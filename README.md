@@ -29,7 +29,7 @@ I thrive on solving complex technical challenges, leading teams, and rapidly ado
 
 ## 🏆 Key Achievements
 
-### **Ray (Samsung Medical Division)** | 2010-2022
+### **Ray** | 2010-2022
 - 🔄 **Microservices Transformation**: Migrated from monolithic to microservices architecture (MSA), enabling independent deployment and scaling
 - 🚀 **Performance Optimization**: Achieved **200%+ improvement** in medical image server performance
 - ⚡ **System Integration**: Enhanced server-viewer system connectivity by **300%**
