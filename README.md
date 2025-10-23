@@ -93,7 +93,6 @@ Inje University | 1997 - 2005
 - 📧 Email: [kcenon@gmail.com](mailto:kcenon@gmail.com)
 - 💼 LinkedIn: [linkedin.com/in/raphaelshin](https://www.linkedin.com/in/raphaelshin/)
 - 🐙 GitHub: [github.com/kcenon](https://github.com/kcenon)
-- 📱 Phone: +82-10-2705-1068
 
 ---
 
