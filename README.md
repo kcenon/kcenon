@@ -27,7 +27,7 @@ Lead cross-functional teams to modernize legacy platforms onto .NET Core, harden
 
 ### Ray (Samsung Medical Division, spun off 2015) — Medical Imaging Platform Modernization (Feb 2010 – Mar 2022)
 - Engineered C#/.NET Framework and C++ TCP services plus ASP.NET Web API endpoints hosted on IIS to unify PACS workflows, third-party integrations, and viewer connectivity.  
-- Led the migration from a monolith to microservices with hybrid .NET Core and C++ services plus containerized deployments, boosting medical imaging throughput by over **200%** and server-viewer responsiveness by **300%** (50 ms → 25 ms).  
+- Led the migration from a monolith to microservices with hybrid .NET Core and C++ services plus containerized deployments, boosting medical imaging throughput by over **100%** and server-viewer responsiveness by **100%** (50 ms → 25 ms).  
 - Introduced WPF MVVM with async-await/TPL patterns and reusable component libraries to streamline radiology UI operations and improve technician productivity.
 
 ## Additional Experience
