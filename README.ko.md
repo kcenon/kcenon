@@ -90,7 +90,6 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 
 - 📧 Email: [kcenon@gmail.com](mailto:kcenon@gmail.com)
 - 💼 LinkedIn: [linkedin.com/in/raphaelshin](https://www.linkedin.com/in/raphaelshin/)
-- 🐙 GitHub: [github.com/kcenon](https://github.com/kcenon)
 
 ---
 
