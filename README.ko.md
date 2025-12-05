@@ -67,8 +67,8 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 
 ## 📈 GitHub 통계
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
+![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
+![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
 
 ## 🎓 학력
 
