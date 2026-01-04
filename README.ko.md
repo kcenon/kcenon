@@ -11,28 +11,11 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 
 ## 핵심 역량
 
-- **백엔드 및 분산 시스템**: C++17, C#, Rust, Go; 멀티스레드 TCP 소켓 설계; RabbitMQ; RESTful 마이크로서비스; PostgreSQL/Redis 성능 튜닝  
-- **.NET 및 UI 엔지니어링**: C#/.NET Framework, .NET Core, ASP.NET Web API, WPF(MVVM, async-await), Qt/QML; IIS 기반 서비스; 의료 기기용 SDK/API 재사용 구조  
-- **클라우드 & DevOps**: AWS, Docker, GitHub Actions; 컨테이너 워크로드 CI/CD 자동화; 가시성 구축과 인시던트 대응, IaC 도입  
+- **백엔드 및 분산 시스템**: C++17, C#, Rust, Go; 멀티스레드 TCP 소켓 설계; RabbitMQ; RESTful 마이크로서비스; PostgreSQL/Redis 성능 튜닝
+- **.NET 및 UI 엔지니어링**: C#/.NET Framework, .NET Core, ASP.NET Web API, WPF(MVVM, async-await), Qt/QML; IIS 기반 서비스; 의료 기기용 SDK/API 재사용 구조
+- **클라우드 & DevOps**: AWS, Docker, GitHub Actions; 컨테이너 워크로드 CI/CD 자동화; 가시성 구축과 인시던트 대응, IaC 도입
+- **의료 규제 준수**: HIPAA 기술적 보호조치 구현, DICOM PS3.15 익명화, PHI 암호화 및 감사 로깅 (미국 의료 시장 요구사항 충족)
 - **리더십 & 딜리버리**: 프로젝트 기획과 로드맵 운영, 멘토링; 신기술 도입과 체계적인 지식 공유 문화
-
-## 주요 프로젝트 및 성과
-
-### 포자랩스 — 분산 오디오 렌더링 플랫폼 (2023.01 – 2025.02)
-- C++/Rust 제어 서비스, Go 스케줄러, Python 데이터 파이프라인, Docker 기반 워커를 AWS 상에서 통합 설계하며 SaaS 아키텍처 전반을 총괄했습니다.  
-- GitHub Actions와 인프라 템플릿을 활용한 AWS CI/CD 파이프라인을 구축해 무중단 일일 배포를 가능하게 했습니다.  
-- REST 연동 레이어와 실시간 관측 환경을 설계해 서브 초 단위 오케스트레이션 지연을 유지하고, SLA 준수를 위한 크로스팀 인시던트 드릴을 주도했습니다.
-
-### Ray (Samsung Medical Division, 2015년 분사) — 의료 영상 플랫폼 현대화 (2010.02 – 2022.03)
-- PACS 워크플로와 서드파티 연동, 뷰어 연결성을 통합하기 위해 IIS 환경에서 C#/.NET Framework 및 C++ 기반 TCP 서비스와 ASP.NET Web API 엔드포인트를 구축했습니다.  
-- 모놀리식을 .NET Core·C++ 하이브리드 마이크로서비스로 전환하고 컨테이너 배포를 도입하여, **무손실 압축 기반의 유효 처리량을 2배로 향상(7→15 MB/s @ 100 Mbps, 70→150 MB/s @ 1 Gbps)**하고 서버-뷰어 지연을 50%(50→25 ms) 단축, **CPU 오버헤드는 ≤30%**로 유지했습니다.
-- WPF MVVM에 async-await/TPL 패턴과 재사용 컴포넌트 라이브러리를 적용해 영상 UI 작업 흐름을 단순화하고 의료 기사 생산성을 높였습니다.
-
-## 추가 경력
-
-- 포항공과대학교 — 리드 프로그래머 (2022.03 – 2022.10): C++/Python을 활용한 Docker 기반 TCP 데이터 수집 시스템을 구축해 분산 연구 장비의 자원 활용을 최적화했습니다.  
-- 틸론 — 선임연구원 (2009.07 – 2009.12): LG 모니터 제어용 C++03 VNC 모듈을 개발하며 네트워크 상태를 실시간 시각화했습니다.  
-- 바텍 — 소프트웨어 엔지니어 (2004.10 – 2009.07): C++/C# UI 및 리포트 툴을 개발해 치과 영상 시각화와 데이터베이스 연동, 문서 워크플로를 구현했습니다.
 
 ## 🛠️ 기술 스택
 
@@ -61,6 +44,7 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 ### 전문 분야
 - **네트워크 아키텍처**: TCP/IP, WebSocket, REST API, 분산 시스템
 - **의료 영상**: PACS, DICOM (ISO 13485 준수)
+- **의료 규제 준수**: HIPAA, DICOM PS3.15 익명화, PHI 보안
 - **UI 프레임워크**: WPF, Qt/QML, Shader Programming
 - **DevOps**: Docker, GitHub Actions, Git, Linux, CI/CD 파이프라인
 - **테스트**: GTest, xUnit, PyTest

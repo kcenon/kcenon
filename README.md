@@ -13,28 +13,11 @@ Lead cross-functional teams to modernize legacy platforms onto .NET Core, harden
 
 ## Core Strengths
 
-- **Backend & Distributed Systems**: C++17, C#, Rust, Go; multithreaded TCP socket design; RabbitMQ; RESTful microservices; PostgreSQL/Redis performance tuning.  
-- **.NET & UI Engineering**: C#/.NET Framework, .NET Core, ASP.NET Web API, WPF (MVVM, async-await), Qt/QML; IIS-hosted services; reusable SDK/API delivery for clinical devices.  
-- **Cloud & DevOps**: AWS, Docker, GitHub Actions; automated CI/CD for containerized workloads; observability, incident response, and infrastructure-as-code adoption.  
+- **Backend & Distributed Systems**: C++17, C#, Rust, Go; multithreaded TCP socket design; RabbitMQ; RESTful microservices; PostgreSQL/Redis performance tuning.
+- **.NET & UI Engineering**: C#/.NET Framework, .NET Core, ASP.NET Web API, WPF (MVVM, async-await), Qt/QML; IIS-hosted services; reusable SDK/API delivery for clinical devices.
+- **Cloud & DevOps**: AWS, Docker, GitHub Actions; automated CI/CD for containerized workloads; observability, incident response, and infrastructure-as-code adoption.
+- **Healthcare Regulatory Compliance**: HIPAA technical safeguards implementation, DICOM PS3.15 de-identification, PHI encryption and audit logging for US healthcare market requirements.
 - **Leadership & Delivery**: Project planning, roadmap ownership, mentoring; rapid technology adoption and structured knowledge sharing.
-
-## Selected Projects & Impact
-
-### Poza Labs — Distributed Audio Rendering Platform (Jan 2023 – Feb 2025)
-- Directed end-to-end architecture for an audio rendering SaaS, orchestrating C++/Rust control services with Go schedulers, Python data pipelines, and Dockerized workers on AWS.  
-- Established an AWS-hosted CI/CD pipeline with GitHub Actions and infrastructure templates, enabling daily release cadence and zero-downtime rollouts.  
-- Designed REST integration layers and runtime observability to sustain sub-second orchestration latency while coordinating cross-team incident drills for SLA compliance.
-
-### Ray (Samsung Medical Division, spun off 2015) — Medical Imaging Platform Modernization (Feb 2010 – Mar 2022)
-- Engineered C#/.NET Framework and C++ TCP services plus ASP.NET Web API endpoints hosted on IIS to unify PACS workflows, third-party integrations, and viewer connectivity.  
-- Led the migration from a monolith to hybrid .NET Core + C++ microservices with containerized deployments, doubling effective imaging throughput via lossless compression (7→15 MB/s @ 100 Mbps; 70→150 MB/s @ 1 Gbps) and cutting server-to-viewer latency by 50% (50→25 ms), while keeping CPU overhead ≤30%.
-- Introduced WPF MVVM with async-await/TPL patterns and reusable component libraries to streamline radiology UI operations and improve technician productivity.
-
-## Additional Experience
-
-- POSTECH — Lead Programmer (Mar 2022 – Oct 2022): Built Docker-based TCP data acquisition system using C++/Python to optimize resource usage in distributed research instrumentation.  
-- Tilon — Senior Researcher (Jul 2009 – Dec 2009): Delivered C++03 VNC modules for LG monitor control, visualizing network health in real time.  
-- VATECH — Software Engineer (Oct 2004 – Jul 2009): Developed C++/C# UI and reporting tools for dental imaging, integrating visualization, database back-end, and document workflows.
 
 ## 🛠️ Technical Skills
 
@@ -63,6 +46,7 @@ Lead cross-functional teams to modernize legacy platforms onto .NET Core, harden
 ### Specializations
 - **Network Architecture**: TCP/IP, WebSocket, REST API, Distributed Systems
 - **Medical Imaging**: PACS, DICOM (ISO 13485 compliant)
+- **Healthcare Compliance**: HIPAA, DICOM PS3.15 De-identification, PHI Security
 - **UI Frameworks**: WPF, Qt/QML, Shader Programming
 - **DevOps**: Docker, GitHub Actions, Git, Linux, CI/CD Pipelines
 - **Testing**: GTest, xUnit, PyTest
