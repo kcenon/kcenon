@@ -1,0 +1,58 @@
+{
+  "timeline": [
+    {
+      "id": "pozalabs",
+      "company": "Poza Labs",
+      "period": "2023 - 2025",
+      "role": "Software Architect",
+      "description": "오디오 렌더링 SaaS 플랫폼의 아키텍처 설계 총괄. C++, Rust, Go, Python 서비스 오케스트레이션. Zero-downtime 배포가 가능한 CI/CD 파이프라인 구축으로 <strong>Daily Release</strong> 체계 확립.",
+      "note": "<strong>경험 확장</strong>: 의료 도메인에서 쌓은 역량을 바탕으로 <strong>AI/ML 파이프라인</strong> 및 <strong>클라우드 네이티브 아키텍처</strong>(AWS, Docker, Kubernetes)를 실무에 적용. On-premise 중심의 의료 시스템 경험을 클라우드 환경으로 확장하여, 향후 <strong>클라우드 기반 의료 AI 시스템</strong> 설계에 기여할 수 있는 역량 확보.",
+      "tags": ["Rust", "Go", "Microservices", "AWS", "AI/ML Pipeline"],
+      "highlight": false
+    },
+    {
+      "id": "purplechips",
+      "company": "Purplechips (POSTECH)",
+      "period": "2022.03 - 2022.10 (8개월)",
+      "role": "Lead Programmer",
+      "description": "<strong>POSTECH</strong>과 <strong>POSCO</strong>의 합작 벤처로 기획된 AI 기반 EDA 스타트업. 딥러닝 기반 반도체 설계 자동화 솔루션 개발 프로젝트에서 리드 프로그래머로 참여하여 AI 작업 서빙 시스템 아키텍처 설계.",
+      "note": "<strong>경험 확장</strong>: 의료 도메인에서 <strong>반도체/AI 도메인</strong>으로 전환하여 딥러닝 기반 알고리즘과 대규모 데이터 처리 파이프라인 구축 경험 획득. 이 경험을 통해 AI/ML 기술을 의료 영상 분석에 적용할 수 있는 역량 확보.",
+      "tags": ["Python", "Deep Learning", "EDA", "AI/ML", "System Architecture"],
+      "highlight": false
+    },
+    {
+      "id": "ray",
+      "company": "Ray",
+      "period": "2010 - 2022",
+      "role": "Lead Software Engineer → Principal Engineer",
+      "badge": "IPO",
+      "description": "<strong>삼성전자 의료사업부 자회사</strong>에서 분사한 치과 의료영상 시스템 전문 기업에서 <strong>12년간</strong> 핵심 개발자로 근무. PACS 서버, DICOM 뷰어, 2D 교정 시뮬레이션, 모달리티 장비 제어 시스템을 직접 설계하고 개발.",
+      "achievements": [
+        "<strong>C++</strong>이 백그라운드에서 무거운 영상 처리를 담당하고, <strong>.NET</strong>이 시각화를 담당하는 마이크로서비스 구조로 전환",
+        "실시간 압축/직렬화로 100Mbps 네트워크에서 이론값(12.5MB/s)을 초과하는 <strong>15 MB/s</strong> 실효 전송량 달성",
+        "레이턴시 <strong>50→25ms</strong> (50% 감소)",
+        "<strong>ISO 13485, IEC 62304</strong> 규격 문서 직접 작성",
+        "<strong>CE, FDA, KFDA, CCC</strong> 전 글로벌 인증 프로세스 참여 및 획득"
+      ],
+      "tags": ["C++", "C#", "DICOM", "ISO 13485", "IEC 62304"],
+      "highlight": true
+    },
+    {
+      "id": "vatech",
+      "company": "(주)바텍 VATECH",
+      "period": "2004 - 2009",
+      "role": "Software Engineer",
+      "badge": "IPO",
+      "description": "치과용 X-ray 및 CBCT 의료영상 장비 전문 기업에서 소프트웨어 개발자로 경력 시작. <strong>DICOM 뷰어, 모달리티 장비 제어 시스템</strong>을 직접 설계하고 개발하며 <strong>2D 교정 시뮬레이션</strong> 개발에 참여. <strong>CE, FDA, KFDA</strong> 글로벌 인증 획득에 기여. 첫 번째 <strong>IPO 경험</strong>으로 벤처기업의 성장 과정을 직접 체험.",
+      "tags": ["C++", "DICOM", "X-ray", "CBCT", "CE/FDA/KFDA"],
+      "highlight": false
+    },
+    {
+      "id": "inje",
+      "company": "Inje University",
+      "period": "1997 - 2005",
+      "role": "Bachelor of Science in Electronic Engineering",
+      "highlight": false
+    }
+  ]
+}

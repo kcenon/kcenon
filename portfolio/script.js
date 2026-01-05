@@ -1,4 +1,108 @@
+// =============================================
+// Data Loading and Rendering
+// =============================================
+
+// Load JSON data and render components
+async function loadData(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error(`Failed to load ${url}:`, error);
+        return null;
+    }
+}
+
+async function initializePortfolio() {
+    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails } = window.PortfolioComponents;
+
+    // Load all data in parallel
+    const [projectsData, careersData, testimonialsData, expertiseData] = await Promise.all([
+        loadData('data/projects.json'),
+        loadData('data/career.json'),
+        loadData('data/testimonials.json'),
+        loadData('data/expertise.json')
+    ]);
+
+    // Render sections
+    if (projectsData) {
+        const projectsContainer = document.getElementById('projects-container');
+        if (projectsContainer) renderProjects(projectsData, projectsContainer);
+    }
+
+    if (careersData) {
+        const careerContainer = document.getElementById('career-container');
+        if (careerContainer) renderCareer(careersData, careerContainer);
+    }
+
+    if (testimonialsData) {
+        const testimonialsContainer = document.getElementById('testimonials-container');
+        if (testimonialsContainer) renderTestimonials(testimonialsData, testimonialsContainer);
+    }
+
+    if (expertiseData) {
+        const expertiseContainer = document.getElementById('expertise-container');
+        if (expertiseContainer) renderExpertise(expertiseData, expertiseContainer);
+
+        const lifecycleDetails = document.getElementById('lifecycle-details');
+        if (lifecycleDetails) renderLifecycleDetails(expertiseData, lifecycleDetails);
+    }
+
+    // Initialize expand buttons after rendering
+    initializeExpandButtons();
+
+    // Initialize scroll animations after content is loaded
+    initializeScrollAnimations();
+}
+
+// Initialize expand buttons for dynamically created cards
+function initializeExpandButtons() {
+    document.querySelectorAll('.project-card.expandable .expand-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const card = this.closest('.project-card');
+            const isExpanded = card.classList.contains('expanded');
+
+            card.classList.toggle('expanded');
+            this.setAttribute('aria-expanded', !isExpanded);
+
+            const buttonText = this.querySelector('span');
+            if (buttonText) {
+                buttonText.textContent = isExpanded ? '상세 보기' : '접기';
+            }
+        });
+    });
+}
+
+// Initialize scroll animations for dynamically created elements
+function initializeScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.highlight-card, .expertise-category, .project-card, .timeline-item, .testimonial-card, .lifecycle-card').forEach(el => {
+        el.classList.add('animate-on-scroll');
+        observer.observe(el);
+    });
+}
+
+// Initialize portfolio when DOM is ready
+document.addEventListener('DOMContentLoaded', initializePortfolio);
+
+// =============================================
 // Theme Toggle
+// =============================================
+
 const themeToggle = document.querySelector('.theme-toggle');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -27,6 +131,10 @@ prefersDark.addEventListener('change', (e) => {
         setTheme(e.matches ? 'dark' : 'light');
     }
 });
+
+// =============================================
+// Navigation
+// =============================================
 
 // Smooth scroll for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -82,28 +190,10 @@ function updateNavBackground() {
 
 window.addEventListener('scroll', updateNavBackground);
 
-// Intersection Observer for scroll animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+// =============================================
+// Scroll Animations CSS
+// =============================================
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Observe elements for animation
-document.querySelectorAll('.highlight-card, .expertise-category, .project-card, .timeline-item').forEach(el => {
-    el.classList.add('animate-on-scroll');
-    observer.observe(el);
-});
-
-// Add CSS for scroll animations
 const style = document.createElement('style');
 style.textContent = `
     .animate-on-scroll {
@@ -131,63 +221,10 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Typing effect for code window (optional enhancement)
-function typeCode() {
-    const codeElement = document.querySelector('.code-content code');
-    if (!codeElement) return;
+// =============================================
+// Console Easter Egg
+// =============================================
 
-    const originalHTML = codeElement.innerHTML;
-    const text = codeElement.textContent;
-
-    // Skip typing effect if user prefers reduced motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        return;
-    }
-
-    codeElement.innerHTML = '';
-    codeElement.style.visibility = 'visible';
-
-    let i = 0;
-    const speed = 20;
-
-    function type() {
-        if (i < text.length) {
-            codeElement.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        } else {
-            // Restore syntax highlighting after typing is complete
-            codeElement.innerHTML = originalHTML;
-        }
-    }
-
-    // Start typing after a short delay
-    setTimeout(type, 500);
-}
-
-// Initialize typing effect when page loads
-// Uncomment the line below to enable typing effect
-// window.addEventListener('load', typeCode);
-
-// Project Card Accordion
-document.querySelectorAll('.project-card.expandable .expand-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const card = this.closest('.project-card');
-        const isExpanded = card.classList.contains('expanded');
-
-        // Toggle expanded state
-        card.classList.toggle('expanded');
-        this.setAttribute('aria-expanded', !isExpanded);
-
-        // Update button text
-        const buttonText = this.querySelector('span');
-        if (buttonText) {
-            buttonText.textContent = isExpanded ? '상세 보기' : '접기';
-        }
-    });
-});
-
-// Console easter egg
 console.log('%c안녕하세요! 신동철입니다.', 'font-size: 20px; font-weight: bold; color: #3b82f6;');
 console.log('%c의료 소프트웨어와 고성능 시스템에 관심이 있으시다면 연락주세요!', 'font-size: 14px; color: #64748b;');
 console.log('%ckcenon@gmail.com', 'font-size: 14px; color: #3b82f6;');

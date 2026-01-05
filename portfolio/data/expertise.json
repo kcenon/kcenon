@@ -1,0 +1,74 @@
+{
+  "categories": [
+    {
+      "id": "medical",
+      "icon": "hospital",
+      "title": "Medical Systems",
+      "items": [
+        "PACS (Picture Archiving & Communication System)",
+        "DICOM Standard Implementation",
+        "3D Volume Rendering & MPR",
+        "Modality Equipment Control",
+        "HIS/RIS Integration (HL7, FHIR)",
+        "Orthodontic Simulation"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "icon": "clipboard",
+      "title": "Regulatory & Compliance",
+      "items": [
+        "ISO 13485 (Medical Device QMS)",
+        "IEC 62304 (생명주기 모델 기반 개발)",
+        "FDA 510(k) / KFDA (한국 식약처)",
+        "CE Marking (유럽) / CCC (중국)",
+        "<strong>HIPAA Compliance</strong> (PHI 보안, 감사 로깅)",
+        "Software Risk Management (ISO 14971)",
+        "Design Control Documentation"
+      ]
+    },
+    {
+      "id": "performance",
+      "icon": "zap",
+      "title": "High Performance Systems",
+      "items": [
+        "Lock-free Data Structures",
+        "SIMD Optimization",
+        "Async I/O & Event-driven Architecture",
+        "Memory-efficient Design",
+        "Sub-microsecond Latency Systems",
+        "Distributed System Architecture"
+      ]
+    },
+    {
+      "id": "technologies",
+      "icon": "tool",
+      "title": "Technologies",
+      "tags": [
+        "C++20", "C#/.NET", "Rust", "Python", "Go", "TypeScript",
+        "Qt", "WPF/MVVM", "OpenGL", "OpenCV", "PostgreSQL", "Redis", "Docker", "AWS"
+      ]
+    }
+  ],
+  "certifications": [
+    { "icon": "EU", "name": "CE" },
+    { "icon": "US", "name": "FDA" },
+    { "icon": "KR", "name": "KFDA" },
+    { "icon": "CN", "name": "CCC" },
+    { "icon": "US", "name": "HIPAA" }
+  ],
+  "heroCapabilities": [
+    { "icon": "check-circle", "title": "Full Lifecycle", "description": "IEC 62304 기반 전 개발 단계 수행" },
+    { "icon": "file-text", "title": "Regulatory Docs", "description": "ISO 13485, IEC 62304 규격 문서 작성" },
+    { "icon": "users", "title": "Team Leadership", "description": "코드 리뷰와 멘토링 기반 팀 성장" },
+    { "icon": "check-square", "title": "Clinical Validation", "description": "임상 시험 및 검증 단계 완수" }
+  ],
+  "lifecycleDetails": [
+    { "icon": "clipboard", "title": "문서화", "description": "SRS, SDS, 위험분석, 추적성 매트릭스 등 IEC 62304 필수 문서 작성" },
+    { "icon": "search", "title": "검증 & 확인", "description": "각 단계별 검증 활동 및 독립적인 유효성 확인 수행" },
+    { "icon": "alert-triangle", "title": "위험 관리", "description": "ISO 14971 기반 소프트웨어 위험 분석 및 완화 조치" },
+    { "icon": "refresh-cw", "title": "변경 관리", "description": "체계적인 변경 통제 및 영향 분석 프로세스" },
+    { "icon": "users", "title": "SQA 협업", "description": "SQA 팀과 긴밀히 협업하여 품질 보증 프로세스 수립 및 준수" },
+    { "icon": "flask", "title": "테스트 자동화", "description": "단위 테스트 기반 자동화 검증 강화로 회귀 오류 방지 및 품질 향상" }
+  ]
+}

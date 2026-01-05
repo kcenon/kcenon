@@ -1,0 +1,128 @@
+{
+  "featured": {
+    "quote": "Mr. Dongcheol is <strong>the most exemplary and outstanding tech leader</strong> I have ever worked with. I gained extensive knowledge, particularly in large-scale systems and on-premise environments. The toolkit he provided to the company was incredibly user-friendly, greatly benefiting many junior developers.",
+    "author": "Hyunkyu Lee",
+    "role": "Software Developer",
+    "relation": "2024.08 · 같은 부서"
+  },
+  "testimonials": [
+    {
+      "id": 1,
+      "date": "2022.02",
+      "context": "부하직원",
+      "text": "신동철팀장님께서는 의료 분야 소프트웨어 엔지니어로서 필요한 의료 도메인 지식을 넓고 깊게 알고 계십니다. <strong>리드 프로그래머로서 책임감</strong>을 가지고 프로그램을 개발하면서도, 아래 직급의 사람이 의견을 내도 타당할 경우 해당내용을 수용해주시며 <strong>다른 팀원들의 실력 향상을 위해 노력</strong>하십니다.",
+      "labels": [
+        { "text": "Medical Domain", "type": "domain" },
+        { "text": "Leadership", "type": "leadership" },
+        { "text": "Team Growth", "type": "mentoring" }
+      ],
+      "author": "박석준",
+      "role": "(주)레이",
+      "relation": "Ray 팀원"
+    },
+    {
+      "id": 2,
+      "date": "2025.03",
+      "context": "같은 부서",
+      "text": "A great senior software engineer with specialty in <strong>large system architecture designs based on microservices</strong>. He's open to learn new skills and capable to apply them to real-world projects. His extensive experience has helped me many times in finding solutions.",
+      "labels": [
+        { "text": "Microservices", "type": "technical" },
+        { "text": "Mentoring", "type": "mentoring" }
+      ],
+      "author": "Hyunjin Song",
+      "role": "S/W Engineer, C++ and Rust",
+      "relation": "Poza Labs 동료"
+    },
+    {
+      "id": 3,
+      "date": "2022.05",
+      "context": "팀은 다름",
+      "text": "Ability to <strong>provide a big direction for co-workers to solve problems on their own</strong> is excellent. He has a lot of experience and deep knowledge in medical software, especially dentistry. He is always trying to learn new skills, and has no fear or reluctance to apply new skills.",
+      "labels": [
+        { "text": "Medical/Dental", "type": "domain" },
+        { "text": "Direction", "type": "leadership" }
+      ],
+      "author": "Gyeong Uk Min",
+      "role": "Dental Software",
+      "relation": "Ray 협업 동료"
+    },
+    {
+      "id": 4,
+      "date": "2022.10",
+      "context": "같은 부서",
+      "text": "The most thoughtful C++ engineer I've ever worked with. I worked with him to integrate the AI modules written in Python into the C++ program. <strong>Writing comprehensible code and building programs to make it easier to maintain</strong> are the most distinctive of his many specialties.",
+      "labels": [
+        { "text": "C++ Expert", "type": "technical" },
+        { "text": "Code Quality", "type": "technical" }
+      ],
+      "author": "junyaup Kim",
+      "role": "Watsonx Customer Success Manager",
+      "relation": "Ray 동료"
+    },
+    {
+      "id": 5,
+      "date": "2014.05",
+      "context": "클라이언트",
+      "text": "One of the best engineers I have seen. Writing up a <strong>Database Service from scratch in a short term</strong> is quite an accomplishment and Mr Shin did it with ease. He has pushed himself all the time to perform better and has continuously achieved better results during his tenure with us at Samsung.",
+      "labels": [
+        { "text": "Fast Delivery", "type": "technical" },
+        { "text": "Self-improvement", "type": "leadership" }
+      ],
+      "author": "Nasir Ahmed Desai",
+      "role": "Informatics Software Leader, DeepHealth",
+      "relation": "Samsung 클라이언트"
+    },
+    {
+      "id": 6,
+      "date": "2013.10",
+      "context": "같은 부서",
+      "text": "A very talented person with deep technical knowledge. He joined DICOM Platform team and took over a challenging component right away. He went ahead and <strong>optimized the performance spec by 2x</strong>. His communication skills are well appreciated.",
+      "labels": [
+        { "text": "Performance 2x", "type": "technical" },
+        { "text": "Communication", "type": "communication" }
+      ],
+      "author": "Rakesh Dutta",
+      "role": "Director, R&D at Stryker Robotics",
+      "relation": "Samsung 동료"
+    },
+    {
+      "id": 7,
+      "date": "2022.05",
+      "context": "직속상사",
+      "text": "He always tries to learn about new technologies and apply them to his work. The project to develop new <strong>dental imaging server and application based on microservices</strong> was successful in performance, scalability and maintainability. I'm sure he would be a good teammate on any development team.",
+      "labels": [
+        { "text": "Microservices", "type": "technical" },
+        { "text": "Continuous Learning", "type": "mentoring" }
+      ],
+      "author": "Chulhyun(Charles) Lee",
+      "role": "Senior Technical Product Manager",
+      "relation": "Ray 직속상사"
+    },
+    {
+      "id": 8,
+      "date": "2022.10",
+      "context": "팀은 다름",
+      "text": "Excellent capabilities in the field of <strong>large-capacity transmission or real-time processing</strong>. He also likes to acquire new skills and reflect them in projects. He never neglects his efforts to improve his code. I got a lot of inspiration collaborating with him on medical image transmission.",
+      "labels": [
+        { "text": "Real-time", "type": "technical" },
+        { "text": "High-throughput", "type": "technical" }
+      ],
+      "author": "DongKeun Kang",
+      "role": "David, Kang",
+      "relation": "Ray 협업 동료"
+    },
+    {
+      "id": 9,
+      "date": "2021.02",
+      "context": "직장선배",
+      "text": "A lot of experiences in medical imaging field and a very well trained programmer. Most of all, <strong>he is eager for knowledge</strong>. So he can be very good in adopting new technologies. I recommend him in general application programming and medical imaging field.",
+      "labels": [
+        { "text": "Medical Imaging", "type": "domain" },
+        { "text": "Eager to Learn", "type": "mentoring" }
+      ],
+      "author": "이우석",
+      "role": "Lunit Software Developer",
+      "relation": "VATECH 직장선배"
+    }
+  ]
+}
