@@ -67,8 +67,8 @@ Inje University | 1997 - 2005
 
 ## 💡 Leadership & Team Development
 
-- 🌟 Lead onboarding and code reviews around .NET/C++ best practices to elevate team capabilities.
-- 🤝 Foster flexible development culture responsive to technological changes and stakeholder needs.
+- 🌟 Lead onboarding and code reviews focused on .NET/C++ best practices to elevate team capabilities.
+- 🤝 Foster a flexible development culture responsive to technological changes and stakeholder needs.
 - 📊 Strengthen team expertise through living technical documentation and structured review processes.
 - 🎯 Enhance project success rates via collaborative problem-solving and data-driven milestone tracking.
 
