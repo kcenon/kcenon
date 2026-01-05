@@ -13,7 +13,7 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 
 - **백엔드 및 분산 시스템**: C++17, C#, Rust, Go; 멀티스레드 TCP 소켓 설계; RabbitMQ; RESTful 마이크로서비스; PostgreSQL/Redis 성능 튜닝
 - **.NET 및 UI 엔지니어링**: C#/.NET Framework, .NET Core, ASP.NET Web API, WPF(MVVM, async-await), Qt/QML; IIS 기반 서비스; 의료 기기용 SDK/API 재사용 구조
-- **클라우드 & DevOps**: AWS, Docker, GitHub Actions; 컨테이너 워크로드 CI/CD 자동화; 가시성 구축과 인시던트 대응, IaC 도입
+- **클라우드 & DevOps**: AWS, Docker, GitHub Actions; 컨테이너 워크로드 CI/CD 자동화; 모니터링 및 관측성(Observability) 구축과 인시던트 대응, IaC 도입
 - **의료 규제 준수**: HIPAA 기술적 보호조치 구현, DICOM PS3.15 익명화, PHI 암호화 및 감사 로깅 (미국 의료 시장 요구사항 충족)
 - **리더십 & 딜리버리**: 프로젝트 기획과 로드맵 운영, 멘토링; 신기술 도입과 체계적인 지식 공유 문화
 
@@ -67,7 +67,7 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 
 - 🌟 .NET/C++ 베스트 프랙티스 온보딩과 코드 리뷰를 주도해 팀 역량을 끌어올립니다.
 - 🤝 이해관계자 요구와 기술 변화를 빠르게 반영하는 유연한 개발 문화를 조성합니다.
-- 📊 생생한 기술 문서와 구조화된 리뷰 프로세스로 팀 내 전문성을 강화합니다.
+- 📊 지속적으로 갱신되는 기술 문서와 구조화된 리뷰 프로세스로 팀 내 전문성을 강화합니다.
 - 🎯 데이터 기반 마일스톤 관리와 협업 문제 해결로 프로젝트 성공률을 높입니다.
 
 ## 📫 연락하기
