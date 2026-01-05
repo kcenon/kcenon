@@ -6,13 +6,37 @@
       "company": "주식회사 레이",
       "title": "SMARTDent v3",
       "period": "2019.01 - 2020.06",
-      "roles": ["architect", "lead", "qa-doc"],
+      "roles": [
+        "architect",
+        "lead",
+        "qa-doc"
+      ],
       "description": "치과 CT/X-Ray 장비를 위한 통합 의료 영상 플랫폼. <strong>마이크로서비스 아키텍처</strong> 설계, 영상 취득 소프트웨어, DICOM 2D/3D 시각화 소프트웨어를 개발. <strong>ISO 13485</strong> 인증을 위한 검증 문서 직접 작성.",
       "metrics": [
-        { "value": "15 MB/s", "label": "실효 전송량 @100Mbps", "change": "이론값 초과", "positive": true },
-        { "value": "25ms", "label": "레이턴시", "change": "-50%", "positive": true }
+        {
+          "value": "15 MB/s",
+          "label": "실효 전송량 @100Mbps",
+          "change": "이론값 초과",
+          "positive": true
+        },
+        {
+          "value": "25ms",
+          "label": "레이턴시",
+          "change": "-50%",
+          "positive": true
+        }
       ],
-      "tags": ["C++14", "C#", "WPF", "DICOM", "PostgreSQL", "ISO 13485", "IEC 62304", "DCMTK", "PACS"],
+      "tags": [
+        "C++14",
+        "C#",
+        "WPF",
+        "DICOM",
+        "PostgreSQL",
+        "ISO 13485",
+        "IEC 62304",
+        "DCMTK",
+        "PACS"
+      ],
       "expanded": {
         "roles": [
           "전체 시스템 아키텍처 설계 및 기술 의사결정",
@@ -30,7 +54,12 @@
           "Database Gateway를 통한 데이터 암호화/복호화 및 네트워크 전체 시스템 자동 상태 동기화",
           "DCMTK 라이브러리 커스터마이징으로 호환성 문제 해결"
         ],
-        "certifications": ["CE", "FDA 510(k)", "KFDA", "CCC"]
+        "certifications": [
+          "CE",
+          "FDA 510(k)",
+          "KFDA",
+          "CCC"
+        ]
       }
     },
     {
@@ -39,13 +68,32 @@
       "company": "주식회사 레이 → Samsung",
       "title": "Medical CT Project for Samsung",
       "period": "2012.11 - 2014.01",
-      "roles": ["architect", "core-dev"],
+      "roles": [
+        "architect",
+        "core-dev"
+      ],
       "description": "삼성전자 CT/MR 제품을 위한 <strong>DICOM 소프트웨어 플랫폼</strong> 개발. 데이터베이스 서버와 PACS 네트워크 서버(C-STORE/C-FIND/C-MOVE)의 클래스 계층 구조를 설계하고, 처리량 <strong>2배 향상</strong> 달성.",
       "metrics": [
-        { "value": "2x", "label": "처리량 향상", "change": "+100%", "positive": true },
-        { "value": "14개월", "label": "개발 기간" }
+        {
+          "value": "2x",
+          "label": "처리량 향상",
+          "change": "+100%",
+          "positive": true
+        },
+        {
+          "value": "14개월",
+          "label": "개발 기간"
+        }
       ],
-      "tags": ["C++11", "Boost", "PostgreSQL", "DCMTK", "PACS", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++11",
+        "Boost",
+        "PostgreSQL",
+        "DCMTK",
+        "PACS",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "DICOM 플랫폼 아키텍처 설계",
@@ -75,9 +123,22 @@
       "company": "주식회사 레이",
       "title": "Alpha Project",
       "period": "2011.01 - 2012.10",
-      "roles": ["architect", "lead", "core-dev"],
+      "roles": [
+        "architect",
+        "lead",
+        "core-dev"
+      ],
       "description": "치과 CT/X-Ray 취득 및 DICOM 2D/3D 시각화 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 이미지 처리 모듈 개발.",
-      "tags": ["C#", "WPF", "DirectX", "PostgreSQL", "ClearCanvas", "PACS", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C#",
+        "WPF",
+        "DirectX",
+        "PostgreSQL",
+        "ClearCanvas",
+        "PACS",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "전체 시스템 아키텍처 설계 및 기술 의사결정",
@@ -87,7 +148,11 @@
           "HLSL 셰이더 프로그래밍",
           "실시간 영상 렌더링 최적화"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     },
     {
@@ -95,9 +160,22 @@
       "company": "주식회사 레이",
       "title": "Visualization Software for DICOM",
       "period": "2010.02 - 2010.12",
-      "roles": ["architect", "core-dev", "qa-doc"],
+      "roles": [
+        "architect",
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "DICOM 2D/3D 시각화 소프트웨어. WPF 기반 프레임워크 및 이미지 처리 모듈 개발. 의료기기 검증 문서 작성.",
-      "tags": ["C++11", "C#", "MFC", "MSSQL", "ClearCanvas", "PACS", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++11",
+        "C#",
+        "MFC",
+        "MSSQL",
+        "ClearCanvas",
+        "PACS",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "전체 시스템 아키텍처 설계 및 기술 의사결정",
@@ -106,7 +184,11 @@
           "WPF 기반 뷰어 프레임워크 개발",
           "이미지 처리 알고리즘 구현"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     },
     {
@@ -114,16 +196,34 @@
       "company": "주식회사 레이",
       "title": "3D Visualization Software",
       "period": "2014.01 - 2015.06",
-      "roles": ["core-dev"],
-      "description": "DICOM 3D 뷰어 개발. C#, WPF 기반 3D 엔진 활용.",
-      "tags": ["C#", "WPF", "OpenGL", "ClearCanvas", "PACS", "ISO 13485", "IEC 62304"],
+      "roles": [
+        "core-dev"
+      ],
+      "description": "DICOM 3D 뷰어 개발. <strong>Fovia 엔진</strong> 기반 Volume Rendering, MPR, MIP 시각화 구현.",
+      "tags": [
+        "C#",
+        "WPF",
+        "Fovia",
+        "Volume Rendering",
+        "GPU",
+        "PACS",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
-          "3D 볼륨 렌더링 엔진 통합",
+          "Fovia 엔진 기반 3D 볼륨 렌더링 통합",
+          "GPU 가속 Volume Rendering 파이프라인 구축",
           "MPR(Multi-Planar Reconstruction) 뷰어 개발",
+          "MIP(Maximum Intensity Projection) 시각화 구현",
           "3D 측정 도구 구현"
         ],
-        "certifications": ["CE", "FDA", "KFDA", "CCC"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA",
+          "CCC"
+        ]
       }
     },
     {
@@ -131,16 +231,30 @@
       "company": "주식회사 레이",
       "title": "Automation Alignment Software",
       "period": "2015.07 - 2016.04",
-      "roles": ["architect", "core-dev", "qa-doc"],
+      "roles": [
+        "architect",
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "의료기기 자동 정렬 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 영상 처리. ISO 13485 검증 문서 작성.",
-      "tags": ["C#", "WPF", "DirectX", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C#",
+        "WPF",
+        "DirectX",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "영상 정합 알고리즘 설계",
           "GPU 기반 실시간 처리 구현",
           "IEC 62304 검증 문서 작성"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     },
     {
@@ -148,16 +262,30 @@
       "company": "주식회사 레이",
       "title": "Intraoral Sensor SDK",
       "period": "2015.01 - 2015.06",
-      "roles": ["architect", "core-dev"],
+      "roles": [
+        "architect",
+        "core-dev"
+      ],
       "description": "구강 내 센서용 SDK 및 TWAIN 드라이버 개발. C++, Boost 기반 SDK와 C#, WPF 기반 이미징 뷰어.",
-      "tags": ["C++14", "C#", "SDK", "TWAIN", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++14",
+        "C#",
+        "SDK",
+        "TWAIN",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "센서 하드웨어 인터페이스 SDK 설계",
           "TWAIN 호환 드라이버 개발",
           "3rd party 연동 API 문서 작성"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     },
     {
@@ -165,16 +293,30 @@
       "company": "바텍 VATECH",
       "title": "Implagraphy Project",
       "period": "2005.08 - 2005.11",
-      "roles": ["core-dev", "qa-doc"],
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "치과 CT/X-Ray 취득 소프트웨어. 이미지 처리 모듈, DICOM 데이터 핸들링, 의료기기 검증 문서 작성.",
-      "tags": ["C++", "MFC", "RS232", "DICOM", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++",
+        "MFC",
+        "RS232",
+        "DICOM",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "이미지 처리 알고리즘 개발",
           "RS232 시리얼 통신 구현",
           "DICOM 데이터 핸들러 개발"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     }
   ],
@@ -184,16 +326,30 @@
       "company": "바텍 VATECH",
       "title": "EzCeph Project",
       "period": "2004.07 - 2005.12",
-      "roles": ["core-dev", "qa-doc"],
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "교정 시뮬레이션 소프트웨어. 이미지 편집기, Morphing/Superimposition/<strong>VTO/STO 시뮬레이션</strong>, Level Anchorage 시뮬레이션 개발.",
-      "tags": ["C++", "MFC", "DCMTK", "Simulation", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++",
+        "MFC",
+        "DCMTK",
+        "Simulation",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "VTO(Visual Treatment Objective) 시뮬레이션 알고리즘 개발",
           "STO(Surgical Treatment Objective) 시뮬레이션 개발",
           "이미지 Morphing 및 Superimposition 기능 구현"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     },
     {
@@ -201,16 +357,30 @@
       "company": "바텍 VATECH",
       "title": "OrthoVision Project",
       "period": "2007.01 - 2008.01",
-      "roles": ["core-dev", "qa-doc"],
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "교정 분석 소프트웨어. WPF 기반 교정 분석 차트, 사용자 차트 에디터, 프린터/스캐너 모듈 개발.",
-      "tags": ["C#", "WPF", ".NET 3.0", "MSSQL", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C#",
+        "WPF",
+        ".NET 3.0",
+        "MSSQL",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "WPF 기반 차트 렌더링 엔진 개발",
           "사용자 정의 차트 에디터 설계",
           "프린터/스캐너 드라이버 통합"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     },
     {
@@ -218,16 +388,31 @@
       "company": "바텍 VATECH",
       "title": "Sherpa Project",
       "period": "2008.01 - 2009.07",
-      "roles": ["core-dev", "qa-doc"],
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "치과 CT/X-Ray 취득 및 치과 영상 시각화 소프트웨어. 차트 관리자, 카메라/프린터/스캐너 모듈, TCP/IP 통신 개발.",
-      "tags": ["C#", "WPF", "DirectShow", "LINQ", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C#",
+        "WPF",
+        "DirectShow",
+        "LINQ",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "전체 소프트웨어 아키텍처 설계",
           "DirectShow 기반 카메라 모듈 개발",
           "TCP/IP 기반 장비 통신 프로토콜 설계"
         ],
-        "certifications": ["CE", "FDA", "KFDA", "CCC"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA",
+          "CCC"
+        ]
       }
     }
   ],
@@ -237,16 +422,30 @@
       "company": "주식회사 레이",
       "title": "3D Printer Software",
       "period": "2016.05 - 2017.07",
-      "roles": ["core-dev", "qa-doc"],
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "3D 프린터 제어 프로그램. C++11, Qt QML, MFC 기반 DCMTK 연동 개발.",
-      "tags": ["C++11", "Qt QML", "MFC", "DCMTK", "OpenGL", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++11",
+        "Qt QML",
+        "MFC",
+        "DCMTK",
+        "OpenGL",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "Qt QML 기반 사용자 인터페이스 개발",
           "프린터 하드웨어 제어 프로토콜 구현",
           "DICOM 데이터에서 3D 프린팅 모델 변환"
         ],
-        "certifications": ["CE", "KFDA"]
+        "certifications": [
+          "CE",
+          "KFDA"
+        ]
       }
     },
     {
@@ -254,12 +453,27 @@
       "company": "주식회사 레이",
       "title": "High Speed File Download System",
       "period": "2018.07 - 2019.01",
-      "roles": ["architect", "core-dev", "qa-doc"],
+      "roles": [
+        "architect",
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "고속 파일 다운로드 시스템. 마이크로서비스 아키텍처 및 스레드 풀 설계. ISO 13485 문서 작성.",
       "metrics": [
-        { "value": "10x", "label": "다중 파일 전송 속도", "change": "비동기 파이프라인", "positive": true }
+        {
+          "value": "10x",
+          "label": "다중 파일 전송 속도",
+          "change": "비동기 파이프라인",
+          "positive": true
+        }
       ],
-      "tags": ["C++14", "Boost", "C#", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++14",
+        "Boost",
+        "C#",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "비동기 다운로드 아키텍처 설계",
@@ -278,16 +492,29 @@
       "company": "바텍 VATECH",
       "title": "EasyDent Project",
       "period": "2004.07 - 2005.10",
-      "roles": ["core-dev", "qa-doc"],
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
       "description": "치과 X-Ray 취득 및 시각화 소프트웨어. 가상 키보드, 이미지 에디터, 썸네일 성능 최적화.",
-      "tags": ["C++", "MFC", "Win32 API", "ISO 13485", "IEC 62304"],
+      "tags": [
+        "C++",
+        "MFC",
+        "Win32 API",
+        "ISO 13485",
+        "IEC 62304"
+      ],
       "expanded": {
         "roles": [
           "가상 키보드 UI 개발",
           "이미지 에디터 기능 구현",
           "썸네일 렌더링 성능 최적화"
         ],
-        "certifications": ["CE", "FDA", "KFDA"]
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
       }
     }
   ],
@@ -297,13 +524,29 @@
       "company": "포자랩스 POZAlabs",
       "title": "PRS Server",
       "period": "2024.01 - 2025.02",
-      "roles": ["architect", "lead", "core-dev"],
+      "roles": [
+        "architect",
+        "lead",
+        "core-dev"
+      ],
       "description": "오디오 렌더링 SaaS 플랫폼의 마이크로서비스 아키텍처 개발. RabbitMQ 기반 메시지 큐, REST API 설계.",
       "metrics": [
-        { "value": "Daily", "label": "Release 체계" },
-        { "value": "99.9%", "label": "가동률" }
+        {
+          "value": "Daily",
+          "label": "Release 체계"
+        },
+        {
+          "value": "99.9%",
+          "label": "가동률"
+        }
       ],
-      "tags": ["C++17", "RabbitMQ", "PostgreSQL", "Redis", "REST API"],
+      "tags": [
+        "C++17",
+        "RabbitMQ",
+        "PostgreSQL",
+        "Redis",
+        "REST API"
+      ],
       "expanded": {
         "roles": [
           "마이크로서비스 아키텍처 설계 및 구현",
@@ -322,9 +565,18 @@
       "company": "포자랩스 POZAlabs",
       "title": "ARS System",
       "period": "2023.04 - 2024.01",
-      "roles": ["architect", "lead", "core-dev"],
+      "roles": [
+        "architect",
+        "lead",
+        "core-dev"
+      ],
       "description": "오디오 렌더링 시스템. C++17과 <strong>Rust</strong> 기반 마이크로서비스 아키텍처, TCP/REST API 통신.",
-      "tags": ["C++17", "Rust", "PostgreSQL", "TCP"],
+      "tags": [
+        "C++17",
+        "Rust",
+        "PostgreSQL",
+        "TCP"
+      ],
       "expanded": {
         "roles": [
           "Rust 기반 고성능 오디오 처리 모듈 개발",
@@ -342,9 +594,18 @@
       "company": "Purplechips",
       "title": "EDA AI Server",
       "period": "2022.03 - 2022.10",
-      "roles": ["architect", "lead", "core-dev"],
+      "roles": [
+        "architect",
+        "lead",
+        "core-dev"
+      ],
       "description": "반도체 EDA용 AI 서버. C++17, Python 기반 마이크로서비스. <strong>ISO 26262</strong> (자동차 기능 안전) 규격 적용.",
-      "tags": ["C++17", "Python", "Docker", "ISO 26262"],
+      "tags": [
+        "C++17",
+        "Python",
+        "Docker",
+        "ISO 26262"
+      ],
       "expanded": {
         "roles": [
           "AI 추론 서버 아키텍처 설계",
@@ -365,7 +626,12 @@
       "github": "https://github.com/kcenon/messaging_system",
       "stars": 30,
       "description": "Modern C++20 메시징 인프라. <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, 메시지 파이프라인 패턴 지원.",
-      "tags": ["C++20", "Pub/Sub", "Event Streaming", "Lock-free"],
+      "tags": [
+        "C++20",
+        "Pub/Sub",
+        "Event Streaming",
+        "Lock-free"
+      ],
       "expanded": {
         "features": [
           "Publisher/Subscriber 패턴 구현",
@@ -381,7 +647,12 @@
       "github": "https://github.com/kcenon/thread_system",
       "stars": 7,
       "description": "Modern C++20 멀티스레딩 프레임워크. <strong>1.16M jobs/sec</strong> 처리량, Lock-free 큐, Hazard Pointers, Adaptive Optimization.",
-      "tags": ["C++20", "Lock-free", "Thread Pool", "Hazard Pointers"],
+      "tags": [
+        "C++20",
+        "Lock-free",
+        "Thread Pool",
+        "Hazard Pointers"
+      ],
       "expanded": {
         "features": [
           "초당 116만 작업 처리",
@@ -396,7 +667,12 @@
       "title": "network_system",
       "github": "https://github.com/kcenon/network_system",
       "description": "Modern C++20 비동기 네트워크 라이브러리. <strong>TCP/UDP, HTTP/1.1, WebSocket, TLS 1.3</strong> 지원. ASIO 기반 Non-blocking I/O.",
-      "tags": ["C++20", "ASIO", "WebSocket", "TLS 1.3"],
+      "tags": [
+        "C++20",
+        "ASIO",
+        "WebSocket",
+        "TLS 1.3"
+      ],
       "expanded": {
         "features": [
           "TCP/UDP 소켓 통신",
@@ -411,7 +687,12 @@
       "title": "pacs_system",
       "github": "https://github.com/kcenon/pacs_system",
       "description": "Modern C++20 PACS. <strong>외부 DICOM 라이브러리 없이</strong> kcenon 생태계만으로 구축. 고성능 비동기 I/O, SIMD 가속.",
-      "tags": ["C++20", "DICOM", "PACS", "SIMD"],
+      "tags": [
+        "C++20",
+        "DICOM",
+        "PACS",
+        "SIMD"
+      ],
       "expanded": {
         "features": [
           "순수 C++20 DICOM 구현",
@@ -426,7 +707,11 @@
       "title": "logger_system",
       "github": "https://github.com/kcenon/logger_system",
       "description": "비동기 로깅 프레임워크. <strong>4.34M msg/sec</strong> 처리량. 구조화된 로깅, 다중 출력, 로그 레벨 지원.",
-      "tags": ["C++20", "Async", "High-throughput"],
+      "tags": [
+        "C++20",
+        "Async",
+        "High-throughput"
+      ],
       "expanded": {
         "features": [
           "초당 434만 메시지 처리",
@@ -440,7 +725,11 @@
       "title": "database_system",
       "github": "https://github.com/kcenon/database_system",
       "description": "경량 C++20 Core DAL 라이브러리. 타입 안전 쿼리, 커넥션 풀링, 트랜잭션 관리.",
-      "tags": ["C++20", "DAL", "Type-safe"],
+      "tags": [
+        "C++20",
+        "DAL",
+        "Type-safe"
+      ],
       "expanded": {
         "features": [
           "헤더 전용 경량 라이브러리",

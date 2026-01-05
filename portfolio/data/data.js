@@ -114,7 +114,7 @@ window.PortfolioData = {
       "period": "2014.01 - 2015.06",
       "roles": ["core-dev"],
       "description": "DICOM 3D 뷰어 개발. C#, WPF 기반 3D 엔진 활용.",
-      "tags": ["C#", "WPF", "OpenGL", "ClearCanvas", "PACS", "ISO 13485", "IEC 62304"],
+      "tags": ["C#", "WPF", "Fovia", "ClearCanvas", "PACS", "ISO 13485", "IEC 62304"],
       "expanded": {
         "roles": [
           "3D 볼륨 렌더링 엔진 통합",
