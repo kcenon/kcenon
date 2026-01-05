@@ -27,6 +27,55 @@ const ProjectIconMap = {
     microscope: Icons.microscope
 };
 
+// Calculate development duration from period string
+function calculateDuration(period) {
+    if (!period) return null;
+
+    // Parse period formats: "YYYY.MM - YYYY.MM", "YYYY - YYYY", "YYYY.MM - Present"
+    const parts = period.split(' - ');
+    if (parts.length !== 2) return null;
+
+    const parseDate = (str) => {
+        str = str.trim();
+        if (str.toLowerCase() === 'present' || str === '현재') {
+            return new Date();
+        }
+        const [year, month] = str.split('.');
+        return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
+    };
+
+    try {
+        const startDate = parseDate(parts[0]);
+        const endDate = parseDate(parts[1]);
+
+        const months = (endDate.getFullYear() - startDate.getFullYear()) * 12
+                     + (endDate.getMonth() - startDate.getMonth()) + 1;
+
+        if (months <= 0) return null;
+
+        if (months >= 12) {
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            if (remainingMonths === 0) {
+                return `${years}년`;
+            }
+            return `${years}년 ${remainingMonths}개월`;
+        }
+        return `${months}개월`;
+    } catch (e) {
+        return null;
+    }
+}
+
+// Render period with duration
+function renderPeriodWithDuration(period) {
+    const duration = calculateDuration(period);
+    if (duration) {
+        return `<span class="project-period">${period} <span class="project-duration">(${duration})</span></span>`;
+    }
+    return `<span class="project-period">${period}</span>`;
+}
+
 // Render role badges
 function renderRoleBadges(roles) {
     const roleLabels = {
@@ -100,7 +149,7 @@ function renderFeaturedProject(project) {
                 </div>
             </div>
             <h3 class="project-title">${project.title}</h3>
-            <span class="project-period">${project.period}</span>
+            ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
             <p class="project-description">${project.description}</p>
             ${renderMetrics(project.metrics)}
@@ -128,7 +177,7 @@ function renderProjectCard(project) {
                 <span class="project-company-small">${project.company}</span>
             </div>
             <h3 class="project-title">${project.title}</h3>
-            <span class="project-period">${project.period}</span>
+            ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
             <p class="project-description">${project.description}</p>
             ${renderMetrics(project.metrics)}
@@ -160,6 +209,7 @@ function renderOpenSourceCard(project) {
                 </a>
             </div>
             <h3 class="project-title">${project.title}</h3>
+            ${project.period ? `<span class="project-period">${project.period}</span>` : ''}
             ${project.stars ? `<div class="project-stats"><span class="star-count">${project.stars} stars</span></div>` : ''}
             <p class="project-description">${project.description}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>

@@ -2,51 +2,40 @@
 // Data Loading and Rendering
 // =============================================
 
-// Load JSON data and render components
-async function loadData(url) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        console.error(`Failed to load ${url}:`, error);
-        return null;
-    }
-}
-
-async function initializePortfolio() {
+// Initialize portfolio using inline data (no server required)
+function initializePortfolio() {
     const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails } = window.PortfolioComponents;
 
-    // Load all data in parallel
-    const [projectsData, careersData, testimonialsData, expertiseData] = await Promise.all([
-        loadData('data/projects.json'),
-        loadData('data/career.json'),
-        loadData('data/testimonials.json'),
-        loadData('data/expertise.json')
-    ]);
+    // Get data from inline JavaScript (data/data.js)
+    const data = window.PortfolioData;
 
-    // Render sections
-    if (projectsData) {
+    if (!data) {
+        console.error('Portfolio data not found. Make sure data/data.js is loaded.');
+        return;
+    }
+
+    // Render sections using inline data
+    if (data.projects) {
         const projectsContainer = document.getElementById('projects-container');
-        if (projectsContainer) renderProjects(projectsData, projectsContainer);
+        if (projectsContainer) renderProjects(data.projects, projectsContainer);
     }
 
-    if (careersData) {
+    if (data.career) {
         const careerContainer = document.getElementById('career-container');
-        if (careerContainer) renderCareer(careersData, careerContainer);
+        if (careerContainer) renderCareer(data.career, careerContainer);
     }
 
-    if (testimonialsData) {
+    if (data.testimonials) {
         const testimonialsContainer = document.getElementById('testimonials-container');
-        if (testimonialsContainer) renderTestimonials(testimonialsData, testimonialsContainer);
+        if (testimonialsContainer) renderTestimonials(data.testimonials, testimonialsContainer);
     }
 
-    if (expertiseData) {
+    if (data.expertise) {
         const expertiseContainer = document.getElementById('expertise-container');
-        if (expertiseContainer) renderExpertise(expertiseData, expertiseContainer);
+        if (expertiseContainer) renderExpertise(data.expertise, expertiseContainer);
 
         const lifecycleDetails = document.getElementById('lifecycle-details');
-        if (lifecycleDetails) renderLifecycleDetails(expertiseData, lifecycleDetails);
+        if (lifecycleDetails) renderLifecycleDetails(data.expertise, lifecycleDetails);
     }
 
     // Initialize expand buttons after rendering
@@ -135,6 +124,34 @@ prefersDark.addEventListener('change', (e) => {
 // =============================================
 // Navigation
 // =============================================
+
+// Mobile menu toggle
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const navLinksContainer = document.querySelector('.nav-links');
+
+if (mobileMenuToggle && navLinksContainer) {
+    mobileMenuToggle.addEventListener('click', () => {
+        const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+        mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+        navLinksContainer.classList.toggle('open');
+    });
+
+    // Close mobile menu when clicking a link
+    navLinksContainer.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            navLinksContainer.classList.remove('open');
+        });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!mobileMenuToggle.contains(e.target) && !navLinksContainer.contains(e.target)) {
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            navLinksContainer.classList.remove('open');
+        }
+    });
+}
 
 // Smooth scroll for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
