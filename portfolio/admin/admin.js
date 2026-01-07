@@ -235,12 +235,39 @@ class AdminApp {
     });
 
     // Form submission
-    document.getElementById('editor-panel')?.addEventListener('submit', (e) => {
-      if (e.target.id === 'editor-form') {
-        e.preventDefault();
-        this.saveItem();
-      }
-    });
+    const editorPanel = document.getElementById('editor-panel');
+    console.log('bindEvents: editor-panel found:', !!editorPanel);
+
+    if (editorPanel) {
+      editorPanel.addEventListener('submit', (e) => {
+        console.log('Submit event captured! target:', e.target, 'target.id:', e.target.id);
+        if (e.target.id === 'editor-form') {
+          e.preventDefault();
+          console.log('Calling saveItem...');
+          this.saveItem();
+        }
+      });
+
+      // Backup: Direct click handler on Save button
+      editorPanel.addEventListener('click', (e) => {
+        const saveBtn = e.target.closest('button[type="submit"]');
+        if (saveBtn && saveBtn.closest('#editor-form')) {
+          console.log('Save button clicked via click handler!');
+          // Manually trigger save if submit event didn't fire
+          e.preventDefault();
+          const form = saveBtn.closest('#editor-form');
+          if (form) {
+            // Check if saveItem was already called by submit event
+            if (!this._saveInProgress) {
+              this._saveInProgress = true;
+              this.saveItem().finally(() => {
+                this._saveInProgress = false;
+              });
+            }
+          }
+        }
+      });
+    }
 
     // Array input enter key
     document.getElementById('editor-panel')?.addEventListener('keydown', (e) => {
@@ -776,14 +803,18 @@ class AdminApp {
    * Save current item
    */
   async saveItem() {
+    console.log('=== saveItem START ===');
+    console.log('currentTab:', this.currentTab, 'currentSubTab:', this.currentSubTab);
+    console.log('selectedItem:', this.selectedItem, 'isNewItem:', this.isNewItem);
+
     const formData = this.collectFormData();
     if (!formData) {
       console.error('saveItem: No form data collected');
-      this.showToast('Failed to collect form data', 'error');
+      alert('ERROR: Failed to collect form data');
       return;
     }
 
-    console.log('saveItem: Collected form data:', formData);
+    console.log('saveItem: Collected form data:', JSON.stringify(formData, null, 2));
 
     const category = formData.category;
     delete formData.category;
@@ -799,32 +830,75 @@ class AdminApp {
       this.renderList();
       this.renderEditor();
       this.showToast('Item saved (not yet written to file)', 'success');
-      console.log('saveItem: Updated testimonials.featured:', this.data.testimonials.featured);
+      console.log('=== saveItem END (Featured) ===');
       return;
     }
 
-    const items = this.getCurrentItems();
-    console.log('saveItem: Current items count:', items.length, 'selectedItem:', this.selectedItem, 'isNewItem:', this.isNewItem);
+    // Get reference to the data array
+    let items;
+    let dataPath;
+    switch (this.currentTab) {
+      case 'projects':
+        if (!this.data.projects) this.data.projects = {};
+        if (!this.data.projects[this.currentSubTab]) this.data.projects[this.currentSubTab] = [];
+        items = this.data.projects[this.currentSubTab];
+        dataPath = `this.data.projects.${this.currentSubTab}`;
+        break;
+      case 'career':
+        if (!this.data.career) this.data.career = {};
+        if (!this.data.career.timeline) this.data.career.timeline = [];
+        items = this.data.career.timeline;
+        dataPath = 'this.data.career.timeline';
+        break;
+      case 'expertise':
+        if (!this.data.expertise) this.data.expertise = {};
+        if (!this.data.expertise[this.currentSubTab]) this.data.expertise[this.currentSubTab] = [];
+        items = this.data.expertise[this.currentSubTab];
+        dataPath = `this.data.expertise.${this.currentSubTab}`;
+        break;
+      case 'testimonials':
+        if (!this.data.testimonials) this.data.testimonials = {};
+        if (!this.data.testimonials.testimonials) this.data.testimonials.testimonials = [];
+        items = this.data.testimonials.testimonials;
+        dataPath = 'this.data.testimonials.testimonials';
+        break;
+      default:
+        console.error('saveItem: Unknown tab:', this.currentTab);
+        alert('ERROR: Unknown tab: ' + this.currentTab);
+        return;
+    }
+
+    console.log('saveItem: dataPath:', dataPath);
+    console.log('saveItem: items count before:', items.length);
 
     if (this.isNewItem) {
       // Generate ID if not provided
       if (!formData.id) {
-        formData.id = `${this.currentSubTab}-${Date.now()}`;
+        formData.id = `${this.currentSubTab || this.currentTab}-${Date.now()}`;
       }
       items.push(formData);
       console.log('saveItem: Added new item with id:', formData.id);
+      console.log('saveItem: items count after:', items.length);
     } else {
       // Update existing item - use loose equality for type-agnostic comparison
       const index = items.findIndex(item => {
         const itemId = item.id || item.title || item.author;
-        return itemId == this.selectedItem || String(itemId) === String(this.selectedItem);
+        const matches = itemId == this.selectedItem || String(itemId) === String(this.selectedItem);
+        console.log(`  comparing itemId=${itemId} with selectedItem=${this.selectedItem}: ${matches}`);
+        return matches;
       });
+
+      console.log('saveItem: Found index:', index);
+
       if (index !== -1) {
+        console.log('saveItem: Before update, item:', JSON.stringify(items[index], null, 2).substring(0, 200));
         items[index] = formData;
-        console.log('saveItem: Updated item at index:', index);
+        console.log('saveItem: After update, item:', JSON.stringify(items[index], null, 2).substring(0, 200));
       } else {
-        console.error('saveItem: Could not find item to update, selectedItem:', this.selectedItem);
-        this.showToast('Failed to find item to update', 'error');
+        console.error('saveItem: Could not find item to update');
+        console.error('  selectedItem:', this.selectedItem);
+        console.error('  available IDs:', items.map(i => i.id || i.title || i.author));
+        alert('ERROR: Could not find item to update. selectedItem=' + this.selectedItem);
         return;
       }
     }
@@ -838,9 +912,12 @@ class AdminApp {
     this.selectedItem = formData.id || formData.title || formData.author;
     this.isNewItem = false;
 
+    console.log('saveItem: New selectedItem:', this.selectedItem);
+
     this.renderList();
     this.renderEditor();
     this.showToast('Item saved (not yet written to file)', 'success');
+    console.log('=== saveItem END ===');
   }
 
   /**
@@ -882,7 +959,28 @@ class AdminApp {
       return;
     }
 
-    const items = this.getCurrentItems();
+    // Get direct reference to the data array
+    let items;
+    switch (this.currentTab) {
+      case 'projects':
+        items = this.data.projects?.[this.currentSubTab];
+        break;
+      case 'career':
+        items = this.data.career?.timeline;
+        break;
+      case 'expertise':
+        items = this.data.expertise?.[this.currentSubTab];
+        break;
+      case 'testimonials':
+        items = this.data.testimonials?.testimonials;
+        break;
+    }
+
+    if (!items) {
+      console.error('deleteItem: No items array found');
+      return;
+    }
+
     // Use loose equality for type-agnostic comparison
     const index = items.findIndex(item => {
       const itemId = item.id || item.title || item.author;
@@ -1026,7 +1124,21 @@ class AdminApp {
   }
 }
 
+// Global error handler
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+  console.error('Global error:', msg, 'at', url, lineNo, columnNo);
+  alert('JavaScript Error: ' + msg);
+  return false;
+};
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  window.adminApp = new AdminApp();
+  console.log('DOM loaded, initializing AdminApp...');
+  try {
+    window.adminApp = new AdminApp();
+    console.log('AdminApp initialized successfully');
+  } catch (err) {
+    console.error('Failed to initialize AdminApp:', err);
+    alert('Failed to initialize AdminApp: ' + err.message);
+  }
 });
