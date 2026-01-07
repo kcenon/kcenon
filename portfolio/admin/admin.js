@@ -777,11 +777,34 @@ class AdminApp {
    */
   async saveItem() {
     const formData = this.collectFormData();
-    if (!formData) return;
+    if (!formData) {
+      console.error('saveItem: No form data collected');
+      this.showToast('Failed to collect form data', 'error');
+      return;
+    }
 
-    const items = this.getCurrentItems();
+    console.log('saveItem: Collected form data:', formData);
+
     const category = formData.category;
     delete formData.category;
+
+    // Special handling for Testimonials Featured - it's a single object, not an array
+    if (this.currentTab === 'testimonials' && this.currentSubTab === 'featured') {
+      console.log('saveItem: Saving Featured Testimonial');
+      this.data.testimonials.featured = formData;
+      this.unsavedChanges.add(this.currentTab);
+      this.updateStatusBar();
+      this.selectedItem = formData.author;
+      this.isNewItem = false;
+      this.renderList();
+      this.renderEditor();
+      this.showToast('Item saved (not yet written to file)', 'success');
+      console.log('saveItem: Updated testimonials.featured:', this.data.testimonials.featured);
+      return;
+    }
+
+    const items = this.getCurrentItems();
+    console.log('saveItem: Current items count:', items.length, 'selectedItem:', this.selectedItem, 'isNewItem:', this.isNewItem);
 
     if (this.isNewItem) {
       // Generate ID if not provided
@@ -789,16 +812,26 @@ class AdminApp {
         formData.id = `${this.currentSubTab}-${Date.now()}`;
       }
       items.push(formData);
+      console.log('saveItem: Added new item with id:', formData.id);
     } else {
-      // Update existing item
-      const index = items.findIndex(item => (item.id || item.title || item.author) === this.selectedItem);
+      // Update existing item - use loose equality for type-agnostic comparison
+      const index = items.findIndex(item => {
+        const itemId = item.id || item.title || item.author;
+        return itemId == this.selectedItem || String(itemId) === String(this.selectedItem);
+      });
       if (index !== -1) {
         items[index] = formData;
+        console.log('saveItem: Updated item at index:', index);
+      } else {
+        console.error('saveItem: Could not find item to update, selectedItem:', this.selectedItem);
+        this.showToast('Failed to find item to update', 'error');
+        return;
       }
     }
 
     // Mark as changed
     this.unsavedChanges.add(this.currentTab);
+    console.log('saveItem: Unsaved changes:', Array.from(this.unsavedChanges));
     this.updateStatusBar();
 
     // Update selection
@@ -843,15 +876,25 @@ class AdminApp {
    * Delete item
    */
   deleteItem(id) {
+    // Special handling for Testimonials Featured - cannot delete, only clear
+    if (this.currentTab === 'testimonials' && this.currentSubTab === 'featured') {
+      this.showToast('Cannot delete featured testimonial. Edit it instead.', 'error');
+      return;
+    }
+
     const items = this.getCurrentItems();
-    const index = items.findIndex(item => (item.id || item.title || item.author) === id);
+    // Use loose equality for type-agnostic comparison
+    const index = items.findIndex(item => {
+      const itemId = item.id || item.title || item.author;
+      return itemId == id || String(itemId) === String(id);
+    });
 
     if (index !== -1) {
       items.splice(index, 1);
       this.unsavedChanges.add(this.currentTab);
       this.updateStatusBar();
 
-      if (this.selectedItem === id) {
+      if (this.selectedItem == id || String(this.selectedItem) === String(id)) {
         this.selectedItem = null;
         this.isNewItem = false;
       }
@@ -881,7 +924,13 @@ class AdminApp {
    * Save all changes
    */
   async saveAll() {
-    if (this.unsavedChanges.size === 0) return;
+    if (this.unsavedChanges.size === 0) {
+      this.showToast('No unsaved changes to save', 'info');
+      return;
+    }
+
+    let savedCount = 0;
+    let failedCount = 0;
 
     for (const dataType of this.unsavedChanges) {
       let filename, data;
@@ -906,15 +955,33 @@ class AdminApp {
       }
 
       if (filename && data) {
-        const result = await window.FileHandler.saveFile(filename, data);
-        if (result.success) {
-          this.showToast(`Saved ${filename} (${result.method})`, 'success');
+        try {
+          console.log(`Saving ${filename}:`, JSON.stringify(data, null, 2).substring(0, 500) + '...');
+          const result = await window.FileHandler.saveFile(filename, data);
+          if (result.success) {
+            savedCount++;
+            console.log(`Successfully saved ${filename} via ${result.method}`);
+          } else {
+            failedCount++;
+            console.error(`Failed to save ${filename}`);
+          }
+        } catch (err) {
+          failedCount++;
+          console.error(`Error saving ${filename}:`, err);
         }
       }
     }
 
-    this.unsavedChanges.clear();
-    this.originalData = JSON.parse(JSON.stringify(this.data));
+    if (savedCount > 0) {
+      const method = window.FileHandler.hasAccess() ? 'filesystem' : 'download';
+      this.showToast(`Saved ${savedCount} file(s) via ${method}`, 'success');
+      this.unsavedChanges.clear();
+      this.originalData = JSON.parse(JSON.stringify(this.data));
+    }
+    if (failedCount > 0) {
+      this.showToast(`Failed to save ${failedCount} file(s)`, 'error');
+    }
+
     this.updateStatusBar();
   }
 
