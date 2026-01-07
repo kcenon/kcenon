@@ -32,10 +32,11 @@
         "WPF",
         "DICOM",
         "PostgreSQL",
-        "ISO 13485",
-        "IEC 62304",
         "DCMTK",
-        "PACS"
+        "PACS",
+        "TCP/IP",
+        "ISO 13485",
+        "IEC 62304"
       ],
       "expanded": {
         "roles": [
@@ -91,6 +92,7 @@
         "PostgreSQL",
         "DCMTK",
         "PACS",
+        "TCP/IP",
         "ISO 13485",
         "IEC 62304"
       ],
@@ -128,14 +130,16 @@
         "lead",
         "core-dev"
       ],
-      "description": "치과 CT/X-Ray 취득 및 DICOM 2D/3D 시각화 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 이미지 처리 모듈 개발.",
+      "description": "치과 CT/X-Ray 이미지 획득 및 DICOM 2D/3D 시각화 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 이미지 처리 모듈 개발.",
       "tags": [
+        "C++",
         "C#",
         "WPF",
         "DirectX",
         "PostgreSQL",
         "ClearCanvas",
         "PACS",
+        "TCP/IP",
         "ISO 13485",
         "IEC 62304"
       ],
@@ -173,6 +177,7 @@
         "MSSQL",
         "ClearCanvas",
         "PACS",
+        "TCP/IP",
         "ISO 13485",
         "IEC 62304"
       ],
@@ -207,6 +212,7 @@
         "Volume Rendering",
         "GPU",
         "PACS",
+        "TCP/IP",
         "ISO 13485",
         "IEC 62304"
       ],
