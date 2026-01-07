@@ -1,0 +1,682 @@
+/**
+ * Admin Components - UI components for admin page
+ */
+
+const AdminComponents = {
+  /**
+   * Render item list for a data type
+   */
+  renderItemList(items, dataType, selectedId = null) {
+    if (!items || items.length === 0) {
+      return `
+        <div class="item-list-empty">
+          <p>No items found</p>
+          <button class="btn btn-primary btn-add-new" data-type="${dataType}">+ Add New</button>
+        </div>
+      `;
+    }
+
+    const itemsHtml = items.map(item => {
+      const id = item.id || item.title || item.author || item.name || `item-${Math.random().toString(36).substr(2, 9)}`;
+      const title = item.title || item.company || item.name || item.author || 'Untitled';
+      const subtitle = item.company || item.role || item.period || '';
+      const isSelected = String(id) === String(selectedId);
+
+      return `
+        <div class="item-list-item ${isSelected ? 'selected' : ''}" data-id="${id}" data-type="${dataType}">
+          <div class="item-info">
+            <span class="item-title">${FormFields.escapeHtml(title)}</span>
+            ${subtitle ? `<span class="item-subtitle">${FormFields.escapeHtml(subtitle)}</span>` : ''}
+          </div>
+          <div class="item-actions">
+            <button class="btn-icon btn-edit" data-id="${id}" title="Edit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button class="btn-icon btn-delete" data-id="${id}" title="Delete">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="item-list-header">
+        <span class="item-count">${items.length} items</span>
+        <button class="btn btn-primary btn-add-new" data-type="${dataType}">+ Add New</button>
+      </div>
+      <div class="item-list-search">
+        <input type="text" placeholder="Search..." class="form-input search-input" />
+      </div>
+      <div class="item-list-items">
+        ${itemsHtml}
+      </div>
+    `;
+  },
+
+  /**
+   * Render project form
+   */
+  renderProjectForm(project = {}, category = 'featured') {
+    const isOpenSource = category === 'openSource';
+    const isFeatured = category === 'featured';
+
+    const roleOptions = [
+      { value: 'architect', label: 'Architect' },
+      { value: 'lead', label: 'Lead' },
+      { value: 'core-dev', label: 'Core Developer' },
+      { value: 'qa-doc', label: 'QA/Documentation' }
+    ];
+
+    const iconOptions = [
+      { value: 'hospital', label: 'Hospital' },
+      { value: 'microscope', label: 'Microscope' },
+      { value: 'code', label: 'Code' },
+      { value: 'server', label: 'Server' }
+    ];
+
+    let formHtml = `
+      <input type="hidden" name="category" value="${category}" />
+      ${FormFields.textInput({ id: 'id', label: 'ID', value: project.id, required: true, placeholder: 'unique-project-id' })}
+    `;
+
+    if (isFeatured) {
+      formHtml += FormFields.select({ id: 'icon', label: 'Icon', value: project.icon, options: iconOptions });
+    }
+
+    if (!isOpenSource) {
+      formHtml += `
+        ${FormFields.textInput({ id: 'company', label: 'Company', value: project.company, required: true })}
+        ${FormFields.textInput({ id: 'title', label: 'Title', value: project.title, required: true })}
+        ${FormFields.periodInput({ id: 'period', label: 'Period', value: project.period, required: true })}
+        ${FormFields.multiSelect({ id: 'roles', label: 'Roles', values: project.roles || [], options: roleOptions, required: true })}
+      `;
+    } else {
+      formHtml += `
+        ${FormFields.textInput({ id: 'title', label: 'Title', value: project.title, required: true })}
+        ${FormFields.textInput({ id: 'github', label: 'GitHub URL', value: project.github, type: 'url' })}
+        ${FormFields.textInput({ id: 'stars', label: 'Stars', value: project.stars, type: 'number' })}
+      `;
+    }
+
+    formHtml += `
+      ${FormFields.textArea({ id: 'description', label: 'Description', value: project.description, required: true, richText: true })}
+      ${FormFields.arrayInput({ id: 'tags', label: 'Tags', values: project.tags || [], placeholder: 'Add tag...' })}
+    `;
+
+    if (!isOpenSource) {
+      formHtml += FormFields.objectArrayInput({
+        id: 'metrics',
+        label: 'Metrics',
+        values: project.metrics || [],
+        fields: [
+          { key: 'value', label: 'Value', type: 'text' },
+          { key: 'label', label: 'Label', type: 'text' },
+          { key: 'change', label: 'Change', type: 'text' },
+          { key: 'positive', label: 'Positive', type: 'checkbox' }
+        ]
+      });
+
+      formHtml += FormFields.nestedObjectEditor({
+        id: 'expanded',
+        label: 'Expanded Details',
+        value: project.expanded || {},
+        schema: {
+          roles: { type: 'array', label: 'Detailed Roles', placeholder: 'Add role detail...' },
+          challenges: { type: 'array', label: 'Challenges', placeholder: 'Add challenge...' },
+          solutions: { type: 'array', label: 'Solutions', placeholder: 'Add solution...' },
+          achievements: { type: 'array', label: 'Achievements', placeholder: 'Add achievement...' },
+          certifications: { type: 'array', label: 'Certifications', placeholder: 'Add certification...' }
+        }
+      });
+    } else {
+      formHtml += FormFields.nestedObjectEditor({
+        id: 'expanded',
+        label: 'Expanded Details',
+        value: project.expanded || {},
+        schema: {
+          features: { type: 'array', label: 'Features', placeholder: 'Add feature...' }
+        }
+      });
+    }
+
+    return formHtml;
+  },
+
+  /**
+   * Render career form
+   */
+  renderCareerForm(career = {}) {
+    return `
+      ${FormFields.textInput({ id: 'id', label: 'ID', value: career.id, required: true, placeholder: 'unique-career-id' })}
+      ${FormFields.textInput({ id: 'company', label: 'Company', value: career.company, required: true })}
+      ${FormFields.periodInput({ id: 'period', label: 'Period', value: career.period, required: true })}
+      ${FormFields.textInput({ id: 'role', label: 'Role', value: career.role, required: true })}
+      ${FormFields.textInput({ id: 'badge', label: 'Badge', value: career.badge, placeholder: 'e.g., IPO' })}
+      ${FormFields.textArea({ id: 'description', label: 'Description', value: career.description, richText: true })}
+      ${FormFields.textArea({ id: 'note', label: 'Note', value: career.note, richText: true })}
+      ${FormFields.arrayInput({ id: 'achievements', label: 'Achievements', values: career.achievements || [], placeholder: 'Add achievement...' })}
+      ${FormFields.arrayInput({ id: 'tags', label: 'Tags', values: career.tags || [], placeholder: 'Add tag...' })}
+      ${FormFields.checkbox({ id: 'highlight', label: 'Highlight this entry', checked: career.highlight })}
+    `;
+  },
+
+  /**
+   * Render expertise category form
+   */
+  renderExpertiseCategoryForm(category = {}) {
+    const iconOptions = [
+      { value: 'hospital', label: 'Hospital' },
+      { value: 'clipboard', label: 'Clipboard' },
+      { value: 'zap', label: 'Zap' },
+      { value: 'tool', label: 'Tool' }
+    ];
+
+    return `
+      ${FormFields.textInput({ id: 'id', label: 'ID', value: category.id, required: true })}
+      ${FormFields.select({ id: 'icon', label: 'Icon', value: category.icon, options: iconOptions, required: true })}
+      ${FormFields.textInput({ id: 'title', label: 'Title', value: category.title, required: true })}
+      ${FormFields.arrayInput({ id: 'items', label: 'Items (for list-based)', values: category.items || [], placeholder: 'Add item...' })}
+      ${FormFields.arrayInput({ id: 'tags', label: 'Tags (for tag-based)', values: category.tags || [], placeholder: 'Add tag...' })}
+    `;
+  },
+
+  /**
+   * Render certification form
+   */
+  renderCertificationForm(cert = {}) {
+    const iconOptions = ['EU', 'US', 'KR', 'CN'].map(i => ({ value: i, label: i }));
+
+    return `
+      ${FormFields.select({ id: 'icon', label: 'Icon (Country)', value: cert.icon, options: iconOptions, required: true })}
+      ${FormFields.textInput({ id: 'name', label: 'Name', value: cert.name, required: true })}
+    `;
+  },
+
+  /**
+   * Render lifecycle/capability form
+   */
+  renderLifecycleForm(item = {}) {
+    const iconOptions = [
+      'clipboard', 'search', 'alert-triangle', 'refresh-cw', 'users', 'flask',
+      'check-circle', 'file-text', 'check-square'
+    ].map(i => ({ value: i, label: i }));
+
+    return `
+      ${FormFields.select({ id: 'icon', label: 'Icon', value: item.icon, options: iconOptions, required: true })}
+      ${FormFields.textInput({ id: 'title', label: 'Title', value: item.title, required: true })}
+      ${FormFields.textInput({ id: 'description', label: 'Description', value: item.description, required: true })}
+    `;
+  },
+
+  /**
+   * Render featured testimonial form
+   */
+  renderFeaturedTestimonialForm(featured = {}) {
+    return `
+      ${FormFields.textArea({ id: 'quote', label: 'Quote', value: featured.quote, required: true, richText: true, rows: 6 })}
+      ${FormFields.textInput({ id: 'author', label: 'Author', value: featured.author, required: true })}
+      ${FormFields.textInput({ id: 'role', label: 'Role', value: featured.role, required: true })}
+      ${FormFields.textInput({ id: 'relation', label: 'Relation', value: featured.relation, required: true })}
+    `;
+  },
+
+  /**
+   * Render testimonial form
+   */
+  renderTestimonialForm(testimonial = {}) {
+    const labelTypeOptions = [
+      { value: 'domain', label: 'Domain' },
+      { value: 'technical', label: 'Technical' },
+      { value: 'leadership', label: 'Leadership' },
+      { value: 'mentoring', label: 'Mentoring' },
+      { value: 'communication', label: 'Communication' }
+    ];
+
+    return `
+      ${FormFields.textInput({ id: 'id', label: 'ID', value: testimonial.id, type: 'number' })}
+      ${FormFields.textInput({ id: 'date', label: 'Date', value: testimonial.date, required: true, placeholder: 'YYYY.MM' })}
+      ${FormFields.textInput({ id: 'context', label: 'Context', value: testimonial.context, required: true })}
+      ${FormFields.textArea({ id: 'text', label: 'Text', value: testimonial.text, required: true, richText: true, rows: 6 })}
+      ${FormFields.objectArrayInput({
+        id: 'labels',
+        label: 'Labels',
+        values: testimonial.labels || [],
+        fields: [
+          { key: 'text', label: 'Text', type: 'text' },
+          { key: 'type', label: 'Type', type: 'text' }
+        ]
+      })}
+      ${FormFields.textInput({ id: 'author', label: 'Author', value: testimonial.author, required: true })}
+      ${FormFields.textInput({ id: 'role', label: 'Role', value: testimonial.role, required: true })}
+      ${FormFields.textInput({ id: 'relation', label: 'Relation', value: testimonial.relation, required: true })}
+    `;
+  },
+
+  /**
+   * Render editor panel
+   */
+  renderEditorPanel(formHtml, isNew = false) {
+    return `
+      <div class="editor-header">
+        <h3>${isNew ? 'Add New Item' : 'Edit Item'}</h3>
+      </div>
+      <form id="editor-form" class="editor-form">
+        ${formHtml}
+        <div class="editor-actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+          ${!isNew ? '<button type="button" class="btn btn-danger btn-delete-item">Delete</button>' : ''}
+        </div>
+      </form>
+    `;
+  },
+
+  /**
+   * Render empty editor state
+   */
+  renderEmptyEditor() {
+    return `
+      <div class="editor-empty">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        <p>Select an item to edit or create a new one</p>
+      </div>
+    `;
+  },
+
+  /**
+   * Render confirmation modal
+   */
+  renderConfirmModal(title, message, confirmText = 'Confirm', cancelText = 'Cancel') {
+    return `
+      <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>${title}</h3>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>${message}</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary modal-cancel">${cancelText}</button>
+            <button class="btn btn-danger modal-confirm">${confirmText}</button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  /**
+   * Render status bar
+   */
+  renderStatusBar(unsavedCount = 0, apiStatus = {}) {
+    const statusClass = apiStatus.hasAccess ? 'status-connected' : 'status-disconnected';
+    const statusText = apiStatus.hasAccess ? 'Connected to folder' : 'Not connected';
+
+    return `
+      <div class="status-info">
+        <span class="status-indicator ${statusClass}"></span>
+        <span>${statusText}</span>
+        ${apiStatus.browserInfo ? `<span class="status-browser">(${apiStatus.browserInfo})</span>` : ''}
+      </div>
+      <div class="status-actions">
+        ${unsavedCount > 0 ? `<span class="unsaved-count">${unsavedCount} unsaved changes</span>` : ''}
+        <button class="btn btn-secondary btn-connect" id="btn-connect-folder">
+          ${apiStatus.hasAccess ? 'Change Folder' : 'Connect Folder'}
+        </button>
+        <button class="btn btn-primary btn-save-all" ${unsavedCount === 0 ? 'disabled' : ''}>Save All</button>
+      </div>
+    `;
+  },
+
+  /**
+   * Render editor panel with preview support
+   */
+  renderEditorPanelWithPreview(formHtml, isNew = false, previewActive = false) {
+    return `
+      <div class="editor-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3>${isNew ? 'Add New Item' : 'Edit Item'}</h3>
+          <button type="button" class="btn btn-small btn-preview ${previewActive ? 'active' : ''}" id="btn-toggle-preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            Preview
+          </button>
+        </div>
+      </div>
+      <div class="editor-content ${previewActive ? 'preview-active' : ''}" id="editor-content">
+        <div class="editor-form-container">
+          <form id="editor-form" class="editor-form">
+            ${formHtml}
+            <div class="editor-actions">
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-secondary btn-cancel">Cancel</button>
+              ${!isNew ? '<button type="button" class="btn btn-danger btn-delete-item">Delete</button>' : ''}
+            </div>
+          </form>
+        </div>
+        <div class="preview-panel" id="preview-panel">
+          <div class="preview-header">
+            <h4>Preview</h4>
+          </div>
+          <div class="preview-content" id="preview-content">
+            ${this.renderPreviewEmpty()}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  /**
+   * Render project preview
+   */
+  renderProjectPreview(data, category = 'featured') {
+    if (!data || !data.title) {
+      return this.renderPreviewEmpty();
+    }
+
+    const isOpenSource = category === 'openSource';
+
+    // Roles badges
+    const rolesHtml = data.roles && data.roles.length > 0 ? `
+      <div class="preview-roles">
+        ${data.roles.map(r => `<span class="preview-role">${r}</span>`).join('')}
+      </div>
+    ` : '';
+
+    // Metrics
+    const metricsHtml = data.metrics && data.metrics.length > 0 ? `
+      <div class="preview-metrics">
+        ${data.metrics.map(m => `
+          <div class="preview-metric">
+            <div class="preview-metric-value">${FormFields.escapeHtml(m.value || '')}</div>
+            <div class="preview-metric-label">${FormFields.escapeHtml(m.label || '')}</div>
+            ${m.change ? `<div class="preview-metric-change ${m.positive ? 'positive' : ''}">${FormFields.escapeHtml(m.change)}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    ` : '';
+
+    // Tags
+    const tagsHtml = data.tags && data.tags.length > 0 ? `
+      <div class="preview-tags">
+        ${data.tags.map(t => `<span class="preview-tag">${FormFields.escapeHtml(t)}</span>`).join('')}
+      </div>
+    ` : '';
+
+    // Expanded section
+    let expandedHtml = '';
+    if (data.expanded) {
+      const sections = [];
+
+      if (data.expanded.roles && data.expanded.roles.length > 0) {
+        sections.push(`
+          <div class="preview-expanded-section">
+            <div class="preview-expanded-title">Roles & Responsibilities</div>
+            <ul class="preview-expanded-list">
+              ${data.expanded.roles.map(r => `<li>${r}</li>`).join('')}
+            </ul>
+          </div>
+        `);
+      }
+
+      if (data.expanded.challenges && data.expanded.challenges.length > 0) {
+        sections.push(`
+          <div class="preview-expanded-section">
+            <div class="preview-expanded-title">Challenges</div>
+            <ul class="preview-expanded-list">
+              ${data.expanded.challenges.map(c => `<li>${c}</li>`).join('')}
+            </ul>
+          </div>
+        `);
+      }
+
+      if (data.expanded.solutions && data.expanded.solutions.length > 0) {
+        sections.push(`
+          <div class="preview-expanded-section">
+            <div class="preview-expanded-title">Solutions</div>
+            <ul class="preview-expanded-list">
+              ${data.expanded.solutions.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+          </div>
+        `);
+      }
+
+      if (data.expanded.achievements && data.expanded.achievements.length > 0) {
+        sections.push(`
+          <div class="preview-expanded-section">
+            <div class="preview-expanded-title">Achievements</div>
+            <ul class="preview-expanded-list">
+              ${data.expanded.achievements.map(a => `<li>${a}</li>`).join('')}
+            </ul>
+          </div>
+        `);
+      }
+
+      if (data.expanded.certifications && data.expanded.certifications.length > 0) {
+        sections.push(`
+          <div class="preview-expanded-section">
+            <div class="preview-expanded-title">Certifications</div>
+            <div class="preview-certifications">
+              ${data.expanded.certifications.map(c => `<span class="preview-cert-badge">${FormFields.escapeHtml(c)}</span>`).join('')}
+            </div>
+          </div>
+        `);
+      }
+
+      if (data.expanded.features && data.expanded.features.length > 0) {
+        sections.push(`
+          <div class="preview-expanded-section">
+            <div class="preview-expanded-title">Features</div>
+            <ul class="preview-expanded-list">
+              ${data.expanded.features.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+          </div>
+        `);
+      }
+
+      if (sections.length > 0) {
+        expandedHtml = `<div class="preview-expanded">${sections.join('')}</div>`;
+      }
+    }
+
+    // Open source specific
+    const githubHtml = isOpenSource && data.github ? `
+      <div style="margin-bottom: 1rem;">
+        <a href="${FormFields.escapeHtml(data.github)}" target="_blank" style="color: var(--accent);">
+          ${FormFields.escapeHtml(data.github)}
+        </a>
+        ${data.stars ? `<span style="margin-left: 0.5rem; color: var(--text-muted);">★ ${data.stars}</span>` : ''}
+      </div>
+    ` : '';
+
+    return `
+      <div class="preview-card">
+        <div class="preview-card-header">
+          <div>
+            <h3 class="preview-card-title">${FormFields.escapeHtml(data.title || '')}</h3>
+            ${data.company ? `<div class="preview-card-subtitle">${FormFields.escapeHtml(data.company)}</div>` : ''}
+          </div>
+          ${data.period ? `<span class="preview-card-period">${FormFields.escapeHtml(data.period)}</span>` : ''}
+        </div>
+        ${rolesHtml}
+        ${githubHtml}
+        <div class="preview-card-description">${data.description || ''}</div>
+        ${metricsHtml}
+        ${tagsHtml}
+        ${expandedHtml}
+      </div>
+    `;
+  },
+
+  /**
+   * Render career preview
+   */
+  renderCareerPreview(data) {
+    if (!data || !data.company) {
+      return this.renderPreviewEmpty();
+    }
+
+    const badgeHtml = data.badge ? `<span class="preview-career-badge">${FormFields.escapeHtml(data.badge)}</span>` : '';
+
+    const achievementsHtml = data.achievements && data.achievements.length > 0 ? `
+      <div class="preview-expanded-section" style="margin-top: 1rem;">
+        <div class="preview-expanded-title">Achievements</div>
+        <ul class="preview-expanded-list">
+          ${data.achievements.map(a => `<li>${a}</li>`).join('')}
+        </ul>
+      </div>
+    ` : '';
+
+    const tagsHtml = data.tags && data.tags.length > 0 ? `
+      <div class="preview-tags">
+        ${data.tags.map(t => `<span class="preview-tag">${FormFields.escapeHtml(t)}</span>`).join('')}
+      </div>
+    ` : '';
+
+    const noteHtml = data.note ? `
+      <div class="preview-career-note">${data.note}</div>
+    ` : '';
+
+    return `
+      <div class="preview-card">
+        <div class="preview-career">
+          <div class="preview-card-header">
+            <div>
+              <h3 class="preview-card-title">
+                ${FormFields.escapeHtml(data.company || '')}
+                ${badgeHtml}
+              </h3>
+              <div class="preview-card-subtitle">${FormFields.escapeHtml(data.role || '')}</div>
+            </div>
+            <span class="preview-card-period">${FormFields.escapeHtml(data.period || '')}</span>
+          </div>
+          ${data.description ? `<div class="preview-card-description">${data.description}</div>` : ''}
+          ${achievementsHtml}
+          ${tagsHtml}
+          ${noteHtml}
+        </div>
+      </div>
+    `;
+  },
+
+  /**
+   * Render testimonial preview
+   */
+  renderTestimonialPreview(data, isFeatured = false) {
+    if (!data || (!data.quote && !data.text)) {
+      return this.renderPreviewEmpty();
+    }
+
+    const quote = data.quote || data.text || '';
+    const initial = (data.author || 'U').charAt(0).toUpperCase();
+
+    // Ensure labels is an array before mapping
+    const labelsHtml = Array.isArray(data.labels) && data.labels.length > 0 ? `
+      <div class="preview-testimonial-labels">
+        ${data.labels.map(l => `<span class="preview-label ${l.type || ''}">${FormFields.escapeHtml(l.text || '')}</span>`).join('')}
+      </div>
+    ` : '';
+
+    return `
+      <div class="preview-card">
+        <div class="preview-testimonial">
+          <div class="preview-testimonial-quote">${quote}</div>
+          <div class="preview-testimonial-author">
+            <div class="preview-testimonial-avatar">${initial}</div>
+            <div class="preview-testimonial-info">
+              <div class="preview-testimonial-name">${FormFields.escapeHtml(data.author || '')}</div>
+              <div class="preview-testimonial-role">
+                ${FormFields.escapeHtml(data.role || '')}
+                ${data.relation ? ` · ${FormFields.escapeHtml(data.relation)}` : ''}
+              </div>
+            </div>
+          </div>
+          ${labelsHtml}
+        </div>
+      </div>
+    `;
+  },
+
+  /**
+   * Render expertise preview
+   */
+  renderExpertisePreview(data, subType = 'categories') {
+    if (!data) {
+      return this.renderPreviewEmpty();
+    }
+
+    if (subType === 'categories') {
+      const itemsHtml = data.items && data.items.length > 0 ? `
+        <ul class="preview-expertise-items">
+          ${data.items.map(i => `<li>${i}</li>`).join('')}
+        </ul>
+      ` : '';
+
+      const tagsHtml = data.tags && data.tags.length > 0 ? `
+        <div class="preview-tags">
+          ${data.tags.map(t => `<span class="preview-tag">${FormFields.escapeHtml(t)}</span>`).join('')}
+        </div>
+      ` : '';
+
+      return `
+        <div class="preview-card">
+          <div class="preview-expertise-category">
+            <h3 class="preview-card-title">${FormFields.escapeHtml(data.title || '')}</h3>
+            ${itemsHtml}
+            ${tagsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    if (subType === 'certifications') {
+      return `
+        <div class="preview-card">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <span style="font-size: 1.5rem;">${FormFields.escapeHtml(data.icon || '')}</span>
+            <span class="preview-card-title">${FormFields.escapeHtml(data.name || '')}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // heroCapabilities or lifecycleDetails
+    return `
+      <div class="preview-card">
+        <h3 class="preview-card-title">${FormFields.escapeHtml(data.title || '')}</h3>
+        <p class="preview-card-description">${FormFields.escapeHtml(data.description || '')}</p>
+      </div>
+    `;
+  },
+
+  /**
+   * Render empty preview state
+   */
+  renderPreviewEmpty() {
+    return `
+      <div class="preview-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <p>Fill in the form to see preview</p>
+      </div>
+    `;
+  }
+};
+
+// Export
+window.AdminComponents = AdminComponents;
