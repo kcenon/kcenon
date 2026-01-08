@@ -143,12 +143,24 @@ class DocumentPreviewRenderer {
       const sectionElements = this.buildSectionElements(sectionId, sectionData);
 
       sectionElements.forEach(element => {
+        // Check if element fits on current page (groups use total group height)
         if (currentPage.currentY + element.height > contentHeight) {
           pages.push(currentPage);
           currentPage = { elements: [], currentY: 0 };
         }
 
-        element.y = currentPage.currentY;
+        // Handle group elements - set relative y positions for items
+        if (element.type === 'group' && element.items) {
+          element.y = currentPage.currentY;
+          let itemY = 0;
+          element.items.forEach(item => {
+            item.relativeY = itemY;
+            itemY += item.height + 3;
+          });
+        } else {
+          element.y = currentPage.currentY;
+        }
+
         currentPage.elements.push(element);
         currentPage.currentY += element.height + 5;
       });
@@ -165,7 +177,7 @@ class DocumentPreviewRenderer {
    * Build visual elements for a section
    * @param {string} sectionId - Section identifier
    * @param {Object} data - Section data
-   * @returns {Array} Array of element objects
+   * @returns {Array} Array of element objects (may include groups)
    */
   buildSectionElements(sectionId, data) {
     const elements = [];
@@ -202,30 +214,39 @@ class DocumentPreviewRenderer {
 
   /**
    * Build expertise section elements
+   * Groups category title with its items to prevent splitting
    */
   buildExpertiseElements(elements, data, typography) {
     if (data.categories) {
       data.categories.slice(0, 3).forEach(cat => {
-        elements.push({
+        const groupItems = [];
+        groupItems.push({
           type: 'subheading',
           text: cat.title,
           height: typography.fontSize.h3 + 10
         });
         if (cat.items) {
           cat.items.slice(0, 4).forEach(item => {
-            elements.push({
+            groupItems.push({
               type: 'bullet',
               text: typeof item === 'string' ? item : item.name,
               height: typography.fontSize.body + 8
             });
           });
         }
+        // Push as a group to keep together
+        elements.push({
+          type: 'group',
+          items: groupItems,
+          height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
+        });
       });
     }
   }
 
   /**
    * Build projects section elements
+   * Groups project title with description to prevent splitting
    */
   buildProjectsElements(elements, data, typography) {
     const allProjects = [
@@ -238,34 +259,49 @@ class DocumentPreviewRenderer {
     ].slice(0, 4);
 
     allProjects.forEach(project => {
-      elements.push({
+      const groupItems = [];
+      groupItems.push({
         type: 'projectTitle',
         text: project.title,
         height: typography.fontSize.h3 + 8
       });
-      elements.push({
+      groupItems.push({
         type: 'paragraph',
         text: this.truncate(project.description, 100),
         height: typography.fontSize.body * 2 + 10
+      });
+      // Push as a group to keep together
+      elements.push({
+        type: 'group',
+        items: groupItems,
+        height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
       });
     });
   }
 
   /**
    * Build career section elements
+   * Groups career entry with date to prevent splitting
    */
   buildCareerElements(elements, data, typography) {
     if (data.timeline) {
       data.timeline.slice(0, 3).forEach(entry => {
-        elements.push({
+        const groupItems = [];
+        groupItems.push({
           type: 'careerEntry',
           text: `${entry.company} - ${entry.role}`,
           height: typography.fontSize.h3 + 8
         });
-        elements.push({
+        groupItems.push({
           type: 'date',
           text: entry.period,
           height: typography.fontSize.small + 6
+        });
+        // Push as a group to keep together
+        elements.push({
+          type: 'group',
+          items: groupItems,
+          height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
         });
       });
     }
@@ -273,18 +309,26 @@ class DocumentPreviewRenderer {
 
   /**
    * Build testimonials section elements
+   * Groups quote with attribution to prevent splitting
    */
   buildTestimonialsElements(elements, data, typography) {
     if (data.featured) {
-      elements.push({
+      const groupItems = [];
+      groupItems.push({
         type: 'quote',
         text: this.truncate(data.featured.quote, 150),
         height: typography.fontSize.body * 3 + 20
       });
-      elements.push({
+      groupItems.push({
         type: 'attribution',
         text: `— ${data.featured.author}, ${data.featured.role}`,
         height: typography.fontSize.small + 10
+      });
+      // Push as a group to keep together
+      elements.push({
+        type: 'group',
+        items: groupItems,
+        height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
       });
     }
   }
@@ -342,7 +386,16 @@ class DocumentPreviewRenderer {
     page.elements.forEach(element => {
       const x = marginLeft;
       const y = marginTop + element.y;
-      this.renderElement(element, x, y, contentWidth, colors, typography);
+
+      // Handle group elements by rendering each item within the group
+      if (element.type === 'group' && element.items) {
+        element.items.forEach(item => {
+          const itemY = y + (item.relativeY || 0);
+          this.renderElement(item, x, itemY, contentWidth, colors, typography);
+        });
+      } else {
+        this.renderElement(element, x, y, contentWidth, colors, typography);
+      }
     });
 
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
