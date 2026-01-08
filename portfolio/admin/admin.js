@@ -1252,9 +1252,39 @@ class AdminApp {
   }
 
   /**
+   * Get available themes for export
+   * @returns {Array} Array of theme objects with id, name, description
+   */
+  getAvailableThemes() {
+    const styleManager = window.StyleManager;
+    if (styleManager && styleManager.getAllThemePreviews) {
+      return styleManager.getAllThemePreviews();
+    }
+    // Fallback themes
+    return [
+      { id: 'professional', name: 'Professional', description: 'Clean blue and gray palette' },
+      { id: 'modern-dark', name: 'Modern Dark', description: 'Sleek dark theme' },
+      { id: 'minimal', name: 'Minimal', description: 'Clean black and white' },
+      { id: 'creative', name: 'Creative', description: 'Vibrant colors' },
+      { id: 'executive', name: 'Executive', description: 'Navy and gold' }
+    ];
+  }
+
+  /**
    * Show export options modal
    */
   showExportOptionsModal() {
+    const themes = this.getAvailableThemes();
+    const themeOptions = themes.map(t => `
+      <label class="multi-select-option">
+        <input type="radio" name="export-theme" value="${t.id}" ${t.id === 'professional' ? 'checked' : ''}>
+        <div>
+          <strong>${t.name}</strong>
+          <span class="theme-desc">${t.description}</span>
+        </div>
+      </label>
+    `).join('');
+
     const modal = `
       <div class="modal-overlay" id="export-options-modal">
         <div class="modal" style="max-width: 500px;">
@@ -1274,6 +1304,12 @@ class AdminApp {
                   <input type="radio" name="export-format" value="docx">
                   Word Document
                 </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Theme</label>
+              <div class="multi-select theme-select">
+                ${themeOptions}
               </div>
             </div>
             <div class="form-group">
@@ -1324,6 +1360,7 @@ class AdminApp {
     modalEl.querySelector('.modal-cancel').addEventListener('click', closeModal);
     modalEl.querySelector('.modal-export').addEventListener('click', () => {
       const format = modalEl.querySelector('input[name="export-format"]:checked').value;
+      const theme = modalEl.querySelector('input[name="export-theme"]:checked')?.value || 'professional';
       const sections = Array.from(modalEl.querySelectorAll('input[name="export-section"]:checked'))
         .map(cb => cb.value);
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
@@ -1332,7 +1369,8 @@ class AdminApp {
 
       const options = {
         sections,
-        filename: `${filename}.${format}`
+        filename: `${filename}.${format}`,
+        theme
       };
 
       if (format === 'pdf') {

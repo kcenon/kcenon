@@ -1,43 +1,223 @@
 /**
  * DOCX Exporter - Generate Word documents from portfolio data using docx.js
+ * Supports theme-based styling via StyleManager
  */
 
 class DOCXExporter {
   constructor() {
-    this.styles = {
+    this.currentTheme = null;
+    this.themeStyles = null;
+  }
+
+  /**
+   * Get StyleManager instance
+   * @returns {Object} StyleManager singleton
+   */
+  getStyleManager() {
+    return window.StyleManager || null;
+  }
+
+  /**
+   * Initialize theme for export
+   * @param {string} themeId - Theme identifier (default: 'professional')
+   * @param {Object} overrides - Custom style overrides
+   */
+  initializeTheme(themeId = 'professional', overrides = {}) {
+    const styleManager = this.getStyleManager();
+    if (!styleManager) {
+      console.warn('StyleManager not available, using fallback styles');
+      this.currentTheme = null;
+      this.themeStyles = this.getFallbackStyles();
+      return;
+    }
+
+    // Get base theme
+    this.currentTheme = styleManager.getTheme(themeId);
+    if (!this.currentTheme) {
+      console.warn(`Theme '${themeId}' not found, using professional theme`);
+      this.currentTheme = styleManager.getTheme('professional');
+    }
+
+    // Apply overrides if provided
+    if (overrides && Object.keys(overrides).length > 0) {
+      this.currentTheme = styleManager.mergeStyles(this.currentTheme, overrides);
+    }
+
+    // Generate DOCX-specific styles from theme
+    this.themeStyles = styleManager.toDOCXStyles(this.currentTheme);
+  }
+
+  /**
+   * Get fallback styles when StyleManager is not available
+   * @returns {Object} Default DOCX styles
+   */
+  getFallbackStyles() {
+    return {
       heading1: {
         run: { size: 48, bold: true, color: '1F2937' },
         paragraph: { spacing: { after: 200 } }
       },
       heading2: {
         run: { size: 32, bold: true, color: '3B82F6' },
-        paragraph: { spacing: { before: 300, after: 150 } }
+        paragraph: { spacing: { before: 400, after: 200 } }
       },
       heading3: {
         run: { size: 24, bold: true, color: '374151' },
-        paragraph: { spacing: { before: 200, after: 100 } }
+        paragraph: { spacing: { before: 250, after: 120 } }
       },
       normal: {
         run: { size: 22, color: '4B5563' },
         paragraph: { spacing: { after: 100 } }
+      },
+      small: {
+        run: { size: 18, color: '9CA3AF' }
+      },
+      tag: {
+        run: { size: 16, color: '3B82F6' }
+      },
+      colors: {
+        primary: '3B82F6',
+        secondary: '6B7280',
+        textPrimary: '1F2937',
+        textSecondary: '374151',
+        textMuted: '9CA3AF',
+        success: '22C55E',
+        warning: 'F59E0B',
+        border: 'E5E7EB'
+      },
+      spacing: {
+        listIndent: 360,
+        itemSpacing: 60
       }
     };
+  }
+
+  /**
+   * Get color from current theme
+   * @param {string} colorPath - Dot-notation path to color (e.g., 'primary', 'text.muted')
+   * @returns {string} Color without # prefix
+   */
+  getColor(colorPath) {
+    if (!this.currentTheme) {
+      // Use fallback colors
+      const fallbackColors = {
+        'primary': '3B82F6',
+        'secondary': '6B7280',
+        'text.primary': '1F2937',
+        'text.secondary': '374151',
+        'text.muted': '9CA3AF',
+        'background.page': 'FFFFFF',
+        'background.section': 'F9FAFB',
+        'background.table': 'F3F4F6',
+        'success': '22C55E',
+        'warning': 'F59E0B',
+        'border': 'E5E7EB'
+      };
+      return fallbackColors[colorPath] || '000000';
+    }
+
+    const parts = colorPath.split('.');
+    let value = this.currentTheme.colors;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    return value ? value.replace('#', '') : '000000';
+  }
+
+  /**
+   * Get typography setting from current theme
+   * @param {string} key - Typography key (e.g., 'fontSize.h1', 'lineHeight')
+   * @returns {*} Typography value
+   */
+  getTypography(key) {
+    if (!this.currentTheme) {
+      const fallback = {
+        'fontSize.h1': 24,
+        'fontSize.h2': 16,
+        'fontSize.h3': 14,
+        'fontSize.body': 11,
+        'fontSize.small': 9,
+        'fontSize.tiny': 8
+      };
+      return fallback[key] || 11;
+    }
+
+    const parts = key.split('.');
+    let value = this.currentTheme.typography;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    return value;
+  }
+
+  /**
+   * Convert points to half-points (DOCX uses half-points for font size)
+   * @param {number} pts - Size in points
+   * @returns {number} Size in half-points
+   */
+  toHalfPt(pts) {
+    return Math.round(pts * 2);
+  }
+
+  /**
+   * Convert points to twips (DOCX uses twips for spacing: 1 pt = 20 twips)
+   * @param {number} pts - Size in points
+   * @returns {number} Size in twips
+   */
+  toTwips(pts) {
+    return Math.round(pts * 20);
+  }
+
+  /**
+   * Get spacing setting from current theme
+   * @param {string} key - Spacing key (e.g., 'list.indent', 'section.marginTop')
+   * @returns {number} Spacing value in twips
+   */
+  getSpacing(key) {
+    if (!this.currentTheme) {
+      const fallback = {
+        'list.indent': 15,
+        'list.itemSpacing': 3,
+        'section.marginTop': 20,
+        'section.marginBottom': 15,
+        'paragraph.marginBottom': 5
+      };
+      return this.toTwips(fallback[key] || 10);
+    }
+
+    const parts = key.split('.');
+    let value = this.currentTheme.spacing;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    return this.toTwips(value || 0);
   }
 
   /**
    * Generate DOCX from portfolio data
    * @param {Object} data - Portfolio data object
    * @param {Object} options - Export options
+   * @param {string} options.theme - Theme ID (default: 'professional')
+   * @param {Object} options.themeOverrides - Custom style overrides
+   * @param {Array} options.sections - Sections to include
+   * @param {string} options.filename - Output filename
+   * @param {string} options.title - Document title
+   * @param {string} options.author - Document author
    */
   async generateDOCX(data, options = {}) {
     const {
       sections = ['expertise', 'projects', 'career', 'testimonials'],
       filename = 'portfolio.docx',
       title = 'Portfolio',
-      author = 'Dongcheol Shin'
+      author = 'Dongcheol Shin',
+      theme = 'professional',
+      themeOverrides = {}
     } = options;
 
     try {
+      // Initialize theme
+      this.initializeTheme(theme, themeOverrides);
+
       const doc = this.buildDocument(data, sections, { title, author });
       const blob = await docx.Packer.toBlob(doc);
       saveAs(blob, filename);
@@ -104,8 +284,8 @@ class DOCXExporter {
           new docx.TextRun({
             text: info.author || info.title,
             bold: true,
-            size: 56,
-            color: '1F2937'
+            size: this.toHalfPt(this.getTypography('fontSize.h1') + 4),
+            color: this.getColor('text.primary')
           })
         ],
         spacing: { after: 100 }
@@ -114,8 +294,8 @@ class DOCXExporter {
         children: [
           new docx.TextRun({
             text: 'Professional Portfolio',
-            size: 28,
-            color: '6B7280'
+            size: this.toHalfPt(this.getTypography('fontSize.h2') - 2),
+            color: this.getColor('text.muted')
           })
         ],
         spacing: { after: 100 }
@@ -127,8 +307,8 @@ class DOCXExporter {
               year: 'numeric',
               month: 'long'
             }),
-            size: 22,
-            color: '9CA3AF'
+            size: this.toHalfPt(this.getTypography('fontSize.body')),
+            color: this.getColor('text.muted')
           })
         ],
         spacing: { after: 400 }
@@ -136,7 +316,7 @@ class DOCXExporter {
       new docx.Paragraph({
         children: [new docx.TextRun({ text: '' })],
         border: {
-          bottom: { color: 'E5E7EB', space: 1, style: docx.BorderStyle.SINGLE, size: 6 }
+          bottom: { color: this.getColor('border'), space: 1, style: docx.BorderStyle.SINGLE, size: 6 }
         },
         spacing: { after: 300 }
       })
@@ -162,12 +342,12 @@ class DOCXExporter {
               children: [
                 new docx.TextRun({
                   text: `• ${this.stripHtml(item)}`,
-                  size: 22,
-                  color: '4B5563'
+                  size: this.toHalfPt(this.getTypography('fontSize.body')),
+                  color: this.getColor('text.secondary')
                 })
               ],
-              spacing: { after: 60 },
-              indent: { left: 360 }
+              spacing: { after: this.getSpacing('list.itemSpacing') },
+              indent: { left: this.getSpacing('list.indent') }
             }));
           });
         }
@@ -178,12 +358,12 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: category.tags.join(' | '),
-                size: 20,
-                color: '3B82F6'
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('primary')
               })
             ],
             spacing: { after: 100 },
-            indent: { left: 360 }
+            indent: { left: this.getSpacing('list.indent') }
           }));
         }
       });
@@ -199,17 +379,17 @@ class DOCXExporter {
             new docx.TextRun({
               text: `${cap.title}: `,
               bold: true,
-              size: 22,
-              color: '1F2937'
+              size: this.toHalfPt(this.getTypography('fontSize.body')),
+              color: this.getColor('text.primary')
             }),
             new docx.TextRun({
               text: cap.description,
-              size: 22,
-              color: '4B5563'
+              size: this.toHalfPt(this.getTypography('fontSize.body')),
+              color: this.getColor('text.secondary')
             })
           ],
-          spacing: { after: 60 },
-          indent: { left: 360 }
+          spacing: { after: this.getSpacing('list.itemSpacing') },
+          indent: { left: this.getSpacing('list.indent') }
         }));
       });
     }
@@ -223,12 +403,12 @@ class DOCXExporter {
           new docx.TextRun({
             text: expertise.certifications.map(cert => cert.name).join(' | '),
             bold: true,
-            size: 22,
-            color: '22C55E'
+            size: this.toHalfPt(this.getTypography('fontSize.body')),
+            color: this.getColor('success')
           })
         ],
         spacing: { after: 150 },
-        indent: { left: 360 }
+        indent: { left: this.getSpacing('list.indent') }
       }));
     }
 
@@ -286,8 +466,8 @@ class DOCXExporter {
         new docx.TextRun({
           text: project.title || project.name || 'Untitled Project',
           bold: true,
-          size: 24,
-          color: '1F2937'
+          size: this.toHalfPt(this.getTypography('fontSize.h3') - 2),
+          color: this.getColor('text.primary')
         })
       ],
       spacing: { before: 150, after: 50 }
@@ -299,12 +479,12 @@ class DOCXExporter {
         children: [
           new docx.TextRun({
             text: [project.company, project.period].filter(Boolean).join(' | '),
-            size: 20,
-            color: '6B7280',
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.muted'),
             italics: true
           })
         ],
-        spacing: { after: 60 }
+        spacing: { after: this.getSpacing('list.itemSpacing') }
       }));
     }
 
@@ -314,11 +494,11 @@ class DOCXExporter {
         children: [
           new docx.TextRun({
             text: this.stripHtml(project.description),
-            size: 22,
-            color: '4B5563'
+            size: this.toHalfPt(this.getTypography('fontSize.body')),
+            color: this.getColor('text.secondary')
           })
         ],
-        spacing: { after: 60 }
+        spacing: { after: this.getSpacing('list.itemSpacing') }
       }));
     }
 
@@ -328,8 +508,8 @@ class DOCXExporter {
         children: [
           new docx.TextRun({
             text: project.tags.join(' • '),
-            size: 18,
-            color: '3B82F6'
+            size: this.toHalfPt(this.getTypography('fontSize.tiny')),
+            color: this.getColor('primary')
           })
         ],
         spacing: { after: 80 }
@@ -344,8 +524,8 @@ class DOCXExporter {
             new docx.TextRun({
               text: 'Key Responsibilities:',
               bold: true,
-              size: 20,
-              color: '374151'
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.secondary')
             })
           ],
           spacing: { before: 60, after: 40 }
@@ -356,12 +536,12 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: `• ${this.stripHtml(role)}`,
-                size: 20,
-                color: '4B5563'
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('text.secondary')
               })
             ],
             spacing: { after: 30 },
-            indent: { left: 360 }
+            indent: { left: this.getSpacing('list.indent') }
           }));
         });
       }
@@ -372,8 +552,8 @@ class DOCXExporter {
             new docx.TextRun({
               text: 'Achievements:',
               bold: true,
-              size: 20,
-              color: '374151'
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.secondary')
             })
           ],
           spacing: { before: 60, after: 40 }
@@ -384,12 +564,12 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: `• ${this.stripHtml(achievement)}`,
-                size: 20,
-                color: '4B5563'
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('text.secondary')
               })
             ],
             spacing: { after: 30 },
-            indent: { left: 360 }
+            indent: { left: this.getSpacing('list.indent') }
           }));
         });
       }
@@ -415,8 +595,8 @@ class DOCXExporter {
           new docx.TextRun({
             text: item.company || item.title || '',
             bold: true,
-            size: 24,
-            color: '1F2937'
+            size: this.toHalfPt(this.getTypography('fontSize.h3') - 2),
+            color: this.getColor('text.primary')
           })
         ];
 
@@ -424,15 +604,15 @@ class DOCXExporter {
           companyRuns.push(new docx.TextRun({
             text: ` [${item.badge}]`,
             bold: true,
-            size: 20,
-            color: 'F59E0B'
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('warning')
           }));
         }
 
         companyRuns.push(new docx.TextRun({
           text: `  ${item.period || ''}`,
-          size: 20,
-          color: '9CA3AF'
+          size: this.toHalfPt(this.getTypography('fontSize.small')),
+          color: this.getColor('text.muted')
         }));
 
         children.push(new docx.Paragraph({
@@ -446,11 +626,11 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: item.role || item.position,
-                size: 22,
-                color: '3B82F6'
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                color: this.getColor('primary')
               })
             ],
-            spacing: { after: 60 }
+            spacing: { after: this.getSpacing('list.itemSpacing') }
           }));
         }
 
@@ -460,11 +640,11 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: this.stripHtml(item.description),
-                size: 22,
-                color: '4B5563'
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                color: this.getColor('text.secondary')
               })
             ],
-            spacing: { after: 60 }
+            spacing: { after: this.getSpacing('list.itemSpacing') }
           }));
         }
 
@@ -475,12 +655,12 @@ class DOCXExporter {
               children: [
                 new docx.TextRun({
                   text: `• ${this.stripHtml(achievement)}`,
-                  size: 20,
-                  color: '4B5563'
+                  size: this.toHalfPt(this.getTypography('fontSize.small')),
+                  color: this.getColor('text.secondary')
                 })
               ],
               spacing: { after: 40 },
-              indent: { left: 360 }
+              indent: { left: this.getSpacing('list.indent') }
             }));
           });
         }
@@ -491,12 +671,12 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: this.stripHtml(item.note),
-                size: 20,
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
                 italics: true,
-                color: '6B7280'
+                color: this.getColor('text.muted')
               })
             ],
-            spacing: { after: 60 }
+            spacing: { after: this.getSpacing('list.itemSpacing') }
           }));
         }
 
@@ -506,8 +686,8 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: item.tags.join(' | '),
-                size: 18,
-                color: '3B82F6'
+                size: this.toHalfPt(this.getTypography('fontSize.tiny')),
+                color: this.getColor('primary')
               })
             ],
             spacing: { after: 80 }
@@ -557,12 +737,12 @@ class DOCXExporter {
           new docx.TextRun({
             text: `"${this.stripHtml(testimonial.quote || testimonial.text)}"`,
             italics: true,
-            size: isFeatured ? 24 : 22,
-            color: '374151'
+            size: isFeatured ? this.toHalfPt(this.getTypography('fontSize.body') + 2) : this.toHalfPt(this.getTypography('fontSize.body')),
+            color: this.getColor('text.secondary')
           })
         ],
         spacing: { before: 150, after: 80 },
-        indent: { left: 360, right: 360 }
+        indent: { left: this.getSpacing('list.indent'), right: this.getSpacing('list.indent') }
       }));
     }
 
@@ -572,22 +752,22 @@ class DOCXExporter {
       authorRuns.push(new docx.TextRun({
         text: '— ' + (testimonial.author || testimonial.name),
         bold: true,
-        size: 20,
-        color: '374151'
+        size: this.toHalfPt(this.getTypography('fontSize.small')),
+        color: this.getColor('text.primary')
       }));
     }
     if (testimonial.role) {
       authorRuns.push(new docx.TextRun({
         text: `, ${testimonial.role}`,
-        size: 20,
-        color: '6B7280'
+        size: this.toHalfPt(this.getTypography('fontSize.small')),
+        color: this.getColor('text.muted')
       }));
     }
     if (testimonial.relation) {
       authorRuns.push(new docx.TextRun({
         text: ` (${testimonial.relation})`,
-        size: 20,
-        color: '9CA3AF'
+        size: this.toHalfPt(this.getTypography('fontSize.small')),
+        color: this.getColor('text.muted')
       }));
     }
 
@@ -595,7 +775,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: authorRuns,
         spacing: { after: 80 },
-        indent: { left: 360 }
+        indent: { left: this.getSpacing('list.indent') }
       }));
     }
 
@@ -605,12 +785,12 @@ class DOCXExporter {
         children: [
           new docx.TextRun({
             text: testimonial.labels.map(l => l.text).join(' | '),
-            size: 18,
-            color: '3B82F6'
+            size: this.toHalfPt(this.getTypography('fontSize.tiny')),
+            color: this.getColor('primary')
           })
         ],
         spacing: { after: 150 },
-        indent: { left: 360 }
+        indent: { left: this.getSpacing('list.indent') }
       }));
     }
 
@@ -626,11 +806,11 @@ class DOCXExporter {
         new docx.TextRun({
           text,
           bold: true,
-          size: 32,
-          color: '3B82F6'
+          size: this.toHalfPt(this.getTypography('fontSize.h2')),
+          color: this.getColor('primary')
         })
       ],
-      spacing: { before: 400, after: 200 }
+      spacing: { before: this.getSpacing('section.marginTop'), after: this.getSpacing('section.marginBottom') }
     });
   }
 
@@ -643,8 +823,8 @@ class DOCXExporter {
         new docx.TextRun({
           text,
           bold: true,
-          size: 24,
-          color: '374151'
+          size: this.toHalfPt(this.getTypography('fontSize.h3')),
+          color: this.getColor('text.secondary')
         })
       ],
       spacing: { before: 250, after: 120 }
@@ -662,13 +842,13 @@ class DOCXExporter {
             new docx.TextRun({
               text: text || '',
               bold: isHeader,
-              size: 20,
-              color: isHeader ? '1F2937' : '4B5563'
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: isHeader ? this.getColor('text.primary') : this.getColor('text.secondary')
             })
           ]
         })
       ],
-      shading: isHeader ? { fill: 'F3F4F6' } : undefined,
+      shading: isHeader ? { fill: this.getColor('background.table') } : undefined,
       margins: {
         top: 80,
         bottom: 80,
