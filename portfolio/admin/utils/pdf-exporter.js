@@ -1,34 +1,220 @@
 /**
  * PDF Exporter - Generate PDF from portfolio data using pdfmake
+ * Supports theme-based styling via StyleManager
  */
 
 class PDFExporter {
   constructor() {
     this.fontLoaded = false;
     this.fontLoading = null;
-    this.defaultStyles = {
-      header: {
-        fontSize: 24,
-        bold: true,
-        margin: [0, 0, 0, 10]
+    this.currentTheme = null;
+    this.themeStyles = null;
+  }
+
+  /**
+   * Get StyleManager instance
+   * @returns {Object} StyleManager singleton
+   */
+  getStyleManager() {
+    return window.StyleManager || null;
+  }
+
+  /**
+   * Initialize theme for export
+   * @param {string} themeId - Theme identifier (default: 'professional')
+   * @param {Object} overrides - Custom style overrides
+   */
+  initializeTheme(themeId = 'professional', overrides = {}) {
+    const styleManager = this.getStyleManager();
+    if (!styleManager) {
+      console.warn('StyleManager not available, using fallback styles');
+      this.currentTheme = null;
+      this.themeStyles = this.getFallbackStyles();
+      return;
+    }
+
+    // Get base theme
+    this.currentTheme = styleManager.getTheme(themeId);
+    if (!this.currentTheme) {
+      console.warn(`Theme '${themeId}' not found, using professional theme`);
+      this.currentTheme = styleManager.getTheme('professional');
+    }
+
+    // Apply overrides if provided
+    if (overrides && Object.keys(overrides).length > 0) {
+      this.currentTheme = styleManager.mergeStyles(this.currentTheme, overrides);
+    }
+
+    // Generate PDF-specific styles from theme
+    this.themeStyles = styleManager.toPDFStyles(this.currentTheme);
+  }
+
+  /**
+   * Get fallback styles when StyleManager is not available
+   * @returns {Object} Default PDF styles
+   */
+  getFallbackStyles() {
+    return {
+      defaultStyle: {
+        fontSize: 10,
+        lineHeight: 1.4,
+        color: '1F2937'
       },
-      subheader: {
-        fontSize: 16,
-        bold: true,
-        margin: [0, 20, 0, 8]
+      styles: {
+        header: {
+          fontSize: 24,
+          bold: true,
+          color: '1F2937',
+          margin: [0, 0, 0, 10]
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          color: '1F2937',
+          margin: [0, 20, 0, 8]
+        },
+        sectionTitle: {
+          fontSize: 14,
+          bold: true,
+          color: '3B82F6',
+          margin: [0, 15, 0, 5]
+        },
+        tableHeader: {
+          bold: true,
+          fillColor: 'F3F4F6',
+          margin: [5, 5, 5, 5]
+        },
+        bodyText: {
+          fontSize: 10,
+          color: '374151'
+        },
+        smallText: {
+          fontSize: 9,
+          color: '9CA3AF'
+        },
+        tagText: {
+          fontSize: 8,
+          color: '3B82F6'
+        },
+        successText: {
+          color: '22C55E',
+          bold: true
+        },
+        warningText: {
+          color: 'F59E0B',
+          bold: true
+        }
       },
-      sectionTitle: {
-        fontSize: 14,
-        bold: true,
-        color: '#3B82F6',
-        margin: [0, 15, 0, 5]
-      },
-      tableHeader: {
-        bold: true,
-        fillColor: '#f3f4f6',
-        margin: [5, 5, 5, 5]
-      }
+      pageMargins: [40, 60, 40, 60]
     };
+  }
+
+  /**
+   * Get color from current theme
+   * @param {string} colorPath - Dot-notation path to color (e.g., 'primary', 'text.muted')
+   * @returns {string} Color without # prefix
+   */
+  getColor(colorPath) {
+    if (!this.currentTheme) {
+      // Fallback colors
+      const fallbackColors = {
+        primary: '3B82F6',
+        secondary: '6B7280',
+        accent: '22C55E',
+        'text.primary': '1F2937',
+        'text.secondary': '374151',
+        'text.muted': '9CA3AF',
+        'background.page': 'FFFFFF',
+        'background.section': 'F9FAFB',
+        'background.table': 'F3F4F6',
+        border: 'E5E7EB',
+        success: '22C55E',
+        warning: 'F59E0B'
+      };
+      return fallbackColors[colorPath] || '000000';
+    }
+
+    const parts = colorPath.split('.');
+    let value = this.currentTheme.colors;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    return value ? value.replace('#', '') : '000000';
+  }
+
+  /**
+   * Get typography setting from current theme
+   * @param {string} key - Typography key (e.g., 'fontSize.h1', 'lineHeight')
+   * @returns {*} Typography value
+   */
+  getTypography(key) {
+    if (!this.currentTheme) {
+      const fallback = {
+        'fontSize.h1': 24,
+        'fontSize.h2': 16,
+        'fontSize.h3': 14,
+        'fontSize.body': 10,
+        'fontSize.small': 9,
+        'fontSize.tiny': 8,
+        'lineHeight': 1.4
+      };
+      return fallback[key] || 10;
+    }
+
+    const parts = key.split('.');
+    let value = this.currentTheme.typography;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    return value;
+  }
+
+  /**
+   * Get spacing setting from current theme
+   * @param {string} key - Spacing key (e.g., 'page.marginTop', 'section.marginTop')
+   * @returns {number} Spacing value
+   */
+  getSpacing(key) {
+    if (!this.currentTheme) {
+      const fallback = {
+        'page.marginTop': 60,
+        'page.marginRight': 40,
+        'page.marginBottom': 60,
+        'page.marginLeft': 40,
+        'section.marginTop': 20,
+        'section.marginBottom': 15,
+        'paragraph.marginBottom': 5,
+        'list.indent': 15,
+        'list.itemSpacing': 3
+      };
+      return fallback[key] || 10;
+    }
+
+    const parts = key.split('.');
+    let value = this.currentTheme.spacing;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    return value || 0;
+  }
+
+  /**
+   * Get layout setting from current theme
+   * @param {string} key - Layout key (e.g., 'bulletStyle', 'dividerStyle')
+   * @returns {*} Layout value
+   */
+  getLayout(key) {
+    if (!this.currentTheme) {
+      const fallback = {
+        headerStyle: 'bordered',
+        bulletStyle: 'disc',
+        dividerStyle: 'line',
+        dividerWeight: 1,
+        tableStyle: 'striped'
+      };
+      return fallback[key];
+    }
+    return this.currentTheme.layout?.[key];
   }
 
   /**
@@ -99,16 +285,27 @@ class PDFExporter {
    * Generate PDF from portfolio data
    * @param {Object} data - Portfolio data object
    * @param {Object} options - Export options
+   * @param {string} options.theme - Theme ID (default: 'professional')
+   * @param {Object} options.themeOverrides - Custom style overrides
+   * @param {Array} options.sections - Sections to include
+   * @param {string} options.filename - Output filename
+   * @param {string} options.title - Document title
+   * @param {string} options.author - Document author
    */
   async generatePDF(data, options = {}) {
     const {
       sections = ['expertise', 'projects', 'career', 'testimonials'],
       filename = 'portfolio.pdf',
       title = 'Portfolio',
-      author = 'Dongcheol Shin'
+      author = 'Dongcheol Shin',
+      theme = 'professional',
+      themeOverrides = {}
     } = options;
 
     try {
+      // Initialize theme
+      this.initializeTheme(theme, themeOverrides);
+
       // Load Korean font first
       await this.loadKoreanFont();
 
@@ -160,6 +357,14 @@ class PDFExporter {
       }
     });
 
+    // Use theme-based page margins
+    const pageMargins = this.themeStyles?.pageMargins || [
+      this.getSpacing('page.marginLeft'),
+      this.getSpacing('page.marginTop'),
+      this.getSpacing('page.marginRight'),
+      this.getSpacing('page.marginBottom')
+    ];
+
     return {
       info: {
         title: info.title,
@@ -168,13 +373,14 @@ class PDFExporter {
         creator: 'Portfolio Admin'
       },
       pageSize: 'A4',
-      pageMargins: [40, 60, 40, 60],
+      pageMargins,
       defaultStyle: {
         font: this.fontLoaded ? 'NotoSansKR' : 'Roboto',
-        fontSize: 10,
-        lineHeight: 1.4
+        fontSize: this.getTypography('fontSize.body'),
+        lineHeight: this.getTypography('lineHeight'),
+        color: this.getColor('text.primary')
       },
-      styles: this.defaultStyles,
+      styles: this.themeStyles?.styles || this.getFallbackStyles().styles,
       content
     };
   }
@@ -183,7 +389,8 @@ class PDFExporter {
    * Build document header
    */
   buildHeader(info) {
-    return {
+    const headerStyle = this.getLayout('headerStyle');
+    const headerContent = {
       columns: [
         {
           text: info.author || info.title,
@@ -195,12 +402,37 @@ class PDFExporter {
             month: 'long'
           }),
           alignment: 'right',
-          color: '#6b7280',
+          color: this.getColor('text.muted'),
           margin: [0, 5, 0, 0]
         }
       ],
       margin: [0, 0, 0, 20]
     };
+
+    // Apply header style based on theme layout
+    if (headerStyle === 'underlined') {
+      return [
+        headerContent,
+        {
+          canvas: [{
+            type: 'line',
+            x1: 0, y1: 0,
+            x2: 515, y2: 0,
+            lineWidth: this.getLayout('dividerWeight') || 1,
+            lineColor: this.getColor('border')
+          }],
+          margin: [0, 0, 0, 15]
+        }
+      ];
+    } else if (headerStyle === 'boxed') {
+      return {
+        ...headerContent,
+        fillColor: this.getColor('background.section'),
+        margin: [10, 10, 10, 20]
+      };
+    }
+
+    return headerContent;
   }
 
   /**
@@ -225,7 +457,8 @@ class PDFExporter {
         if (category.items && category.items.length > 0) {
           content.push({
             ul: category.items.map(item => this.stripHtml(item)),
-            margin: [10, 0, 0, 10]
+            margin: [this.getSpacing('list.indent'), 0, 0, 10],
+            markerColor: this.getColor('primary')
           });
         }
 
@@ -233,9 +466,9 @@ class PDFExporter {
         if (category.tags && category.tags.length > 0) {
           content.push({
             text: category.tags.join(' | '),
-            color: '#3B82F6',
-            fontSize: 9,
-            margin: [10, 0, 0, 10]
+            color: this.getColor('primary'),
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [this.getSpacing('list.indent'), 0, 0, 10]
           });
         }
       });
@@ -254,7 +487,7 @@ class PDFExporter {
             { text: cap.title + ': ', bold: true },
             { text: cap.description }
           ],
-          margin: [10, 0, 0, 5]
+          margin: [this.getSpacing('list.indent'), 0, 0, 5]
         });
       });
     }
@@ -268,9 +501,9 @@ class PDFExporter {
 
       content.push({
         text: expertise.certifications.map(cert => cert.name).join(' | '),
-        color: '#22c55e',
+        color: this.getColor('success'),
         bold: true,
-        margin: [10, 0, 0, 10]
+        margin: [this.getSpacing('list.indent'), 0, 0, 10]
       });
     }
 
@@ -336,15 +569,16 @@ class PDFExporter {
     items.push({
       text: project.title || project.name || 'Untitled Project',
       bold: true,
-      fontSize: 12,
+      fontSize: this.getTypography('fontSize.h3') - 2,
+      color: this.getColor('text.primary'),
       margin: [0, 8, 0, 3]
     });
 
     if (project.company || project.period) {
       items.push({
         text: [project.company, project.period].filter(Boolean).join(' | '),
-        color: '#6b7280',
-        fontSize: 9,
+        color: this.getColor('text.muted'),
+        fontSize: this.getTypography('fontSize.small'),
         margin: [0, 0, 0, 3]
       });
     }
@@ -352,6 +586,7 @@ class PDFExporter {
     if (project.description) {
       items.push({
         text: this.stripHtml(project.description),
+        color: this.getColor('text.secondary'),
         margin: [0, 0, 0, 5]
       });
     }
@@ -359,8 +594,8 @@ class PDFExporter {
     if (project.tags && project.tags.length > 0) {
       items.push({
         text: project.tags.join(' | '),
-        color: '#3B82F6',
-        fontSize: 8,
+        color: this.getColor('primary'),
+        fontSize: this.getTypography('fontSize.tiny'),
         margin: [0, 0, 0, 5]
       });
     }
@@ -371,13 +606,15 @@ class PDFExporter {
         items.push({
           text: 'Key Responsibilities:',
           bold: true,
-          fontSize: 9,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.secondary'),
           margin: [0, 3, 0, 2]
         });
         items.push({
           ul: project.expanded.roles.map(r => this.stripHtml(r)),
-          fontSize: 9,
-          margin: [10, 0, 0, 3]
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [this.getSpacing('list.indent'), 0, 0, 3],
+          markerColor: this.getColor('primary')
         });
       }
 
@@ -385,13 +622,15 @@ class PDFExporter {
         items.push({
           text: 'Achievements:',
           bold: true,
-          fontSize: 9,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.secondary'),
           margin: [0, 3, 0, 2]
         });
         items.push({
           ul: project.expanded.achievements.map(a => this.stripHtml(a)),
-          fontSize: 9,
-          margin: [10, 0, 0, 3]
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [this.getSpacing('list.indent'), 0, 0, 3],
+          markerColor: this.getColor('primary')
         });
       }
     }
@@ -419,23 +658,23 @@ class PDFExporter {
 
         // Company with optional badge
         const companyText = [];
-        companyText.push({ text: item.company || item.title || '', bold: true });
+        companyText.push({ text: item.company || item.title || '', bold: true, color: this.getColor('text.primary') });
         if (item.badge) {
-          companyText.push({ text: ` [${item.badge}]`, color: '#f59e0b', bold: true });
+          companyText.push({ text: ` [${item.badge}]`, color: this.getColor('warning'), bold: true });
         }
 
         entry.push({
           columns: [
             {
               text: companyText,
-              fontSize: 12,
+              fontSize: this.getTypography('fontSize.h3') - 2,
               width: '*'
             },
             {
               text: item.period || '',
               alignment: 'right',
-              color: '#6b7280',
-              fontSize: 9,
+              color: this.getColor('text.muted'),
+              fontSize: this.getTypography('fontSize.small'),
               width: 'auto'
             }
           ],
@@ -445,8 +684,8 @@ class PDFExporter {
         if (item.role || item.position) {
           entry.push({
             text: item.role || item.position,
-            color: '#3B82F6',
-            fontSize: 10,
+            color: this.getColor('primary'),
+            fontSize: this.getTypography('fontSize.body'),
             margin: [0, 0, 0, 3]
           });
         }
@@ -454,6 +693,7 @@ class PDFExporter {
         if (item.description) {
           entry.push({
             text: this.stripHtml(item.description),
+            color: this.getColor('text.secondary'),
             margin: [0, 0, 0, 3]
           });
         }
@@ -461,17 +701,18 @@ class PDFExporter {
         if (item.achievements && item.achievements.length > 0) {
           entry.push({
             ul: item.achievements.map(a => this.stripHtml(a)),
-            fontSize: 9,
-            margin: [10, 3, 0, 5]
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [this.getSpacing('list.indent'), 3, 0, 5],
+            markerColor: this.getColor('primary')
           });
         }
 
         if (item.note) {
           entry.push({
             text: this.stripHtml(item.note),
-            fontSize: 9,
+            fontSize: this.getTypography('fontSize.small'),
             italics: true,
-            color: '#6b7280',
+            color: this.getColor('text.muted'),
             margin: [0, 3, 0, 5]
           });
         }
@@ -479,8 +720,8 @@ class PDFExporter {
         if (item.tags && item.tags.length > 0) {
           entry.push({
             text: item.tags.join(' | '),
-            color: '#3B82F6',
-            fontSize: 8,
+            color: this.getColor('primary'),
+            fontSize: this.getTypography('fontSize.tiny'),
             margin: [0, 0, 0, 5]
           });
         }
@@ -531,30 +772,29 @@ class PDFExporter {
       items.push({
         text: `"${this.stripHtml(testimonial.quote || testimonial.text)}"`,
         italics: true,
-        fontSize: isFeatured ? 11 : 10,
-        margin: [10, 0, 10, 8],
-        color: '#374151'
+        fontSize: isFeatured ? this.getTypography('fontSize.body') + 1 : this.getTypography('fontSize.body'),
+        margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
+        color: this.getColor('text.secondary')
       });
     }
 
     items.push({
       text: [
-        { text: testimonial.author || testimonial.name || '', bold: true },
-        { text: testimonial.role ? `, ${testimonial.role}` : '' },
-        { text: testimonial.relation ? ` (${testimonial.relation})` : '' }
+        { text: testimonial.author || testimonial.name || '', bold: true, color: this.getColor('text.primary') },
+        { text: testimonial.role ? `, ${testimonial.role}` : '', color: this.getColor('text.muted') },
+        { text: testimonial.relation ? ` (${testimonial.relation})` : '', color: this.getColor('text.muted') }
       ],
-      fontSize: 9,
-      color: '#6b7280',
-      margin: [10, 0, 0, 0]
+      fontSize: this.getTypography('fontSize.small'),
+      margin: [this.getSpacing('list.indent'), 0, 0, 0]
     });
 
     // Labels
     if (testimonial.labels && testimonial.labels.length > 0) {
       items.push({
         text: testimonial.labels.map(l => l.text).join(' | '),
-        fontSize: 8,
-        color: '#3B82F6',
-        margin: [10, 5, 0, 0]
+        fontSize: this.getTypography('fontSize.tiny'),
+        color: this.getColor('primary'),
+        margin: [this.getSpacing('list.indent'), 5, 0, 0]
       });
     }
 
