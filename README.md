@@ -51,45 +51,6 @@ Lead cross-functional teams to modernize legacy platforms onto .NET Core, harden
 - **DevOps**: Docker, GitHub Actions, Git, Linux, CI/CD Pipelines
 - **Testing**: GTest, xUnit, PyTest
 
-## 🌐 Portfolio Website
-
-This repository includes an interactive portfolio website with an admin interface.
-
-### Features
-- **Interactive Portfolio**: Showcases projects, career timeline, expertise, and testimonials
-- **Admin Interface**: Edit portfolio content directly in the browser
-- **Export Options**: Export portfolio to PDF or Word (DOCX) format
-  - Full portfolio or section-selective export
-  - **Drag-and-Drop Section Ordering**:
-    - Reorder sections via drag-and-drop for custom document structure
-    - Toggle section inclusion with checkboxes
-    - Keyboard-accessible with Alt+Arrow keys
-    - Section order persisted in localStorage
-  - **Page Break Option**:
-    - Insert page breaks between sections for better document structure
-    - Option saved in localStorage for persistence
-  - **Automatic Content Grouping**:
-    - Prevents individual items from being split across page boundaries
-    - Project cards, career entries, skill categories, and testimonials stay intact
-    - Applied to PDF, DOCX, and preview rendering
-  - Theme selection with visual preview (5 built-in themes: Professional, Modern Dark, Minimal, Creative, Executive)
-  - **Real-time Document Preview**:
-    - Live preview panel shows document appearance before export
-    - Preview updates instantly when theme or options change
-    - Zoom controls (50%-200%) and page navigation
-    - Responsive two-column layout
-  - **Advanced Customization Options**:
-    - Color pickers for Primary, Accent, Text, and Background colors
-    - Font size presets (Small, Medium, Large)
-    - Page margin presets (Compact, Normal, Wide)
-    - Reset to Theme Defaults button
-  - Theme preference saved for future exports
-  - Progress indicator during export
-  - Customizable filename
-
-View the portfolio at: `portfolio/index.html`
-Access admin panel at: `portfolio/admin.html`
-
 ## 📈 GitHub Stats
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)

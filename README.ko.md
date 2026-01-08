@@ -49,45 +49,6 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 - **DevOps**: Docker, GitHub Actions, Git, Linux, CI/CD 파이프라인
 - **테스트**: GTest, xUnit, PyTest
 
-## 🌐 포트폴리오 웹사이트
-
-이 저장소에는 관리자 인터페이스가 포함된 인터랙티브 포트폴리오 웹사이트가 포함되어 있습니다.
-
-### 기능
-- **인터랙티브 포트폴리오**: 프로젝트, 경력 타임라인, 전문 분야, 추천서 표시
-- **관리자 인터페이스**: 브라우저에서 직접 포트폴리오 콘텐츠 편집
-- **내보내기 옵션**: 포트폴리오를 PDF 또는 Word (DOCX) 형식으로 내보내기
-  - 전체 포트폴리오 또는 섹션별 선택 내보내기
-  - **드래그 앤 드롭 섹션 순서 변경**:
-    - 드래그 앤 드롭으로 섹션 순서를 사용자 정의
-    - 체크박스로 섹션 포함/제외 전환
-    - Alt+화살표 키로 키보드 접근성 지원
-    - 섹션 순서가 localStorage에 저장됨
-  - **페이지 나누기 옵션**:
-    - 섹션 사이에 페이지 나누기를 삽입하여 문서 구조 개선
-    - 옵션이 localStorage에 저장되어 유지됨
-  - **자동 콘텐츠 그룹화**:
-    - 개별 항목이 페이지 경계에서 분리되지 않도록 방지
-    - 프로젝트 카드, 경력 항목, 스킬 카테고리, 추천사가 온전히 유지됨
-    - PDF, DOCX, 미리보기 렌더링에 모두 적용
-  - 시각적 미리보기가 포함된 테마 선택 기능 (5가지 내장 테마: Professional, Modern Dark, Minimal, Creative, Executive)
-  - **실시간 문서 미리보기**:
-    - 내보내기 전 문서 외관을 보여주는 라이브 미리보기 패널
-    - 테마나 옵션 변경 시 즉시 미리보기 업데이트
-    - 줌 컨트롤 (50%-200%) 및 페이지 네비게이션
-    - 반응형 2열 레이아웃
-  - **고급 사용자 정의 옵션**:
-    - Primary, Accent, Text, Background 색상 선택기
-    - 글꼴 크기 프리셋 (Small, Medium, Large)
-    - 페이지 여백 프리셋 (Compact, Normal, Wide)
-    - 테마 기본값으로 초기화 버튼
-  - 다음 내보내기를 위한 테마 환경설정 저장
-  - 내보내기 진행 표시
-  - 파일명 사용자 정의
-
-포트폴리오 보기: `portfolio/index.html`
-관리자 패널 접근: `portfolio/admin.html`
-
 ## 📈 GitHub 통계
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
