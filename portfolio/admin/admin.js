@@ -1368,6 +1368,9 @@ class AdminApp {
     // Store preview renderer reference
     this.previewRenderer = null;
 
+    // Store section order manager reference
+    this.sectionOrderManager = null;
+
     const themeOptions = themes.map(t =>
       `<option value="${t.id}" ${t.id === savedTheme ? 'selected' : ''}>${t.name}</option>`
     ).join('');
@@ -1449,24 +1452,7 @@ class AdminApp {
 
               <div class="form-group">
                 <label>Sections to Include</label>
-                <div class="checkbox-grid">
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="export-section" value="expertise" checked>
-                    <span>Expertise</span>
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="export-section" value="projects" checked>
-                    <span>Projects</span>
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="export-section" value="career" checked>
-                    <span>Career</span>
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="export-section" value="testimonials" checked>
-                    <span>Testimonials</span>
-                  </label>
-                </div>
+                <div id="section-order-container"></div>
               </div>
 
               <div class="form-group">
@@ -1496,6 +1482,9 @@ class AdminApp {
     const modalEl = document.getElementById('export-options-modal');
     setTimeout(() => modalEl.classList.add('active'), 10);
 
+    // Initialize section order manager
+    this.initializeSectionOrderManager(modalEl);
+
     // Initialize preview renderer
     this.initializePreviewRenderer(modalEl, selectedTheme);
 
@@ -1510,12 +1499,12 @@ class AdminApp {
       this.updateDocumentPreview();
     });
 
-    // Section checkbox change handlers
-    modalEl.querySelectorAll('input[name="export-section"]').forEach(cb => {
-      cb.addEventListener('change', () => this.updateDocumentPreview());
-    });
-
     const closeModal = () => {
+      // Cleanup section order manager
+      if (this.sectionOrderManager) {
+        this.sectionOrderManager.destroy();
+        this.sectionOrderManager = null;
+      }
       // Cleanup preview renderer
       if (this.previewRenderer) {
         this.previewRenderer.destroy();
@@ -1530,8 +1519,9 @@ class AdminApp {
     modalEl.querySelector('.modal-export').addEventListener('click', () => {
       const format = modalEl.querySelector('#export-format').value;
       const theme = modalEl.querySelector('#export-theme').value;
-      const sections = Array.from(modalEl.querySelectorAll('input[name="export-section"]:checked'))
-        .map(cb => cb.value);
+      const sections = this.sectionOrderManager
+        ? this.sectionOrderManager.getOrderedSections()
+        : ['expertise', 'projects', 'career', 'testimonials'];
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
 
       // Save theme preference
@@ -1554,6 +1544,21 @@ class AdminApp {
       } else {
         this.exportDOCX(options);
       }
+    });
+  }
+
+  /**
+   * Initialize section order manager
+   * @param {HTMLElement} modalEl - Modal element
+   */
+  initializeSectionOrderManager(modalEl) {
+    const container = modalEl.querySelector('#section-order-container');
+    if (!container || !window.SectionOrderManager) {
+      return;
+    }
+
+    this.sectionOrderManager = new window.SectionOrderManager(container, (orderedSections) => {
+      this.updateDocumentPreview();
     });
   }
 
@@ -1587,8 +1592,9 @@ class AdminApp {
     if (!baseTheme) return;
 
     const mergedTheme = this.getMergedThemeForPreview(baseTheme);
-    const sections = Array.from(modalEl.querySelectorAll('input[name="export-section"]:checked'))
-      .map(cb => cb.value);
+    const sections = this.sectionOrderManager
+      ? this.sectionOrderManager.getOrderedSections()
+      : ['expertise', 'projects', 'career', 'testimonials'];
 
     this.previewRenderer.update(this.data, mergedTheme, sections);
   }
