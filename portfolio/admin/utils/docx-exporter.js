@@ -203,6 +203,7 @@ class DOCXExporter {
    * @param {string} options.filename - Output filename
    * @param {string} options.title - Document title
    * @param {string} options.author - Document author
+   * @param {boolean} options.pageBreakBetweenSections - Insert page breaks between sections
    */
   async generateDOCX(data, options = {}) {
     const {
@@ -211,14 +212,15 @@ class DOCXExporter {
       title = 'Portfolio',
       author = 'Dongcheol Shin',
       theme = 'professional',
-      themeOverrides = {}
+      themeOverrides = {},
+      pageBreakBetweenSections = false
     } = options;
 
     try {
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
 
-      const doc = this.buildDocument(data, sections, { title, author });
+      const doc = this.buildDocument(data, sections, { title, author, pageBreakBetweenSections });
       const blob = await docx.Packer.toBlob(doc);
       saveAs(blob, filename);
       return { success: true, filename };
@@ -233,12 +235,21 @@ class DOCXExporter {
    */
   buildDocument(data, sections, info) {
     const children = [];
+    const { pageBreakBetweenSections = false } = info;
 
     // Header
     children.push(...this.buildHeader(info));
 
     // Build each section
-    sections.forEach(section => {
+    sections.forEach((section, index) => {
+      // Insert page break before section (except the first)
+      if (pageBreakBetweenSections && index > 0) {
+        children.push(new docx.Paragraph({
+          children: [],
+          pageBreakBefore: true
+        }));
+      }
+
       switch (section) {
         case 'expertise':
           if (data.expertise) {

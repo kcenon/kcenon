@@ -80,14 +80,17 @@ class DocumentPreviewRenderer {
    * @param {Object} data - Portfolio data
    * @param {Object} theme - Merged theme configuration
    * @param {Array} sections - Selected sections to include
+   * @param {Object} options - Additional options
+   * @param {boolean} options.pageBreakBetweenSections - Whether to insert page breaks between sections
    */
-  update(data, theme, sections) {
+  update(data, theme, sections, options = {}) {
     clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => {
       this.data = data;
       this.theme = theme;
       this.sections = sections;
-      this.pageData = this.calculatePages(data, sections);
+      this.options = options;
+      this.pageData = this.calculatePages(data, sections, options);
       this.totalPages = this.pageData.length;
       this.currentPage = Math.min(this.currentPage, this.totalPages);
       if (this.currentPage < 1) this.currentPage = 1;
@@ -99,13 +102,16 @@ class DocumentPreviewRenderer {
    * Calculate page layout and content distribution
    * @param {Object} data - Portfolio data
    * @param {Array} sections - Selected sections
+   * @param {Object} options - Additional options
+   * @param {boolean} options.pageBreakBetweenSections - Whether to insert page breaks between sections
    * @returns {Array} Array of page objects
    */
-  calculatePages(data, sections) {
+  calculatePages(data, sections, options = {}) {
     if (!this.theme || !data) {
       return [{ elements: [{ type: 'empty', text: 'No content available', y: 100 }] }];
     }
 
+    const { pageBreakBetweenSections = false } = options;
     const pages = [];
     const pageHeight = 842;
     const contentHeight = pageHeight - this.theme.spacing.page.marginTop - this.theme.spacing.page.marginBottom;
@@ -121,9 +127,18 @@ class DocumentPreviewRenderer {
     currentPage.currentY += 60;
 
     // Process each section
-    sections.forEach(sectionId => {
+    sections.forEach((sectionId, sectionIndex) => {
       const sectionData = data[sectionId];
       if (!sectionData) return;
+
+      // Insert page break before section (except the first)
+      if (pageBreakBetweenSections && sectionIndex > 0) {
+        // Push current page and start a new one
+        if (currentPage.elements.length > 0) {
+          pages.push(currentPage);
+        }
+        currentPage = { elements: [], currentY: 0 };
+      }
 
       const sectionElements = this.buildSectionElements(sectionId, sectionData);
 

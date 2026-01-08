@@ -63,6 +63,9 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
     - 체크박스로 섹션 포함/제외 전환
     - Alt+화살표 키로 키보드 접근성 지원
     - 섹션 순서가 localStorage에 저장됨
+  - **페이지 나누기 옵션**:
+    - 섹션 사이에 페이지 나누기를 삽입하여 문서 구조 개선
+    - 옵션이 localStorage에 저장되어 유지됨
   - 시각적 미리보기가 포함된 테마 선택 기능 (5가지 내장 테마: Professional, Modern Dark, Minimal, Creative, Executive)
   - **실시간 문서 미리보기**:
     - 내보내기 전 문서 외관을 보여주는 라이브 미리보기 패널

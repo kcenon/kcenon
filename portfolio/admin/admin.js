@@ -1455,6 +1455,15 @@ class AdminApp {
                 <div id="section-order-container"></div>
               </div>
 
+              <div class="form-group page-break-option">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="page-break-sections" ${this.getSavedPageBreakOption() ? 'checked' : ''}>
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Page break between sections</span>
+                </label>
+                <p class="form-hint">Insert a page break before each section (except the first)</p>
+              </div>
+
               <div class="form-group">
                 <label for="export-filename">Filename</label>
                 <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
@@ -1499,6 +1508,14 @@ class AdminApp {
       this.updateDocumentPreview();
     });
 
+    // Page break checkbox change handler
+    const pageBreakCheckbox = modalEl.querySelector('#page-break-sections');
+    if (pageBreakCheckbox) {
+      pageBreakCheckbox.addEventListener('change', () => {
+        this.updateDocumentPreview();
+      });
+    }
+
     const closeModal = () => {
       // Cleanup section order manager
       if (this.sectionOrderManager) {
@@ -1523,9 +1540,13 @@ class AdminApp {
         ? this.sectionOrderManager.getOrderedSections()
         : ['expertise', 'projects', 'career', 'testimonials'];
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
+      const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
 
       // Save theme preference
       this.saveExportTheme(theme);
+
+      // Save page break preference
+      this.savePageBreakOption(pageBreakBetweenSections);
 
       // Save custom preferences
       this.saveExportPreferences();
@@ -1536,7 +1557,8 @@ class AdminApp {
         sections,
         filename: `${filename}.${format}`,
         theme,
-        themeOverrides: this.buildExportOverrides()
+        themeOverrides: this.buildExportOverrides(),
+        pageBreakBetweenSections
       };
 
       if (format === 'pdf') {
@@ -1595,8 +1617,9 @@ class AdminApp {
     const sections = this.sectionOrderManager
       ? this.sectionOrderManager.getOrderedSections()
       : ['expertise', 'projects', 'career', 'testimonials'];
+    const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
 
-    this.previewRenderer.update(this.data, mergedTheme, sections);
+    this.previewRenderer.update(this.data, mergedTheme, sections, { pageBreakBetweenSections });
   }
 
   /**
@@ -2002,6 +2025,22 @@ class AdminApp {
     if (!hasOverrides) return null;
 
     return JSON.parse(JSON.stringify(this.customOverrides));
+  }
+
+  /**
+   * Get saved page break option from localStorage
+   * @returns {boolean} Whether page breaks are enabled
+   */
+  getSavedPageBreakOption() {
+    return localStorage.getItem('export-page-break-sections') === 'true';
+  }
+
+  /**
+   * Save page break option to localStorage
+   * @param {boolean} enabled - Whether page breaks are enabled
+   */
+  savePageBreakOption(enabled) {
+    localStorage.setItem('export-page-break-sections', enabled ? 'true' : 'false');
   }
 
   /**
