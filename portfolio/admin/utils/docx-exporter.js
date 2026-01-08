@@ -345,10 +345,14 @@ class DOCXExporter {
     // Categories
     if (expertise.categories && expertise.categories.length > 0) {
       expertise.categories.forEach(category => {
-        children.push(this.createHeading3(category.title || 'Category'));
+        const hasTags = category.tags && category.tags.length > 0;
+        const hasItems = category.items && category.items.length > 0;
 
-        if (category.items && category.items.length > 0) {
-          category.items.forEach(item => {
+        children.push(this.createHeading3WithKeep(category.title || 'Category', hasItems || hasTags));
+
+        if (hasItems) {
+          category.items.forEach((item, index) => {
+            const isLast = index === category.items.length - 1;
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
@@ -358,13 +362,15 @@ class DOCXExporter {
                 })
               ],
               spacing: { after: this.getSpacing('list.itemSpacing') },
-              indent: { left: this.getSpacing('list.indent') }
+              indent: { left: this.getSpacing('list.indent') },
+              keepLines: true,
+              keepNext: !isLast || hasTags
             }));
           });
         }
 
         // Handle tags for Technologies category
-        if (category.tags && category.tags.length > 0) {
+        if (hasTags) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -374,7 +380,8 @@ class DOCXExporter {
               })
             ],
             spacing: { after: 100 },
-            indent: { left: this.getSpacing('list.indent') }
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true
           }));
         }
       });
@@ -382,9 +389,10 @@ class DOCXExporter {
 
     // Hero Capabilities
     if (expertise.heroCapabilities && expertise.heroCapabilities.length > 0) {
-      children.push(this.createHeading3('Core Capabilities'));
+      children.push(this.createHeading3WithKeep('Core Capabilities', true));
 
-      expertise.heroCapabilities.forEach(cap => {
+      expertise.heroCapabilities.forEach((cap, index) => {
+        const isLast = index === expertise.heroCapabilities.length - 1;
         children.push(new docx.Paragraph({
           children: [
             new docx.TextRun({
@@ -400,14 +408,16 @@ class DOCXExporter {
             })
           ],
           spacing: { after: this.getSpacing('list.itemSpacing') },
-          indent: { left: this.getSpacing('list.indent') }
+          indent: { left: this.getSpacing('list.indent') },
+          keepLines: true,
+          keepNext: !isLast
         }));
       });
     }
 
     // Certifications
     if (expertise.certifications && expertise.certifications.length > 0) {
-      children.push(this.createHeading3('Certifications'));
+      children.push(this.createHeading3WithKeep('Certifications', true));
 
       children.push(new docx.Paragraph({
         children: [
@@ -419,7 +429,8 @@ class DOCXExporter {
           })
         ],
         spacing: { after: 150 },
-        indent: { left: this.getSpacing('list.indent') }
+        indent: { left: this.getSpacing('list.indent') },
+        keepLines: true
       }));
     }
 
@@ -481,7 +492,9 @@ class DOCXExporter {
           color: this.getColor('text.primary')
         })
       ],
-      spacing: { before: 150, after: 50 }
+      spacing: { before: 150, after: 50 },
+      keepLines: true,
+      keepNext: true
     }));
 
     // Company and period
@@ -495,7 +508,9 @@ class DOCXExporter {
             italics: true
           })
         ],
-        spacing: { after: this.getSpacing('list.itemSpacing') }
+        spacing: { after: this.getSpacing('list.itemSpacing') },
+        keepLines: true,
+        keepNext: true
       }));
     }
 
@@ -509,7 +524,9 @@ class DOCXExporter {
             color: this.getColor('text.secondary')
           })
         ],
-        spacing: { after: this.getSpacing('list.itemSpacing') }
+        spacing: { after: this.getSpacing('list.itemSpacing') },
+        keepLines: true,
+        keepNext: true
       }));
     }
 
@@ -523,7 +540,9 @@ class DOCXExporter {
             color: this.getColor('primary')
           })
         ],
-        spacing: { after: 80 }
+        spacing: { after: 80 },
+        keepLines: true,
+        keepNext: project.expanded ? true : false
       }));
     }
 
@@ -539,10 +558,14 @@ class DOCXExporter {
               color: this.getColor('text.secondary')
             })
           ],
-          spacing: { before: 60, after: 40 }
+          spacing: { before: 60, after: 40 },
+          keepLines: true,
+          keepNext: true
         }));
 
-        project.expanded.roles.forEach(role => {
+        project.expanded.roles.forEach((role, index) => {
+          const isLast = index === project.expanded.roles.length - 1;
+          const hasAchievements = project.expanded.achievements && project.expanded.achievements.length > 0;
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -552,7 +575,9 @@ class DOCXExporter {
               })
             ],
             spacing: { after: 30 },
-            indent: { left: this.getSpacing('list.indent') }
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLast || hasAchievements
           }));
         });
       }
@@ -567,10 +592,13 @@ class DOCXExporter {
               color: this.getColor('text.secondary')
             })
           ],
-          spacing: { before: 60, after: 40 }
+          spacing: { before: 60, after: 40 },
+          keepLines: true,
+          keepNext: true
         }));
 
-        project.expanded.achievements.forEach(achievement => {
+        project.expanded.achievements.forEach((achievement, index) => {
+          const isLast = index === project.expanded.achievements.length - 1;
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -580,7 +608,9 @@ class DOCXExporter {
               })
             ],
             spacing: { after: 30 },
-            indent: { left: this.getSpacing('list.indent') }
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLast
           }));
         });
       }
@@ -601,6 +631,13 @@ class DOCXExporter {
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
+        // Determine what content exists for this item
+        const hasRole = item.role || item.position;
+        const hasDescription = item.description;
+        const hasAchievements = item.achievements && item.achievements.length > 0;
+        const hasNote = item.note;
+        const hasTags = item.tags && item.tags.length > 0;
+
         // Company name with optional badge
         const companyRuns = [
           new docx.TextRun({
@@ -628,11 +665,13 @@ class DOCXExporter {
 
         children.push(new docx.Paragraph({
           children: companyRuns,
-          spacing: { before: 150, after: 50 }
+          spacing: { before: 150, after: 50 },
+          keepLines: true,
+          keepNext: true
         }));
 
         // Role
-        if (item.role || item.position) {
+        if (hasRole) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -641,12 +680,14 @@ class DOCXExporter {
                 color: this.getColor('primary')
               })
             ],
-            spacing: { after: this.getSpacing('list.itemSpacing') }
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: hasDescription || hasAchievements || hasNote || hasTags
           }));
         }
 
         // Description
-        if (item.description) {
+        if (hasDescription) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -655,13 +696,16 @@ class DOCXExporter {
                 color: this.getColor('text.secondary')
               })
             ],
-            spacing: { after: this.getSpacing('list.itemSpacing') }
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: hasAchievements || hasNote || hasTags
           }));
         }
 
         // Achievements
-        if (item.achievements && item.achievements.length > 0) {
-          item.achievements.forEach(achievement => {
+        if (hasAchievements) {
+          item.achievements.forEach((achievement, index) => {
+            const isLast = index === item.achievements.length - 1;
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
@@ -671,13 +715,15 @@ class DOCXExporter {
                 })
               ],
               spacing: { after: 40 },
-              indent: { left: this.getSpacing('list.indent') }
+              indent: { left: this.getSpacing('list.indent') },
+              keepLines: true,
+              keepNext: !isLast || hasNote || hasTags
             }));
           });
         }
 
         // Note
-        if (item.note) {
+        if (hasNote) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -687,12 +733,14 @@ class DOCXExporter {
                 color: this.getColor('text.muted')
               })
             ],
-            spacing: { after: this.getSpacing('list.itemSpacing') }
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: hasTags
           }));
         }
 
         // Tags
-        if (item.tags && item.tags.length > 0) {
+        if (hasTags) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
@@ -701,6 +749,7 @@ class DOCXExporter {
                 color: this.getColor('primary')
               })
             ],
+            keepLines: true,
             spacing: { after: 80 }
           }));
         }
@@ -740,6 +789,7 @@ class DOCXExporter {
    */
   formatTestimonial(testimonial, isFeatured) {
     const children = [];
+    const hasLabels = testimonial.labels && testimonial.labels.length > 0;
 
     // Quote
     if (testimonial.quote || testimonial.text) {
@@ -753,7 +803,9 @@ class DOCXExporter {
           })
         ],
         spacing: { before: 150, after: 80 },
-        indent: { left: this.getSpacing('list.indent'), right: this.getSpacing('list.indent') }
+        indent: { left: this.getSpacing('list.indent'), right: this.getSpacing('list.indent') },
+        keepLines: true,
+        keepNext: true
       }));
     }
 
@@ -786,12 +838,14 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: authorRuns,
         spacing: { after: 80 },
-        indent: { left: this.getSpacing('list.indent') }
+        indent: { left: this.getSpacing('list.indent') },
+        keepLines: true,
+        keepNext: hasLabels
       }));
     }
 
     // Labels
-    if (testimonial.labels && testimonial.labels.length > 0) {
+    if (hasLabels) {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
@@ -801,7 +855,8 @@ class DOCXExporter {
           })
         ],
         spacing: { after: 150 },
-        indent: { left: this.getSpacing('list.indent') }
+        indent: { left: this.getSpacing('list.indent') },
+        keepLines: true
       }));
     }
 
@@ -839,6 +894,27 @@ class DOCXExporter {
         })
       ],
       spacing: { before: 250, after: 120 }
+    });
+  }
+
+  /**
+   * Create heading 3 with keepNext option
+   * @param {string} text - Heading text
+   * @param {boolean} keepNext - Whether to keep with next paragraph
+   */
+  createHeading3WithKeep(text, keepNext = true) {
+    return new docx.Paragraph({
+      children: [
+        new docx.TextRun({
+          text,
+          bold: true,
+          size: this.toHalfPt(this.getTypography('fontSize.h3')),
+          color: this.getColor('text.secondary')
+        })
+      ],
+      spacing: { before: 250, after: 120 },
+      keepLines: true,
+      keepNext
     });
   }
 
