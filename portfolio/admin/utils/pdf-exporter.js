@@ -291,6 +291,7 @@ class PDFExporter {
    * @param {string} options.filename - Output filename
    * @param {string} options.title - Document title
    * @param {string} options.author - Document author
+   * @param {boolean} options.pageBreakBetweenSections - Insert page breaks between sections
    */
   async generatePDF(data, options = {}) {
     const {
@@ -299,7 +300,8 @@ class PDFExporter {
       title = 'Portfolio',
       author = 'Dongcheol Shin',
       theme = 'professional',
-      themeOverrides = {}
+      themeOverrides = {},
+      pageBreakBetweenSections = false
     } = options;
 
     try {
@@ -309,7 +311,7 @@ class PDFExporter {
       // Load Korean font first
       await this.loadKoreanFont();
 
-      const docDefinition = this.buildDocument(data, sections, { title, author });
+      const docDefinition = this.buildDocument(data, sections, { title, author, pageBreakBetweenSections });
 
       return new Promise((resolve, reject) => {
         const pdfDoc = pdfMake.createPdf(docDefinition);
@@ -327,12 +329,18 @@ class PDFExporter {
    */
   buildDocument(data, sections, info) {
     const content = [];
+    const { pageBreakBetweenSections = false } = info;
 
     // Header
     content.push(this.buildHeader(info));
 
     // Build each section
-    sections.forEach(section => {
+    sections.forEach((section, index) => {
+      // Insert page break before section (except the first)
+      if (pageBreakBetweenSections && index > 0) {
+        content.push({ text: '', pageBreak: 'before' });
+      }
+
       switch (section) {
         case 'expertise':
           if (data.expertise) {

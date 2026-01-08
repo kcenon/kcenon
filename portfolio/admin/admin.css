@@ -2275,3 +2275,49 @@
     height: 28px;
   }
 }
+
+/* ==========================================
+   Page Break Option Styles
+   ========================================== */
+
+.page-break-option {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.page-break-option .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.page-break-option .checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.page-break-option .checkbox-custom {
+  display: none;
+}
+
+.page-break-option .checkbox-text {
+  font-weight: 500;
+}
+
+.page-break-option .form-hint {
+  margin-top: 8px;
+  margin-left: 30px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
