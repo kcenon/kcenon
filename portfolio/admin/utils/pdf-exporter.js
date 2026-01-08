@@ -457,13 +457,15 @@ class PDFExporter {
     // Categories
     if (expertise.categories && expertise.categories.length > 0) {
       expertise.categories.forEach(category => {
-        content.push({
+        const categoryContent = [];
+
+        categoryContent.push({
           text: category.title,
           style: 'sectionTitle'
         });
 
         if (category.items && category.items.length > 0) {
-          content.push({
+          categoryContent.push({
             ul: category.items.map(item => this.stripHtml(item)),
             margin: [this.getSpacing('list.indent'), 0, 0, 10],
             markerColor: this.getColor('primary')
@@ -472,25 +474,33 @@ class PDFExporter {
 
         // Handle tags for Technologies category
         if (category.tags && category.tags.length > 0) {
-          content.push({
+          categoryContent.push({
             text: category.tags.join(' | '),
             color: this.getColor('primary'),
             fontSize: this.getTypography('fontSize.small'),
             margin: [this.getSpacing('list.indent'), 0, 0, 10]
           });
         }
+
+        content.push({
+          unbreakable: true,
+          stack: categoryContent,
+          margin: [0, 0, 0, 5]
+        });
       });
     }
 
     // Hero Capabilities
     if (expertise.heroCapabilities && expertise.heroCapabilities.length > 0) {
-      content.push({
+      const capabilitiesContent = [];
+
+      capabilitiesContent.push({
         text: 'Core Capabilities',
         style: 'sectionTitle'
       });
 
       expertise.heroCapabilities.forEach(cap => {
-        content.push({
+        capabilitiesContent.push({
           text: [
             { text: cap.title + ': ', bold: true },
             { text: cap.description }
@@ -498,20 +508,31 @@ class PDFExporter {
           margin: [this.getSpacing('list.indent'), 0, 0, 5]
         });
       });
+
+      content.push({
+        unbreakable: true,
+        stack: capabilitiesContent,
+        margin: [0, 0, 0, 5]
+      });
     }
 
     // Certifications
     if (expertise.certifications && expertise.certifications.length > 0) {
       content.push({
-        text: 'Certifications',
-        style: 'sectionTitle'
-      });
-
-      content.push({
-        text: expertise.certifications.map(cert => cert.name).join(' | '),
-        color: this.getColor('success'),
-        bold: true,
-        margin: [this.getSpacing('list.indent'), 0, 0, 10]
+        unbreakable: true,
+        stack: [
+          {
+            text: 'Certifications',
+            style: 'sectionTitle'
+          },
+          {
+            text: expertise.certifications.map(cert => cert.name).join(' | '),
+            color: this.getColor('success'),
+            bold: true,
+            margin: [this.getSpacing('list.indent'), 0, 0, 10]
+          }
+        ],
+        margin: [0, 0, 0, 5]
       });
     }
 
@@ -644,6 +665,7 @@ class PDFExporter {
     }
 
     return {
+      unbreakable: true,
       stack: items,
       margin: [0, 0, 0, 10]
     };
@@ -735,6 +757,7 @@ class PDFExporter {
         }
 
         content.push({
+          unbreakable: true,
           stack: entry,
           margin: [0, 0, 0, 10]
         });
@@ -807,6 +830,7 @@ class PDFExporter {
     }
 
     return {
+      unbreakable: true,
       stack: items,
       margin: [0, 10, 0, 15]
     };
