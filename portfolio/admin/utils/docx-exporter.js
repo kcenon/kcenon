@@ -161,7 +161,7 @@ class DOCXExporter {
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
-                  text: `• ${item}`,
+                  text: `• ${this.stripHtml(item)}`,
                   size: 22,
                   color: '4B5563'
                 })
@@ -171,6 +171,46 @@ class DOCXExporter {
             }));
           });
         }
+
+        // Handle tags for Technologies category
+        if (category.tags && category.tags.length > 0) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: category.tags.join(' | '),
+                size: 20,
+                color: '3B82F6'
+              })
+            ],
+            spacing: { after: 100 },
+            indent: { left: 360 }
+          }));
+        }
+      });
+    }
+
+    // Hero Capabilities
+    if (expertise.heroCapabilities && expertise.heroCapabilities.length > 0) {
+      children.push(this.createHeading3('Core Capabilities'));
+
+      expertise.heroCapabilities.forEach(cap => {
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: `${cap.title}: `,
+              bold: true,
+              size: 22,
+              color: '1F2937'
+            }),
+            new docx.TextRun({
+              text: cap.description,
+              size: 22,
+              color: '4B5563'
+            })
+          ],
+          spacing: { after: 60 },
+          indent: { left: 360 }
+        }));
       });
     }
 
@@ -178,35 +218,29 @@ class DOCXExporter {
     if (expertise.certifications && expertise.certifications.length > 0) {
       children.push(this.createHeading3('Certifications'));
 
-      const rows = [
-        new docx.TableRow({
-          children: [
-            this.createTableCell('Certification', true),
-            this.createTableCell('Issuer', true),
-            this.createTableCell('Year', true)
-          ],
-          tableHeader: true
-        }),
-        ...expertise.certifications.map(cert =>
-          new docx.TableRow({
-            children: [
-              this.createTableCell(cert.name || cert.title || ''),
-              this.createTableCell(cert.issuer || ''),
-              this.createTableCell(cert.year || '')
-            ]
+      children.push(new docx.Paragraph({
+        children: [
+          new docx.TextRun({
+            text: expertise.certifications.map(cert => cert.name).join(' | '),
+            bold: true,
+            size: 22,
+            color: '22C55E'
           })
-        )
-      ];
-
-      children.push(new docx.Table({
-        rows,
-        width: { size: 100, type: docx.WidthType.PERCENTAGE }
+        ],
+        spacing: { after: 150 },
+        indent: { left: 360 }
       }));
-
-      children.push(new docx.Paragraph({ children: [], spacing: { after: 200 } }));
     }
 
     return children;
+  }
+
+  /**
+   * Strip HTML tags from text
+   */
+  stripHtml(html) {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '');
   }
 
   /**
@@ -279,7 +313,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: project.description,
+            text: this.stripHtml(project.description),
             size: 22,
             color: '4B5563'
           })
@@ -298,9 +332,70 @@ class DOCXExporter {
             color: '3B82F6'
           })
         ],
-        spacing: { after: 150 }
+        spacing: { after: 80 }
       }));
     }
+
+    // Expanded details
+    if (project.expanded) {
+      if (project.expanded.roles && project.expanded.roles.length > 0) {
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: 'Key Responsibilities:',
+              bold: true,
+              size: 20,
+              color: '374151'
+            })
+          ],
+          spacing: { before: 60, after: 40 }
+        }));
+
+        project.expanded.roles.forEach(role => {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `• ${this.stripHtml(role)}`,
+                size: 20,
+                color: '4B5563'
+              })
+            ],
+            spacing: { after: 30 },
+            indent: { left: 360 }
+          }));
+        });
+      }
+
+      if (project.expanded.achievements && project.expanded.achievements.length > 0) {
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: 'Achievements:',
+              bold: true,
+              size: 20,
+              color: '374151'
+            })
+          ],
+          spacing: { before: 60, after: 40 }
+        }));
+
+        project.expanded.achievements.forEach(achievement => {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `• ${this.stripHtml(achievement)}`,
+                size: 20,
+                color: '4B5563'
+              })
+            ],
+            spacing: { after: 30 },
+            indent: { left: 360 }
+          }));
+        });
+      }
+    }
+
+    children.push(new docx.Paragraph({ children: [], spacing: { after: 100 } }));
 
     return children;
   }
@@ -315,21 +410,33 @@ class DOCXExporter {
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
-        // Company name
+        // Company name with optional badge
+        const companyRuns = [
+          new docx.TextRun({
+            text: item.company || item.title || '',
+            bold: true,
+            size: 24,
+            color: '1F2937'
+          })
+        ];
+
+        if (item.badge) {
+          companyRuns.push(new docx.TextRun({
+            text: ` [${item.badge}]`,
+            bold: true,
+            size: 20,
+            color: 'F59E0B'
+          }));
+        }
+
+        companyRuns.push(new docx.TextRun({
+          text: `  ${item.period || ''}`,
+          size: 20,
+          color: '9CA3AF'
+        }));
+
         children.push(new docx.Paragraph({
-          children: [
-            new docx.TextRun({
-              text: item.company || item.title || '',
-              bold: true,
-              size: 24,
-              color: '1F2937'
-            }),
-            new docx.TextRun({
-              text: `  ${item.period || ''}`,
-              size: 20,
-              color: '9CA3AF'
-            })
-          ],
+          children: companyRuns,
           spacing: { before: 150, after: 50 }
         }));
 
@@ -352,7 +459,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: item.description,
+                text: this.stripHtml(item.description),
                 size: 22,
                 color: '4B5563'
               })
@@ -367,7 +474,7 @@ class DOCXExporter {
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
-                  text: `• ${achievement}`,
+                  text: `• ${this.stripHtml(achievement)}`,
                   size: 20,
                   color: '4B5563'
                 })
@@ -376,6 +483,35 @@ class DOCXExporter {
               indent: { left: 360 }
             }));
           });
+        }
+
+        // Note
+        if (item.note) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: this.stripHtml(item.note),
+                size: 20,
+                italics: true,
+                color: '6B7280'
+              })
+            ],
+            spacing: { after: 60 }
+          }));
+        }
+
+        // Tags
+        if (item.tags && item.tags.length > 0) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: item.tags.join(' | '),
+                size: 18,
+                color: '3B82F6'
+              })
+            ],
+            spacing: { after: 80 }
+          }));
         }
 
         children.push(new docx.Paragraph({ children: [], spacing: { after: 100 } }));
@@ -419,7 +555,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: `"${testimonial.quote || testimonial.text}"`,
+            text: `"${this.stripHtml(testimonial.quote || testimonial.text)}"`,
             italics: true,
             size: isFeatured ? 24 : 22,
             color: '374151'
@@ -431,27 +567,49 @@ class DOCXExporter {
     }
 
     // Author info
-    const authorParts = [];
+    const authorRuns = [];
     if (testimonial.author || testimonial.name) {
-      authorParts.push(testimonial.author || testimonial.name);
+      authorRuns.push(new docx.TextRun({
+        text: '— ' + (testimonial.author || testimonial.name),
+        bold: true,
+        size: 20,
+        color: '374151'
+      }));
     }
     if (testimonial.role) {
-      authorParts.push(testimonial.role);
+      authorRuns.push(new docx.TextRun({
+        text: `, ${testimonial.role}`,
+        size: 20,
+        color: '6B7280'
+      }));
     }
-    if (testimonial.company) {
-      authorParts.push(testimonial.company);
+    if (testimonial.relation) {
+      authorRuns.push(new docx.TextRun({
+        text: ` (${testimonial.relation})`,
+        size: 20,
+        color: '9CA3AF'
+      }));
     }
 
-    if (authorParts.length > 0) {
+    if (authorRuns.length > 0) {
+      children.push(new docx.Paragraph({
+        children: authorRuns,
+        spacing: { after: 80 },
+        indent: { left: 360 }
+      }));
+    }
+
+    // Labels
+    if (testimonial.labels && testimonial.labels.length > 0) {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: '— ' + authorParts.join(', '),
-            size: 20,
-            color: '6B7280'
+            text: testimonial.labels.map(l => l.text).join(' | '),
+            size: 18,
+            color: '3B82F6'
           })
         ],
-        spacing: { after: 200 },
+        spacing: { after: 150 },
         indent: { left: 360 }
       }));
     }

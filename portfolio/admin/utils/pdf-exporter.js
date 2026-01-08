@@ -155,10 +155,38 @@ class PDFExporter {
 
         if (category.items && category.items.length > 0) {
           content.push({
-            ul: category.items,
+            ul: category.items.map(item => this.stripHtml(item)),
             margin: [10, 0, 0, 10]
           });
         }
+
+        // Handle tags for Technologies category
+        if (category.tags && category.tags.length > 0) {
+          content.push({
+            text: category.tags.join(' | '),
+            color: '#3B82F6',
+            fontSize: 9,
+            margin: [10, 0, 0, 10]
+          });
+        }
+      });
+    }
+
+    // Hero Capabilities
+    if (expertise.heroCapabilities && expertise.heroCapabilities.length > 0) {
+      content.push({
+        text: 'Core Capabilities',
+        style: 'sectionTitle'
+      });
+
+      expertise.heroCapabilities.forEach(cap => {
+        content.push({
+          text: [
+            { text: cap.title + ': ', bold: true },
+            { text: cap.description }
+          ],
+          margin: [10, 0, 0, 5]
+        });
       });
     }
 
@@ -169,29 +197,23 @@ class PDFExporter {
         style: 'sectionTitle'
       });
 
-      const certTable = {
-        table: {
-          headerRows: 1,
-          widths: ['*', 'auto', 'auto'],
-          body: [
-            [
-              { text: 'Certification', style: 'tableHeader' },
-              { text: 'Issuer', style: 'tableHeader' },
-              { text: 'Year', style: 'tableHeader' }
-            ],
-            ...expertise.certifications.map(cert => [
-              cert.name || cert.title || '',
-              cert.issuer || '',
-              cert.year || ''
-            ])
-          ]
-        },
-        margin: [0, 5, 0, 15]
-      };
-      content.push(certTable);
+      content.push({
+        text: expertise.certifications.map(cert => cert.name).join(' | '),
+        color: '#22c55e',
+        bold: true,
+        margin: [10, 0, 0, 10]
+      });
     }
 
     return content;
+  }
+
+  /**
+   * Strip HTML tags from text
+   */
+  stripHtml(html) {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '');
   }
 
   /**
@@ -260,7 +282,7 @@ class PDFExporter {
 
     if (project.description) {
       items.push({
-        text: project.description,
+        text: this.stripHtml(project.description),
         margin: [0, 0, 0, 5]
       });
     }
@@ -272,6 +294,37 @@ class PDFExporter {
         fontSize: 8,
         margin: [0, 0, 0, 5]
       });
+    }
+
+    // Expanded details
+    if (project.expanded) {
+      if (project.expanded.roles && project.expanded.roles.length > 0) {
+        items.push({
+          text: 'Key Responsibilities:',
+          bold: true,
+          fontSize: 9,
+          margin: [0, 3, 0, 2]
+        });
+        items.push({
+          ul: project.expanded.roles.map(r => this.stripHtml(r)),
+          fontSize: 9,
+          margin: [10, 0, 0, 3]
+        });
+      }
+
+      if (project.expanded.achievements && project.expanded.achievements.length > 0) {
+        items.push({
+          text: 'Achievements:',
+          bold: true,
+          fontSize: 9,
+          margin: [0, 3, 0, 2]
+        });
+        items.push({
+          ul: project.expanded.achievements.map(a => this.stripHtml(a)),
+          fontSize: 9,
+          margin: [10, 0, 0, 3]
+        });
+      }
     }
 
     return {
@@ -295,11 +348,17 @@ class PDFExporter {
       career.timeline.forEach(item => {
         const entry = [];
 
+        // Company with optional badge
+        const companyText = [];
+        companyText.push({ text: item.company || item.title || '', bold: true });
+        if (item.badge) {
+          companyText.push({ text: ` [${item.badge}]`, color: '#f59e0b', bold: true });
+        }
+
         entry.push({
           columns: [
             {
-              text: item.company || item.title || '',
-              bold: true,
+              text: companyText,
               fontSize: 12,
               width: '*'
             },
@@ -325,15 +384,35 @@ class PDFExporter {
 
         if (item.description) {
           entry.push({
-            text: item.description,
+            text: this.stripHtml(item.description),
             margin: [0, 0, 0, 3]
           });
         }
 
         if (item.achievements && item.achievements.length > 0) {
           entry.push({
-            ul: item.achievements,
+            ul: item.achievements.map(a => this.stripHtml(a)),
+            fontSize: 9,
             margin: [10, 3, 0, 5]
+          });
+        }
+
+        if (item.note) {
+          entry.push({
+            text: this.stripHtml(item.note),
+            fontSize: 9,
+            italics: true,
+            color: '#6b7280',
+            margin: [0, 3, 0, 5]
+          });
+        }
+
+        if (item.tags && item.tags.length > 0) {
+          entry.push({
+            text: item.tags.join(' | '),
+            color: '#3B82F6',
+            fontSize: 8,
+            margin: [0, 0, 0, 5]
           });
         }
 
@@ -381,7 +460,7 @@ class PDFExporter {
 
     if (testimonial.quote || testimonial.text) {
       items.push({
-        text: `"${testimonial.quote || testimonial.text}"`,
+        text: `"${this.stripHtml(testimonial.quote || testimonial.text)}"`,
         italics: true,
         fontSize: isFeatured ? 11 : 10,
         margin: [10, 0, 10, 8],
@@ -393,12 +472,22 @@ class PDFExporter {
       text: [
         { text: testimonial.author || testimonial.name || '', bold: true },
         { text: testimonial.role ? `, ${testimonial.role}` : '' },
-        { text: testimonial.company ? ` at ${testimonial.company}` : '' }
+        { text: testimonial.relation ? ` (${testimonial.relation})` : '' }
       ],
       fontSize: 9,
       color: '#6b7280',
       margin: [10, 0, 0, 0]
     });
+
+    // Labels
+    if (testimonial.labels && testimonial.labels.length > 0) {
+      items.push({
+        text: testimonial.labels.map(l => l.text).join(' | '),
+        fontSize: 8,
+        color: '#3B82F6',
+        margin: [10, 5, 0, 0]
+      });
+    }
 
     return {
       stack: items,
