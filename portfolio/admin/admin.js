@@ -106,6 +106,9 @@ class AdminApp {
     // Theme toggle
     document.getElementById('theme-toggle')?.addEventListener('click', () => this.toggleTheme());
 
+    // Export dropdown
+    this.bindExportEvents();
+
     // Tab navigation
     document.querySelector('.tab-nav')?.addEventListener('click', (e) => {
       const btn = e.target.closest('.tab-btn');
@@ -1121,6 +1124,223 @@ class AdminApp {
     this.renderSubTabs();
     this.renderList();
     this.renderEditor();
+  }
+
+  /**
+   * Bind export dropdown events
+   */
+  bindExportEvents() {
+    const dropdown = document.getElementById('export-dropdown');
+    const toggle = document.getElementById('export-toggle');
+    const menu = document.getElementById('export-menu');
+
+    if (!dropdown || !toggle) return;
+
+    // Toggle dropdown
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+
+    // Export PDF
+    document.getElementById('export-pdf')?.addEventListener('click', () => {
+      dropdown.classList.remove('active');
+      this.exportPDF();
+    });
+
+    // Export DOCX
+    document.getElementById('export-docx')?.addEventListener('click', () => {
+      dropdown.classList.remove('active');
+      this.exportDOCX();
+    });
+
+    // Export Options
+    document.getElementById('export-options')?.addEventListener('click', () => {
+      dropdown.classList.remove('active');
+      this.showExportOptionsModal();
+    });
+  }
+
+  /**
+   * Export portfolio as PDF
+   */
+  async exportPDF(options = {}) {
+    if (!window.PDFExporter?.isAvailable()) {
+      this.showToast('PDF export library not loaded', 'error');
+      return;
+    }
+
+    this.showExportProgress('Generating PDF...');
+
+    try {
+      const result = await window.PDFExporter.generatePDF(this.data, {
+        filename: 'portfolio.pdf',
+        author: 'Dongcheol Shin',
+        ...options
+      });
+
+      this.hideExportProgress();
+      this.showToast(`PDF exported: ${result.filename}`, 'success');
+    } catch (error) {
+      this.hideExportProgress();
+      console.error('PDF export failed:', error);
+      this.showToast('PDF export failed: ' + error.message, 'error');
+    }
+  }
+
+  /**
+   * Export portfolio as DOCX
+   */
+  async exportDOCX(options = {}) {
+    if (!window.DOCXExporter?.isAvailable()) {
+      this.showToast('Word export library not loaded', 'error');
+      return;
+    }
+
+    this.showExportProgress('Generating Word document...');
+
+    try {
+      const result = await window.DOCXExporter.generateDOCX(this.data, {
+        filename: 'portfolio.docx',
+        author: 'Dongcheol Shin',
+        ...options
+      });
+
+      this.hideExportProgress();
+      this.showToast(`Word document exported: ${result.filename}`, 'success');
+    } catch (error) {
+      this.hideExportProgress();
+      console.error('DOCX export failed:', error);
+      this.showToast('Word export failed: ' + error.message, 'error');
+    }
+  }
+
+  /**
+   * Show export progress overlay
+   */
+  showExportProgress(message) {
+    const overlay = document.createElement('div');
+    overlay.id = 'export-progress-overlay';
+    overlay.className = 'export-progress-overlay';
+    overlay.innerHTML = `
+      <div class="export-progress-modal">
+        <div class="export-progress-spinner"></div>
+        <div class="export-progress-text">${message}</div>
+        <div class="export-progress-subtext">Please wait...</div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add('active'), 10);
+  }
+
+  /**
+   * Hide export progress overlay
+   */
+  hideExportProgress() {
+    const overlay = document.getElementById('export-progress-overlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+      setTimeout(() => overlay.remove(), 200);
+    }
+  }
+
+  /**
+   * Show export options modal
+   */
+  showExportOptionsModal() {
+    const modal = `
+      <div class="modal-overlay" id="export-options-modal">
+        <div class="modal" style="max-width: 500px;">
+          <div class="modal-header">
+            <h3>Export Options</h3>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Export Format</label>
+              <div class="multi-select">
+                <label class="multi-select-option">
+                  <input type="radio" name="export-format" value="pdf" checked>
+                  PDF Document
+                </label>
+                <label class="multi-select-option">
+                  <input type="radio" name="export-format" value="docx">
+                  Word Document
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Sections to Export</label>
+              <div class="multi-select">
+                <label class="multi-select-option">
+                  <input type="checkbox" name="export-section" value="expertise" checked>
+                  Expertise
+                </label>
+                <label class="multi-select-option">
+                  <input type="checkbox" name="export-section" value="projects" checked>
+                  Projects
+                </label>
+                <label class="multi-select-option">
+                  <input type="checkbox" name="export-section" value="career" checked>
+                  Career
+                </label>
+                <label class="multi-select-option">
+                  <input type="checkbox" name="export-section" value="testimonials" checked>
+                  Testimonials
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Filename</label>
+              <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary modal-cancel">Cancel</button>
+            <button class="btn btn-primary modal-export">Export</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modal);
+
+    const modalEl = document.getElementById('export-options-modal');
+    setTimeout(() => modalEl.classList.add('active'), 10);
+
+    const closeModal = () => {
+      modalEl.classList.remove('active');
+      setTimeout(() => modalEl.remove(), 200);
+    };
+
+    modalEl.querySelector('.modal-close').addEventListener('click', closeModal);
+    modalEl.querySelector('.modal-cancel').addEventListener('click', closeModal);
+    modalEl.querySelector('.modal-export').addEventListener('click', () => {
+      const format = modalEl.querySelector('input[name="export-format"]:checked').value;
+      const sections = Array.from(modalEl.querySelectorAll('input[name="export-section"]:checked'))
+        .map(cb => cb.value);
+      const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
+
+      closeModal();
+
+      const options = {
+        sections,
+        filename: `${filename}.${format}`
+      };
+
+      if (format === 'pdf') {
+        this.exportPDF(options);
+      } else {
+        this.exportDOCX(options);
+      }
+    });
   }
 }
 

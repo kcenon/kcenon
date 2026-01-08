@@ -51,6 +51,21 @@ Lead cross-functional teams to modernize legacy platforms onto .NET Core, harden
 - **DevOps**: Docker, GitHub Actions, Git, Linux, CI/CD Pipelines
 - **Testing**: GTest, xUnit, PyTest
 
+## 🌐 Portfolio Website
+
+This repository includes an interactive portfolio website with an admin interface.
+
+### Features
+- **Interactive Portfolio**: Showcases projects, career timeline, expertise, and testimonials
+- **Admin Interface**: Edit portfolio content directly in the browser
+- **Export Options**: Export portfolio to PDF or Word (DOCX) format
+  - Full portfolio or section-selective export
+  - Progress indicator during export
+  - Customizable filename
+
+View the portfolio at: `portfolio/index.html`
+Access admin panel at: `portfolio/admin.html`
+
 ## 📈 GitHub Stats
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
