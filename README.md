@@ -61,6 +61,11 @@ This repository includes an interactive portfolio website with an admin interfac
 - **Export Options**: Export portfolio to PDF or Word (DOCX) format
   - Full portfolio or section-selective export
   - Theme selection with visual preview (5 built-in themes: Professional, Modern Dark, Minimal, Creative, Executive)
+  - **Real-time Document Preview**:
+    - Live preview panel shows document appearance before export
+    - Preview updates instantly when theme or options change
+    - Zoom controls (50%-200%) and page navigation
+    - Responsive two-column layout
   - **Advanced Customization Options**:
     - Color pickers for Primary, Accent, Text, and Background colors
     - Font size presets (Small, Medium, Large)

@@ -1351,7 +1351,7 @@ class AdminApp {
   }
 
   /**
-   * Show export options modal
+   * Show export options modal with preview panel
    */
   showExportOptionsModal() {
     const themes = this.getAvailableThemes();
@@ -1365,108 +1365,122 @@ class AdminApp {
       spacing: {}
     };
 
+    // Store preview renderer reference
+    this.previewRenderer = null;
+
     const themeOptions = themes.map(t =>
       `<option value="${t.id}" ${t.id === savedTheme ? 'selected' : ''}>${t.name}</option>`
     ).join('');
 
     const modal = `
       <div class="modal-overlay" id="export-options-modal">
-        <div class="modal export-modal">
+        <div class="modal export-modal export-modal-with-preview">
           <div class="modal-header">
             <h3>Export Portfolio</h3>
             <button class="modal-close">&times;</button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label for="export-format">Format</label>
-              <select id="export-format" class="form-select">
-                <option value="pdf">PDF (.pdf)</option>
-                <option value="docx">Word (.docx)</option>
-              </select>
-            </div>
+            <!-- Left Panel: Export Options -->
+            <div class="export-options-panel">
+              <div class="form-group">
+                <label for="export-format">Format</label>
+                <select id="export-format" class="form-select">
+                  <option value="pdf">PDF (.pdf)</option>
+                  <option value="docx">Word (.docx)</option>
+                </select>
+              </div>
 
-            <div class="form-group">
-              <label for="export-theme">Theme</label>
-              <select id="export-theme" class="form-select">
-                ${themeOptions}
-              </select>
-            </div>
+              <div class="form-group">
+                <label for="export-theme">Theme</label>
+                <select id="export-theme" class="form-select">
+                  ${themeOptions}
+                </select>
+              </div>
 
-            <div class="theme-preview-container" id="theme-preview-container">
-              ${this.buildThemePreviewCard(selectedTheme)}
-            </div>
+              <div class="theme-preview-container" id="theme-preview-container">
+                ${this.buildThemePreviewCard(selectedTheme)}
+              </div>
 
-            <!-- Advanced Options Section -->
-            <div class="advanced-options-section">
-              <button type="button" class="advanced-toggle" id="advanced-toggle">
-                <span class="toggle-icon">&#9654;</span>
-                <span>Advanced Options</span>
-              </button>
-
-              <div class="advanced-content" id="advanced-content" style="display: none;">
-                <!-- Color Customization -->
-                <div class="option-group">
-                  <h4 class="option-group-title">Colors</h4>
-                  <div class="color-options-grid">
-                    ${this.buildColorPicker('primary', 'Primary', selectedTheme.colors?.primary || '#3B82F6')}
-                    ${this.buildColorPicker('accent', 'Accent', selectedTheme.colors?.accent || '#22C55E')}
-                    ${this.buildColorPicker('text', 'Text', selectedTheme.colors?.text?.primary || '#1F2937')}
-                    ${this.buildColorPicker('background', 'Background', selectedTheme.colors?.background?.section || '#F9FAFB')}
-                  </div>
-                </div>
-
-                <!-- Typography -->
-                <div class="option-group">
-                  <h4 class="option-group-title">Typography</h4>
-                  <div class="button-group" id="font-size-group">
-                    <button type="button" class="size-btn" data-size="small">Small</button>
-                    <button type="button" class="size-btn active" data-size="medium">Medium</button>
-                    <button type="button" class="size-btn" data-size="large">Large</button>
-                  </div>
-                </div>
-
-                <!-- Page Margins -->
-                <div class="option-group">
-                  <h4 class="option-group-title">Page Margins</h4>
-                  <div class="button-group" id="margin-group">
-                    <button type="button" class="size-btn" data-margin="compact">Compact</button>
-                    <button type="button" class="size-btn active" data-margin="normal">Normal</button>
-                    <button type="button" class="size-btn" data-margin="wide">Wide</button>
-                  </div>
-                </div>
-
-                <!-- Reset Button -->
-                <button type="button" class="btn-reset-defaults" id="btn-reset-defaults">
-                  &#8634; Reset to Theme Defaults
+              <!-- Advanced Options Section -->
+              <div class="advanced-options-section">
+                <button type="button" class="advanced-toggle" id="advanced-toggle">
+                  <span class="toggle-icon">&#9654;</span>
+                  <span>Advanced Options</span>
                 </button>
+
+                <div class="advanced-content" id="advanced-content" style="display: none;">
+                  <!-- Color Customization -->
+                  <div class="option-group">
+                    <h4 class="option-group-title">Colors</h4>
+                    <div class="color-options-grid">
+                      ${this.buildColorPicker('primary', 'Primary', selectedTheme.colors?.primary || '#3B82F6')}
+                      ${this.buildColorPicker('accent', 'Accent', selectedTheme.colors?.accent || '#22C55E')}
+                      ${this.buildColorPicker('text', 'Text', selectedTheme.colors?.text?.primary || '#1F2937')}
+                      ${this.buildColorPicker('background', 'Background', selectedTheme.colors?.background?.section || '#F9FAFB')}
+                    </div>
+                  </div>
+
+                  <!-- Typography -->
+                  <div class="option-group">
+                    <h4 class="option-group-title">Typography</h4>
+                    <div class="button-group" id="font-size-group">
+                      <button type="button" class="size-btn" data-size="small">Small</button>
+                      <button type="button" class="size-btn active" data-size="medium">Medium</button>
+                      <button type="button" class="size-btn" data-size="large">Large</button>
+                    </div>
+                  </div>
+
+                  <!-- Page Margins -->
+                  <div class="option-group">
+                    <h4 class="option-group-title">Page Margins</h4>
+                    <div class="button-group" id="margin-group">
+                      <button type="button" class="size-btn" data-margin="compact">Compact</button>
+                      <button type="button" class="size-btn active" data-margin="normal">Normal</button>
+                      <button type="button" class="size-btn" data-margin="wide">Wide</button>
+                    </div>
+                  </div>
+
+                  <!-- Reset Button -->
+                  <button type="button" class="btn-reset-defaults" id="btn-reset-defaults">
+                    &#8634; Reset to Theme Defaults
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Sections to Include</label>
+                <div class="checkbox-grid">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="export-section" value="expertise" checked>
+                    <span>Expertise</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="export-section" value="projects" checked>
+                    <span>Projects</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="export-section" value="career" checked>
+                    <span>Career</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="export-section" value="testimonials" checked>
+                    <span>Testimonials</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="export-filename">Filename</label>
+                <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
               </div>
             </div>
 
-            <div class="form-group">
-              <label>Sections to Include</label>
-              <div class="checkbox-grid">
-                <label class="checkbox-label">
-                  <input type="checkbox" name="export-section" value="expertise" checked>
-                  <span>Expertise</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="export-section" value="projects" checked>
-                  <span>Projects</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="export-section" value="career" checked>
-                  <span>Career</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="export-section" value="testimonials" checked>
-                  <span>Testimonials</span>
-                </label>
+            <!-- Right Panel: Document Preview -->
+            <div class="preview-panel">
+              <div class="preview-panel-header">
+                <span>Document Preview</span>
               </div>
-            </div>
-
-            <div class="form-group">
-              <label for="export-filename">Filename</label>
-              <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
+              <div id="document-preview"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -1482,6 +1496,9 @@ class AdminApp {
     const modalEl = document.getElementById('export-options-modal');
     setTimeout(() => modalEl.classList.add('active'), 10);
 
+    // Initialize preview renderer
+    this.initializePreviewRenderer(modalEl, selectedTheme);
+
     // Bind advanced options events
     this.bindAdvancedOptionsEvents(modalEl, selectedTheme);
 
@@ -1490,9 +1507,20 @@ class AdminApp {
     themeSelect.addEventListener('change', (e) => {
       this.updateExportThemePreview(e.target.value);
       this.updateAdvancedOptionsForTheme(modalEl, e.target.value);
+      this.updateDocumentPreview();
+    });
+
+    // Section checkbox change handlers
+    modalEl.querySelectorAll('input[name="export-section"]').forEach(cb => {
+      cb.addEventListener('change', () => this.updateDocumentPreview());
     });
 
     const closeModal = () => {
+      // Cleanup preview renderer
+      if (this.previewRenderer) {
+        this.previewRenderer.destroy();
+        this.previewRenderer = null;
+      }
       modalEl.classList.remove('active');
       setTimeout(() => modalEl.remove(), 200);
     };
@@ -1527,6 +1555,91 @@ class AdminApp {
         this.exportDOCX(options);
       }
     });
+  }
+
+  /**
+   * Initialize document preview renderer
+   * @param {HTMLElement} modalEl - Modal element
+   * @param {Object} theme - Initial theme object
+   */
+  initializePreviewRenderer(modalEl, theme) {
+    const previewContainer = modalEl.querySelector('#document-preview');
+    if (!previewContainer || !window.DocumentPreviewRenderer) {
+      return;
+    }
+
+    this.previewRenderer = new window.DocumentPreviewRenderer(previewContainer);
+    this.updateDocumentPreview();
+  }
+
+  /**
+   * Update document preview with current settings
+   */
+  updateDocumentPreview() {
+    if (!this.previewRenderer) return;
+
+    const modalEl = document.getElementById('export-options-modal');
+    if (!modalEl) return;
+
+    const themeId = modalEl.querySelector('#export-theme').value;
+    const baseTheme = window.StyleManager ? window.StyleManager.getTheme(themeId) : null;
+
+    if (!baseTheme) return;
+
+    const mergedTheme = this.getMergedThemeForPreview(baseTheme);
+    const sections = Array.from(modalEl.querySelectorAll('input[name="export-section"]:checked'))
+      .map(cb => cb.value);
+
+    this.previewRenderer.update(this.data, mergedTheme, sections);
+  }
+
+  /**
+   * Get merged theme with current overrides for preview
+   * @param {Object} baseTheme - Base theme object
+   * @returns {Object} Merged theme object
+   */
+  getMergedThemeForPreview(baseTheme) {
+    const overrides = this.buildExportOverrides();
+
+    if (!overrides || Object.keys(overrides).length === 0) {
+      return baseTheme;
+    }
+
+    // Deep merge baseTheme with overrides
+    return this.mergeDeep({}, baseTheme, overrides);
+  }
+
+  /**
+   * Deep merge helper for themes
+   * @param {Object} target - Target object
+   * @param  {...Object} sources - Source objects
+   * @returns {Object} Merged object
+   */
+  mergeDeep(target, ...sources) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+
+    if (this.isObject(target) && this.isObject(source)) {
+      for (const key in source) {
+        if (this.isObject(source[key])) {
+          if (!target[key]) Object.assign(target, { [key]: {} });
+          this.mergeDeep(target[key], source[key]);
+        } else {
+          Object.assign(target, { [key]: source[key] });
+        }
+      }
+    }
+
+    return this.mergeDeep(target, ...sources);
+  }
+
+  /**
+   * Check if value is a plain object
+   * @param {*} item - Value to check
+   * @returns {boolean} True if plain object
+   */
+  isObject(item) {
+    return item && typeof item === 'object' && !Array.isArray(item);
   }
 
   /**
@@ -1866,6 +1979,9 @@ class AdminApp {
     if (swatchHeader && (this.customOverrides.colors.primary || baseTheme.colors?.primary)) {
       swatchHeader.style.background = this.customOverrides.colors.primary || baseTheme.colors?.primary;
     }
+
+    // Update document preview
+    this.updateDocumentPreview();
   }
 
   /**

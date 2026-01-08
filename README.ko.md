@@ -59,6 +59,11 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
 - **내보내기 옵션**: 포트폴리오를 PDF 또는 Word (DOCX) 형식으로 내보내기
   - 전체 포트폴리오 또는 섹션별 선택 내보내기
   - 시각적 미리보기가 포함된 테마 선택 기능 (5가지 내장 테마: Professional, Modern Dark, Minimal, Creative, Executive)
+  - **실시간 문서 미리보기**:
+    - 내보내기 전 문서 외관을 보여주는 라이브 미리보기 패널
+    - 테마나 옵션 변경 시 즉시 미리보기 업데이트
+    - 줌 컨트롤 (50%-200%) 및 페이지 네비게이션
+    - 반응형 2열 레이아웃
   - **고급 사용자 정의 옵션**:
     - Primary, Accent, Text, Background 색상 선택기
     - 글꼴 크기 프리셋 (Small, Medium, Large)
