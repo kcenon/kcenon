@@ -62,6 +62,7 @@ This repository includes an interactive portfolio website with an admin interfac
   - Full portfolio or section-selective export
   - Progress indicator during export
   - Customizable filename
+  - Theme styling system (5 built-in themes: Professional, Modern Dark, Minimal, Creative, Executive)
 
 View the portfolio at: `portfolio/index.html`
 Access admin panel at: `portfolio/admin.html`

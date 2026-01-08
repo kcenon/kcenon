@@ -60,6 +60,7 @@ ASP.NET Web API와 TCP 서비스를 설계하고, WPF(MVVM + 비동기) 및 Qt/Q
   - 전체 포트폴리오 또는 섹션별 선택 내보내기
   - 내보내기 진행 표시
   - 파일명 사용자 정의
+  - 테마 스타일링 시스템 (5가지 내장 테마: Professional, Modern Dark, Minimal, Creative, Executive)
 
 포트폴리오 보기: `portfolio/index.html`
 관리자 패널 접근: `portfolio/admin.html`
