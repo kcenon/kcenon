@@ -68,6 +68,10 @@ This repository includes an interactive portfolio website with an admin interfac
   - **Page Break Option**:
     - Insert page breaks between sections for better document structure
     - Option saved in localStorage for persistence
+  - **Automatic Content Grouping**:
+    - Prevents individual items from being split across page boundaries
+    - Project cards, career entries, skill categories, and testimonials stay intact
+    - Applied to PDF, DOCX, and preview rendering
   - Theme selection with visual preview (5 built-in themes: Professional, Modern Dark, Minimal, Creative, Executive)
   - **Real-time Document Preview**:
     - Live preview panel shows document appearance before export
