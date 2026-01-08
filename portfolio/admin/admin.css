@@ -1500,3 +1500,170 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ==========================================
+   Theme Selection UI Styles
+   ========================================== */
+
+/* Export Modal Enhancements */
+.export-modal {
+  max-width: 480px;
+}
+
+.export-modal .form-group {
+  margin-bottom: 16px;
+}
+
+.export-modal .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.export-modal .form-select,
+.export-modal .form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.export-modal .form-select:focus,
+.export-modal .form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Theme Preview Container */
+.theme-preview-container {
+  margin: 12px 0 16px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* Theme Preview Card */
+.theme-preview-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.theme-preview-swatch {
+  width: 80px;
+  height: 100px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.swatch-header {
+  height: 20px;
+  width: 100%;
+}
+
+.swatch-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swatch-line {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.swatch-accent {
+  height: 8px;
+  margin: 8px;
+  border-radius: 2px;
+}
+
+.theme-preview-info {
+  flex: 1;
+}
+
+.theme-name {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.theme-description {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.theme-colors {
+  display: flex;
+  gap: 6px;
+}
+
+.color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: help;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Checkbox Grid */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}
+
+/* Responsive - Stack on mobile */
+@media (max-width: 480px) {
+  .theme-preview-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .theme-preview-swatch {
+    width: 100px;
+    height: 120px;
+  }
+
+  .theme-colors {
+    justify-content: center;
+  }
+
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+}

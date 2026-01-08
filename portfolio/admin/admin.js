@@ -1253,21 +1253,94 @@ class AdminApp {
 
   /**
    * Get available themes for export
-   * @returns {Array} Array of theme objects with id, name, description
+   * @returns {Array} Array of theme objects with id, name, description, colors
    */
   getAvailableThemes() {
     const styleManager = window.StyleManager;
-    if (styleManager && styleManager.getAllThemePreviews) {
-      return styleManager.getAllThemePreviews();
+    if (styleManager && styleManager.getAllThemes) {
+      return styleManager.getAllThemes().map(theme => ({
+        id: theme.id,
+        name: theme.name,
+        description: theme.description,
+        colors: theme.colors
+      }));
     }
     // Fallback themes
     return [
-      { id: 'professional', name: 'Professional', description: 'Clean blue and gray palette' },
-      { id: 'modern-dark', name: 'Modern Dark', description: 'Sleek dark theme' },
-      { id: 'minimal', name: 'Minimal', description: 'Clean black and white' },
-      { id: 'creative', name: 'Creative', description: 'Vibrant colors' },
-      { id: 'executive', name: 'Executive', description: 'Navy and gold' }
+      { id: 'professional', name: 'Professional', description: 'Clean blue and gray palette', colors: { primary: '#3B82F6', secondary: '#6B7280', accent: '#22C55E', text: { primary: '#1F2937' }, background: { page: '#FFFFFF' } } },
+      { id: 'modern-dark', name: 'Modern Dark', description: 'Sleek dark theme', colors: { primary: '#60A5FA', secondary: '#A78BFA', accent: '#34D399', text: { primary: '#F9FAFB' }, background: { page: '#1F2937' } } },
+      { id: 'minimal', name: 'Minimal', description: 'Clean black and white', colors: { primary: '#111827', secondary: '#374151', accent: '#111827', text: { primary: '#111827' }, background: { page: '#FFFFFF' } } },
+      { id: 'creative', name: 'Creative', description: 'Vibrant colors', colors: { primary: '#8B5CF6', secondary: '#EC4899', accent: '#F59E0B', text: { primary: '#1F2937' }, background: { page: '#FFFFFF' } } },
+      { id: 'executive', name: 'Executive', description: 'Navy and gold', colors: { primary: '#1E3A5F', secondary: '#B8860B', accent: '#B8860B', text: { primary: '#1E293B' }, background: { page: '#FFFFFF' } } }
     ];
+  }
+
+  /**
+   * Get saved export theme preference from localStorage
+   * @returns {string} Theme ID
+   */
+  getSavedExportTheme() {
+    return localStorage.getItem('portfolioExportTheme') || 'professional';
+  }
+
+  /**
+   * Save export theme preference to localStorage
+   * @param {string} themeId - Theme ID to save
+   */
+  saveExportTheme(themeId) {
+    localStorage.setItem('portfolioExportTheme', themeId);
+  }
+
+  /**
+   * Build theme preview card HTML
+   * @param {Object} theme - Theme object with colors
+   * @returns {string} HTML string for preview card
+   */
+  buildThemePreviewCard(theme) {
+    if (!theme || !theme.colors) return '';
+
+    const { colors } = theme;
+    const bgColor = colors.background?.page || '#FFFFFF';
+    const textColor = colors.text?.primary || '#1F2937';
+
+    return `
+      <div class="theme-preview-card">
+        <div class="theme-preview-swatch" style="background: ${bgColor};">
+          <div class="swatch-header" style="background: ${colors.primary};"></div>
+          <div class="swatch-body">
+            <div class="swatch-line" style="background: ${textColor}; width: 80%;"></div>
+            <div class="swatch-line" style="background: ${colors.secondary || textColor}; width: 60%; opacity: 0.7;"></div>
+            <div class="swatch-line" style="background: ${textColor}; width: 70%; opacity: 0.5;"></div>
+          </div>
+          <div class="swatch-accent" style="background: ${colors.accent || colors.primary};"></div>
+        </div>
+        <div class="theme-preview-info">
+          <h4 class="theme-name">${theme.name}</h4>
+          <p class="theme-description">${theme.description}</p>
+          <div class="theme-colors">
+            <span class="color-dot" style="background: ${colors.primary};" title="Primary"></span>
+            <span class="color-dot" style="background: ${colors.secondary || colors.primary};" title="Secondary"></span>
+            <span class="color-dot" style="background: ${colors.accent || colors.primary};" title="Accent"></span>
+            <span class="color-dot" style="background: ${textColor};" title="Text"></span>
+            <span class="color-dot" style="background: ${bgColor}; border: 1px solid #E5E7EB;" title="Background"></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Update theme preview in export modal
+   * @param {string} themeId - Selected theme ID
+   */
+  updateExportThemePreview(themeId) {
+    const themes = this.getAvailableThemes();
+    const theme = themes.find(t => t.id === themeId);
+    const previewContainer = document.getElementById('theme-preview-container');
+
+    if (previewContainer && theme) {
+      previewContainer.innerHTML = this.buildThemePreviewCard(theme);
+    }
   }
 
   /**
@@ -1275,66 +1348,64 @@ class AdminApp {
    */
   showExportOptionsModal() {
     const themes = this.getAvailableThemes();
-    const themeOptions = themes.map(t => `
-      <label class="multi-select-option">
-        <input type="radio" name="export-theme" value="${t.id}" ${t.id === 'professional' ? 'checked' : ''}>
-        <div>
-          <strong>${t.name}</strong>
-          <span class="theme-desc">${t.description}</span>
-        </div>
-      </label>
-    `).join('');
+    const savedTheme = this.getSavedExportTheme();
+    const selectedTheme = themes.find(t => t.id === savedTheme) || themes[0];
+
+    const themeOptions = themes.map(t =>
+      `<option value="${t.id}" ${t.id === savedTheme ? 'selected' : ''}>${t.name}</option>`
+    ).join('');
 
     const modal = `
       <div class="modal-overlay" id="export-options-modal">
-        <div class="modal" style="max-width: 500px;">
+        <div class="modal export-modal">
           <div class="modal-header">
-            <h3>Export Options</h3>
+            <h3>Export Portfolio</h3>
             <button class="modal-close">&times;</button>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              <label>Export Format</label>
-              <div class="multi-select">
-                <label class="multi-select-option">
-                  <input type="radio" name="export-format" value="pdf" checked>
-                  PDF Document
-                </label>
-                <label class="multi-select-option">
-                  <input type="radio" name="export-format" value="docx">
-                  Word Document
-                </label>
-              </div>
+              <label for="export-format">Format</label>
+              <select id="export-format" class="form-select">
+                <option value="pdf">PDF (.pdf)</option>
+                <option value="docx">Word (.docx)</option>
+              </select>
             </div>
+
             <div class="form-group">
-              <label>Theme</label>
-              <div class="multi-select theme-select">
+              <label for="export-theme">Theme</label>
+              <select id="export-theme" class="form-select">
                 ${themeOptions}
-              </div>
+              </select>
             </div>
+
+            <div class="theme-preview-container" id="theme-preview-container">
+              ${this.buildThemePreviewCard(selectedTheme)}
+            </div>
+
             <div class="form-group">
-              <label>Sections to Export</label>
-              <div class="multi-select">
-                <label class="multi-select-option">
+              <label>Sections to Include</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-label">
                   <input type="checkbox" name="export-section" value="expertise" checked>
-                  Expertise
+                  <span>Expertise</span>
                 </label>
-                <label class="multi-select-option">
+                <label class="checkbox-label">
                   <input type="checkbox" name="export-section" value="projects" checked>
-                  Projects
+                  <span>Projects</span>
                 </label>
-                <label class="multi-select-option">
+                <label class="checkbox-label">
                   <input type="checkbox" name="export-section" value="career" checked>
-                  Career
+                  <span>Career</span>
                 </label>
-                <label class="multi-select-option">
+                <label class="checkbox-label">
                   <input type="checkbox" name="export-section" value="testimonials" checked>
-                  Testimonials
+                  <span>Testimonials</span>
                 </label>
               </div>
             </div>
+
             <div class="form-group">
-              <label>Filename</label>
+              <label for="export-filename">Filename</label>
               <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
             </div>
           </div>
@@ -1351,6 +1422,12 @@ class AdminApp {
     const modalEl = document.getElementById('export-options-modal');
     setTimeout(() => modalEl.classList.add('active'), 10);
 
+    // Theme selection change handler
+    const themeSelect = modalEl.querySelector('#export-theme');
+    themeSelect.addEventListener('change', (e) => {
+      this.updateExportThemePreview(e.target.value);
+    });
+
     const closeModal = () => {
       modalEl.classList.remove('active');
       setTimeout(() => modalEl.remove(), 200);
@@ -1359,11 +1436,14 @@ class AdminApp {
     modalEl.querySelector('.modal-close').addEventListener('click', closeModal);
     modalEl.querySelector('.modal-cancel').addEventListener('click', closeModal);
     modalEl.querySelector('.modal-export').addEventListener('click', () => {
-      const format = modalEl.querySelector('input[name="export-format"]:checked').value;
-      const theme = modalEl.querySelector('input[name="export-theme"]:checked')?.value || 'professional';
+      const format = modalEl.querySelector('#export-format').value;
+      const theme = modalEl.querySelector('#export-theme').value;
       const sections = Array.from(modalEl.querySelectorAll('input[name="export-section"]:checked'))
         .map(cb => cb.value);
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
+
+      // Save theme preference
+      this.saveExportTheme(theme);
 
       closeModal();
 
