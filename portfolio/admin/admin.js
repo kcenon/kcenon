@@ -19,6 +19,13 @@ class AdminApp {
     this.previewActive = false;
     this.previewDebounceTimer = null;
 
+    // Export custom overrides state
+    this.customOverrides = {
+      colors: {},
+      typography: {},
+      spacing: {}
+    };
+
     this.init();
   }
 
@@ -1351,6 +1358,13 @@ class AdminApp {
     const savedTheme = this.getSavedExportTheme();
     const selectedTheme = themes.find(t => t.id === savedTheme) || themes[0];
 
+    // Reset custom overrides
+    this.customOverrides = {
+      colors: {},
+      typography: {},
+      spacing: {}
+    };
+
     const themeOptions = themes.map(t =>
       `<option value="${t.id}" ${t.id === savedTheme ? 'selected' : ''}>${t.name}</option>`
     ).join('');
@@ -1380,6 +1394,52 @@ class AdminApp {
 
             <div class="theme-preview-container" id="theme-preview-container">
               ${this.buildThemePreviewCard(selectedTheme)}
+            </div>
+
+            <!-- Advanced Options Section -->
+            <div class="advanced-options-section">
+              <button type="button" class="advanced-toggle" id="advanced-toggle">
+                <span class="toggle-icon">&#9654;</span>
+                <span>Advanced Options</span>
+              </button>
+
+              <div class="advanced-content" id="advanced-content" style="display: none;">
+                <!-- Color Customization -->
+                <div class="option-group">
+                  <h4 class="option-group-title">Colors</h4>
+                  <div class="color-options-grid">
+                    ${this.buildColorPicker('primary', 'Primary', selectedTheme.colors?.primary || '#3B82F6')}
+                    ${this.buildColorPicker('accent', 'Accent', selectedTheme.colors?.accent || '#22C55E')}
+                    ${this.buildColorPicker('text', 'Text', selectedTheme.colors?.text?.primary || '#1F2937')}
+                    ${this.buildColorPicker('background', 'Background', selectedTheme.colors?.background?.section || '#F9FAFB')}
+                  </div>
+                </div>
+
+                <!-- Typography -->
+                <div class="option-group">
+                  <h4 class="option-group-title">Typography</h4>
+                  <div class="button-group" id="font-size-group">
+                    <button type="button" class="size-btn" data-size="small">Small</button>
+                    <button type="button" class="size-btn active" data-size="medium">Medium</button>
+                    <button type="button" class="size-btn" data-size="large">Large</button>
+                  </div>
+                </div>
+
+                <!-- Page Margins -->
+                <div class="option-group">
+                  <h4 class="option-group-title">Page Margins</h4>
+                  <div class="button-group" id="margin-group">
+                    <button type="button" class="size-btn" data-margin="compact">Compact</button>
+                    <button type="button" class="size-btn active" data-margin="normal">Normal</button>
+                    <button type="button" class="size-btn" data-margin="wide">Wide</button>
+                  </div>
+                </div>
+
+                <!-- Reset Button -->
+                <button type="button" class="btn-reset-defaults" id="btn-reset-defaults">
+                  &#8634; Reset to Theme Defaults
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
@@ -1422,10 +1482,14 @@ class AdminApp {
     const modalEl = document.getElementById('export-options-modal');
     setTimeout(() => modalEl.classList.add('active'), 10);
 
+    // Bind advanced options events
+    this.bindAdvancedOptionsEvents(modalEl, selectedTheme);
+
     // Theme selection change handler
     const themeSelect = modalEl.querySelector('#export-theme');
     themeSelect.addEventListener('change', (e) => {
       this.updateExportThemePreview(e.target.value);
+      this.updateAdvancedOptionsForTheme(modalEl, e.target.value);
     });
 
     const closeModal = () => {
@@ -1445,12 +1509,16 @@ class AdminApp {
       // Save theme preference
       this.saveExportTheme(theme);
 
+      // Save custom preferences
+      this.saveExportPreferences();
+
       closeModal();
 
       const options = {
         sections,
         filename: `${filename}.${format}`,
-        theme
+        theme,
+        themeOverrides: this.buildExportOverrides()
       };
 
       if (format === 'pdf') {
@@ -1459,6 +1527,374 @@ class AdminApp {
         this.exportDOCX(options);
       }
     });
+  }
+
+  /**
+   * Build color picker HTML
+   * @param {string} id - Color picker ID
+   * @param {string} label - Display label
+   * @param {string} defaultValue - Default hex color
+   * @returns {string} HTML string
+   */
+  buildColorPicker(id, label, defaultValue) {
+    return `
+      <div class="color-picker-group">
+        <label class="color-label">${label}</label>
+        <div class="color-input-wrapper">
+          <input type="color"
+                 id="color-${id}"
+                 class="color-input"
+                 value="${defaultValue}"
+                 data-default="${defaultValue}">
+          <input type="text"
+                 id="color-${id}-hex"
+                 class="hex-input"
+                 value="${defaultValue}"
+                 pattern="^#[0-9A-Fa-f]{6}$">
+        </div>
+        <button type="button" class="btn-reset-color" data-color-id="${id}" title="Reset to theme default">
+          &#8634;
+        </button>
+      </div>
+    `;
+  }
+
+  /**
+   * Bind advanced options event handlers
+   * @param {HTMLElement} modalEl - Modal element
+   * @param {Object} theme - Current theme object
+   */
+  bindAdvancedOptionsEvents(modalEl, theme) {
+    // Toggle advanced options
+    const toggleBtn = modalEl.querySelector('#advanced-toggle');
+    const content = modalEl.querySelector('#advanced-content');
+
+    toggleBtn.addEventListener('click', () => {
+      const isExpanded = content.style.display !== 'none';
+      content.style.display = isExpanded ? 'none' : 'block';
+      toggleBtn.classList.toggle('expanded', !isExpanded);
+      toggleBtn.querySelector('.toggle-icon').innerHTML = isExpanded ? '&#9654;' : '&#9660;';
+    });
+
+    // Color picker handlers
+    ['primary', 'accent', 'text', 'background'].forEach(colorId => {
+      const colorInput = modalEl.querySelector(`#color-${colorId}`);
+      const hexInput = modalEl.querySelector(`#color-${colorId}-hex`);
+      const resetBtn = modalEl.querySelector(`.btn-reset-color[data-color-id="${colorId}"]`);
+
+      colorInput.addEventListener('input', (e) => {
+        hexInput.value = e.target.value;
+        this.setColorOverride(colorId, e.target.value);
+        this.updateThemePreviewWithOverrides(modalEl);
+      });
+
+      hexInput.addEventListener('change', (e) => {
+        const value = e.target.value;
+        if (/^#[0-9A-Fa-f]{6}$/i.test(value)) {
+          colorInput.value = value;
+          this.setColorOverride(colorId, value);
+          this.updateThemePreviewWithOverrides(modalEl);
+        } else {
+          e.target.value = colorInput.value;
+        }
+      });
+
+      resetBtn.addEventListener('click', () => {
+        const defaultValue = colorInput.dataset.default;
+        colorInput.value = defaultValue;
+        hexInput.value = defaultValue;
+        this.removeColorOverride(colorId);
+        this.updateThemePreviewWithOverrides(modalEl);
+      });
+    });
+
+    // Font size handlers
+    const fontSizeBtns = modalEl.querySelectorAll('#font-size-group .size-btn');
+    fontSizeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        fontSizeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.setFontSizeOverride(btn.dataset.size);
+        this.updateThemePreviewWithOverrides(modalEl);
+      });
+    });
+
+    // Margin handlers
+    const marginBtns = modalEl.querySelectorAll('#margin-group .size-btn');
+    marginBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        marginBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.setMarginOverride(btn.dataset.margin);
+        this.updateThemePreviewWithOverrides(modalEl);
+      });
+    });
+
+    // Reset to defaults handler
+    modalEl.querySelector('#btn-reset-defaults').addEventListener('click', () => {
+      this.resetToThemeDefaults(modalEl);
+    });
+  }
+
+  /**
+   * Set color override
+   * @param {string} colorId - Color identifier
+   * @param {string} value - Hex color value
+   */
+  setColorOverride(colorId, value) {
+    const colorMapping = {
+      'primary': { path: 'primary' },
+      'accent': { path: 'accent' },
+      'text': { path: 'text', nested: 'primary' },
+      'background': { path: 'background', nested: 'section' }
+    };
+
+    const mapping = colorMapping[colorId];
+    if (!mapping) return;
+
+    if (mapping.nested) {
+      if (!this.customOverrides.colors[mapping.path]) {
+        this.customOverrides.colors[mapping.path] = {};
+      }
+      this.customOverrides.colors[mapping.path][mapping.nested] = value;
+    } else {
+      this.customOverrides.colors[mapping.path] = value;
+    }
+  }
+
+  /**
+   * Remove color override
+   * @param {string} colorId - Color identifier
+   */
+  removeColorOverride(colorId) {
+    const colorMapping = {
+      'primary': { path: 'primary' },
+      'accent': { path: 'accent' },
+      'text': { path: 'text', nested: 'primary' },
+      'background': { path: 'background', nested: 'section' }
+    };
+
+    const mapping = colorMapping[colorId];
+    if (!mapping) return;
+
+    if (mapping.nested) {
+      if (this.customOverrides.colors[mapping.path]) {
+        delete this.customOverrides.colors[mapping.path][mapping.nested];
+        if (Object.keys(this.customOverrides.colors[mapping.path]).length === 0) {
+          delete this.customOverrides.colors[mapping.path];
+        }
+      }
+    } else {
+      delete this.customOverrides.colors[mapping.path];
+    }
+  }
+
+  /**
+   * Set font size override
+   * @param {string} size - Size preset (small, medium, large)
+   */
+  setFontSizeOverride(size) {
+    const multipliers = {
+      small: 0.85,
+      medium: 1.0,
+      large: 1.15
+    };
+
+    if (size === 'medium') {
+      delete this.customOverrides.typography.sizeMultiplier;
+    } else {
+      this.customOverrides.typography.sizeMultiplier = multipliers[size];
+    }
+  }
+
+  /**
+   * Set margin override
+   * @param {string} preset - Margin preset (compact, normal, wide)
+   */
+  setMarginOverride(preset) {
+    const presets = {
+      compact: {
+        marginTop: 40,
+        marginRight: 30,
+        marginBottom: 40,
+        marginLeft: 30
+      },
+      normal: null, // Use theme defaults
+      wide: {
+        marginTop: 80,
+        marginRight: 60,
+        marginBottom: 80,
+        marginLeft: 60
+      }
+    };
+
+    if (preset === 'normal') {
+      delete this.customOverrides.spacing.page;
+    } else {
+      this.customOverrides.spacing.page = presets[preset];
+    }
+  }
+
+  /**
+   * Reset all overrides to theme defaults
+   * @param {HTMLElement} modalEl - Modal element
+   */
+  resetToThemeDefaults(modalEl) {
+    const themeId = modalEl.querySelector('#export-theme').value;
+    const themes = this.getAvailableThemes();
+    const theme = themes.find(t => t.id === themeId);
+
+    // Reset overrides
+    this.customOverrides = {
+      colors: {},
+      typography: {},
+      spacing: {}
+    };
+
+    // Reset color inputs
+    ['primary', 'accent', 'text', 'background'].forEach(colorId => {
+      const colorInput = modalEl.querySelector(`#color-${colorId}`);
+      const hexInput = modalEl.querySelector(`#color-${colorId}-hex`);
+      const defaultValue = colorInput.dataset.default;
+      colorInput.value = defaultValue;
+      hexInput.value = defaultValue;
+    });
+
+    // Reset font size to medium
+    modalEl.querySelectorAll('#font-size-group .size-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.size === 'medium');
+    });
+
+    // Reset margins to normal
+    modalEl.querySelectorAll('#margin-group .size-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.margin === 'normal');
+    });
+
+    // Update preview
+    this.updateThemePreviewWithOverrides(modalEl);
+  }
+
+  /**
+   * Update advanced options when theme changes
+   * @param {HTMLElement} modalEl - Modal element
+   * @param {string} themeId - New theme ID
+   */
+  updateAdvancedOptionsForTheme(modalEl, themeId) {
+    const themes = this.getAvailableThemes();
+    const theme = themes.find(t => t.id === themeId);
+    if (!theme) return;
+
+    // Reset overrides
+    this.customOverrides = {
+      colors: {},
+      typography: {},
+      spacing: {}
+    };
+
+    // Update color picker defaults
+    const colorDefaults = {
+      primary: theme.colors?.primary || '#3B82F6',
+      accent: theme.colors?.accent || '#22C55E',
+      text: theme.colors?.text?.primary || '#1F2937',
+      background: theme.colors?.background?.section || '#F9FAFB'
+    };
+
+    Object.entries(colorDefaults).forEach(([colorId, value]) => {
+      const colorInput = modalEl.querySelector(`#color-${colorId}`);
+      const hexInput = modalEl.querySelector(`#color-${colorId}-hex`);
+      if (colorInput && hexInput) {
+        colorInput.value = value;
+        colorInput.dataset.default = value;
+        hexInput.value = value;
+      }
+    });
+
+    // Reset buttons to defaults
+    modalEl.querySelectorAll('#font-size-group .size-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.size === 'medium');
+    });
+    modalEl.querySelectorAll('#margin-group .size-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.margin === 'normal');
+    });
+  }
+
+  /**
+   * Update theme preview with current overrides
+   * @param {HTMLElement} modalEl - Modal element
+   */
+  updateThemePreviewWithOverrides(modalEl) {
+    const themeId = modalEl.querySelector('#export-theme').value;
+    const themes = this.getAvailableThemes();
+    const baseTheme = themes.find(t => t.id === themeId);
+    if (!baseTheme) return;
+
+    const previewContainer = modalEl.querySelector('#theme-preview-container');
+    const themeName = previewContainer.querySelector('.theme-name');
+
+    // Check if customized
+    const hasOverrides = Object.keys(this.customOverrides.colors).length > 0 ||
+                         Object.keys(this.customOverrides.typography).length > 0 ||
+                         Object.keys(this.customOverrides.spacing).length > 0;
+
+    // Update customized indicator
+    let indicator = themeName.querySelector('.customized-indicator');
+    if (hasOverrides && !indicator) {
+      indicator = document.createElement('span');
+      indicator.className = 'customized-indicator';
+      indicator.textContent = ' (Customized)';
+      themeName.appendChild(indicator);
+    } else if (!hasOverrides && indicator) {
+      indicator.remove();
+    }
+
+    // Update color dots with overridden values
+    const colorDots = previewContainer.querySelectorAll('.color-dot');
+    const colors = [
+      this.customOverrides.colors.primary || baseTheme.colors?.primary,
+      this.customOverrides.colors.secondary || baseTheme.colors?.secondary,
+      this.customOverrides.colors.accent || baseTheme.colors?.accent,
+      this.customOverrides.colors.text?.primary || baseTheme.colors?.text?.primary,
+      this.customOverrides.colors.background?.section || baseTheme.colors?.background?.page
+    ];
+
+    colorDots.forEach((dot, i) => {
+      if (colors[i]) dot.style.background = colors[i];
+    });
+
+    // Update swatch header
+    const swatchHeader = previewContainer.querySelector('.swatch-header');
+    if (swatchHeader && (this.customOverrides.colors.primary || baseTheme.colors?.primary)) {
+      swatchHeader.style.background = this.customOverrides.colors.primary || baseTheme.colors?.primary;
+    }
+  }
+
+  /**
+   * Build export overrides object
+   * @returns {Object|null} Theme overrides or null if none
+   */
+  buildExportOverrides() {
+    const hasOverrides = Object.keys(this.customOverrides.colors).length > 0 ||
+                         Object.keys(this.customOverrides.typography).length > 0 ||
+                         Object.keys(this.customOverrides.spacing).length > 0;
+
+    if (!hasOverrides) return null;
+
+    return JSON.parse(JSON.stringify(this.customOverrides));
+  }
+
+  /**
+   * Save export preferences to localStorage
+   */
+  saveExportPreferences() {
+    const fontSizeBtn = document.querySelector('#font-size-group .size-btn.active');
+    const marginBtn = document.querySelector('#margin-group .size-btn.active');
+
+    const prefs = {
+      fontSize: fontSizeBtn?.dataset.size || 'medium',
+      margin: marginBtn?.dataset.margin || 'normal'
+    };
+
+    localStorage.setItem('portfolioExportPrefs', JSON.stringify(prefs));
   }
 }
 
