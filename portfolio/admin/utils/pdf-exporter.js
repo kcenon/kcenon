@@ -4,6 +4,8 @@
 
 class PDFExporter {
   constructor() {
+    this.fontLoaded = false;
+    this.fontLoading = null;
     this.defaultStyles = {
       header: {
         fontSize: 24,
@@ -30,6 +32,70 @@ class PDFExporter {
   }
 
   /**
+   * Load Korean font (Noto Sans KR) for PDF generation
+   */
+  async loadKoreanFont() {
+    if (this.fontLoaded) return true;
+    if (this.fontLoading) return this.fontLoading;
+
+    this.fontLoading = (async () => {
+      try {
+        // Noto Sans KR Regular from Google Fonts
+        const fontUrl = 'https://fonts.gstatic.com/s/notosanskr/v36/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzzuoyeLTq8H4hfeE.ttf';
+
+        const response = await fetch(fontUrl);
+        if (!response.ok) {
+          console.warn('Korean font load failed, using default font');
+          return false;
+        }
+
+        const fontBuffer = await response.arrayBuffer();
+        const base64 = this.arrayBufferToBase64(fontBuffer);
+
+        // Register font with pdfMake
+        pdfMake.vfs = pdfMake.vfs || {};
+        pdfMake.vfs['NotoSansKR-Regular.ttf'] = base64;
+
+        pdfMake.fonts = {
+          Roboto: {
+            normal: 'Roboto-Regular.ttf',
+            bold: 'Roboto-Medium.ttf',
+            italics: 'Roboto-Italic.ttf',
+            bolditalics: 'Roboto-MediumItalic.ttf'
+          },
+          NotoSansKR: {
+            normal: 'NotoSansKR-Regular.ttf',
+            bold: 'NotoSansKR-Regular.ttf',
+            italics: 'NotoSansKR-Regular.ttf',
+            bolditalics: 'NotoSansKR-Regular.ttf'
+          }
+        };
+
+        this.fontLoaded = true;
+        console.log('Korean font loaded successfully');
+        return true;
+      } catch (error) {
+        console.warn('Korean font load error:', error);
+        return false;
+      }
+    })();
+
+    return this.fontLoading;
+  }
+
+  /**
+   * Convert ArrayBuffer to Base64
+   */
+  arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  /**
    * Generate PDF from portfolio data
    * @param {Object} data - Portfolio data object
    * @param {Object} options - Export options
@@ -43,6 +109,9 @@ class PDFExporter {
     } = options;
 
     try {
+      // Load Korean font first
+      await this.loadKoreanFont();
+
       const docDefinition = this.buildDocument(data, sections, { title, author });
 
       return new Promise((resolve, reject) => {
@@ -101,7 +170,7 @@ class PDFExporter {
       pageSize: 'A4',
       pageMargins: [40, 60, 40, 60],
       defaultStyle: {
-        font: 'Roboto',
+        font: this.fontLoaded ? 'NotoSansKR' : 'Roboto',
         fontSize: 10,
         lineHeight: 1.4
       },
