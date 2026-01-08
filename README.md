@@ -60,6 +60,11 @@ This repository includes an interactive portfolio website with an admin interfac
 - **Admin Interface**: Edit portfolio content directly in the browser
 - **Export Options**: Export portfolio to PDF or Word (DOCX) format
   - Full portfolio or section-selective export
+  - **Drag-and-Drop Section Ordering**:
+    - Reorder sections via drag-and-drop for custom document structure
+    - Toggle section inclusion with checkboxes
+    - Keyboard-accessible with Alt+Arrow keys
+    - Section order persisted in localStorage
   - Theme selection with visual preview (5 built-in themes: Professional, Modern Dark, Minimal, Creative, Executive)
   - **Real-time Document Preview**:
     - Live preview panel shows document appearance before export
