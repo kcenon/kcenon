@@ -65,6 +65,9 @@ This repository includes an interactive portfolio website with an admin interfac
     - Toggle section inclusion with checkboxes
     - Keyboard-accessible with Alt+Arrow keys
     - Section order persisted in localStorage
+  - **Page Break Option**:
+    - Insert page breaks between sections for better document structure
+    - Option saved in localStorage for persistence
   - Theme selection with visual preview (5 built-in themes: Professional, Modern Dark, Minimal, Creative, Executive)
   - **Real-time Document Preview**:
     - Live preview panel shows document appearance before export
