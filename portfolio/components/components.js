@@ -56,14 +56,18 @@ const ProjectIconMap = {
 
 // Calculate development duration from period string
 function calculateDuration(period) {
-    if (!period) return null;
+    // Handle multilingual period object
+    const periodStr = getText(period);
+    if (!periodStr) return null;
 
     // Parse period formats: "YYYY.MM - YYYY.MM", "YYYY - YYYY", "YYYY.MM - Present"
-    const parts = period.split(' - ');
+    const parts = periodStr.split(' - ');
     if (parts.length !== 2) return null;
 
     const parseDate = (str) => {
         str = str.trim();
+        // Remove any duration info like "(8개월)" or "(8 months)"
+        str = str.replace(/\s*\([^)]*\)\s*$/, '');
         if (str.toLowerCase() === 'present' || str === '현재') {
             return new Date();
         }
@@ -80,15 +84,18 @@ function calculateDuration(period) {
 
         if (months <= 0) return null;
 
+        const lang = getLang();
         if (months >= 12) {
             const years = Math.floor(months / 12);
             const remainingMonths = months % 12;
             if (remainingMonths === 0) {
-                return `${years}년`;
+                return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
             }
-            return `${years}년 ${remainingMonths}개월`;
+            return lang === 'ko'
+                ? `${years}년 ${remainingMonths}개월`
+                : `${years} yr${years > 1 ? 's' : ''} ${remainingMonths} mo`;
         }
-        return `${months}개월`;
+        return lang === 'ko' ? `${months}개월` : `${months} mo`;
     } catch (e) {
         return null;
     }
@@ -96,11 +103,12 @@ function calculateDuration(period) {
 
 // Render period with duration
 function renderPeriodWithDuration(period) {
+    const periodStr = getText(period);
     const duration = calculateDuration(period);
     if (duration) {
-        return `<span class="project-period">${period} <span class="project-duration">(${duration})</span></span>`;
+        return `<span class="project-period">${periodStr} <span class="project-duration">(${duration})</span></span>`;
     }
-    return `<span class="project-period">${period}</span>`;
+    return `<span class="project-period">${periodStr}</span>`;
 }
 
 // Render role badges
@@ -128,9 +136,9 @@ function renderMetrics(metrics) {
         <div class="project-metrics">
             ${metrics.map(m => `
                 <div class="metric">
-                    <span class="metric-value">${m.value}</span>
-                    <span class="metric-label">${m.label}</span>
-                    ${m.change ? `<span class="metric-change ${m.positive ? 'positive' : ''}">${m.change}</span>` : ''}
+                    <span class="metric-value">${getText(m.value)}</span>
+                    <span class="metric-label">${getText(m.label)}</span>
+                    ${m.change ? `<span class="metric-change ${m.positive ? 'positive' : ''}">${getText(m.change)}</span>` : ''}
                 </div>
             `).join('')}
         </div>
@@ -174,7 +182,7 @@ function renderFeaturedProject(project) {
         : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions', achievements: 'Achievements' };
 
     return `
-        <article class="project-card featured expandable">
+        <article class="project-card featured expandable" id="project-${project.id}">
             <div class="project-header">
                 <div class="project-icon">${iconSvg}</div>
                 <div class="project-meta">
@@ -211,7 +219,7 @@ function renderProjectCard(project) {
         : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions' };
 
     return `
-        <article class="project-card expandable">
+        <article class="project-card expandable" id="project-${project.id}">
             <div class="project-header">
                 <span class="project-company-small">${getText(project.company)}</span>
             </div>
@@ -245,7 +253,7 @@ function renderOpenSourceCard(project) {
         : { features: 'Key Features', performance: 'Performance', viewOnGithub: 'View on GitHub' };
 
     return `
-        <article class="project-card opensource expandable">
+        <article class="project-card opensource expandable" id="project-${project.id}">
             <div class="project-header">
                 <span class="project-company-small">Open Source</span>
                 <a href="${project.github}" target="_blank" class="github-link" title="${labels.viewOnGithub}">
@@ -253,7 +261,7 @@ function renderOpenSourceCard(project) {
                 </a>
             </div>
             <h3 class="project-title">${getText(project.title)}</h3>
-            ${project.period ? `<span class="project-period">${project.period}</span>` : ''}
+            ${project.period ? `<span class="project-period">${getText(project.period)}</span>` : ''}
             ${project.stars ? `<div class="project-stats"><span class="star-count">${project.stars} stars</span></div>` : ''}
             <p class="project-description">${getText(project.description)}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>
@@ -431,14 +439,80 @@ function renderTestimonials(data, container) {
 
 // Render career timeline
 function renderCareer(data, container) {
+    const lang = getLang();
+    const labels = lang === 'ko'
+        ? {
+            responsibilities: '담당 업무',
+            companyScale: '회사 규모',
+            teamScale: '팀 규모',
+            leaveReason: '퇴사 사유',
+            relatedProjects: '관련 프로젝트'
+          }
+        : {
+            responsibilities: 'Responsibilities',
+            companyScale: 'Company Size',
+            teamScale: 'Team Size',
+            leaveReason: 'Reason for Leaving',
+            relatedProjects: 'Related Projects'
+          };
+
+    // Helper to find project title by ID
+    const getProjectTitle = (projectId) => {
+        const projectData = window.PortfolioData?.projects;
+        if (!projectData) return projectId;
+
+        // Search in all project categories
+        const allProjects = [
+            ...(projectData.featured || []),
+            ...(projectData.medicalImaging || []),
+            ...(projectData.openSource || [])
+        ];
+
+        const project = allProjects.find(p => p.id === projectId);
+        return project ? getText(project.title) : projectId;
+    };
+
+    const renderRelatedProjects = (projectIds) => {
+        if (!projectIds || projectIds.length === 0) return '';
+        return `
+            <div class="timeline-related-projects">
+                <strong>${labels.relatedProjects}:</strong>
+                <div class="project-links">
+                    ${projectIds.map(id => `<a href="#project-${id}" class="project-link" data-project-id="${id}">${getProjectTitle(id)}</a>`).join('')}
+                </div>
+            </div>
+        `;
+    };
+
+    const renderTimelinePeriod = (period) => {
+        let periodStr = getText(period);
+        // Remove any existing duration from the period string
+        periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
+        const duration = calculateDuration(period);
+        if (duration) {
+            return `${periodStr} <span class="timeline-duration">(${duration})</span>`;
+        }
+        return periodStr;
+    };
+
     const renderAchievements = (achievements) => {
         if (!achievements) return '';
         const arr = getArray(achievements);
         if (arr.length === 0) return '';
         return `
             <ul class="timeline-achievements">
-                ${arr.map(a => `<li>${a}</li>`).join('')}
+                ${arr.map(a => `<li>${getText(a)}</li>`).join('')}
             </ul>
+        `;
+    };
+
+    const renderScale = (scale) => {
+        if (!scale) return '';
+        return `
+            <div class="timeline-scale">
+                ${scale.company ? `<span class="scale-item"><strong>${labels.companyScale}:</strong> ${getText(scale.company)}</span>` : ''}
+                ${scale.team ? `<span class="scale-item"><strong>${labels.teamScale}:</strong> ${getText(scale.team)}</span>` : ''}
+            </div>
         `;
     };
 
@@ -451,13 +525,18 @@ function renderCareer(data, container) {
                     <div class="timeline-content">
                         <div class="timeline-header">
                             <h3 class="timeline-title">${getText(item.company)}</h3>
-                            <span class="timeline-period">${item.period}</span>
+                            <span class="timeline-period">${renderTimelinePeriod(item.period)}</span>
                             ${item.badge ? `<span class="timeline-badge">${getText(item.badge)}</span>` : ''}
                         </div>
                         <p class="timeline-role">${getText(item.role)}</p>
+                        ${item.companyDescription ? `<p class="timeline-company-desc">${getText(item.companyDescription)}</p>` : ''}
                         ${item.description ? `<p class="timeline-description">${getText(item.description)}</p>` : ''}
+                        ${item.responsibilities ? `<p class="timeline-responsibilities"><strong>${labels.responsibilities}:</strong> ${getText(item.responsibilities)}</p>` : ''}
+                        ${renderScale(item.scale)}
                         ${renderAchievements(item.achievements)}
                         ${item.note ? `<div class="timeline-note"><p>${getText(item.note)}</p></div>` : ''}
+                        ${item.leaveReason ? `<p class="timeline-leave-reason"><strong>${labels.leaveReason}:</strong> ${getText(item.leaveReason)}</p>` : ''}
+                        ${renderRelatedProjects(item.relatedProjects)}
                         ${item.tags ? `<div class="timeline-tags">${renderTags(item.tags)}</div>` : ''}
                     </div>
                 </div>
@@ -465,6 +544,20 @@ function renderCareer(data, container) {
         </div>
     `;
     container.innerHTML = html;
+
+    // Add click handlers for project links
+    container.querySelectorAll('.project-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const projectId = link.dataset.projectId;
+            const projectCard = document.getElementById(`project-${projectId}`);
+            if (projectCard) {
+                projectCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                projectCard.classList.add('highlight-flash');
+                setTimeout(() => projectCard.classList.remove('highlight-flash'), 2000);
+            }
+        });
+    });
 }
 
 // Render expertise section
@@ -473,7 +566,9 @@ function renderExpertise(data, container) {
         'hospital': '🏥',
         'clipboard': '📋',
         'zap': '⚡',
-        'tool': '🛠️'
+        'tool': '🛠️',
+        'file-text': '📄',
+        'git-branch': '🔀'
     };
 
     let html = `
@@ -501,7 +596,7 @@ function renderExpertise(data, container) {
                             ${getText(cat.title)}
                         </h3>
                         <ul class="expertise-list">
-                            ${items.map(item => `<li>${item}</li>`).join('')}
+                            ${items.map(item => `<li>${getText(item)}</li>`).join('')}
                         </ul>
                     </div>
                 `;

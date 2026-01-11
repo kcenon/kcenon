@@ -291,7 +291,7 @@ window.PortfolioData = {
     },
     {
       "id": "sherpa",
-      "company": { "ko": "바텍 VATECH", "en": "VATECH" },
+      "company": { "ko": "(주)바텍이우홀딩스", "en": "VATECH E-WOO Holdings" },
       "title": "Sherpa Project",
       "period": "2008.01 - 2009.07",
       "roles": ["core-dev", "qa-doc"],
@@ -741,83 +741,156 @@ window.PortfolioData = {
   "timeline": [
     {
       "id": "pozalabs",
-      "company": { "ko": "포자랩스 Poza Labs", "en": "Poza Labs" },
-      "period": "2023 - 2025",
-      "role": { "ko": "Software Architect", "en": "Software Architect" },
-      "description": {
-        "ko": "오디오 렌더링 SaaS 플랫폼의 아키텍처 설계 총괄. C++, Rust, Go, Python 서비스 오케스트레이션. Zero-downtime 배포가 가능한 CI/CD 파이프라인 구축으로 <strong>Daily Release</strong> 체계 확립.",
-        "en": "Led architecture design for audio rendering SaaS platform. Orchestrated C++, Rust, Go, Python services. Established <strong>Daily Release</strong> system with zero-downtime CI/CD pipeline."
+      "company": { "ko": "포자랩스", "en": "Poza Labs" },
+      "period": "2023.01 - 2025.02",
+      "role": { "ko": "소프트웨어 아키텍트", "en": "Software Architect" },
+      "companyDescription": {
+        "ko": "AI를 통한 음악 작곡 자동화 시스템 개발 스타트업",
+        "en": "Startup developing AI-powered music composition automation systems"
+      },
+      "responsibilities": {
+        "ko": "오디오 렌더링 SaaS Architecture 설계, 폴리글랏으로 설계된 서비스 오케스트레이션 및 CI/CD 구성",
+        "en": "Audio rendering SaaS Architecture design, polyglot service orchestration and CI/CD configuration"
+      },
+      "scale": {
+        "company": { "ko": "75명", "en": "75 employees" },
+        "team": { "ko": "3명", "en": "3 members" }
+      },
+      "leaveReason": {
+        "ko": "시리즈 B 단계로 투자 유치 실패, 운영 자금 부족으로 개발 인원 대부분 정리해고",
+        "en": "Series B funding failed, most developers laid off due to lack of operating funds"
       },
       "note": {
         "ko": "<strong>경험 확장</strong>: 의료 도메인에서 쌓은 역량을 바탕으로 <strong>AI/ML 파이프라인</strong> 및 <strong>클라우드 네이티브 아키텍처</strong>(AWS, Docker, Kubernetes)를 실무에 적용. On-premise 중심의 의료 시스템 경험을 클라우드 환경으로 확장하여, 향후 <strong>클라우드 기반 의료 AI 시스템</strong> 설계에 기여할 수 있는 역량 확보.",
-        "en": "<strong>Experience Expansion</strong>: Applied <strong>AI/ML pipelines</strong> and <strong>cloud-native architecture</strong> (AWS, Docker, Kubernetes) based on medical domain expertise. Extended on-premise medical system experience to cloud environment, building capabilities for future <strong>cloud-based medical AI systems</strong>."
+        "en": "<strong>Experience Expansion</strong>: Applied <strong>AI/ML pipeline</strong> and <strong>cloud-native architecture</strong> (AWS, Docker, Kubernetes) in production, building on medical domain expertise. Extended on-premise medical system experience to cloud environments, gaining capabilities for future <strong>cloud-based medical AI system</strong> design."
       },
-      "tags": ["Rust", "Go", "Microservices", "AWS", "AI/ML Pipeline"],
+      "tags": ["Rust", "Go", "C++", "System Architecture", "AWS", "AI/ML Pipeline"],
+      "relatedProjects": ["prs-server", "ars-system"],
       "highlight": false
     },
     {
       "id": "purplechips",
-      "company": { "ko": "Purplechips (POSTECH)", "en": "Purplechips (POSTECH)" },
+      "company": { "ko": "퍼플칩스 (POSTECH)", "en": "Purplechips (POSTECH)" },
       "period": { "ko": "2022.03 - 2022.10 (8개월)", "en": "2022.03 - 2022.10 (8 months)" },
-      "role": { "ko": "Lead Programmer", "en": "Lead Programmer" },
-      "description": {
-        "ko": "<strong>POSTECH</strong>과 <strong>POSCO</strong>의 합작 벤처로 기획된 AI 기반 EDA 스타트업. 딥러닝 기반 반도체 설계 자동화 솔루션 개발 프로젝트에서 리드 프로그래머로 참여하여 AI 작업 서빙 시스템 아키텍처 설계.",
-        "en": "AI-based EDA startup joint venture between <strong>POSTECH</strong> and <strong>POSCO</strong>. Participated as lead programmer in deep learning-based semiconductor design automation solution, designing AI job serving system architecture."
+      "role": { "ko": "리드 프로그래머", "en": "Lead Programmer" },
+      "companyDescription": {
+        "ko": "POSTECH과 POSCO의 합작 벤처로 기획된 AI 기반 EDA 스타트업",
+        "en": "AI-based EDA startup planned as a joint venture between POSTECH and POSCO"
+      },
+      "responsibilities": {
+        "ko": "AI 작업에 대한 서빙 시스템 Architecture 설계/구현",
+        "en": "AI job serving system architecture design and implementation"
+      },
+      "scale": {
+        "company": { "ko": "5명", "en": "5 employees" },
+        "team": { "ko": "2명", "en": "2 members" }
+      },
+      "leaveReason": {
+        "ko": "사업 아이템을 제공한 POSTECH 교수(CTO)가 PoC 실패 이후 사업 철수 선언",
+        "en": "POSTECH professor (CTO) who provided the business idea declared business withdrawal after PoC failure"
       },
       "note": {
         "ko": "<strong>경험 확장</strong>: 의료 도메인에서 <strong>반도체/AI 도메인</strong>으로 전환하여 딥러닝 기반 알고리즘과 대규모 데이터 처리 파이프라인 구축 경험 획득. 이 경험을 통해 AI/ML 기술을 의료 영상 분석에 적용할 수 있는 역량 확보.",
-        "en": "<strong>Experience Expansion</strong>: Transitioned from medical to <strong>semiconductor/AI domain</strong>, gaining experience in deep learning algorithms and large-scale data processing pipelines. Built capabilities to apply AI/ML technology to medical image analysis."
+        "en": "<strong>Experience Expansion</strong>: Transitioned from medical to <strong>semiconductor/AI domain</strong>, gaining experience in deep learning algorithms and large-scale data processing pipelines. Acquired capabilities to apply AI/ML technologies to medical image analysis."
       },
-      "tags": ["Python", "Deep Learning", "EDA", "AI/ML", "System Architecture"],
+      "tags": ["Python", "C++", "Deep Learning", "EDA", "AI/ML Pipeline", "System Architecture", "ISO 26262"],
+      "relatedProjects": ["eda-ai-server"],
       "highlight": false
     },
     {
       "id": "ray",
-      "company": { "ko": "주식회사 레이", "en": "Ray Co., Ltd." },
-      "period": "2010 - 2022",
-      "role": { "ko": "Lead Software Engineer → Principal Engineer", "en": "Lead Software Engineer → Principal Engineer" },
+      "company": { "ko": "(주)레이", "en": "Ray Co., Ltd." },
+      "period": "2010.02 - 2022.03",
+      "role": { "ko": "리드 소프트웨어 엔지니어 → 수석 엔지니어", "en": "Lead Software Engineer → Principal Engineer" },
       "badge": "IPO",
-      "description": {
-        "ko": "<strong>삼성전자 의료사업부 자회사</strong>에서 분사한 치과 의료영상 시스템 전문 기업에서 <strong>12년간</strong> 핵심 개발자로 근무. PACS 서버, DICOM 뷰어, 2D 교정 시뮬레이션, 모달리티 장비 제어 시스템을 직접 설계하고 개발.",
-        "en": "Worked <strong>12 years</strong> as core developer at dental medical imaging system company spun off from <strong>Samsung Electronics Medical Division</strong>. Designed and developed PACS server, DICOM viewer, 2D orthodontic simulation, and modality equipment control systems."
+      "companyDescription": {
+        "ko": "삼성전자 의료사업부 자회사에서 분사한 치과 의료영상 시스템 전문 기업",
+        "en": "Dental medical imaging company spun off from Samsung Electronics Medical Division"
       },
-      "achievements": {
-        "ko": [
-          "<strong>C++</strong>이 백그라운드에서 무거운 영상 처리를 담당하고, <strong>.NET</strong>이 시각화를 담당하는 마이크로서비스 구조로 전환",
-          "실시간 압축/직렬화로 100Mbps 네트워크에서 이론값(12.5MB/s)을 초과하는 <strong>15 MB/s</strong> 실효 전송량 달성",
-          "레이턴시 <strong>50→25ms</strong> (50% 감소)",
-          "<strong>ISO 13485, IEC 62304</strong> 규격 문서 직접 작성",
-          "<strong>CE, FDA, KFDA, CCC</strong> 전 글로벌 인증 프로세스 참여 및 획득"
-        ],
-        "en": [
-          "Migrated to microservices architecture with <strong>C++</strong> handling heavy image processing and <strong>.NET</strong> handling visualization",
-          "Achieved <strong>15 MB/s</strong> effective throughput exceeding theoretical 12.5MB/s on 100Mbps network through real-time compression/serialization",
-          "Reduced latency <strong>50→25ms</strong> (50% reduction)",
-          "Authored <strong>ISO 13485, IEC 62304</strong> documentation",
-          "Participated in and obtained <strong>CE, FDA, KFDA, CCC</strong> global certifications"
-        ]
+      "responsibilities": {
+        "ko": "PACS, DICOM 뷰어, 영상 획득 장비 제어, 영상 관리/전송 서버 Architecture 설계/구현",
+        "en": "PACS, DICOM viewer, image acquisition equipment control, image management/transfer server architecture design and implementation"
       },
-      "tags": ["C++", "C#", "DICOM", "ISO 13485", "IEC 62304"],
+      "scale": {
+        "company": { "ko": "약 300명", "en": "~300 employees" },
+        "team": { "ko": "11명", "en": "11 members" }
+      },
+      "leaveReason": {
+        "ko": "새로운 분야에 대한 도전",
+        "en": "Seeking new challenges in different domains"
+      },
+      "tags": ["C++", "C#", "DICOM", "PACS", "System Architecture", "ISO 13485", "IEC 62304", "ISO 14971"],
+      "relatedProjects": ["smartdent-v3", "samsung-ct", "alpha-project", "dicom-visualization", "3d-visualization", "automation-alignment", "intraoral-sensor-sdk", "3d-printer", "high-speed-download"],
       "highlight": true
     },
     {
-      "id": "vatech",
-      "company": { "ko": "(주)바텍 VATECH", "en": "VATECH" },
-      "period": "2004 - 2009",
-      "role": { "ko": "Software Engineer", "en": "Software Engineer" },
-      "badge": "IPO",
-      "description": {
-        "ko": "치과용 X-ray 및 CBCT 의료영상 장비 전문 기업에서 소프트웨어 개발자로 경력 시작. <strong>DICOM 뷰어, 모달리티 장비 제어 시스템</strong>을 직접 설계하고 개발하며 <strong>2D 교정 시뮬레이션</strong> 개발에 참여. <strong>CE, FDA, KFDA</strong> 글로벌 인증 획득에 기여. 첫 번째 <strong>IPO 경험</strong>으로 벤처기업의 성장 과정을 직접 체험.",
-        "en": "Started career as software developer at dental X-ray and CBCT medical imaging equipment company. Designed and developed <strong>DICOM viewer, modality equipment control systems</strong> and participated in <strong>2D orthodontic simulation</strong> development. Contributed to <strong>CE, FDA, KFDA</strong> global certifications. First <strong>IPO experience</strong> witnessing venture company growth."
+      "id": "tilon",
+      "company": { "ko": "(주)틸론", "en": "Tilon Co., Ltd." },
+      "period": { "ko": "2009.07 - 2009.12 (6개월)", "en": "2009.07 - 2009.12 (6 months)" },
+      "role": { "ko": "시니어 프로그래머", "en": "Senior Programmer" },
+      "companyDescription": {
+        "ko": "시스템 가상화 및 망분리 시스템 개발 벤처 기업",
+        "en": "Venture company developing system virtualization and network separation systems"
+      },
+      "scale": {
+        "company": { "ko": "약 30명", "en": "~30 employees" },
+        "team": { "ko": "5명", "en": "5 members" }
+      },
+      "leaveReason": {
+        "ko": "경영진 간 비전 차이로 안정적인 개발 환경 확보가 어려워 새로운 기회 모색",
+        "en": "Sought new opportunities due to leadership alignment challenges affecting development environment stability"
+      },
+      "tags": ["C++", "Windows Driver", "Virtualization", "System Programming"],
+      "highlight": false
+    },
+    {
+      "id": "vatech-ewoo",
+      "company": { "ko": "(주)바텍이우홀딩스", "en": "VATECH E-WOO Holdings" },
+      "period": "2008.10 - 2009.07",
+      "role": { "ko": "시니어 소프트웨어 엔지니어", "en": "Senior Software Engineer" },
+      "companyDescription": {
+        "ko": "바텍에서 이우로 자회사 보직 이동",
+        "en": "Transferred to E-WOO subsidiary from VATECH"
+      },
+      "scale": {
+        "company": { "ko": "약 600명", "en": "~600 employees" },
+        "team": { "ko": "10명", "en": "10 members" }
+      },
+      "leaveReason": {
+        "ko": "새로운 분야에 대한 도전",
+        "en": "Seeking new challenges in different domains"
       },
       "tags": ["C++", "DICOM", "X-ray", "CBCT", "CE/FDA/KFDA"],
+      "relatedProjects": ["sherpa"],
+      "highlight": false
+    },
+    {
+      "id": "vatech",
+      "company": { "ko": "(주)바텍", "en": "VATECH Co., Ltd." },
+      "period": "2004.07 - 2008.10",
+      "role": { "ko": "소프트웨어 엔지니어", "en": "Software Engineer" },
+      "badge": "IPO",
+      "companyDescription": {
+        "ko": "치과용 X-ray 및 CBCT 의료영상 장비 전문 기업",
+        "en": "Company specializing in dental X-ray and CBCT medical imaging equipment"
+      },
+      "scale": {
+        "company": { "ko": "약 300명", "en": "~300 employees" },
+        "team": { "ko": "5명", "en": "5 members" }
+      },
+      "leaveReason": {
+        "ko": "자회사 보직 이동으로 인한 퇴사처리",
+        "en": "Resignation processed due to subsidiary transfer"
+      },
+      "tags": ["C++", "DICOM", "X-ray", "CBCT", "CE/FDA/KFDA"],
+      "relatedProjects": ["implagraphy", "ezceph", "orthovision", "easydent"],
       "highlight": false
     },
     {
       "id": "inje",
-      "company": { "ko": "인제대학교 Inje University", "en": "Inje University" },
-      "period": "1997 - 2005",
-      "role": { "ko": "전자공학 학사", "en": "Bachelor of Science in Electronic Engineering" },
+      "company": { "ko": "인제대학교", "en": "Inje University" },
+      "period": "1997.03 - 2005.08",
+      "role": { "ko": "전자공학과 학사", "en": "Bachelor of Science in Electronic Engineering" },
       "highlight": false
     }
   ]

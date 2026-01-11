@@ -1803,6 +1803,11 @@ body {
     font-size: 0.9rem;
 }
 
+.timeline-duration {
+    color: var(--accent);
+    font-weight: 500;
+}
+
 .timeline-badge {
     background: var(--success);
     color: white;
@@ -1876,6 +1881,116 @@ body {
 
 .timeline-note strong {
     color: var(--accent);
+}
+
+.timeline-company-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 4px 0 12px 0;
+}
+
+.timeline-responsibilities {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.timeline-responsibilities strong {
+    color: var(--text-primary);
+}
+
+.timeline-scale {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.timeline-scale .scale-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.timeline-scale strong {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.timeline-leave-reason {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 12px 0;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+}
+
+.timeline-leave-reason strong {
+    color: var(--text-secondary);
+}
+
+.timeline-related-projects {
+    margin: 16px 0;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+}
+
+.timeline-related-projects strong {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.project-link {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.project-link:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Project card highlight animation when navigating from career */
+.project-card.highlight-flash {
+    animation: highlightFlash 2s ease-out;
+}
+
+@keyframes highlightFlash {
+    0% {
+        box-shadow: 0 0 0 4px var(--accent);
+        transform: scale(1.02);
+    }
+    50% {
+        box-shadow: 0 0 0 4px var(--accent);
+    }
+    100% {
+        box-shadow: none;
+        transform: scale(1);
+    }
 }
 
 /* ===================================
