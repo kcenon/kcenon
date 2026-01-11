@@ -3,6 +3,33 @@
  * Renders portfolio sections from JSON data
  */
 
+// Get current language
+function getLang() {
+    return window.currentLanguage || window.getLanguage?.() || 'ko';
+}
+
+// Get translated text from translations object
+function t(key) {
+    const lang = getLang();
+    return window.translations?.[lang]?.[key] || key;
+}
+
+// Get text from multilingual data object { ko: "...", en: "..." }
+function getText(obj) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    const lang = getLang();
+    return obj[lang] || obj.ko || obj.en || '';
+}
+
+// Get array from multilingual data object { ko: [...], en: [...] }
+function getArray(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj;
+    const lang = getLang();
+    return obj[lang] || obj.ko || obj.en || [];
+}
+
 // Icon SVG definitions
 const Icons = {
     hospital: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>`,
@@ -113,9 +140,11 @@ function renderMetrics(metrics) {
 // Render certifications
 function renderCertifications(certs) {
     if (!certs || certs.length === 0) return '';
+    const lang = getLang();
+    const label = lang === 'ko' ? '인증' : 'Certifications';
     return `
         <div class="expanded-section">
-            <h4>인증</h4>
+            <h4>${label}</h4>
             <div class="cert-badges">
                 ${certs.map(cert => `<span class="cert-badge">${cert}</span>`).join('')}
             </div>
@@ -139,30 +168,35 @@ function renderExpandedList(title, items) {
 // Render a featured project card
 function renderFeaturedProject(project) {
     const iconSvg = ProjectIconMap[project.icon] || Icons.hospital;
+    const lang = getLang();
+    const labels = lang === 'ko'
+        ? { roles: '담당 역할', challenges: '기술적 도전', solutions: '해결 방법', achievements: '성과' }
+        : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions', achievements: 'Achievements' };
+
     return `
         <article class="project-card featured expandable">
             <div class="project-header">
                 <div class="project-icon">${iconSvg}</div>
                 <div class="project-meta">
                     <span class="project-badge">Featured</span>
-                    <span class="project-company">${project.company}</span>
+                    <span class="project-company">${getText(project.company)}</span>
                 </div>
             </div>
-            <h3 class="project-title">${project.title}</h3>
+            <h3 class="project-title">${getText(project.title)}</h3>
             ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
-            <p class="project-description">${project.description}</p>
+            <p class="project-description">${getText(project.description)}</p>
             ${renderMetrics(project.metrics)}
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
-                <span>상세 보기</span>
+                <span>${t('expand')}</span>
                 ${Icons.chevronDown}
             </button>
             <div class="project-expanded">
-                ${renderExpandedList('담당 역할', project.expanded?.roles)}
-                ${renderExpandedList('기술적 도전', project.expanded?.challenges)}
-                ${renderExpandedList('해결 방법', project.expanded?.solutions)}
-                ${renderExpandedList('성과', project.expanded?.achievements)}
+                ${renderExpandedList(labels.roles, getArray(project.expanded?.roles))}
+                ${renderExpandedList(labels.challenges, getArray(project.expanded?.challenges))}
+                ${renderExpandedList(labels.solutions, getArray(project.expanded?.solutions))}
+                ${renderExpandedList(labels.achievements, getArray(project.expanded?.achievements))}
                 ${renderCertifications(project.expanded?.certifications)}
             </div>
         </article>
@@ -171,27 +205,32 @@ function renderFeaturedProject(project) {
 
 // Render a regular project card
 function renderProjectCard(project) {
+    const lang = getLang();
+    const labels = lang === 'ko'
+        ? { roles: '담당 역할', challenges: '기술적 도전', solutions: '해결 방법' }
+        : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions' };
+
     return `
         <article class="project-card expandable">
             <div class="project-header">
-                <span class="project-company-small">${project.company}</span>
+                <span class="project-company-small">${getText(project.company)}</span>
             </div>
-            <h3 class="project-title">${project.title}</h3>
+            <h3 class="project-title">${getText(project.title)}</h3>
             ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
-            <p class="project-description">${project.description}</p>
+            <p class="project-description">${getText(project.description)}</p>
             ${renderMetrics(project.metrics)}
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
-                <span>상세 보기</span>
+                <span>${t('expand')}</span>
                 <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
             </button>
             <div class="project-expanded">
-                ${renderExpandedList('담당 역할', project.expanded?.roles)}
-                ${renderExpandedList('기술적 도전', project.expanded?.challenges)}
-                ${renderExpandedList('해결 방법', project.expanded?.solutions)}
+                ${renderExpandedList(labels.roles, getArray(project.expanded?.roles))}
+                ${renderExpandedList(labels.challenges, getArray(project.expanded?.challenges))}
+                ${renderExpandedList(labels.solutions, getArray(project.expanded?.solutions))}
                 ${renderCertifications(project.expanded?.certifications)}
             </div>
         </article>
@@ -200,122 +239,188 @@ function renderProjectCard(project) {
 
 // Render an open source project card
 function renderOpenSourceCard(project) {
+    const lang = getLang();
+    const labels = lang === 'ko'
+        ? { features: '주요 기능', performance: '성능 특징', viewOnGithub: 'GitHub에서 보기' }
+        : { features: 'Key Features', performance: 'Performance', viewOnGithub: 'View on GitHub' };
+
     return `
         <article class="project-card opensource expandable">
             <div class="project-header">
                 <span class="project-company-small">Open Source</span>
-                <a href="${project.github}" target="_blank" class="github-link" title="GitHub에서 보기">
+                <a href="${project.github}" target="_blank" class="github-link" title="${labels.viewOnGithub}">
                     ${Icons.github}
                 </a>
             </div>
-            <h3 class="project-title">${project.title}</h3>
+            <h3 class="project-title">${getText(project.title)}</h3>
             ${project.period ? `<span class="project-period">${project.period}</span>` : ''}
             ${project.stars ? `<div class="project-stats"><span class="star-count">${project.stars} stars</span></div>` : ''}
-            <p class="project-description">${project.description}</p>
+            <p class="project-description">${getText(project.description)}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
-                <span>상세 보기</span>
+                <span>${t('expand')}</span>
                 <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
             </button>
             <div class="project-expanded">
-                ${renderExpandedList('주요 기능', project.expanded?.features)}
-                ${renderExpandedList('성능 특징', project.expanded?.performance)}
+                ${renderExpandedList(labels.features, getArray(project.expanded?.features))}
+                ${renderExpandedList(labels.performance, getArray(project.expanded?.performance))}
             </div>
         </article>
     `;
 }
 
-// Render all projects
+// Render all projects with filter tabs
 function renderProjects(data, container) {
+    const lang = getLang();
     let html = `
-        <h2 class="section-title">Projects</h2>
-        <p class="section-description">20년간 참여한 주요 프로젝트들</p>
+        <h2 class="section-title">${t('projects.title')}</h2>
+        <p class="section-description">${t('projects.desc')}</p>
+
+        <!-- Filter Tabs -->
+        <div class="project-filters">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="featured">Featured</button>
+            <button class="filter-tab" data-filter="medical">Medical Imaging</button>
+            <button class="filter-tab" data-filter="orthodontic">Orthodontic</button>
+            <button class="filter-tab" data-filter="equipment">Equipment</button>
+            <button class="filter-tab" data-filter="enterprise">Enterprise</button>
+            <button class="filter-tab" data-filter="opensource">Open Source</button>
+        </div>
 
         <!-- Featured Projects -->
-        <div class="projects-featured">
-            ${data.featured.map(renderFeaturedProject).join('')}
+        <div class="project-category" data-category="featured">
+            <div class="projects-featured">
+                ${data.featured.map(renderFeaturedProject).join('')}
+            </div>
         </div>
 
         <!-- Medical Imaging Platform -->
-        <h3 class="projects-subtitle">Medical Imaging Platform</h3>
-        <div class="projects-grid">
-            ${data.medicalImaging.map(renderProjectCard).join('')}
+        <div class="project-category" data-category="medical">
+            <h3 class="projects-subtitle">Medical Imaging Platform</h3>
+            <div class="projects-grid">
+                ${data.medicalImaging.map(renderProjectCard).join('')}
+            </div>
         </div>
 
         <!-- Orthodontic Simulation -->
-        <h3 class="projects-subtitle">Orthodontic Simulation (교정 시뮬레이션)</h3>
-        <div class="projects-grid">
-            ${data.orthodontic.map(renderProjectCard).join('')}
+        <div class="project-category" data-category="orthodontic">
+            <h3 class="projects-subtitle">Orthodontic Simulation (교정 시뮬레이션)</h3>
+            <div class="projects-grid">
+                ${data.orthodontic.map(renderProjectCard).join('')}
+            </div>
         </div>
 
         <!-- Equipment Control & 3D -->
-        <h3 class="projects-subtitle">Equipment Control & 3D Printing</h3>
-        <div class="projects-grid">
-            ${data.equipmentControl.map(renderProjectCard).join('')}
+        <div class="project-category" data-category="equipment">
+            <h3 class="projects-subtitle">Equipment Control & 3D Printing</h3>
+            <div class="projects-grid">
+                ${data.equipmentControl.map(renderProjectCard).join('')}
+            </div>
         </div>
 
         <!-- Enterprise Systems -->
-        <h3 class="projects-subtitle">Enterprise & AI Systems</h3>
-        <div class="projects-grid">
-            ${data.enterprise.map(renderProjectCard).join('')}
+        <div class="project-category" data-category="enterprise">
+            <h3 class="projects-subtitle">Enterprise & AI Systems</h3>
+            <div class="projects-grid">
+                ${data.enterprise.map(renderProjectCard).join('')}
+            </div>
         </div>
 
         <!-- Open Source Projects -->
-        <h3 class="projects-subtitle">Open Source Projects</h3>
-        <p class="opensource-description">
-            업무 경험을 바탕으로 개발한 오픈소스 프로젝트들. 모든 프로젝트는 Modern C++20 기반.
-        </p>
-        <div class="projects-grid">
-            ${data.openSource.map(renderOpenSourceCard).join('')}
-        </div>
-
-        <div class="opensource-cta">
-            <a href="https://github.com/kcenon" target="_blank" class="btn btn-secondary">
-                ${Icons.github}
-                전체 37개 프로젝트 보기
-            </a>
+        <div class="project-category" data-category="opensource">
+            <h3 class="projects-subtitle">Open Source Projects</h3>
+            <p class="opensource-description">
+                ${lang === 'ko'
+                    ? '업무 경험을 바탕으로 개발한 오픈소스 프로젝트들. 모든 프로젝트는 Modern C++20 기반.'
+                    : 'Open source projects developed based on professional experience. All projects are based on Modern C++20.'}
+            </p>
+            <div class="projects-grid">
+                ${data.openSource.map(renderOpenSourceCard).join('')}
+            </div>
+            <div class="opensource-cta">
+                <a href="https://github.com/kcenon" target="_blank" class="btn btn-secondary">
+                    ${Icons.github}
+                    ${lang === 'ko' ? '전체 37개 프로젝트 보기' : 'View all 37 projects'}
+                </a>
+            </div>
         </div>
     `;
     container.innerHTML = html;
+
+    // Initialize filter tabs
+    initializeProjectFilters(container);
+}
+
+// Initialize project filter tabs
+function initializeProjectFilters(container) {
+    const filterTabs = container.querySelectorAll('.filter-tab');
+    const categories = container.querySelectorAll('.project-category');
+
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const filter = tab.dataset.filter;
+
+            // Update active tab
+            filterTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Show/hide categories
+            if (filter === 'all') {
+                categories.forEach(cat => cat.classList.remove('hidden'));
+            } else {
+                categories.forEach(cat => {
+                    if (cat.dataset.category === filter) {
+                        cat.classList.remove('hidden');
+                    } else {
+                        cat.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    });
 }
 
 // Render testimonials
 function renderTestimonials(data, container) {
-    const renderLabels = (labels) => labels.map(l =>
-        `<span class="testimonial-label ${l.type}">${l.text}</span>`
-    ).join('');
+    const renderLabels = (labels) => {
+        if (!labels) return '';
+        const arr = getArray(labels);
+        return arr.map(l =>
+            `<span class="testimonial-label ${l.type}">${getText(l.text)}</span>`
+        ).join('');
+    };
 
     let html = `
-        <h2 class="section-title">Testimonials</h2>
-        <p class="section-description">함께 일한 동료들의 추천서</p>
+        <h2 class="section-title">${t('testimonials.title')}</h2>
+        <p class="section-description">${t('testimonials.desc')}</p>
 
         <!-- Leadership Highlight -->
         <div class="testimonial-highlight">
             <blockquote class="testimonial-featured">
-                <p class="testimonial-quote">"${data.featured.quote}"</p>
+                <p class="testimonial-quote">"${getText(data.featured.quote)}"</p>
                 <footer class="testimonial-author">
-                    <span class="author-name">${data.featured.author}</span>
-                    <span class="author-role">${data.featured.role}</span>
-                    <span class="author-relation">${data.featured.relation}</span>
+                    <span class="author-name">${getText(data.featured.author)}</span>
+                    <span class="author-role">${getText(data.featured.role)}</span>
+                    <span class="author-relation">${getText(data.featured.relation)}</span>
                 </footer>
             </blockquote>
         </div>
 
         <div class="testimonials-grid">
-            ${data.testimonials.map(t => `
+            ${data.testimonials.map(item => `
                 <div class="testimonial-card">
                     <div class="testimonial-meta">
-                        <span class="testimonial-date">${t.date}</span>
-                        <span class="testimonial-context">${t.context}</span>
+                        <span class="testimonial-date">${item.date}</span>
+                        <span class="testimonial-context">${getText(item.context)}</span>
                     </div>
-                    <p class="testimonial-text">"${t.text}"</p>
-                    <div class="testimonial-labels">${renderLabels(t.labels)}</div>
+                    <p class="testimonial-text">"${getText(item.text)}"</p>
+                    <div class="testimonial-labels">${renderLabels(item.labels)}</div>
                     <footer class="testimonial-author">
-                        <span class="author-name">${t.author}</span>
-                        <span class="author-role">${t.role}</span>
-                        <span class="author-relation">${t.relation}</span>
+                        <span class="author-name">${getText(item.author)}</span>
+                        <span class="author-role">${getText(item.role)}</span>
+                        <span class="author-relation">${getText(item.relation)}</span>
                     </footer>
                 </div>
             `).join('')}
@@ -328,9 +433,11 @@ function renderTestimonials(data, container) {
 function renderCareer(data, container) {
     const renderAchievements = (achievements) => {
         if (!achievements) return '';
+        const arr = getArray(achievements);
+        if (arr.length === 0) return '';
         return `
             <ul class="timeline-achievements">
-                ${achievements.map(a => `<li>${a}</li>`).join('')}
+                ${arr.map(a => `<li>${a}</li>`).join('')}
             </ul>
         `;
     };
@@ -343,14 +450,14 @@ function renderCareer(data, container) {
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3 class="timeline-title">${item.company}</h3>
+                            <h3 class="timeline-title">${getText(item.company)}</h3>
                             <span class="timeline-period">${item.period}</span>
-                            ${item.badge ? `<span class="timeline-badge">${item.badge}</span>` : ''}
+                            ${item.badge ? `<span class="timeline-badge">${getText(item.badge)}</span>` : ''}
                         </div>
-                        <p class="timeline-role">${item.role}</p>
-                        ${item.description ? `<p class="timeline-description">${item.description}</p>` : ''}
+                        <p class="timeline-role">${getText(item.role)}</p>
+                        ${item.description ? `<p class="timeline-description">${getText(item.description)}</p>` : ''}
                         ${renderAchievements(item.achievements)}
-                        ${item.note ? `<div class="timeline-note"><p>${item.note}</p></div>` : ''}
+                        ${item.note ? `<div class="timeline-note"><p>${getText(item.note)}</p></div>` : ''}
                         ${item.tags ? `<div class="timeline-tags">${renderTags(item.tags)}</div>` : ''}
                     </div>
                 </div>
@@ -378,7 +485,7 @@ function renderExpertise(data, container) {
                         <div class="expertise-category">
                             <h3 class="expertise-title">
                                 <span class="expertise-icon">${iconMap[cat.icon] || '📌'}</span>
-                                ${cat.title}
+                                ${getText(cat.title)}
                             </h3>
                             <div class="tech-tags">
                                 ${cat.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
@@ -386,14 +493,15 @@ function renderExpertise(data, container) {
                         </div>
                     `;
                 }
+                const items = getArray(cat.items);
                 return `
                     <div class="expertise-category">
                         <h3 class="expertise-title">
                             <span class="expertise-icon">${iconMap[cat.icon] || '📌'}</span>
-                            ${cat.title}
+                            ${getText(cat.title)}
                         </h3>
                         <ul class="expertise-list">
-                            ${cat.items.map(item => `<li>${item}</li>`).join('')}
+                            ${items.map(item => `<li>${item}</li>`).join('')}
                         </ul>
                     </div>
                 `;
@@ -417,8 +525,8 @@ function renderLifecycleDetails(data, container) {
     container.innerHTML = data.lifecycleDetails.map(item => `
         <div class="lifecycle-card">
             <div class="lifecycle-icon">${iconMap[item.icon] || '📌'}</div>
-            <h4>${item.title}</h4>
-            <p>${item.description}</p>
+            <h4>${getText(item.title)}</h4>
+            <p>${getText(item.description)}</p>
         </div>
     `).join('');
 }

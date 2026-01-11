@@ -19,6 +19,9 @@ class AdminApp {
     this.previewActive = false;
     this.previewDebounceTimer = null;
 
+    // Current edit language
+    this.currentLang = localStorage.getItem('adminEditLang') || 'ko';
+
     // Export custom overrides state
     this.customOverrides = {
       colors: {},
@@ -32,6 +35,7 @@ class AdminApp {
   async init() {
     this.bindEvents();
     this.initTheme();
+    this.initLang();
     await this.loadData();
     this.render();
     this.updateStatusBar();
@@ -67,6 +71,59 @@ class AdminApp {
     btn.innerHTML = theme === 'dark'
       ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
       : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+
+  /**
+   * Initialize language from localStorage
+   */
+  initLang() {
+    this.updateLangButton();
+    // Set global language for FormFields
+    window.adminCurrentLang = this.currentLang;
+  }
+
+  /**
+   * Toggle edit language (ko/en)
+   */
+  toggleLang() {
+    // Find currently selected item before language change
+    let currentItem = null;
+    if (this.selectedItem) {
+      currentItem = this.findItem(this.selectedItem);
+    }
+
+    // Change language
+    this.currentLang = this.currentLang === 'ko' ? 'en' : 'ko';
+    localStorage.setItem('adminEditLang', this.currentLang);
+    window.adminCurrentLang = this.currentLang;
+    this.updateLangButton();
+
+    // Update selectedItem to new language's ID
+    if (currentItem) {
+      const rawId = currentItem.id || currentItem.title || currentItem.author;
+      this.selectedItem = FormFields.getText(rawId);
+    }
+
+    // Re-render to apply language change
+    this.render();
+    if (this.selectedItem || this.isNewItem) {
+      this.renderEditor();
+    }
+  }
+
+  /**
+   * Update language toggle button text
+   */
+  updateLangButton() {
+    const btn = document.getElementById('lang-toggle');
+    if (!btn) return;
+    const langText = btn.querySelector('.lang-text');
+    if (langText) {
+      // Show the OTHER language as the toggle option
+      langText.textContent = this.currentLang === 'ko' ? 'EN' : 'KO';
+    }
+    // Add visual indicator for current language
+    btn.title = `Current: ${this.currentLang.toUpperCase()} - Click to switch`;
   }
 
   /**
@@ -112,6 +169,9 @@ class AdminApp {
   bindEvents() {
     // Theme toggle
     document.getElementById('theme-toggle')?.addEventListener('click', () => this.toggleTheme());
+
+    // Language toggle
+    document.getElementById('lang-toggle')?.addEventListener('click', () => this.toggleLang());
 
     // Export dropdown
     this.bindExportEvents();
@@ -553,8 +613,10 @@ class AdminApp {
   findItem(id) {
     const items = this.getCurrentItems();
     // Use loose equality to handle number vs string comparison
+    // Handle multilingual objects for id, title, author
     return items.find(item => {
-      const itemId = item.id || item.title || item.author;
+      const rawItemId = item.id || item.title || item.author;
+      const itemId = FormFields.getText(rawItemId);
       return itemId == id || String(itemId) === String(id);
     });
   }
@@ -891,8 +953,10 @@ class AdminApp {
       console.log('saveItem: items count after:', items.length);
     } else {
       // Update existing item - use loose equality for type-agnostic comparison
+      // Handle multilingual objects for id, title, author
       const index = items.findIndex(item => {
-        const itemId = item.id || item.title || item.author;
+        const rawItemId = item.id || item.title || item.author;
+        const itemId = FormFields.getText(rawItemId);
         const matches = itemId == this.selectedItem || String(itemId) === String(this.selectedItem);
         console.log(`  comparing itemId=${itemId} with selectedItem=${this.selectedItem}: ${matches}`);
         return matches;
@@ -907,7 +971,7 @@ class AdminApp {
       } else {
         console.error('saveItem: Could not find item to update');
         console.error('  selectedItem:', this.selectedItem);
-        console.error('  available IDs:', items.map(i => i.id || i.title || i.author));
+        console.error('  available IDs:', items.map(i => FormFields.getText(i.id || i.title || i.author)));
         alert('ERROR: Could not find item to update. selectedItem=' + this.selectedItem);
         return;
       }
@@ -992,8 +1056,10 @@ class AdminApp {
     }
 
     // Use loose equality for type-agnostic comparison
+    // Handle multilingual objects for id, title, author
     const index = items.findIndex(item => {
-      const itemId = item.id || item.title || item.author;
+      const rawItemId = item.id || item.title || item.author;
+      const itemId = FormFields.getText(rawItemId);
       return itemId == id || String(itemId) === String(id);
     });
 
@@ -1299,6 +1365,22 @@ class AdminApp {
   }
 
   /**
+   * Get saved export language preference from localStorage
+   * @returns {string} Language code ('ko' or 'en')
+   */
+  getSavedExportLanguage() {
+    return localStorage.getItem('portfolioExportLanguage') || 'ko';
+  }
+
+  /**
+   * Save export language preference to localStorage
+   * @param {string} lang - Language code to save
+   */
+  saveExportLanguage(lang) {
+    localStorage.setItem('portfolioExportLanguage', lang);
+  }
+
+  /**
    * Build theme preview card HTML
    * @param {Object} theme - Theme object with colors
    * @returns {string} HTML string for preview card
@@ -1390,6 +1472,14 @@ class AdminApp {
                 <select id="export-format" class="form-select">
                   <option value="pdf">PDF (.pdf)</option>
                   <option value="docx">Word (.docx)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="export-language">Language</label>
+                <select id="export-language" class="form-select">
+                  <option value="ko" ${this.getSavedExportLanguage() === 'ko' ? 'selected' : ''}>한국어 (Korean)</option>
+                  <option value="en" ${this.getSavedExportLanguage() === 'en' ? 'selected' : ''}>English</option>
                 </select>
               </div>
 
@@ -1535,6 +1625,7 @@ class AdminApp {
     modalEl.querySelector('.modal-cancel').addEventListener('click', closeModal);
     modalEl.querySelector('.modal-export').addEventListener('click', () => {
       const format = modalEl.querySelector('#export-format').value;
+      const language = modalEl.querySelector('#export-language').value;
       const theme = modalEl.querySelector('#export-theme').value;
       const sections = this.sectionOrderManager
         ? this.sectionOrderManager.getOrderedSections()
@@ -1542,23 +1633,27 @@ class AdminApp {
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
       const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
 
-      // Save theme preference
+      // Save preferences
       this.saveExportTheme(theme);
-
-      // Save page break preference
+      this.saveExportLanguage(language);
       this.savePageBreakOption(pageBreakBetweenSections);
-
-      // Save custom preferences
       this.saveExportPreferences();
 
       closeModal();
 
+      // Get localized filename and author based on language
+      const fileInfo = language === 'ko'
+        ? { filename: `${filename}_ko.${format}`, author: '신동철' }
+        : { filename: `${filename}_en.${format}`, author: 'Dongcheol Shin' };
+
       const options = {
         sections,
-        filename: `${filename}.${format}`,
+        filename: fileInfo.filename,
+        author: fileInfo.author,
         theme,
         themeOverrides: this.buildExportOverrides(),
-        pageBreakBetweenSections
+        pageBreakBetweenSections,
+        language
       };
 
       if (format === 'pdf') {

@@ -17,9 +17,13 @@ const AdminComponents = {
     }
 
     const itemsHtml = items.map(item => {
-      const id = item.id || item.title || item.author || item.name || `item-${Math.random().toString(36).substr(2, 9)}`;
-      const title = item.title || item.company || item.name || item.author || 'Untitled';
-      const subtitle = item.company || item.role || item.period || '';
+      // Handle multilingual objects for id, title, subtitle
+      const rawId = item.id || item.title || item.author || item.name || `item-${Math.random().toString(36).substr(2, 9)}`;
+      const id = FormFields.getText(rawId);
+      const rawTitle = item.title || item.company || item.name || item.author || 'Untitled';
+      const title = FormFields.getText(rawTitle);
+      const rawSubtitle = item.company || item.role || item.period || '';
+      const subtitle = FormFields.getText(rawSubtitle);
       const isSelected = String(id) === String(selectedId);
 
       return `

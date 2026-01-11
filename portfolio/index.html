@@ -18,14 +18,17 @@
         <div class="nav-container">
             <a href="#" class="nav-logo">DS</a>
             <div class="nav-links">
-                <a href="#about">About</a>
-                <a href="#lifecycle">Methodology</a>
-                <a href="#projects">Projects</a>
-                <a href="#testimonials">Testimonials</a>
-                <a href="#career">Career</a>
-                <a href="#contact">Contact</a>
+                <a href="#about" data-i18n="nav.about">About</a>
+                <a href="#expertise" data-i18n="nav.expertise">Expertise</a>
+                <a href="#projects" data-i18n="nav.projects">Projects</a>
+                <a href="#testimonials" data-i18n="nav.testimonials">Testimonials</a>
+                <a href="#career" data-i18n="nav.career">Career</a>
+                <a href="#contact" data-i18n="nav.contact">Contact</a>
             </div>
             <div class="nav-actions">
+                <button class="lang-toggle" aria-label="Toggle language">
+                    <span class="lang-text">EN</span>
+                </button>
                 <button class="theme-toggle" aria-label="Toggle theme">
                     <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="5"></circle>
@@ -59,27 +62,27 @@
                 <div class="profile-header">
                     <span class="profile-status">
                         <span class="status-dot"></span>
-                        Open to Opportunities
+                        <span data-i18n="hero.status">Open to Opportunities</span>
                     </span>
                 </div>
-                <h1 class="profile-name">신동철</h1>
-                <p class="profile-title">Medical Software Architect</p>
-                <p class="profile-summary">
+                <h1 class="profile-name" data-i18n="hero.name">신동철</h1>
+                <p class="profile-title" data-i18n="hero.title">Medical Software Architect</p>
+                <p class="profile-summary" data-i18n="hero.summary">
                     <strong>IEC 62304 생명주기 모델</strong> 기반 의료기기 소프트웨어의 전 개발 과정을 경험한 아키텍트.
                     PACS 서버, DICOM 뷰어, 교정 시뮬레이션, 모달리티 장비 제어 시스템까지 의료 영상 분야 전반을 설계하고 구현.
                 </p>
                 <div class="profile-metrics">
                     <div class="profile-metric">
                         <span class="metric-number">20+</span>
-                        <span class="metric-text">Years Experience</span>
+                        <span class="metric-text" data-i18n="hero.metric1">Years Experience</span>
                     </div>
                     <div class="profile-metric">
                         <span class="metric-number">2</span>
-                        <span class="metric-text">IPO Success</span>
+                        <span class="metric-text" data-i18n="hero.metric2">IPO Success</span>
                     </div>
                     <div class="profile-metric">
                         <span class="metric-number">4</span>
-                        <span class="metric-text">Global Certs</span>
+                        <span class="metric-text" data-i18n="hero.metric3">Global Certs</span>
                     </div>
                 </div>
             </div>
@@ -95,8 +98,8 @@
                             </svg>
                         </div>
                         <div class="expertise-content-unified">
-                            <h3>Full Lifecycle</h3>
-                            <p>IEC 62304 기반 전 개발 단계 수행</p>
+                            <h3 data-i18n="hero.capability1.title">Full Lifecycle</h3>
+                            <p data-i18n="hero.capability1.desc">IEC 62304 기반 전 개발 단계 수행</p>
                         </div>
                     </div>
                     <div class="expertise-card-unified">
@@ -109,8 +112,8 @@
                             </svg>
                         </div>
                         <div class="expertise-content-unified">
-                            <h3>Regulatory Docs</h3>
-                            <p>ISO 13485, IEC 62304 규격 문서 작성</p>
+                            <h3 data-i18n="hero.capability2.title">Regulatory Docs</h3>
+                            <p data-i18n="hero.capability2.desc">ISO 13485, IEC 62304 규격 문서 작성</p>
                         </div>
                     </div>
                     <div class="expertise-card-unified">
@@ -122,8 +125,8 @@
                             </svg>
                         </div>
                         <div class="expertise-content-unified">
-                            <h3>Team Leadership</h3>
-                            <p>코드 리뷰와 멘토링 기반 팀 성장</p>
+                            <h3 data-i18n="hero.capability3.title">Team Leadership</h3>
+                            <p data-i18n="hero.capability3.desc">코드 리뷰와 멘토링 기반 팀 성장</p>
                         </div>
                     </div>
                     <div class="expertise-card-unified">
@@ -134,8 +137,8 @@
                             </svg>
                         </div>
                         <div class="expertise-content-unified">
-                            <h3>Clinical Validation</h3>
-                            <p>임상 시험 및 검증 단계 완수</p>
+                            <h3 data-i18n="hero.capability4.title">Clinical Validation</h3>
+                            <p data-i18n="hero.capability4.desc">임상 시험 및 검증 단계 완수</p>
                         </div>
                     </div>
                 </div>
@@ -165,8 +168,8 @@
     <!-- IEC 62304 Lifecycle Section -->
     <section id="lifecycle" class="section section-alt">
         <div class="container">
-            <h2 class="section-title">Development Methodology</h2>
-            <p class="section-description">
+            <h2 class="section-title" data-i18n="section.methodology">Development Methodology</h2>
+            <p class="section-description" data-i18n="section.methodology.desc">
                 IEC 62304 생명주기 모델 기반의 체계적인 의료기기 소프트웨어 개발
             </p>
 
@@ -191,8 +194,8 @@
                     </defs>
 
                     <!-- Section Labels -->
-                    <text x="180" y="30" text-anchor="middle" fill="var(--text-secondary)" font-size="13" font-weight="600">정의 & 설계</text>
-                    <text x="720" y="30" text-anchor="middle" fill="var(--text-secondary)" font-size="13" font-weight="600">검증 & 테스트</text>
+                    <text x="180" y="30" text-anchor="middle" fill="var(--text-secondary)" font-size="13" font-weight="600" class="svg-i18n" data-key="vmodel.definition">정의 & 설계</text>
+                    <text x="720" y="30" text-anchor="middle" fill="var(--text-secondary)" font-size="13" font-weight="600" class="svg-i18n" data-key="vmodel.verification">검증 & 테스트</text>
 
                     <!-- V-shape connection lines -->
                     <path d="M 230 95 L 280 145" stroke="var(--accent)" stroke-width="2" fill="none" opacity="0.4"/>
@@ -214,52 +217,52 @@
                     <!-- LEFT SIDE - Definition & Design Phases -->
                     <g class="lifecycle-phase">
                         <rect x="80" y="50" width="150" height="50" rx="8" fill="url(#leftGradient)"/>
-                        <text x="155" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="600">요구사항 분석</text>
-                        <text x="155" y="88" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Requirements</text>
+                        <text x="155" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.requirements">요구사항 분석</text>
+                        <text x="155" y="88" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.requirements.sub">Requirements</text>
                     </g>
                     <g class="lifecycle-phase">
                         <rect x="130" y="130" width="150" height="50" rx="8" fill="url(#leftGradient)" opacity="0.9"/>
-                        <text x="205" y="152" text-anchor="middle" fill="white" font-size="11" font-weight="600">아키텍처 설계</text>
-                        <text x="205" y="168" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Architecture</text>
+                        <text x="205" y="152" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.architecture">아키텍처 설계</text>
+                        <text x="205" y="168" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.architecture.sub">Architecture</text>
                     </g>
                     <g class="lifecycle-phase">
                         <rect x="180" y="210" width="150" height="50" rx="8" fill="url(#leftGradient)" opacity="0.85"/>
-                        <text x="255" y="232" text-anchor="middle" fill="white" font-size="11" font-weight="600">상세 설계</text>
-                        <text x="255" y="248" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Detailed Design</text>
+                        <text x="255" y="232" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.detailed">상세 설계</text>
+                        <text x="255" y="248" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.detailed.sub">Detailed Design</text>
                     </g>
                     <g class="lifecycle-phase">
                         <rect x="230" y="290" width="150" height="50" rx="8" fill="url(#leftGradient)" opacity="0.8"/>
-                        <text x="305" y="312" text-anchor="middle" fill="white" font-size="11" font-weight="600">단위 설계</text>
-                        <text x="305" y="328" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Unit Design</text>
+                        <text x="305" y="312" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.unit">단위 설계</text>
+                        <text x="305" y="328" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.unit.sub">Unit Design</text>
                     </g>
 
                     <!-- BOTTOM - Implementation -->
                     <g class="lifecycle-phase">
                         <rect x="375" y="380" width="150" height="55" rx="8" fill="url(#bottomGradient)"/>
-                        <text x="450" y="405" text-anchor="middle" fill="white" font-size="12" font-weight="700">구현</text>
-                        <text x="450" y="422" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Implementation</text>
+                        <text x="450" y="405" text-anchor="middle" fill="white" font-size="12" font-weight="700" class="svg-i18n" data-key="vmodel.implementation">구현</text>
+                        <text x="450" y="422" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.implementation.sub">Implementation</text>
                     </g>
 
                     <!-- RIGHT SIDE - Verification & Testing Phases -->
                     <g class="lifecycle-phase">
                         <rect x="520" y="290" width="150" height="50" rx="8" fill="url(#rightGradient)" opacity="0.8"/>
-                        <text x="595" y="312" text-anchor="middle" fill="white" font-size="11" font-weight="600">단위 테스트</text>
-                        <text x="595" y="328" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Unit Test</text>
+                        <text x="595" y="312" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.unittest">단위 테스트</text>
+                        <text x="595" y="328" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.unittest.sub">Unit Test</text>
                     </g>
                     <g class="lifecycle-phase">
                         <rect x="570" y="210" width="150" height="50" rx="8" fill="url(#rightGradient)" opacity="0.85"/>
-                        <text x="645" y="232" text-anchor="middle" fill="white" font-size="11" font-weight="600">통합 테스트</text>
-                        <text x="645" y="248" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Integration Test</text>
+                        <text x="645" y="232" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.integration">통합 테스트</text>
+                        <text x="645" y="248" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.integration.sub">Integration Test</text>
                     </g>
                     <g class="lifecycle-phase">
                         <rect x="620" y="130" width="150" height="50" rx="8" fill="url(#rightGradient)" opacity="0.9"/>
-                        <text x="695" y="152" text-anchor="middle" fill="white" font-size="11" font-weight="600">시스템 테스트</text>
-                        <text x="695" y="168" text-anchor="middle" fill="white" font-size="9" opacity="0.85">System Test</text>
+                        <text x="695" y="152" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.system">시스템 테스트</text>
+                        <text x="695" y="168" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.system.sub">System Test</text>
                     </g>
                     <g class="lifecycle-phase">
                         <rect x="670" y="50" width="150" height="50" rx="8" fill="url(#rightGradient)"/>
-                        <text x="745" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="600">인수 테스트 / 릴리스</text>
-                        <text x="745" y="88" text-anchor="middle" fill="white" font-size="9" opacity="0.85">Acceptance / Release</text>
+                        <text x="745" y="72" text-anchor="middle" fill="white" font-size="11" font-weight="600" class="svg-i18n" data-key="vmodel.acceptance">인수 테스트 / 릴리스</text>
+                        <text x="745" y="88" text-anchor="middle" fill="white" font-size="9" opacity="0.85" class="svg-i18n" data-key="vmodel.acceptance.sub">Acceptance / Release</text>
                     </g>
 
                     <!-- Verification labels -->
@@ -269,7 +272,7 @@
                     <text x="450" y="308" text-anchor="middle" fill="var(--text-muted)" font-size="9">Verification</text>
 
                     <!-- Bottom label -->
-                    <text x="450" y="465" text-anchor="middle" fill="var(--text-muted)" font-size="11">
+                    <text x="450" y="465" text-anchor="middle" fill="var(--text-muted)" font-size="11" class="svg-i18n" data-key="vmodel.caption">
                         IEC 62304 V-Model: 각 개발 단계와 대응하는 검증 활동의 매핑
                     </text>
                 </svg>
@@ -347,9 +350,9 @@
     <!-- Contact Section -->
     <section id="contact" class="section">
         <div class="container">
-            <h2 class="section-title">Contact</h2>
+            <h2 class="section-title" data-i18n="contact.title">Contact</h2>
             <div class="contact-content">
-                <p class="contact-intro">
+                <p class="contact-intro" data-i18n="contact.intro">
                     의료 소프트웨어 개발, 시스템 아키텍처 설계, 또는 오픈소스 협업에 관심이 있으시다면
                     언제든 연락주세요.
                 </p>
@@ -373,25 +376,40 @@
                         </svg>
                         <span>LinkedIn</span>
                     </a>
-                </div>
-                <div class="contact-availability">
-                    <span class="availability-dot"></span>
-                    <span>Open to opportunities</span>
+                    <button onclick="downloadResumePDF()" class="contact-link pdf-download">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <polyline points="9 15 12 18 15 15"></polyline>
+                        </svg>
+                        <span>Resume (PDF)</span>
+                    </button>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="Back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Dongcheol Shin. Built with passion for medical software.</p>
+            <p data-i18n="footer.copyright">&copy; 2025 Dongcheol Shin. Built with passion for medical software.</p>
         </div>
     </footer>
 
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="data/data.js?v=1.0.2"></script>
     <script src="components/components.js?v=1.0.2"></script>
+    <script src="admin/utils/pdf-exporter.js?v=1.2.0"></script>
     <script src="script.js?v=1.0.2"></script>
 </body>
 </html>

@@ -9,6 +9,85 @@ class PDFExporter {
     this.fontLoading = null;
     this.currentTheme = null;
     this.themeStyles = null;
+    this.currentLang = 'ko';
+  }
+
+  /**
+   * Get current language
+   * @returns {string} Current language code ('ko' or 'en')
+   */
+  getLang() {
+    return window.currentLanguage || window.getLanguage?.() || 'ko';
+  }
+
+  /**
+   * Get text from multilingual object { ko: "...", en: "..." }
+   * @param {*} obj - Multilingual object or string
+   * @returns {string} Text in current language
+   */
+  getText(obj) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    const lang = this.currentLang;
+    return obj[lang] || obj.ko || obj.en || '';
+  }
+
+  /**
+   * Get array from multilingual object { ko: [...], en: [...] }
+   * @param {*} obj - Multilingual array object or array
+   * @returns {Array} Array in current language
+   */
+  getArray(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj;
+    const lang = this.currentLang;
+    return obj[lang] || obj.ko || obj.en || [];
+  }
+
+  /**
+   * Get localized labels based on current language
+   * @returns {Object} Localized label strings
+   */
+  getLabels() {
+    const labels = {
+      ko: {
+        expertise: '전문성',
+        projects: '프로젝트',
+        career: '경력',
+        testimonials: '추천서',
+        featuredProjects: '주요 프로젝트',
+        medicalImaging: '의료 영상',
+        orthodontic: '교정 시스템',
+        equipmentControl: '장비 제어',
+        enterprise: '엔터프라이즈 솔루션',
+        openSource: '오픈 소스',
+        coreCapabilities: '핵심 역량',
+        certifications: '인증',
+        keyResponsibilities: '주요 역할:',
+        achievements: '성과:',
+        challenges: '기술적 도전:',
+        solutions: '해결 방법:'
+      },
+      en: {
+        expertise: 'EXPERTISE',
+        projects: 'PROJECTS',
+        career: 'CAREER',
+        testimonials: 'TESTIMONIALS',
+        featuredProjects: 'Featured Projects',
+        medicalImaging: 'Medical Imaging',
+        orthodontic: 'Orthodontic Systems',
+        equipmentControl: 'Equipment Control',
+        enterprise: 'Enterprise Solutions',
+        openSource: 'Open Source',
+        coreCapabilities: 'Core Capabilities',
+        certifications: 'Certifications',
+        keyResponsibilities: 'Key Responsibilities:',
+        achievements: 'Achievements:',
+        challenges: 'Challenges:',
+        solutions: 'Solutions:'
+      }
+    };
+    return labels[this.currentLang] || labels.en;
   }
 
   /**
@@ -292,6 +371,7 @@ class PDFExporter {
    * @param {string} options.title - Document title
    * @param {string} options.author - Document author
    * @param {boolean} options.pageBreakBetweenSections - Insert page breaks between sections
+   * @param {string} options.language - Language code ('ko' or 'en')
    */
   async generatePDF(data, options = {}) {
     const {
@@ -301,10 +381,15 @@ class PDFExporter {
       author = 'Dongcheol Shin',
       theme = 'professional',
       themeOverrides = {},
-      pageBreakBetweenSections = false
+      pageBreakBetweenSections = false,
+      language = null
     } = options;
 
     try {
+      // Set current language for multilingual support
+      // Use provided language option, or detect from window
+      this.currentLang = language || this.getLang();
+
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
 
@@ -398,6 +483,7 @@ class PDFExporter {
    */
   buildHeader(info) {
     const headerStyle = this.getLayout('headerStyle');
+    const locale = this.currentLang === 'ko' ? 'ko-KR' : 'en-US';
     const headerContent = {
       columns: [
         {
@@ -405,7 +491,7 @@ class PDFExporter {
           style: 'header'
         },
         {
-          text: new Date().toLocaleDateString('en-US', {
+          text: new Date().toLocaleDateString(locale, {
             year: 'numeric',
             month: 'long'
           }),
@@ -448,9 +534,10 @@ class PDFExporter {
    */
   buildExpertiseSection(expertise) {
     const content = [];
+    const labels = this.getLabels();
 
     content.push({
-      text: 'EXPERTISE',
+      text: labels.expertise,
       style: 'subheader'
     });
 
@@ -460,22 +547,24 @@ class PDFExporter {
         const categoryContent = [];
 
         categoryContent.push({
-          text: category.title,
+          text: this.getText(category.title),
           style: 'sectionTitle'
         });
 
-        if (category.items && category.items.length > 0) {
+        const items = this.getArray(category.items);
+        if (items.length > 0) {
           categoryContent.push({
-            ul: category.items.map(item => this.stripHtml(item)),
+            ul: items.map(item => this.stripHtml(this.getText(item))),
             margin: [this.getSpacing('list.indent'), 0, 0, 10],
             markerColor: this.getColor('primary')
           });
         }
 
         // Handle tags for Technologies category
-        if (category.tags && category.tags.length > 0) {
+        const tags = this.getArray(category.tags);
+        if (tags.length > 0) {
           categoryContent.push({
-            text: category.tags.join(' | '),
+            text: tags.map(tag => this.getText(tag)).join(' | '),
             color: this.getColor('primary'),
             fontSize: this.getTypography('fontSize.small'),
             margin: [this.getSpacing('list.indent'), 0, 0, 10]
@@ -495,15 +584,15 @@ class PDFExporter {
       const capabilitiesContent = [];
 
       capabilitiesContent.push({
-        text: 'Core Capabilities',
+        text: labels.coreCapabilities,
         style: 'sectionTitle'
       });
 
       expertise.heroCapabilities.forEach(cap => {
         capabilitiesContent.push({
           text: [
-            { text: cap.title + ': ', bold: true },
-            { text: cap.description }
+            { text: this.getText(cap.title) + ': ', bold: true },
+            { text: this.getText(cap.description) }
           ],
           margin: [this.getSpacing('list.indent'), 0, 0, 5]
         });
@@ -522,11 +611,11 @@ class PDFExporter {
         unbreakable: true,
         stack: [
           {
-            text: 'Certifications',
+            text: labels.certifications,
             style: 'sectionTitle'
           },
           {
-            text: expertise.certifications.map(cert => cert.name).join(' | '),
+            text: expertise.certifications.map(cert => this.getText(cert.name)).join(' | '),
             color: this.getColor('success'),
             bold: true,
             margin: [this.getSpacing('list.indent'), 0, 0, 10]
@@ -552,16 +641,17 @@ class PDFExporter {
    */
   buildProjectsSection(projects) {
     const content = [];
+    const labels = this.getLabels();
 
     content.push({
-      text: 'PROJECTS',
+      text: labels.projects,
       style: 'subheader'
     });
 
     // Featured projects first
     if (projects.featured && projects.featured.length > 0) {
       content.push({
-        text: 'Featured Projects',
+        text: labels.featuredProjects,
         style: 'sectionTitle'
       });
 
@@ -594,9 +684,10 @@ class PDFExporter {
    */
   formatProject(project) {
     const items = [];
+    const labels = this.getLabels();
 
     items.push({
-      text: project.title || project.name || 'Untitled Project',
+      text: this.getText(project.title) || this.getText(project.name) || 'Untitled Project',
       bold: true,
       fontSize: this.getTypography('fontSize.h3') - 2,
       color: this.getColor('text.primary'),
@@ -605,7 +696,7 @@ class PDFExporter {
 
     if (project.company || project.period) {
       items.push({
-        text: [project.company, project.period].filter(Boolean).join(' | '),
+        text: [this.getText(project.company), this.getText(project.period)].filter(Boolean).join(' | '),
         color: this.getColor('text.muted'),
         fontSize: this.getTypography('fontSize.small'),
         margin: [0, 0, 0, 3]
@@ -614,15 +705,16 @@ class PDFExporter {
 
     if (project.description) {
       items.push({
-        text: this.stripHtml(project.description),
+        text: this.stripHtml(this.getText(project.description)),
         color: this.getColor('text.secondary'),
         margin: [0, 0, 0, 5]
       });
     }
 
-    if (project.tags && project.tags.length > 0) {
+    const tags = this.getArray(project.tags);
+    if (tags.length > 0) {
       items.push({
-        text: project.tags.join(' | '),
+        text: tags.map(tag => this.getText(tag)).join(' | '),
         color: this.getColor('primary'),
         fontSize: this.getTypography('fontSize.tiny'),
         margin: [0, 0, 0, 5]
@@ -631,32 +723,34 @@ class PDFExporter {
 
     // Expanded details
     if (project.expanded) {
-      if (project.expanded.roles && project.expanded.roles.length > 0) {
+      const roles = this.getArray(project.expanded.roles);
+      if (roles.length > 0) {
         items.push({
-          text: 'Key Responsibilities:',
+          text: labels.keyResponsibilities,
           bold: true,
           fontSize: this.getTypography('fontSize.small'),
           color: this.getColor('text.secondary'),
           margin: [0, 3, 0, 2]
         });
         items.push({
-          ul: project.expanded.roles.map(r => this.stripHtml(r)),
+          ul: roles.map(r => this.stripHtml(this.getText(r))),
           fontSize: this.getTypography('fontSize.small'),
           margin: [this.getSpacing('list.indent'), 0, 0, 3],
           markerColor: this.getColor('primary')
         });
       }
 
-      if (project.expanded.achievements && project.expanded.achievements.length > 0) {
+      const achievements = this.getArray(project.expanded.achievements);
+      if (achievements.length > 0) {
         items.push({
-          text: 'Achievements:',
+          text: labels.achievements,
           bold: true,
           fontSize: this.getTypography('fontSize.small'),
           color: this.getColor('text.secondary'),
           margin: [0, 3, 0, 2]
         });
         items.push({
-          ul: project.expanded.achievements.map(a => this.stripHtml(a)),
+          ul: achievements.map(a => this.stripHtml(this.getText(a))),
           fontSize: this.getTypography('fontSize.small'),
           margin: [this.getSpacing('list.indent'), 0, 0, 3],
           markerColor: this.getColor('primary')
@@ -676,9 +770,10 @@ class PDFExporter {
    */
   buildCareerSection(career) {
     const content = [];
+    const labels = this.getLabels();
 
     content.push({
-      text: 'CAREER',
+      text: labels.career,
       style: 'subheader'
     });
 
@@ -688,9 +783,9 @@ class PDFExporter {
 
         // Company with optional badge
         const companyText = [];
-        companyText.push({ text: item.company || item.title || '', bold: true, color: this.getColor('text.primary') });
+        companyText.push({ text: this.getText(item.company) || this.getText(item.title) || '', bold: true, color: this.getColor('text.primary') });
         if (item.badge) {
-          companyText.push({ text: ` [${item.badge}]`, color: this.getColor('warning'), bold: true });
+          companyText.push({ text: ` [${this.getText(item.badge)}]`, color: this.getColor('warning'), bold: true });
         }
 
         entry.push({
@@ -701,7 +796,7 @@ class PDFExporter {
               width: '*'
             },
             {
-              text: item.period || '',
+              text: this.getText(item.period) || '',
               alignment: 'right',
               color: this.getColor('text.muted'),
               fontSize: this.getTypography('fontSize.small'),
@@ -713,7 +808,7 @@ class PDFExporter {
 
         if (item.role || item.position) {
           entry.push({
-            text: item.role || item.position,
+            text: this.getText(item.role) || this.getText(item.position),
             color: this.getColor('primary'),
             fontSize: this.getTypography('fontSize.body'),
             margin: [0, 0, 0, 3]
@@ -722,15 +817,16 @@ class PDFExporter {
 
         if (item.description) {
           entry.push({
-            text: this.stripHtml(item.description),
+            text: this.stripHtml(this.getText(item.description)),
             color: this.getColor('text.secondary'),
             margin: [0, 0, 0, 3]
           });
         }
 
-        if (item.achievements && item.achievements.length > 0) {
+        const achievements = this.getArray(item.achievements);
+        if (achievements.length > 0) {
           entry.push({
-            ul: item.achievements.map(a => this.stripHtml(a)),
+            ul: achievements.map(a => this.stripHtml(this.getText(a))),
             fontSize: this.getTypography('fontSize.small'),
             margin: [this.getSpacing('list.indent'), 3, 0, 5],
             markerColor: this.getColor('primary')
@@ -739,7 +835,7 @@ class PDFExporter {
 
         if (item.note) {
           entry.push({
-            text: this.stripHtml(item.note),
+            text: this.stripHtml(this.getText(item.note)),
             fontSize: this.getTypography('fontSize.small'),
             italics: true,
             color: this.getColor('text.muted'),
@@ -747,9 +843,10 @@ class PDFExporter {
           });
         }
 
-        if (item.tags && item.tags.length > 0) {
+        const tags = this.getArray(item.tags);
+        if (tags.length > 0) {
           entry.push({
-            text: item.tags.join(' | '),
+            text: tags.map(tag => this.getText(tag)).join(' | '),
             color: this.getColor('primary'),
             fontSize: this.getTypography('fontSize.tiny'),
             margin: [0, 0, 0, 5]
@@ -772,9 +869,10 @@ class PDFExporter {
    */
   buildTestimonialsSection(testimonials) {
     const content = [];
+    const labels = this.getLabels();
 
     content.push({
-      text: 'TESTIMONIALS',
+      text: labels.testimonials,
       style: 'subheader'
     });
 
@@ -800,8 +898,9 @@ class PDFExporter {
     const items = [];
 
     if (testimonial.quote || testimonial.text) {
+      const quoteText = this.getText(testimonial.quote) || this.getText(testimonial.text);
       items.push({
-        text: `"${this.stripHtml(testimonial.quote || testimonial.text)}"`,
+        text: `"${this.stripHtml(quoteText)}"`,
         italics: true,
         fontSize: isFeatured ? this.getTypography('fontSize.body') + 1 : this.getTypography('fontSize.body'),
         margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
@@ -811,9 +910,9 @@ class PDFExporter {
 
     items.push({
       text: [
-        { text: testimonial.author || testimonial.name || '', bold: true, color: this.getColor('text.primary') },
-        { text: testimonial.role ? `, ${testimonial.role}` : '', color: this.getColor('text.muted') },
-        { text: testimonial.relation ? ` (${testimonial.relation})` : '', color: this.getColor('text.muted') }
+        { text: this.getText(testimonial.author) || this.getText(testimonial.name) || '', bold: true, color: this.getColor('text.primary') },
+        { text: testimonial.role ? `, ${this.getText(testimonial.role)}` : '', color: this.getColor('text.muted') },
+        { text: testimonial.relation ? ` (${this.getText(testimonial.relation)})` : '', color: this.getColor('text.muted') }
       ],
       fontSize: this.getTypography('fontSize.small'),
       margin: [this.getSpacing('list.indent'), 0, 0, 0]
@@ -822,7 +921,7 @@ class PDFExporter {
     // Labels
     if (testimonial.labels && testimonial.labels.length > 0) {
       items.push({
-        text: testimonial.labels.map(l => l.text).join(' | '),
+        text: testimonial.labels.map(l => this.getText(l.text)).join(' | '),
         fontSize: this.getTypography('fontSize.tiny'),
         color: this.getColor('primary'),
         margin: [this.getSpacing('list.indent'), 5, 0, 0]
@@ -840,12 +939,13 @@ class PDFExporter {
    * Format category name for display
    */
   formatCategoryName(category) {
+    const labels = this.getLabels();
     const names = {
-      medicalImaging: 'Medical Imaging',
-      orthodontic: 'Orthodontic Systems',
-      equipmentControl: 'Equipment Control',
-      enterprise: 'Enterprise Solutions',
-      openSource: 'Open Source'
+      medicalImaging: labels.medicalImaging,
+      orthodontic: labels.orthodontic,
+      equipmentControl: labels.equipmentControl,
+      enterprise: labels.enterprise,
+      openSource: labels.openSource
     };
     return names[category] || category;
   }

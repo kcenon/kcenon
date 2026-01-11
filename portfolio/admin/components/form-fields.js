@@ -4,10 +4,52 @@
 
 const FormFields = {
   /**
+   * Get current admin edit language
+   * @returns {string} Current language code ('ko' or 'en')
+   */
+  getCurrentLang() {
+    return window.adminCurrentLang || 'ko';
+  },
+
+  /**
+   * Get text from multilingual object { ko: "...", en: "..." }
+   * @param {*} obj - Multilingual object or string
+   * @param {string} lang - Preferred language (uses current admin language if not specified)
+   * @returns {string} Text in preferred language
+   */
+  getText(obj, lang = null) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    const useLang = lang || this.getCurrentLang();
+    if (typeof obj === 'object' && !Array.isArray(obj)) {
+      return obj[useLang] || obj.ko || obj.en || '';
+    }
+    return String(obj);
+  },
+
+  /**
+   * Get array from multilingual object { ko: [...], en: [...] }
+   * @param {*} obj - Multilingual array object or array
+   * @param {string} lang - Preferred language (uses current admin language if not specified)
+   * @returns {Array} Array in preferred language
+   */
+  getArray(obj, lang = null) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj;
+    const useLang = lang || this.getCurrentLang();
+    if (typeof obj === 'object') {
+      return obj[useLang] || obj.ko || obj.en || [];
+    }
+    return [];
+  },
+
+  /**
    * Create a text input field
    */
   textInput(config) {
     const { id, label, value = '', required = false, placeholder = '', type = 'text' } = config;
+    // Handle multilingual object
+    const textValue = this.getText(value);
     return `
       <div class="form-group">
         <label for="${id}">${label}${required ? ' <span class="required">*</span>' : ''}</label>
@@ -15,7 +57,7 @@ const FormFields = {
           type="${type}"
           id="${id}"
           name="${id}"
-          value="${this.escapeHtml(value)}"
+          value="${this.escapeHtml(textValue)}"
           placeholder="${placeholder}"
           ${required ? 'required' : ''}
           class="form-input"
@@ -29,6 +71,8 @@ const FormFields = {
    */
   textArea(config) {
     const { id, label, value = '', required = false, placeholder = '', rows = 4, richText = false } = config;
+    // Handle multilingual object
+    const textValue = this.getText(value);
     return `
       <div class="form-group">
         <label for="${id}">
@@ -42,7 +86,7 @@ const FormFields = {
           placeholder="${placeholder}"
           ${required ? 'required' : ''}
           class="form-input form-textarea"
-        >${this.escapeHtml(value)}</textarea>
+        >${this.escapeHtml(textValue)}</textarea>
       </div>
     `;
   },
@@ -89,9 +133,11 @@ const FormFields = {
    */
   arrayInput(config) {
     const { id, label, values = [], required = false, placeholder = 'Add item...', suggestions = [] } = config;
-    const tagsHtml = values.map((val, idx) => `
+    // Handle multilingual array object
+    const arrayValues = this.getArray(values);
+    const tagsHtml = arrayValues.map((val, idx) => `
       <span class="tag-item" data-index="${idx}">
-        ${this.escapeHtml(val)}
+        ${this.escapeHtml(this.getText(val))}
         <button type="button" class="tag-remove" data-field="${id}" data-index="${idx}">&times;</button>
       </span>
     `).join('');
@@ -120,7 +166,7 @@ const FormFields = {
             <button type="button" class="btn btn-small btn-add" data-field="${id}">Add</button>
           </div>
           ${suggestionsHtml}
-          <input type="hidden" id="${id}" name="${id}" value="${this.escapeHtml(JSON.stringify(values))}" />
+          <input type="hidden" id="${id}" name="${id}" value="${this.escapeHtml(JSON.stringify(arrayValues))}" />
         </div>
       </div>
     `;
@@ -131,10 +177,12 @@ const FormFields = {
    */
   multiSelect(config) {
     const { id, label, values = [], options = [], required = false } = config;
+    // Handle multilingual array object
+    const arrayValues = this.getArray(values);
     const optionsHtml = options.map(opt => {
       const optValue = typeof opt === 'object' ? opt.value : opt;
       const optLabel = typeof opt === 'object' ? opt.label : opt;
-      const checked = values.includes(optValue);
+      const checked = arrayValues.includes(optValue);
       return `
         <label class="multi-select-option">
           <input type="checkbox" name="${id}[]" value="${optValue}" ${checked ? 'checked' : ''} />
@@ -180,11 +228,13 @@ const FormFields = {
    */
   objectArrayItem(fieldId, index, item, fields) {
     const fieldsHtml = fields.map(field => {
-      const value = item[field.key] || '';
+      const rawValue = item[field.key] || '';
+      // Handle multilingual objects
+      const value = this.getText(rawValue);
       if (field.type === 'checkbox') {
         return `
           <label class="inline-field">
-            <input type="checkbox" name="${fieldId}_${index}_${field.key}" ${value ? 'checked' : ''} />
+            <input type="checkbox" name="${fieldId}_${index}_${field.key}" ${rawValue ? 'checked' : ''} />
             ${field.label}
           </label>
         `;

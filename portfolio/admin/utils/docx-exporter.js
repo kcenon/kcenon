@@ -7,6 +7,83 @@ class DOCXExporter {
   constructor() {
     this.currentTheme = null;
     this.themeStyles = null;
+    this.currentLang = 'ko';
+  }
+
+  /**
+   * Get current language
+   * @returns {string} Current language code ('ko' or 'en')
+   */
+  getLang() {
+    return window.currentLanguage || window.getLanguage?.() || 'ko';
+  }
+
+  /**
+   * Get text from multilingual object { ko: "...", en: "..." }
+   * @param {*} obj - Multilingual object or string
+   * @returns {string} Text in current language
+   */
+  getText(obj) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    const lang = this.currentLang;
+    return obj[lang] || obj.ko || obj.en || '';
+  }
+
+  /**
+   * Get array from multilingual object { ko: [...], en: [...] }
+   * @param {*} obj - Multilingual array object or array
+   * @returns {Array} Array in current language
+   */
+  getArray(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj;
+    const lang = this.currentLang;
+    return obj[lang] || obj.ko || obj.en || [];
+  }
+
+  /**
+   * Get localized labels based on current language
+   * @returns {Object} Localized label strings
+   */
+  getLabels() {
+    const labels = {
+      ko: {
+        expertise: '전문성',
+        projects: '프로젝트',
+        career: '경력',
+        testimonials: '추천서',
+        featuredProjects: '주요 프로젝트',
+        medicalImaging: '의료 영상',
+        orthodontic: '교정 시스템',
+        equipmentControl: '장비 제어',
+        enterprise: '엔터프라이즈 솔루션',
+        openSource: '오픈 소스',
+        coreCapabilities: '핵심 역량',
+        certifications: '인증',
+        keyResponsibilities: '주요 역할:',
+        achievements: '성과:',
+        professionalPortfolio: '프로페셔널 포트폴리오'
+      },
+      en: {
+        expertise: 'EXPERTISE',
+        projects: 'PROJECTS',
+        career: 'CAREER',
+        testimonials: 'TESTIMONIALS',
+        featuredProjects: 'Featured Projects',
+        medicalImaging: 'Medical Imaging',
+        orthodontic: 'Orthodontic Systems',
+        equipmentControl: 'Equipment Control',
+        enterprise: 'Enterprise Solutions',
+        openSource: 'Open Source',
+        coreCapabilities: 'Core Capabilities',
+        certifications: 'Certifications',
+        keyResponsibilities: 'Key Responsibilities:',
+        achievements: 'Achievements:',
+        professionalPortfolio: 'Professional Portfolio'
+      }
+    };
+    return labels[this.currentLang] || labels.en;
   }
 
   /**
@@ -204,6 +281,7 @@ class DOCXExporter {
    * @param {string} options.title - Document title
    * @param {string} options.author - Document author
    * @param {boolean} options.pageBreakBetweenSections - Insert page breaks between sections
+   * @param {string} options.language - Language code ('ko' or 'en')
    */
   async generateDOCX(data, options = {}) {
     const {
@@ -213,10 +291,14 @@ class DOCXExporter {
       author = 'Dongcheol Shin',
       theme = 'professional',
       themeOverrides = {},
-      pageBreakBetweenSections = false
+      pageBreakBetweenSections = false,
+      language = null
     } = options;
 
     try {
+      // Set current language for multilingual support
+      this.currentLang = language || this.getLang();
+
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
 
@@ -289,6 +371,9 @@ class DOCXExporter {
    * Build document header
    */
   buildHeader(info) {
+    const labels = this.getLabels();
+    const locale = this.currentLang === 'ko' ? 'ko-KR' : 'en-US';
+
     return [
       new docx.Paragraph({
         children: [
@@ -304,7 +389,7 @@ class DOCXExporter {
       new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: 'Professional Portfolio',
+            text: labels.professionalPortfolio,
             size: this.toHalfPt(this.getTypography('fontSize.h2') - 2),
             color: this.getColor('text.muted')
           })
@@ -314,7 +399,7 @@ class DOCXExporter {
       new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: new Date().toLocaleDateString('en-US', {
+            text: new Date().toLocaleDateString(locale, {
               year: 'numeric',
               month: 'long'
             }),
@@ -339,24 +424,27 @@ class DOCXExporter {
    */
   buildExpertiseSection(expertise) {
     const children = [];
+    const labels = this.getLabels();
 
-    children.push(this.createHeading2('EXPERTISE'));
+    children.push(this.createHeading2(labels.expertise));
 
     // Categories
     if (expertise.categories && expertise.categories.length > 0) {
       expertise.categories.forEach(category => {
-        const hasTags = category.tags && category.tags.length > 0;
-        const hasItems = category.items && category.items.length > 0;
+        const tags = this.getArray(category.tags);
+        const items = this.getArray(category.items);
+        const hasTags = tags.length > 0;
+        const hasItems = items.length > 0;
 
-        children.push(this.createHeading3WithKeep(category.title || 'Category', hasItems || hasTags));
+        children.push(this.createHeading3WithKeep(this.getText(category.title) || 'Category', hasItems || hasTags));
 
         if (hasItems) {
-          category.items.forEach((item, index) => {
-            const isLast = index === category.items.length - 1;
+          items.forEach((item, index) => {
+            const isLast = index === items.length - 1;
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
-                  text: `• ${this.stripHtml(item)}`,
+                  text: `• ${this.stripHtml(this.getText(item))}`,
                   size: this.toHalfPt(this.getTypography('fontSize.body')),
                   color: this.getColor('text.secondary')
                 })
@@ -374,7 +462,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: category.tags.join(' | '),
+                text: tags.map(tag => this.getText(tag)).join(' | '),
                 size: this.toHalfPt(this.getTypography('fontSize.small')),
                 color: this.getColor('primary')
               })
@@ -389,20 +477,20 @@ class DOCXExporter {
 
     // Hero Capabilities
     if (expertise.heroCapabilities && expertise.heroCapabilities.length > 0) {
-      children.push(this.createHeading3WithKeep('Core Capabilities', true));
+      children.push(this.createHeading3WithKeep(labels.coreCapabilities, true));
 
       expertise.heroCapabilities.forEach((cap, index) => {
         const isLast = index === expertise.heroCapabilities.length - 1;
         children.push(new docx.Paragraph({
           children: [
             new docx.TextRun({
-              text: `${cap.title}: `,
+              text: `${this.getText(cap.title)}: `,
               bold: true,
               size: this.toHalfPt(this.getTypography('fontSize.body')),
               color: this.getColor('text.primary')
             }),
             new docx.TextRun({
-              text: cap.description,
+              text: this.getText(cap.description),
               size: this.toHalfPt(this.getTypography('fontSize.body')),
               color: this.getColor('text.secondary')
             })
@@ -417,12 +505,12 @@ class DOCXExporter {
 
     // Certifications
     if (expertise.certifications && expertise.certifications.length > 0) {
-      children.push(this.createHeading3WithKeep('Certifications', true));
+      children.push(this.createHeading3WithKeep(labels.certifications, true));
 
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: expertise.certifications.map(cert => cert.name).join(' | '),
+            text: expertise.certifications.map(cert => this.getText(cert.name)).join(' | '),
             bold: true,
             size: this.toHalfPt(this.getTypography('fontSize.body')),
             color: this.getColor('success')
@@ -450,12 +538,13 @@ class DOCXExporter {
    */
   buildProjectsSection(projects) {
     const children = [];
+    const labels = this.getLabels();
 
-    children.push(this.createHeading2('PROJECTS'));
+    children.push(this.createHeading2(labels.projects));
 
     // Featured projects
     if (projects.featured && projects.featured.length > 0) {
-      children.push(this.createHeading3('Featured Projects'));
+      children.push(this.createHeading3(labels.featuredProjects));
       projects.featured.forEach(project => {
         children.push(...this.formatProject(project));
       });
@@ -481,12 +570,13 @@ class DOCXExporter {
    */
   formatProject(project) {
     const children = [];
+    const labels = this.getLabels();
 
     // Title
     children.push(new docx.Paragraph({
       children: [
         new docx.TextRun({
-          text: project.title || project.name || 'Untitled Project',
+          text: this.getText(project.title) || this.getText(project.name) || 'Untitled Project',
           bold: true,
           size: this.toHalfPt(this.getTypography('fontSize.h3') - 2),
           color: this.getColor('text.primary')
@@ -502,7 +592,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: [project.company, project.period].filter(Boolean).join(' | '),
+            text: [this.getText(project.company), this.getText(project.period)].filter(Boolean).join(' | '),
             size: this.toHalfPt(this.getTypography('fontSize.small')),
             color: this.getColor('text.muted'),
             italics: true
@@ -519,7 +609,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: this.stripHtml(project.description),
+            text: this.stripHtml(this.getText(project.description)),
             size: this.toHalfPt(this.getTypography('fontSize.body')),
             color: this.getColor('text.secondary')
           })
@@ -531,11 +621,12 @@ class DOCXExporter {
     }
 
     // Tags
-    if (project.tags && project.tags.length > 0) {
+    const tags = this.getArray(project.tags);
+    if (tags.length > 0) {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: project.tags.join(' • '),
+            text: tags.map(tag => this.getText(tag)).join(' • '),
             size: this.toHalfPt(this.getTypography('fontSize.tiny')),
             color: this.getColor('primary')
           })
@@ -548,11 +639,12 @@ class DOCXExporter {
 
     // Expanded details
     if (project.expanded) {
-      if (project.expanded.roles && project.expanded.roles.length > 0) {
+      const roles = this.getArray(project.expanded.roles);
+      if (roles.length > 0) {
         children.push(new docx.Paragraph({
           children: [
             new docx.TextRun({
-              text: 'Key Responsibilities:',
+              text: labels.keyResponsibilities,
               bold: true,
               size: this.toHalfPt(this.getTypography('fontSize.small')),
               color: this.getColor('text.secondary')
@@ -563,13 +655,14 @@ class DOCXExporter {
           keepNext: true
         }));
 
-        project.expanded.roles.forEach((role, index) => {
-          const isLast = index === project.expanded.roles.length - 1;
-          const hasAchievements = project.expanded.achievements && project.expanded.achievements.length > 0;
+        const achievements = this.getArray(project.expanded.achievements);
+        roles.forEach((role, index) => {
+          const isLast = index === roles.length - 1;
+          const hasAchievements = achievements.length > 0;
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: `• ${this.stripHtml(role)}`,
+                text: `• ${this.stripHtml(this.getText(role))}`,
                 size: this.toHalfPt(this.getTypography('fontSize.small')),
                 color: this.getColor('text.secondary')
               })
@@ -582,11 +675,12 @@ class DOCXExporter {
         });
       }
 
-      if (project.expanded.achievements && project.expanded.achievements.length > 0) {
+      const achievements = this.getArray(project.expanded.achievements);
+      if (achievements.length > 0) {
         children.push(new docx.Paragraph({
           children: [
             new docx.TextRun({
-              text: 'Achievements:',
+              text: labels.achievements,
               bold: true,
               size: this.toHalfPt(this.getTypography('fontSize.small')),
               color: this.getColor('text.secondary')
@@ -597,12 +691,12 @@ class DOCXExporter {
           keepNext: true
         }));
 
-        project.expanded.achievements.forEach((achievement, index) => {
-          const isLast = index === project.expanded.achievements.length - 1;
+        achievements.forEach((achievement, index) => {
+          const isLast = index === achievements.length - 1;
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: `• ${this.stripHtml(achievement)}`,
+                text: `• ${this.stripHtml(this.getText(achievement))}`,
                 size: this.toHalfPt(this.getTypography('fontSize.small')),
                 color: this.getColor('text.secondary')
               })
@@ -626,22 +720,25 @@ class DOCXExporter {
    */
   buildCareerSection(career) {
     const children = [];
+    const labels = this.getLabels();
 
-    children.push(this.createHeading2('CAREER'));
+    children.push(this.createHeading2(labels.career));
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
         // Determine what content exists for this item
         const hasRole = item.role || item.position;
         const hasDescription = item.description;
-        const hasAchievements = item.achievements && item.achievements.length > 0;
+        const achievements = this.getArray(item.achievements);
+        const hasAchievements = achievements.length > 0;
         const hasNote = item.note;
-        const hasTags = item.tags && item.tags.length > 0;
+        const tags = this.getArray(item.tags);
+        const hasTags = tags.length > 0;
 
         // Company name with optional badge
         const companyRuns = [
           new docx.TextRun({
-            text: item.company || item.title || '',
+            text: this.getText(item.company) || this.getText(item.title) || '',
             bold: true,
             size: this.toHalfPt(this.getTypography('fontSize.h3') - 2),
             color: this.getColor('text.primary')
@@ -650,7 +747,7 @@ class DOCXExporter {
 
         if (item.badge) {
           companyRuns.push(new docx.TextRun({
-            text: ` [${item.badge}]`,
+            text: ` [${this.getText(item.badge)}]`,
             bold: true,
             size: this.toHalfPt(this.getTypography('fontSize.small')),
             color: this.getColor('warning')
@@ -658,7 +755,7 @@ class DOCXExporter {
         }
 
         companyRuns.push(new docx.TextRun({
-          text: `  ${item.period || ''}`,
+          text: `  ${this.getText(item.period) || ''}`,
           size: this.toHalfPt(this.getTypography('fontSize.small')),
           color: this.getColor('text.muted')
         }));
@@ -675,7 +772,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: item.role || item.position,
+                text: this.getText(item.role) || this.getText(item.position),
                 size: this.toHalfPt(this.getTypography('fontSize.body')),
                 color: this.getColor('primary')
               })
@@ -691,7 +788,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: this.stripHtml(item.description),
+                text: this.stripHtml(this.getText(item.description)),
                 size: this.toHalfPt(this.getTypography('fontSize.body')),
                 color: this.getColor('text.secondary')
               })
@@ -704,12 +801,12 @@ class DOCXExporter {
 
         // Achievements
         if (hasAchievements) {
-          item.achievements.forEach((achievement, index) => {
-            const isLast = index === item.achievements.length - 1;
+          achievements.forEach((achievement, index) => {
+            const isLast = index === achievements.length - 1;
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
-                  text: `• ${this.stripHtml(achievement)}`,
+                  text: `• ${this.stripHtml(this.getText(achievement))}`,
                   size: this.toHalfPt(this.getTypography('fontSize.small')),
                   color: this.getColor('text.secondary')
                 })
@@ -727,7 +824,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: this.stripHtml(item.note),
+                text: this.stripHtml(this.getText(item.note)),
                 size: this.toHalfPt(this.getTypography('fontSize.small')),
                 italics: true,
                 color: this.getColor('text.muted')
@@ -744,7 +841,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: item.tags.join(' | '),
+                text: tags.map(tag => this.getText(tag)).join(' | '),
                 size: this.toHalfPt(this.getTypography('fontSize.tiny')),
                 color: this.getColor('primary')
               })
@@ -766,8 +863,9 @@ class DOCXExporter {
    */
   buildTestimonialsSection(testimonials) {
     const children = [];
+    const labels = this.getLabels();
 
-    children.push(this.createHeading2('TESTIMONIALS'));
+    children.push(this.createHeading2(labels.testimonials));
 
     // Featured testimonial
     if (testimonials.featured) {
@@ -793,10 +891,11 @@ class DOCXExporter {
 
     // Quote
     if (testimonial.quote || testimonial.text) {
+      const quoteText = this.getText(testimonial.quote) || this.getText(testimonial.text);
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: `"${this.stripHtml(testimonial.quote || testimonial.text)}"`,
+            text: `"${this.stripHtml(quoteText)}"`,
             italics: true,
             size: isFeatured ? this.toHalfPt(this.getTypography('fontSize.body') + 2) : this.toHalfPt(this.getTypography('fontSize.body')),
             color: this.getColor('text.secondary')
@@ -813,7 +912,7 @@ class DOCXExporter {
     const authorRuns = [];
     if (testimonial.author || testimonial.name) {
       authorRuns.push(new docx.TextRun({
-        text: '— ' + (testimonial.author || testimonial.name),
+        text: '— ' + (this.getText(testimonial.author) || this.getText(testimonial.name)),
         bold: true,
         size: this.toHalfPt(this.getTypography('fontSize.small')),
         color: this.getColor('text.primary')
@@ -821,14 +920,14 @@ class DOCXExporter {
     }
     if (testimonial.role) {
       authorRuns.push(new docx.TextRun({
-        text: `, ${testimonial.role}`,
+        text: `, ${this.getText(testimonial.role)}`,
         size: this.toHalfPt(this.getTypography('fontSize.small')),
         color: this.getColor('text.muted')
       }));
     }
     if (testimonial.relation) {
       authorRuns.push(new docx.TextRun({
-        text: ` (${testimonial.relation})`,
+        text: ` (${this.getText(testimonial.relation)})`,
         size: this.toHalfPt(this.getTypography('fontSize.small')),
         color: this.getColor('text.muted')
       }));
@@ -849,7 +948,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: testimonial.labels.map(l => l.text).join(' | '),
+            text: testimonial.labels.map(l => this.getText(l.text)).join(' | '),
             size: this.toHalfPt(this.getTypography('fontSize.tiny')),
             color: this.getColor('primary')
           })
@@ -949,12 +1048,13 @@ class DOCXExporter {
    * Format category name for display
    */
   formatCategoryName(category) {
+    const labels = this.getLabels();
     const names = {
-      medicalImaging: 'Medical Imaging',
-      orthodontic: 'Orthodontic Systems',
-      equipmentControl: 'Equipment Control',
-      enterprise: 'Enterprise Solutions',
-      openSource: 'Open Source'
+      medicalImaging: labels.medicalImaging,
+      orthodontic: labels.orthodontic,
+      equipmentControl: labels.equipmentControl,
+      enterprise: labels.enterprise,
+      openSource: labels.openSource
     };
     return names[category] || category;
   }
