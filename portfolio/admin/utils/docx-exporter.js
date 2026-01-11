@@ -398,33 +398,27 @@ class DOCXExporter {
 
     // Build each section
     sections.forEach((section, index) => {
-      // Insert page break before section (except the first)
-      if (pageBreakBetweenSections && index > 0) {
-        children.push(new docx.Paragraph({
-          children: [],
-          pageBreakBefore: true
-        }));
-      }
+      const addPageBreak = pageBreakBetweenSections && index > 0;
 
       switch (section) {
         case 'expertise':
           if (data.expertise) {
-            children.push(...this.buildExpertiseSection(data.expertise));
+            children.push(...this.buildExpertiseSection(data.expertise, addPageBreak));
           }
           break;
         case 'projects':
           if (data.projects) {
-            children.push(...this.buildProjectsSection(data.projects));
+            children.push(...this.buildProjectsSection(data.projects, addPageBreak));
           }
           break;
         case 'career':
           if (data.career) {
-            children.push(...this.buildCareerSection(data.career));
+            children.push(...this.buildCareerSection(data.career, addPageBreak));
           }
           break;
         case 'testimonials':
           if (data.testimonials) {
-            children.push(...this.buildTestimonialsSection(data.testimonials));
+            children.push(...this.buildTestimonialsSection(data.testimonials, addPageBreak));
           }
           break;
       }
@@ -495,12 +489,14 @@ class DOCXExporter {
 
   /**
    * Build expertise section
+   * @param {Object} expertise - Expertise data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildExpertiseSection(expertise) {
+  buildExpertiseSection(expertise, addPageBreak = false) {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.expertise));
+    children.push(this.createHeading2(labels.expertise, addPageBreak));
 
     // Categories
     if (expertise.categories && expertise.categories.length > 0) {
@@ -609,12 +605,14 @@ class DOCXExporter {
 
   /**
    * Build projects section
+   * @param {Object} projects - Projects data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildProjectsSection(projects) {
+  buildProjectsSection(projects, addPageBreak = false) {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.projects));
+    children.push(this.createHeading2(labels.projects, addPageBreak));
 
     // Featured projects
     if (projects.featured && projects.featured.length > 0) {
@@ -791,12 +789,14 @@ class DOCXExporter {
 
   /**
    * Build career section
+   * @param {Object} career - Career data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildCareerSection(career) {
+  buildCareerSection(career, addPageBreak = false) {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.career));
+    children.push(this.createHeading2(labels.career, addPageBreak));
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
@@ -1044,12 +1044,14 @@ class DOCXExporter {
 
   /**
    * Build testimonials section
+   * @param {Object} testimonials - Testimonials data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildTestimonialsSection(testimonials) {
+  buildTestimonialsSection(testimonials, addPageBreak = false) {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.testimonials));
+    children.push(this.createHeading2(labels.testimonials, addPageBreak));
 
     // Featured testimonial
     if (testimonials.featured) {
@@ -1081,7 +1083,7 @@ class DOCXExporter {
           new docx.TextRun({
             text: `"${this.stripHtml(quoteText)}"`,
             italics: true,
-            size: isFeatured ? this.toHalfPt(this.getTypography('fontSize.body') + 2) : this.toHalfPt(this.getTypography('fontSize.body')),
+            size: this.toHalfPt(this.getTypography('fontSize.body')),
             color: this.getColor('text.secondary')
           })
         ],
@@ -1148,8 +1150,10 @@ class DOCXExporter {
 
   /**
    * Create heading 2
+   * @param {string} text - Heading text
+   * @param {boolean} pageBreakBefore - Whether to add page break before heading
    */
-  createHeading2(text) {
+  createHeading2(text, pageBreakBefore = false) {
     return new docx.Paragraph({
       children: [
         new docx.TextRun({
@@ -1159,7 +1163,8 @@ class DOCXExporter {
           color: this.getColor('primary')
         })
       ],
-      spacing: { before: this.getSpacing('section.marginTop'), after: this.getSpacing('section.marginBottom') }
+      spacing: { before: this.getSpacing('section.marginTop'), after: this.getSpacing('section.marginBottom') },
+      pageBreakBefore
     });
   }
 

@@ -209,84 +209,41 @@ window.PortfolioData = {
       }
     },
     {
-      "id": "automation-alignment",
+      "id": "high-speed-download",
       "company": { "ko": "주식회사 레이", "en": "Ray Co., Ltd." },
-      "title": "Automation Alignment Software",
-      "period": "2015.07 - 2016.04",
+      "title": "High Speed File Download System",
+      "period": "2018.07 - 2019.01",
       "roles": ["architect", "core-dev", "qa-doc"],
       "description": {
-        "ko": "의료기기 자동 정렬 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 영상 처리. ISO 13485 검증 문서 작성.",
-        "en": "Medical device automatic alignment software. Image processing based on <strong>DirectX Shader (HLSL)</strong>. Authored ISO 13485 verification documents."
+        "ko": "고속 파일 다운로드 시스템. 마이크로서비스 아키텍처 및 스레드 풀 설계. ISO 13485 문서 작성.",
+        "en": "High-speed file download system. Designed microservices architecture and thread pool. Authored ISO 13485 documents."
       },
-      "tags": ["C#", "WPF", "DirectX", "ISO 13485", "IEC 62304"],
+      "tags": ["C++14", "Boost", "C#", "ISO 13485", "IEC 62304"],
       "expanded": {
         "roles": {
           "ko": [
-            "영상 정합 알고리즘 설계",
-            "GPU 기반 실시간 처리 구현",
-            "IEC 62304 검증 문서 작성"
+            "비동기 다운로드 아키텍처 설계",
+            "스레드 풀 기반 병렬 처리 구현",
+            "IEC 62304 기반 검증 문서 작성"
           ],
           "en": [
-            "Designed image registration algorithms",
-            "Implemented GPU-based real-time processing",
+            "Designed asynchronous download architecture",
+            "Implemented parallel processing based on thread pool",
             "Authored IEC 62304 verification documents"
           ]
         },
-        "certifications": ["CE", "FDA", "KFDA"]
-      }
-    },
-    {
-      "id": "intraoral-sensor-sdk",
-      "company": { "ko": "주식회사 레이", "en": "Ray Co., Ltd." },
-      "title": "Intraoral Sensor SDK",
-      "period": "2015.01 - 2015.06",
-      "roles": ["architect", "core-dev"],
-      "description": {
-        "ko": "구강 내 센서용 SDK 및 TWAIN 드라이버 개발. C++, Boost 기반 SDK와 C#, WPF 기반 이미징 뷰어.",
-        "en": "Developed SDK and TWAIN driver for intraoral sensors. C++/Boost-based SDK and C#/WPF-based imaging viewer."
-      },
-      "tags": ["C++14", "C#", "SDK", "TWAIN", "ISO 13485", "IEC 62304"],
-      "expanded": {
-        "roles": {
+        "challenges": {
           "ko": [
-            "센서 하드웨어 인터페이스 SDK 설계",
-            "TWAIN 호환 드라이버 개발",
-            "3rd party 연동 API 문서 작성"
+            "동기 전송 방식의 시간 손실을 비동기 파이프라인으로 해결하여 다중 파일 전송 속도 10배 향상",
+            "대용량 의료 영상 파일의 네트워크 전송 최적화",
+            "불안정한 네트워크 환경에서의 재시도 로직"
           ],
           "en": [
-            "Designed sensor hardware interface SDK",
-            "Developed TWAIN-compatible driver",
-            "Authored 3rd party integration API documentation"
+            "Achieved 10x multi-file transfer speed by replacing synchronous with async pipeline",
+            "Optimized network transfer of large medical image files",
+            "Retry logic for unstable network environments"
           ]
-        },
-        "certifications": ["CE", "FDA", "KFDA"]
-      }
-    },
-    {
-      "id": "implagraphy",
-      "company": { "ko": "바텍 VATECH", "en": "VATECH" },
-      "title": "Implagraphy Project",
-      "period": "2005.08 - 2005.11",
-      "roles": ["core-dev", "qa-doc"],
-      "description": {
-        "ko": "치과 CT/X-Ray 취득 소프트웨어. 이미지 처리 모듈, DICOM 데이터 핸들링, 의료기기 검증 문서 작성.",
-        "en": "Dental CT/X-Ray acquisition software. Developed image processing modules, DICOM data handling, and medical device verification documents."
-      },
-      "tags": ["C++", "MFC", "RS232", "DICOM", "ISO 13485", "IEC 62304"],
-      "expanded": {
-        "roles": {
-          "ko": [
-            "이미지 처리 알고리즘 개발",
-            "RS232 시리얼 통신 구현",
-            "DICOM 데이터 핸들러 개발"
-          ],
-          "en": [
-            "Developed image processing algorithms",
-            "Implemented RS232 serial communication",
-            "Developed DICOM data handler"
-          ]
-        },
-        "certifications": ["CE", "FDA", "KFDA"]
+        }
       }
     },
     {
@@ -402,41 +359,84 @@ window.PortfolioData = {
       }
     },
     {
-      "id": "high-speed-download",
+      "id": "automation-alignment",
       "company": { "ko": "주식회사 레이", "en": "Ray Co., Ltd." },
-      "title": "High Speed File Download System",
-      "period": "2018.07 - 2019.01",
+      "title": "Automation Alignment Software",
+      "period": "2015.07 - 2016.04",
       "roles": ["architect", "core-dev", "qa-doc"],
       "description": {
-        "ko": "고속 파일 다운로드 시스템. 마이크로서비스 아키텍처 및 스레드 풀 설계. ISO 13485 문서 작성.",
-        "en": "High-speed file download system. Designed microservices architecture and thread pool. Authored ISO 13485 documents."
+        "ko": "의료기기 자동 정렬 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 영상 처리. ISO 13485 검증 문서 작성.",
+        "en": "Medical device automatic alignment software. Image processing based on <strong>DirectX Shader (HLSL)</strong>. Authored ISO 13485 verification documents."
       },
-      "tags": ["C++14", "Boost", "C#", "ISO 13485", "IEC 62304"],
+      "tags": ["C#", "WPF", "DirectX", "ISO 13485", "IEC 62304"],
       "expanded": {
         "roles": {
           "ko": [
-            "비동기 다운로드 아키텍처 설계",
-            "스레드 풀 기반 병렬 처리 구현",
-            "IEC 62304 기반 검증 문서 작성"
+            "영상 정합 알고리즘 설계",
+            "GPU 기반 실시간 처리 구현",
+            "IEC 62304 검증 문서 작성"
           ],
           "en": [
-            "Designed asynchronous download architecture",
-            "Implemented parallel processing based on thread pool",
+            "Designed image registration algorithms",
+            "Implemented GPU-based real-time processing",
             "Authored IEC 62304 verification documents"
           ]
         },
-        "challenges": {
+        "certifications": ["CE", "FDA", "KFDA"]
+      }
+    },
+    {
+      "id": "intraoral-sensor-sdk",
+      "company": { "ko": "주식회사 레이", "en": "Ray Co., Ltd." },
+      "title": "Intraoral Sensor SDK",
+      "period": "2015.01 - 2015.06",
+      "roles": ["architect", "core-dev"],
+      "description": {
+        "ko": "구강 내 센서용 SDK 및 TWAIN 드라이버 개발. C++, Boost 기반 SDK와 C#, WPF 기반 이미징 뷰어.",
+        "en": "Developed SDK and TWAIN driver for intraoral sensors. C++/Boost-based SDK and C#/WPF-based imaging viewer."
+      },
+      "tags": ["C++14", "C#", "SDK", "TWAIN", "ISO 13485", "IEC 62304"],
+      "expanded": {
+        "roles": {
           "ko": [
-            "동기 전송 방식의 시간 손실을 비동기 파이프라인으로 해결하여 다중 파일 전송 속도 10배 향상",
-            "대용량 의료 영상 파일의 네트워크 전송 최적화",
-            "불안정한 네트워크 환경에서의 재시도 로직"
+            "센서 하드웨어 인터페이스 SDK 설계",
+            "TWAIN 호환 드라이버 개발",
+            "3rd party 연동 API 문서 작성"
           ],
           "en": [
-            "Achieved 10x multi-file transfer speed by replacing synchronous with async pipeline",
-            "Optimized network transfer of large medical image files",
-            "Retry logic for unstable network environments"
+            "Designed sensor hardware interface SDK",
+            "Developed TWAIN-compatible driver",
+            "Authored 3rd party integration API documentation"
           ]
-        }
+        },
+        "certifications": ["CE", "FDA", "KFDA"]
+      }
+    },
+    {
+      "id": "implagraphy",
+      "company": { "ko": "바텍 VATECH", "en": "VATECH" },
+      "title": "Implagraphy Project",
+      "period": "2005.08 - 2005.11",
+      "roles": ["core-dev", "qa-doc"],
+      "description": {
+        "ko": "치과 CT/X-Ray 취득 소프트웨어. 이미지 처리 모듈, DICOM 데이터 핸들링, 의료기기 검증 문서 작성.",
+        "en": "Dental CT/X-Ray acquisition software. Developed image processing modules, DICOM data handling, and medical device verification documents."
+      },
+      "tags": ["C++", "MFC", "RS232", "DICOM", "ISO 13485", "IEC 62304"],
+      "expanded": {
+        "roles": {
+          "ko": [
+            "이미지 처리 알고리즘 개발",
+            "RS232 시리얼 통신 구현",
+            "DICOM 데이터 핸들러 개발"
+          ],
+          "en": [
+            "Developed image processing algorithms",
+            "Implemented RS232 serial communication",
+            "Developed DICOM data handler"
+          ]
+        },
+        "certifications": ["CE", "FDA", "KFDA"]
       }
     },
     {
@@ -904,7 +904,12 @@ window.PortfolioData = {
     },
     "author": { "ko": "이현규", "en": "Hyunkyu Lee" },
     "role": { "ko": "소프트웨어 개발자", "en": "Software Developer" },
-    "relation": { "ko": "2024.08 · 같은 부서", "en": "2024.08 · Same department" }
+    "relation": { "ko": "2024.08 · 같은 부서", "en": "2024.08 · Same department" },
+    "labels": [
+      { "text": { "ko": "기술 리더십", "en": "Tech Leadership" }, "type": "leadership" },
+      { "text": { "ko": "대규모 시스템", "en": "Large-scale Systems" }, "type": "technical" },
+      { "text": { "ko": "멘토링", "en": "Mentoring" }, "type": "mentoring" }
+    ]
   },
   "testimonials": [
     {

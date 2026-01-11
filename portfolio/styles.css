@@ -1569,6 +1569,17 @@ body {
     font-size: 0.85rem;
 }
 
+.testimonial-featured .testimonial-labels {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.testimonial-featured .testimonial-label {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .testimonials-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2508,6 +2519,12 @@ body {
 
     .testimonial-featured .testimonial-quote strong {
         color: #333 !important;
+    }
+
+    .testimonial-featured .testimonial-label {
+        background: rgba(0, 0, 0, 0.1) !important;
+        color: #333 !important;
+        border: 1px solid #ccc !important;
     }
 
     .testimonial-card {

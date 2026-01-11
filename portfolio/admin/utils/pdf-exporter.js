@@ -487,30 +487,27 @@ class PDFExporter {
 
     // Build each section
     sections.forEach((section, index) => {
-      // Insert page break before section (except the first)
-      if (pageBreakBetweenSections && index > 0) {
-        content.push({ text: '', pageBreak: 'before' });
-      }
+      const addPageBreak = pageBreakBetweenSections && index > 0;
 
       switch (section) {
         case 'expertise':
           if (data.expertise) {
-            content.push(...this.buildExpertiseSection(data.expertise));
+            content.push(...this.buildExpertiseSection(data.expertise, addPageBreak));
           }
           break;
         case 'projects':
           if (data.projects) {
-            content.push(...this.buildProjectsSection(data.projects));
+            content.push(...this.buildProjectsSection(data.projects, addPageBreak));
           }
           break;
         case 'career':
           if (data.career) {
-            content.push(...this.buildCareerSection(data.career));
+            content.push(...this.buildCareerSection(data.career, addPageBreak));
           }
           break;
         case 'testimonials':
           if (data.testimonials) {
-            content.push(...this.buildTestimonialsSection(data.testimonials));
+            content.push(...this.buildTestimonialsSection(data.testimonials, addPageBreak));
           }
           break;
       }
@@ -597,15 +594,21 @@ class PDFExporter {
 
   /**
    * Build expertise section
+   * @param {Object} expertise - Expertise data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildExpertiseSection(expertise) {
+  buildExpertiseSection(expertise, addPageBreak = false) {
     const content = [];
     const labels = this.getLabels();
 
-    content.push({
+    const sectionHeader = {
       text: labels.expertise,
       style: 'subheader'
-    });
+    };
+    if (addPageBreak) {
+      sectionHeader.pageBreak = 'before';
+    }
+    content.push(sectionHeader);
 
     // Categories
     if (expertise.categories && expertise.categories.length > 0) {
@@ -704,15 +707,21 @@ class PDFExporter {
 
   /**
    * Build projects section
+   * @param {Object} projects - Projects data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildProjectsSection(projects) {
+  buildProjectsSection(projects, addPageBreak = false) {
     const content = [];
     const labels = this.getLabels();
 
-    content.push({
+    const sectionHeader = {
       text: labels.projects,
       style: 'subheader'
-    });
+    };
+    if (addPageBreak) {
+      sectionHeader.pageBreak = 'before';
+    }
+    content.push(sectionHeader);
 
     // Featured projects first
     if (projects.featured && projects.featured.length > 0) {
@@ -833,15 +842,21 @@ class PDFExporter {
 
   /**
    * Build career section
+   * @param {Object} career - Career data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildCareerSection(career) {
+  buildCareerSection(career, addPageBreak = false) {
     const content = [];
     const labels = this.getLabels();
 
-    content.push({
+    const sectionHeader = {
       text: labels.career,
       style: 'subheader'
-    });
+    };
+    if (addPageBreak) {
+      sectionHeader.pageBreak = 'before';
+    }
+    content.push(sectionHeader);
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
@@ -986,15 +1001,21 @@ class PDFExporter {
 
   /**
    * Build testimonials section
+   * @param {Object} testimonials - Testimonials data
+   * @param {boolean} addPageBreak - Whether to add page break before section
    */
-  buildTestimonialsSection(testimonials) {
+  buildTestimonialsSection(testimonials, addPageBreak = false) {
     const content = [];
     const labels = this.getLabels();
 
-    content.push({
+    const sectionHeader = {
       text: labels.testimonials,
       style: 'subheader'
-    });
+    };
+    if (addPageBreak) {
+      sectionHeader.pageBreak = 'before';
+    }
+    content.push(sectionHeader);
 
     // Featured testimonial
     if (testimonials.featured) {
@@ -1022,7 +1043,7 @@ class PDFExporter {
       items.push({
         text: `"${this.stripHtml(quoteText)}"`,
         italics: true,
-        fontSize: isFeatured ? this.getTypography('fontSize.body') + 1 : this.getTypography('fontSize.body'),
+        fontSize: this.getTypography('fontSize.body'),
         margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
         color: this.getColor('text.secondary')
       });

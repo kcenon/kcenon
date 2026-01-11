@@ -408,6 +408,7 @@ function renderTestimonials(data, container) {
         <div class="testimonial-highlight">
             <blockquote class="testimonial-featured">
                 <p class="testimonial-quote">"${getText(data.featured.quote)}"</p>
+                <div class="testimonial-labels">${renderLabels(data.featured.labels)}</div>
                 <footer class="testimonial-author">
                     <span class="author-name">${getText(data.featured.author)}</span>
                     <span class="author-role">${getText(data.featured.role)}</span>
