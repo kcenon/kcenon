@@ -45,6 +45,72 @@ class PDFExporter {
   }
 
   /**
+   * Calculate duration from period string
+   * @param {string|Object} period - Period string or multilingual object
+   * @returns {string|null} Formatted duration string
+   */
+  calculateDuration(period) {
+    const periodStr = this.getText(period);
+    if (!periodStr) return null;
+
+    // Parse period formats: "YYYY.MM - YYYY.MM", "YYYY - YYYY", "YYYY.MM - Present"
+    const parts = periodStr.split(' - ');
+    if (parts.length !== 2) return null;
+
+    const parseDate = (str) => {
+      str = str.trim();
+      // Remove any existing duration info like "(8개월)" or "(8 months)"
+      str = str.replace(/\s*\([^)]*\)\s*$/, '');
+      if (str.toLowerCase() === 'present' || str === '현재') {
+        return new Date();
+      }
+      const [year, month] = str.split('.');
+      return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
+    };
+
+    try {
+      const startDate = parseDate(parts[0]);
+      const endDate = parseDate(parts[1]);
+
+      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12
+                   + (endDate.getMonth() - startDate.getMonth()) + 1;
+
+      if (months <= 0) return null;
+
+      const lang = this.currentLang;
+      if (months >= 12) {
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        if (remainingMonths === 0) {
+          return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
+        }
+        return lang === 'ko'
+          ? `${years}년 ${remainingMonths}개월`
+          : `${years} yr${years > 1 ? 's' : ''} ${remainingMonths} mo`;
+      }
+      return lang === 'ko' ? `${months}개월` : `${months} mo`;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Format period with duration
+   * @param {string|Object} period - Period string or multilingual object
+   * @returns {string} Period with duration appended
+   */
+  formatPeriodWithDuration(period) {
+    let periodStr = this.getText(period);
+    // Remove any existing duration info like "(8개월)", "(1년 2개월)", "(8 months)", "(1 yr 2 mo)"
+    periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
+    const duration = this.calculateDuration(period);
+    if (duration) {
+      return `${periodStr} (${duration})`;
+    }
+    return periodStr;
+  }
+
+  /**
    * Get localized labels based on current language
    * @returns {Object} Localized label strings
    */
@@ -696,7 +762,7 @@ class PDFExporter {
 
     if (project.company || project.period) {
       items.push({
-        text: [this.getText(project.company), this.getText(project.period)].filter(Boolean).join(' | '),
+        text: [this.getText(project.company), this.formatPeriodWithDuration(project.period)].filter(Boolean).join(' | '),
         color: this.getColor('text.muted'),
         fontSize: this.getTypography('fontSize.small'),
         margin: [0, 0, 0, 3]
@@ -796,7 +862,7 @@ class PDFExporter {
               width: '*'
             },
             {
-              text: this.getText(item.period) || '',
+              text: this.formatPeriodWithDuration(item.period) || '',
               alignment: 'right',
               color: this.getColor('text.muted'),
               fontSize: this.getTypography('fontSize.small'),
@@ -811,6 +877,47 @@ class PDFExporter {
             text: this.getText(item.role) || this.getText(item.position),
             color: this.getColor('primary'),
             fontSize: this.getTypography('fontSize.body'),
+            margin: [0, 0, 0, 3]
+          });
+        }
+
+        // Company description
+        if (item.companyDescription) {
+          entry.push({
+            text: this.stripHtml(this.getText(item.companyDescription)),
+            italics: true,
+            color: this.getColor('text.muted'),
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [0, 0, 0, 3]
+          });
+        }
+
+        // Responsibilities
+        if (item.responsibilities) {
+          entry.push({
+            text: [
+              { text: this.currentLang === 'ko' ? '담당 업무: ' : 'Responsibilities: ', bold: true },
+              { text: this.stripHtml(this.getText(item.responsibilities)) }
+            ],
+            color: this.getColor('text.secondary'),
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [0, 0, 0, 3]
+          });
+        }
+
+        // Scale (company/team size)
+        if (item.scale && (item.scale.company || item.scale.team)) {
+          const scaleText = [];
+          if (item.scale.company) {
+            scaleText.push(this.currentLang === 'ko' ? `회사 규모: ${this.getText(item.scale.company)}` : `Company: ${this.getText(item.scale.company)}`);
+          }
+          if (item.scale.team) {
+            scaleText.push(this.currentLang === 'ko' ? `팀 규모: ${this.getText(item.scale.team)}` : `Team: ${this.getText(item.scale.team)}`);
+          }
+          entry.push({
+            text: scaleText.join('  |  '),
+            color: this.getColor('text.muted'),
+            fontSize: this.getTypography('fontSize.tiny'),
             margin: [0, 0, 0, 3]
           });
         }
@@ -840,6 +947,19 @@ class PDFExporter {
             italics: true,
             color: this.getColor('text.muted'),
             margin: [0, 3, 0, 5]
+          });
+        }
+
+        // Leave reason
+        if (item.leaveReason) {
+          entry.push({
+            text: [
+              { text: this.currentLang === 'ko' ? '퇴사 사유: ' : 'Reason for Leaving: ', bold: true },
+              { text: this.stripHtml(this.getText(item.leaveReason)) }
+            ],
+            color: this.getColor('text.muted'),
+            fontSize: this.getTypography('fontSize.tiny'),
+            margin: [0, 0, 0, 3]
           });
         }
 

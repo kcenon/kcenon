@@ -16,8 +16,105 @@ class DocumentPreviewRenderer {
     this.debounceTimer = null;
     this.data = null;
     this.sections = [];
+    this.currentLang = 'ko';
 
     this.init();
+  }
+
+  /**
+   * Get current language
+   * @returns {string} Current language code ('ko' or 'en')
+   */
+  getLang() {
+    return window.currentLanguage || window.getLanguage?.() || 'ko';
+  }
+
+  /**
+   * Get text from multilingual object { ko: "...", en: "..." }
+   * @param {*} obj - Multilingual object or string
+   * @returns {string} Text in current language
+   */
+  getText(obj) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    const lang = this.currentLang;
+    return obj[lang] || obj.ko || obj.en || '';
+  }
+
+  /**
+   * Get array from multilingual object { ko: [...], en: [...] }
+   * @param {*} obj - Multilingual array object or array
+   * @returns {Array} Array in current language
+   */
+  getArray(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj;
+    const lang = this.currentLang;
+    return obj[lang] || obj.ko || obj.en || [];
+  }
+
+  /**
+   * Calculate duration from period string
+   * @param {string|Object} period - Period string or multilingual object
+   * @returns {string|null} Formatted duration string
+   */
+  calculateDuration(period) {
+    const periodStr = this.getText(period);
+    if (!periodStr) return null;
+
+    const parts = periodStr.split(' - ');
+    if (parts.length !== 2) return null;
+
+    const parseDate = (str) => {
+      str = str.trim();
+      str = str.replace(/\s*\([^)]*\)\s*$/, '');
+      if (str.toLowerCase() === 'present' || str === '현재') {
+        return new Date();
+      }
+      const [year, month] = str.split('.');
+      return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
+    };
+
+    try {
+      const startDate = parseDate(parts[0]);
+      const endDate = parseDate(parts[1]);
+
+      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12
+                   + (endDate.getMonth() - startDate.getMonth()) + 1;
+
+      if (months <= 0) return null;
+
+      const lang = this.currentLang;
+      if (months >= 12) {
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        if (remainingMonths === 0) {
+          return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
+        }
+        return lang === 'ko'
+          ? `${years}년 ${remainingMonths}개월`
+          : `${years} yr${years > 1 ? 's' : ''} ${remainingMonths} mo`;
+      }
+      return lang === 'ko' ? `${months}개월` : `${months} mo`;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Format period with duration
+   * @param {string|Object} period - Period string or multilingual object
+   * @returns {string} Period with duration appended
+   */
+  formatPeriodWithDuration(period) {
+    let periodStr = this.getText(period);
+    // Remove any existing duration info like "(8개월)", "(1년 2개월)", "(8 months)", "(1 yr 2 mo)"
+    periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
+    const duration = this.calculateDuration(period);
+    if (duration) {
+      return `${periodStr} (${duration})`;
+    }
+    return periodStr;
   }
 
   /**
@@ -90,6 +187,8 @@ class DocumentPreviewRenderer {
       this.theme = theme;
       this.sections = sections;
       this.options = options;
+      // Set current language for multilingual support
+      this.currentLang = options.language || this.getLang();
       this.pageData = this.calculatePages(data, sections, options);
       this.totalPages = this.pageData.length;
       this.currentPage = Math.min(this.currentPage, this.totalPages);
@@ -222,14 +321,15 @@ class DocumentPreviewRenderer {
         const groupItems = [];
         groupItems.push({
           type: 'subheading',
-          text: cat.title,
+          text: this.getText(cat.title),
           height: typography.fontSize.h3 + 10
         });
-        if (cat.items) {
-          cat.items.slice(0, 4).forEach(item => {
+        const items = this.getArray(cat.items);
+        if (items.length > 0) {
+          items.slice(0, 4).forEach(item => {
             groupItems.push({
               type: 'bullet',
-              text: typeof item === 'string' ? item : item.name,
+              text: this.getText(typeof item === 'string' ? item : (item.name || item)),
               height: typography.fontSize.body + 8
             });
           });
@@ -262,12 +362,12 @@ class DocumentPreviewRenderer {
       const groupItems = [];
       groupItems.push({
         type: 'projectTitle',
-        text: project.title,
+        text: this.getText(project.title),
         height: typography.fontSize.h3 + 8
       });
       groupItems.push({
         type: 'paragraph',
-        text: this.truncate(project.description, 100),
+        text: this.truncate(this.getText(project.description), 100),
         height: typography.fontSize.body * 2 + 10
       });
       // Push as a group to keep together
@@ -289,12 +389,12 @@ class DocumentPreviewRenderer {
         const groupItems = [];
         groupItems.push({
           type: 'careerEntry',
-          text: `${entry.company} - ${entry.role}`,
+          text: `${this.getText(entry.company)} - ${this.getText(entry.role)}`,
           height: typography.fontSize.h3 + 8
         });
         groupItems.push({
           type: 'date',
-          text: entry.period,
+          text: this.formatPeriodWithDuration(entry.period),
           height: typography.fontSize.small + 6
         });
         // Push as a group to keep together
@@ -316,12 +416,12 @@ class DocumentPreviewRenderer {
       const groupItems = [];
       groupItems.push({
         type: 'quote',
-        text: this.truncate(data.featured.quote, 150),
+        text: this.truncate(this.getText(data.featured.quote), 150),
         height: typography.fontSize.body * 3 + 20
       });
       groupItems.push({
         type: 'attribution',
-        text: `— ${data.featured.author}, ${data.featured.role}`,
+        text: `— ${this.getText(data.featured.author)}, ${this.getText(data.featured.role)}`,
         height: typography.fontSize.small + 10
       });
       // Push as a group to keep together
@@ -519,6 +619,13 @@ class DocumentPreviewRenderer {
    * @param {number} maxWidth - Maximum width
    */
   wrapText(text, x, y, maxWidth) {
+    // Handle multilingual objects and ensure string
+    if (!text) return;
+    if (typeof text === 'object') {
+      text = this.getText(text);
+    }
+    text = String(text);
+
     const words = text.split(' ');
     let line = '';
     let lineY = y;
@@ -550,6 +657,12 @@ class DocumentPreviewRenderer {
    */
   truncate(text, maxLength) {
     if (!text) return '';
+    // Handle multilingual objects as fallback
+    if (typeof text === 'object') {
+      text = this.getText(text);
+    }
+    // Ensure text is a string
+    text = String(text);
     text = text.replace(/<[^>]*>/g, '');
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   }

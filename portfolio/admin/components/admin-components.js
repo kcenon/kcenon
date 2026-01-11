@@ -163,6 +163,19 @@ const AdminComponents = {
       ${FormFields.periodInput({ id: 'period', label: 'Period', value: career.period, required: true })}
       ${FormFields.textInput({ id: 'role', label: 'Role', value: career.role, required: true })}
       ${FormFields.textInput({ id: 'badge', label: 'Badge', value: career.badge, placeholder: 'e.g., IPO' })}
+      ${FormFields.textArea({ id: 'companyDescription', label: 'Company Description', value: career.companyDescription, placeholder: 'Brief description of the company' })}
+      ${FormFields.textArea({ id: 'responsibilities', label: 'Responsibilities', value: career.responsibilities, placeholder: 'Main responsibilities in this role' })}
+      ${FormFields.nestedObjectEditor({
+        id: 'scale',
+        label: 'Company/Team Scale',
+        value: career.scale || {},
+        schema: {
+          company: { type: 'text', label: 'Company Size' },
+          team: { type: 'text', label: 'Team Size' }
+        }
+      })}
+      ${FormFields.textArea({ id: 'leaveReason', label: 'Reason for Leaving', value: career.leaveReason, placeholder: 'Reason for leaving this position' })}
+      ${FormFields.arrayInput({ id: 'relatedProjects', label: 'Related Projects', values: career.relatedProjects || [], placeholder: 'Add project ID...' })}
       ${FormFields.textArea({ id: 'description', label: 'Description', value: career.description, richText: true })}
       ${FormFields.textArea({ id: 'note', label: 'Note', value: career.note, richText: true })}
       ${FormFields.arrayInput({ id: 'achievements', label: 'Achievements', values: career.achievements || [], placeholder: 'Add achievement...' })}
@@ -535,6 +548,38 @@ const AdminComponents = {
 
     const badgeHtml = data.badge ? `<span class="preview-career-badge">${FormFields.escapeHtml(data.badge)}</span>` : '';
 
+    const companyDescHtml = data.companyDescription ? `
+      <div class="preview-company-desc" style="font-style: italic; color: var(--text-muted); margin: 0.5rem 0;">${FormFields.escapeHtml(data.companyDescription)}</div>
+    ` : '';
+
+    const responsibilitiesHtml = data.responsibilities ? `
+      <div class="preview-responsibilities" style="margin: 0.5rem 0;">
+        <strong>Responsibilities:</strong> ${FormFields.escapeHtml(data.responsibilities)}
+      </div>
+    ` : '';
+
+    const scaleHtml = data.scale && (data.scale.company || data.scale.team) ? `
+      <div class="preview-scale" style="display: flex; gap: 1rem; margin: 0.5rem 0; font-size: 0.9rem; color: var(--text-muted);">
+        ${data.scale.company ? `<span><strong>Company:</strong> ${FormFields.escapeHtml(data.scale.company)}</span>` : ''}
+        ${data.scale.team ? `<span><strong>Team:</strong> ${FormFields.escapeHtml(data.scale.team)}</span>` : ''}
+      </div>
+    ` : '';
+
+    const leaveReasonHtml = data.leaveReason ? `
+      <div class="preview-leave-reason" style="margin: 0.5rem 0; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 4px; font-size: 0.9rem;">
+        <strong>Reason for Leaving:</strong> ${FormFields.escapeHtml(data.leaveReason)}
+      </div>
+    ` : '';
+
+    const relatedProjectsHtml = data.relatedProjects && data.relatedProjects.length > 0 ? `
+      <div class="preview-related-projects" style="margin: 0.5rem 0;">
+        <strong>Related Projects:</strong>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem;">
+          ${data.relatedProjects.map(p => `<span class="preview-tag" style="background: var(--accent); color: white;">${FormFields.escapeHtml(p)}</span>`).join('')}
+        </div>
+      </div>
+    ` : '';
+
     const achievementsHtml = data.achievements && data.achievements.length > 0 ? `
       <div class="preview-expanded-section" style="margin-top: 1rem;">
         <div class="preview-expanded-title">Achievements</div>
@@ -567,8 +612,13 @@ const AdminComponents = {
             </div>
             <span class="preview-card-period">${FormFields.escapeHtml(data.period || '')}</span>
           </div>
+          ${companyDescHtml}
+          ${responsibilitiesHtml}
+          ${scaleHtml}
           ${data.description ? `<div class="preview-card-description">${data.description}</div>` : ''}
           ${achievementsHtml}
+          ${leaveReasonHtml}
+          ${relatedProjectsHtml}
           ${tagsHtml}
           ${noteHtml}
         </div>

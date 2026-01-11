@@ -1256,6 +1256,7 @@ class AdminApp {
       const result = await window.PDFExporter.generatePDF(this.data, {
         filename: 'portfolio.pdf',
         author: 'Dongcheol Shin',
+        language: this.currentLang || 'ko',
         ...options
       });
 
@@ -1283,6 +1284,7 @@ class AdminApp {
       const result = await window.DOCXExporter.generateDOCX(this.data, {
         filename: 'portfolio.docx',
         author: 'Dongcheol Shin',
+        language: this.currentLang || 'ko',
         ...options
       });
 

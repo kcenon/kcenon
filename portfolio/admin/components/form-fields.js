@@ -305,6 +305,8 @@ const FormFields = {
    */
   periodInput(config) {
     const { id, label, value = '', required = false } = config;
+    // Handle multilingual object
+    const textValue = this.getText(value);
     return `
       <div class="form-group">
         <label for="${id}">${label}${required ? ' <span class="required">*</span>' : ''}</label>
@@ -312,13 +314,13 @@ const FormFields = {
           type="text"
           id="${id}"
           name="${id}"
-          value="${this.escapeHtml(value)}"
+          value="${this.escapeHtml(textValue)}"
           placeholder="YYYY.MM - YYYY.MM"
-          pattern="\\d{4}\\.\\d{2}\\s*-\\s*(\\d{4}\\.\\d{2}|Present)"
+          pattern="\\d{4}\\.\\d{2}\\s*-\\s*(\\d{4}\\.\\d{2}|Present|현재)"
           ${required ? 'required' : ''}
           class="form-input"
         />
-        <span class="hint">Format: YYYY.MM - YYYY.MM (or Present)</span>
+        <span class="hint">Format: YYYY.MM - YYYY.MM (or Present/현재)</span>
       </div>
     `;
   },

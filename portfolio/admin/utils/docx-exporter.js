@@ -43,6 +43,72 @@ class DOCXExporter {
   }
 
   /**
+   * Calculate duration from period string
+   * @param {string|Object} period - Period string or multilingual object
+   * @returns {string|null} Formatted duration string
+   */
+  calculateDuration(period) {
+    const periodStr = this.getText(period);
+    if (!periodStr) return null;
+
+    // Parse period formats: "YYYY.MM - YYYY.MM", "YYYY - YYYY", "YYYY.MM - Present"
+    const parts = periodStr.split(' - ');
+    if (parts.length !== 2) return null;
+
+    const parseDate = (str) => {
+      str = str.trim();
+      // Remove any existing duration info like "(8개월)" or "(8 months)"
+      str = str.replace(/\s*\([^)]*\)\s*$/, '');
+      if (str.toLowerCase() === 'present' || str === '현재') {
+        return new Date();
+      }
+      const [year, month] = str.split('.');
+      return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
+    };
+
+    try {
+      const startDate = parseDate(parts[0]);
+      const endDate = parseDate(parts[1]);
+
+      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12
+                   + (endDate.getMonth() - startDate.getMonth()) + 1;
+
+      if (months <= 0) return null;
+
+      const lang = this.currentLang;
+      if (months >= 12) {
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        if (remainingMonths === 0) {
+          return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
+        }
+        return lang === 'ko'
+          ? `${years}년 ${remainingMonths}개월`
+          : `${years} yr${years > 1 ? 's' : ''} ${remainingMonths} mo`;
+      }
+      return lang === 'ko' ? `${months}개월` : `${months} mo`;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Format period with duration
+   * @param {string|Object} period - Period string or multilingual object
+   * @returns {string} Period with duration appended
+   */
+  formatPeriodWithDuration(period) {
+    let periodStr = this.getText(period);
+    // Remove any existing duration info like "(8개월)", "(1년 2개월)", "(8 months)", "(1 yr 2 mo)"
+    periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
+    const duration = this.calculateDuration(period);
+    if (duration) {
+      return `${periodStr} (${duration})`;
+    }
+    return periodStr;
+  }
+
+  /**
    * Get localized labels based on current language
    * @returns {Object} Localized label strings
    */
@@ -63,7 +129,11 @@ class DOCXExporter {
         certifications: '인증',
         keyResponsibilities: '주요 역할:',
         achievements: '성과:',
-        professionalPortfolio: '프로페셔널 포트폴리오'
+        professionalPortfolio: '프로페셔널 포트폴리오',
+        responsibilities: '담당 업무:',
+        companyScale: '회사 규모:',
+        teamScale: '팀 규모:',
+        reasonForLeaving: '퇴사 사유:'
       },
       en: {
         expertise: 'EXPERTISE',
@@ -80,7 +150,11 @@ class DOCXExporter {
         certifications: 'Certifications',
         keyResponsibilities: 'Key Responsibilities:',
         achievements: 'Achievements:',
-        professionalPortfolio: 'Professional Portfolio'
+        professionalPortfolio: 'Professional Portfolio',
+        responsibilities: 'Responsibilities:',
+        companyScale: 'Company Size:',
+        teamScale: 'Team Size:',
+        reasonForLeaving: 'Reason for Leaving:'
       }
     };
     return labels[this.currentLang] || labels.en;
@@ -592,7 +666,7 @@ class DOCXExporter {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text: [this.getText(project.company), this.getText(project.period)].filter(Boolean).join(' | '),
+            text: [this.getText(project.company), this.formatPeriodWithDuration(project.period)].filter(Boolean).join(' | '),
             size: this.toHalfPt(this.getTypography('fontSize.small')),
             color: this.getColor('text.muted'),
             italics: true
@@ -728,6 +802,10 @@ class DOCXExporter {
       career.timeline.forEach(item => {
         // Determine what content exists for this item
         const hasRole = item.role || item.position;
+        const hasCompanyDescription = item.companyDescription;
+        const hasResponsibilities = item.responsibilities;
+        const hasScale = item.scale && (item.scale.company || item.scale.team);
+        const hasLeaveReason = item.leaveReason;
         const hasDescription = item.description;
         const achievements = this.getArray(item.achievements);
         const hasAchievements = achievements.length > 0;
@@ -755,7 +833,7 @@ class DOCXExporter {
         }
 
         companyRuns.push(new docx.TextRun({
-          text: `  ${this.getText(item.period) || ''}`,
+          text: `  ${this.formatPeriodWithDuration(item.period) || ''}`,
           size: this.toHalfPt(this.getTypography('fontSize.small')),
           color: this.getColor('text.muted')
         }));
@@ -766,6 +844,23 @@ class DOCXExporter {
           keepLines: true,
           keepNext: true
         }));
+
+        // Company description
+        if (hasCompanyDescription) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: this.stripHtml(this.getText(item.companyDescription)),
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                italics: true,
+                color: this.getColor('text.muted')
+              })
+            ],
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: true
+          }));
+        }
 
         // Role
         if (hasRole) {
@@ -779,7 +874,73 @@ class DOCXExporter {
             ],
             spacing: { after: this.getSpacing('list.itemSpacing') },
             keepLines: true,
-            keepNext: hasDescription || hasAchievements || hasNote || hasTags
+            keepNext: hasResponsibilities || hasScale || hasDescription || hasAchievements || hasNote || hasTags || hasLeaveReason
+          }));
+        }
+
+        // Responsibilities
+        if (hasResponsibilities) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${labels.responsibilities} `,
+                bold: true,
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                color: this.getColor('text.secondary')
+              }),
+              new docx.TextRun({
+                text: this.stripHtml(this.getText(item.responsibilities)),
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                color: this.getColor('text.secondary')
+              })
+            ],
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: hasScale || hasDescription || hasAchievements || hasNote || hasTags || hasLeaveReason
+          }));
+        }
+
+        // Scale (company/team size)
+        if (hasScale) {
+          const scaleRuns = [];
+          if (item.scale.company) {
+            scaleRuns.push(new docx.TextRun({
+              text: `${labels.companyScale} `,
+              bold: true,
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.secondary')
+            }));
+            scaleRuns.push(new docx.TextRun({
+              text: this.getText(item.scale.company),
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.secondary')
+            }));
+          }
+          if (item.scale.company && item.scale.team) {
+            scaleRuns.push(new docx.TextRun({
+              text: ' | ',
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.muted')
+            }));
+          }
+          if (item.scale.team) {
+            scaleRuns.push(new docx.TextRun({
+              text: `${labels.teamScale} `,
+              bold: true,
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.secondary')
+            }));
+            scaleRuns.push(new docx.TextRun({
+              text: this.getText(item.scale.team),
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.secondary')
+            }));
+          }
+          children.push(new docx.Paragraph({
+            children: scaleRuns,
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: hasDescription || hasAchievements || hasNote || hasTags || hasLeaveReason
           }));
         }
 
@@ -795,7 +956,7 @@ class DOCXExporter {
             ],
             spacing: { after: this.getSpacing('list.itemSpacing') },
             keepLines: true,
-            keepNext: hasAchievements || hasNote || hasTags
+            keepNext: hasAchievements || hasNote || hasTags || hasLeaveReason
           }));
         }
 
@@ -814,7 +975,7 @@ class DOCXExporter {
               spacing: { after: 40 },
               indent: { left: this.getSpacing('list.indent') },
               keepLines: true,
-              keepNext: !isLast || hasNote || hasTags
+              keepNext: !isLast || hasNote || hasTags || hasLeaveReason
             }));
           });
         }
@@ -825,6 +986,29 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: this.stripHtml(this.getText(item.note)),
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                italics: true,
+                color: this.getColor('text.muted')
+              })
+            ],
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            keepLines: true,
+            keepNext: hasTags || hasLeaveReason
+          }));
+        }
+
+        // Leave reason
+        if (hasLeaveReason) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${labels.reasonForLeaving} `,
+                bold: true,
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('text.muted')
+              }),
+              new docx.TextRun({
+                text: this.stripHtml(this.getText(item.leaveReason)),
                 size: this.toHalfPt(this.getTypography('fontSize.small')),
                 italics: true,
                 color: this.getColor('text.muted')
