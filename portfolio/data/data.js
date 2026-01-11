@@ -138,13 +138,11 @@ window.PortfolioData = {
         "roles": {
           "ko": [
             "DirectX HLSL 기반 GPU 가속 이미지 처리 파이프라인 설계",
-            "실시간 영상 렌더링 최적화로 프레임 레이트 60fps 달성",
             "ClearCanvas 오픈소스 커스터마이징으로 PACS 연동 구현",
             "팀 4명 리딩, 22개월 개발 기간 내 CE/FDA/KFDA 인증 획득"
           ],
           "en": [
             "Designed GPU-accelerated image processing pipeline based on DirectX HLSL",
-            "Achieved 60fps frame rate through real-time rendering optimization",
             "Implemented PACS integration by customizing ClearCanvas open source",
             "Led team of 4, achieved CE/FDA/KFDA certifications within 22 months"
           ]
