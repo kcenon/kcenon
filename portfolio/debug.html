@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .ok { color: green; }
+        .error { color: red; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Portfolio Debug Test</h1>
+    <div id="results"></div>
+
+    <script src="data/data.js?v=1.0.4"></script>
+    <script src="utils/i18n.js?v=1.0.1"></script>
+    <script src="components/components.js?v=1.1.0"></script>
+    <script src="script.js?v=1.0.5"></script>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function log(msg, isError = false) {
+            const div = document.createElement('div');
+            div.className = isError ? 'error' : 'ok';
+            div.textContent = msg;
+            results.appendChild(div);
+        }
+
+        // Check loaded modules
+        log('=== Module Loading ===');
+        log('window.PortfolioData: ' + (typeof window.PortfolioData));
+        log('window.i18nUtils: ' + (typeof window.i18nUtils));
+        log('window.PortfolioComponents: ' + (typeof window.PortfolioComponents));
+        log('window.translations: ' + (typeof window.translations));
+        log('window.getLanguage: ' + (typeof window.getLanguage));
+
+        // Check i18n functions
+        log('');
+        log('=== i18n Functions ===');
+        try {
+            log('getLang(): ' + window.getLang());
+            log('getText({ko:"한글",en:"EN"}): ' + window.getText({ko:"한글",en:"EN"}));
+            log('t("projects.title"): ' + window.i18nUtils.t('projects.title'));
+        } catch(e) {
+            log('i18n error: ' + e.message, true);
+        }
+
+        // Check Icons
+        log('');
+        log('=== Icons Check ===');
+        try {
+            const componentsCode = document.querySelector('script[src*="components.js"]');
+            log('Icons object keys: ' + (typeof Icons !== 'undefined' ? Object.keys(Icons).length + ' icons' : 'undefined'));
+            log('IconKeyMap: ' + (typeof IconKeyMap !== 'undefined' ? Object.keys(IconKeyMap).join(', ') : 'undefined'));
+        } catch(e) {
+            log('Icons error: ' + e.message, true);
+        }
+
+        // Test renders
+        log('');
+        log('=== Render Tests ===');
+        const PC = window.PortfolioComponents;
+        const data = window.PortfolioData;
+
+        const tests = [
+            ['renderProjects', () => PC.renderProjects(data.projects, document.createElement('div'))],
+            ['renderCareer', () => PC.renderCareer(data.career, document.createElement('div'))],
+            ['renderExpertise', () => PC.renderExpertise(data.expertise, document.createElement('div'))],
+            ['renderManager', () => PC.renderManager(data.manager, document.createElement('div'))]
+        ];
+
+        tests.forEach(([name, fn]) => {
+            try {
+                fn();
+                log(name + ': OK');
+            } catch(e) {
+                log(name + ' ERROR: ' + e.message, true);
+                console.error(name, e);
+            }
+        });
+
+        // Console errors
+        log('');
+        log('=== Check browser console for any errors ===');
+    </script>
+</body>
+</html>

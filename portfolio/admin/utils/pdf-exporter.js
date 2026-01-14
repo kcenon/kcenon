@@ -1,6 +1,8 @@
 /**
  * PDF Exporter - Generate PDF from portfolio data using pdfmake
  * Supports theme-based styling via StyleManager
+ *
+ * Dependencies: utils/i18n.js (getLang, getText, getArray, calculateDuration, formatPeriodWithDuration)
  */
 
 class PDFExporter {
@@ -13,19 +15,20 @@ class PDFExporter {
   }
 
   /**
-   * Get current language
+   * Get current language (delegates to shared utility)
    * @returns {string} Current language code ('ko' or 'en')
    */
   getLang() {
-    return window.currentLanguage || window.getLanguage?.() || 'ko';
+    return window.i18nUtils?.getLang?.() || window.currentLanguage || window.getLanguage?.() || 'ko';
   }
 
   /**
-   * Get text from multilingual object { ko: "...", en: "..." }
+   * Get text from multilingual object (delegates to shared utility)
    * @param {*} obj - Multilingual object or string
    * @returns {string} Text in current language
    */
   getText(obj) {
+    // Use shared utility with currentLang context
     if (!obj) return '';
     if (typeof obj === 'string') return obj;
     const lang = this.currentLang;
@@ -33,7 +36,7 @@ class PDFExporter {
   }
 
   /**
-   * Get array from multilingual object { ko: [...], en: [...] }
+   * Get array from multilingual object (delegates to shared utility)
    * @param {*} obj - Multilingual array object or array
    * @returns {Array} Array in current language
    */
@@ -45,25 +48,32 @@ class PDFExporter {
   }
 
   /**
-   * Calculate duration from period string
+   * Calculate duration from period string (delegates to shared utility)
    * @param {string|Object} period - Period string or multilingual object
    * @returns {string|null} Formatted duration string
    */
   calculateDuration(period) {
+    // Temporarily set global language context for shared utility
+    const originalLang = window.currentLanguage;
+    window.currentLanguage = this.currentLang;
+    const result = window.i18nUtils?.calculateDuration?.(period) ?? this._calculateDurationFallback(period);
+    window.currentLanguage = originalLang;
+    return result;
+  }
+
+  /**
+   * Fallback duration calculation if shared utility not available
+   * @private
+   */
+  _calculateDurationFallback(period) {
     const periodStr = this.getText(period);
     if (!periodStr) return null;
-
-    // Parse period formats: "YYYY.MM - YYYY.MM", "YYYY - YYYY", "YYYY.MM - Present"
     const parts = periodStr.split(' - ');
     if (parts.length !== 2) return null;
 
     const parseDate = (str) => {
-      str = str.trim();
-      // Remove any existing duration info like "(8개월)" or "(8 months)"
-      str = str.replace(/\s*\([^)]*\)\s*$/, '');
-      if (str.toLowerCase() === 'present' || str === '현재') {
-        return new Date();
-      }
+      str = str.trim().replace(/\s*\([^)]*\)\s*$/, '');
+      if (str.toLowerCase() === 'present' || str === '현재') return new Date();
       const [year, month] = str.split('.');
       return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
     };
@@ -71,27 +81,17 @@ class PDFExporter {
     try {
       const startDate = parseDate(parts[0]);
       const endDate = parseDate(parts[1]);
-
-      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12
-                   + (endDate.getMonth() - startDate.getMonth()) + 1;
-
+      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth()) + 1;
       if (months <= 0) return null;
-
       const lang = this.currentLang;
       if (months >= 12) {
         const years = Math.floor(months / 12);
-        const remainingMonths = months % 12;
-        if (remainingMonths === 0) {
-          return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
-        }
-        return lang === 'ko'
-          ? `${years}년 ${remainingMonths}개월`
-          : `${years} yr${years > 1 ? 's' : ''} ${remainingMonths} mo`;
+        const rem = months % 12;
+        if (rem === 0) return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
+        return lang === 'ko' ? `${years}년 ${rem}개월` : `${years} yr${years > 1 ? 's' : ''} ${rem} mo`;
       }
       return lang === 'ko' ? `${months}개월` : `${months} mo`;
-    } catch (e) {
-      return null;
-    }
+    } catch (e) { return null; }
   }
 
   /**
@@ -101,13 +101,9 @@ class PDFExporter {
    */
   formatPeriodWithDuration(period) {
     let periodStr = this.getText(period);
-    // Remove any existing duration info like "(8개월)", "(1년 2개월)", "(8 months)", "(1 yr 2 mo)"
     periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
     const duration = this.calculateDuration(period);
-    if (duration) {
-      return `${periodStr} (${duration})`;
-    }
-    return periodStr;
+    return duration ? `${periodStr} (${duration})` : periodStr;
   }
 
   /**

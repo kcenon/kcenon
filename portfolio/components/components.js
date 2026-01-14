@@ -1,37 +1,19 @@
 /**
  * Portfolio Components - Dynamic Rendering Functions
  * Renders portfolio sections from JSON data
+ *
+ * Dependencies: utils/i18n.js (getLang, getText, getArray, calculateDuration, t)
  */
 
-// Get current language
-function getLang() {
-    return window.currentLanguage || window.getLanguage?.() || 'ko';
-}
+// Use shared utilities from utils/i18n.js (access via window to avoid redeclaration)
+const _getLang = () => window.getLang?.() || window.i18nUtils?.getLang?.() || 'ko';
+const _getText = (obj) => window.getText?.(obj) ?? window.i18nUtils?.getText?.(obj) ?? (typeof obj === 'string' ? obj : obj?.ko || obj?.en || '');
+const _getArray = (obj) => window.getArray?.(obj) ?? window.i18nUtils?.getArray?.(obj) ?? (Array.isArray(obj) ? obj : obj?.ko || obj?.en || []);
+const _t = (key) => window.i18nUtils?.t?.(key) ?? window.translations?.[_getLang()]?.[key] ?? key;
 
-// Get translated text from translations object
-function t(key) {
-    const lang = getLang();
-    return window.translations?.[lang]?.[key] || key;
-}
-
-// Get text from multilingual data object { ko: "...", en: "..." }
-function getText(obj) {
-    if (!obj) return '';
-    if (typeof obj === 'string') return obj;
-    const lang = getLang();
-    return obj[lang] || obj.ko || obj.en || '';
-}
-
-// Get array from multilingual data object { ko: [...], en: [...] }
-function getArray(obj) {
-    if (!obj) return [];
-    if (Array.isArray(obj)) return obj;
-    const lang = getLang();
-    return obj[lang] || obj.ko || obj.en || [];
-}
-
-// Icon SVG definitions
+// Icon SVG definitions - Consolidated for all sections
 const Icons = {
+    // Project icons
     hospital: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>`,
     microscope: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>`,
     clipboard: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`,
@@ -39,14 +21,37 @@ const Icons = {
     tool: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
     github: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>`,
     chevronDown: `<svg class="expand-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>`,
+    // Common icons
     checkCircle: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
     fileText: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>`,
-    users: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path></svg>`,
+    users: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
     checkSquare: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>`,
     search: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
     alertTriangle: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
     refreshCw: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>`,
-    flask: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v5l4 9H5l4-9V3z"/><path d="M3 21h18"/></svg>`
+    flask: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v5l4 9H5l4-9V3z"/><path d="M3 21h18"/></svg>`,
+    // Manager/Leadership section icons
+    handshake: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path></svg>`,
+    calendarCheck: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M9 16l2 2 4-4"></path></svg>`,
+    shield: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+    trendingUp: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`,
+    messageCircle: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>`,
+    compass: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`,
+    bookOpen: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`,
+    unlock: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>`
+};
+
+// Icon key mapping for data compatibility (maps data icon names to Icons keys)
+const IconKeyMap = {
+    'calendar-check': 'calendarCheck',
+    'trending-up': 'trendingUp',
+    'message-circle': 'messageCircle',
+    'book-open': 'bookOpen',
+    'check-circle': 'checkCircle',
+    'alert-triangle': 'alertTriangle',
+    'refresh-cw': 'refreshCw',
+    'file-text': 'fileText',
+    'check-square': 'checkSquare'
 };
 
 const ProjectIconMap = {
@@ -54,57 +59,13 @@ const ProjectIconMap = {
     microscope: Icons.microscope
 };
 
-// Calculate development duration from period string
-function calculateDuration(period) {
-    // Handle multilingual period object
-    const periodStr = getText(period);
-    if (!periodStr) return null;
-
-    // Parse period formats: "YYYY.MM - YYYY.MM", "YYYY - YYYY", "YYYY.MM - Present"
-    const parts = periodStr.split(' - ');
-    if (parts.length !== 2) return null;
-
-    const parseDate = (str) => {
-        str = str.trim();
-        // Remove any duration info like "(8개월)" or "(8 months)"
-        str = str.replace(/\s*\([^)]*\)\s*$/, '');
-        if (str.toLowerCase() === 'present' || str === '현재') {
-            return new Date();
-        }
-        const [year, month] = str.split('.');
-        return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
-    };
-
-    try {
-        const startDate = parseDate(parts[0]);
-        const endDate = parseDate(parts[1]);
-
-        const months = (endDate.getFullYear() - startDate.getFullYear()) * 12
-                     + (endDate.getMonth() - startDate.getMonth()) + 1;
-
-        if (months <= 0) return null;
-
-        const lang = getLang();
-        if (months >= 12) {
-            const years = Math.floor(months / 12);
-            const remainingMonths = months % 12;
-            if (remainingMonths === 0) {
-                return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
-            }
-            return lang === 'ko'
-                ? `${years}년 ${remainingMonths}개월`
-                : `${years} yr${years > 1 ? 's' : ''} ${remainingMonths} mo`;
-        }
-        return lang === 'ko' ? `${months}개월` : `${months} mo`;
-    } catch (e) {
-        return null;
-    }
-}
+// Use shared calculateDuration from utils/i18n.js
+const _calculateDuration = (period) => window.calculateDuration?.(period) ?? window.i18nUtils?.calculateDuration?.(period) ?? null;
 
 // Render period with duration
 function renderPeriodWithDuration(period) {
-    const periodStr = getText(period);
-    const duration = calculateDuration(period);
+    const periodStr = _getText(period);
+    const duration = _calculateDuration(period);
     if (duration) {
         return `<span class="project-period">${periodStr} <span class="project-duration">(${duration})</span></span>`;
     }
@@ -136,9 +97,9 @@ function renderMetrics(metrics) {
         <div class="project-metrics">
             ${metrics.map(m => `
                 <div class="metric">
-                    <span class="metric-value">${getText(m.value)}</span>
-                    <span class="metric-label">${getText(m.label)}</span>
-                    ${m.change ? `<span class="metric-change ${m.positive ? 'positive' : ''}">${getText(m.change)}</span>` : ''}
+                    <span class="metric-value">${_getText(m.value)}</span>
+                    <span class="metric-label">${_getText(m.label)}</span>
+                    ${m.change ? `<span class="metric-change ${m.positive ? 'positive' : ''}">${_getText(m.change)}</span>` : ''}
                 </div>
             `).join('')}
         </div>
@@ -148,7 +109,7 @@ function renderMetrics(metrics) {
 // Render certifications
 function renderCertifications(certs) {
     if (!certs || certs.length === 0) return '';
-    const lang = getLang();
+    const lang = _getLang();
     const label = lang === 'ko' ? '인증' : 'Certifications';
     return `
         <div class="expanded-section">
@@ -176,7 +137,7 @@ function renderExpandedList(title, items) {
 // Render a featured project card
 function renderFeaturedProject(project) {
     const iconSvg = ProjectIconMap[project.icon] || Icons.hospital;
-    const lang = getLang();
+    const lang = _getLang();
     const labels = lang === 'ko'
         ? { roles: '담당 역할', challenges: '기술적 도전', solutions: '해결 방법', achievements: '성과' }
         : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions', achievements: 'Achievements' };
@@ -187,13 +148,13 @@ function renderFeaturedProject(project) {
                 <div class="project-icon">${iconSvg}</div>
                 <div class="project-meta">
                     <span class="project-badge">Featured</span>
-                    <span class="project-company">${getText(project.company)}</span>
+                    <span class="project-company">${_getText(project.company)}</span>
                 </div>
             </div>
-            <h3 class="project-title">${getText(project.title)}</h3>
+            <h3 class="project-title">${_getText(project.title)}</h3>
             ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
-            <p class="project-description">${getText(project.description)}</p>
+            <p class="project-description">${_getText(project.description)}</p>
             ${renderMetrics(project.metrics)}
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
@@ -201,10 +162,10 @@ function renderFeaturedProject(project) {
                 ${Icons.chevronDown}
             </button>
             <div class="project-expanded">
-                ${renderExpandedList(labels.roles, getArray(project.expanded?.roles))}
-                ${renderExpandedList(labels.challenges, getArray(project.expanded?.challenges))}
-                ${renderExpandedList(labels.solutions, getArray(project.expanded?.solutions))}
-                ${renderExpandedList(labels.achievements, getArray(project.expanded?.achievements))}
+                ${renderExpandedList(labels.roles, _getArray(project.expanded?.roles))}
+                ${renderExpandedList(labels.challenges, _getArray(project.expanded?.challenges))}
+                ${renderExpandedList(labels.solutions, _getArray(project.expanded?.solutions))}
+                ${renderExpandedList(labels.achievements, _getArray(project.expanded?.achievements))}
                 ${renderCertifications(project.expanded?.certifications)}
             </div>
         </article>
@@ -213,7 +174,7 @@ function renderFeaturedProject(project) {
 
 // Render a regular project card
 function renderProjectCard(project) {
-    const lang = getLang();
+    const lang = _getLang();
     const labels = lang === 'ko'
         ? { roles: '담당 역할', challenges: '기술적 도전', solutions: '해결 방법' }
         : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions' };
@@ -221,12 +182,12 @@ function renderProjectCard(project) {
     return `
         <article class="project-card expandable" id="project-${project.id}">
             <div class="project-header">
-                <span class="project-company-small">${getText(project.company)}</span>
+                <span class="project-company-small">${_getText(project.company)}</span>
             </div>
-            <h3 class="project-title">${getText(project.title)}</h3>
+            <h3 class="project-title">${_getText(project.title)}</h3>
             ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
-            <p class="project-description">${getText(project.description)}</p>
+            <p class="project-description">${_getText(project.description)}</p>
             ${renderMetrics(project.metrics)}
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
@@ -236,9 +197,9 @@ function renderProjectCard(project) {
                 </svg>
             </button>
             <div class="project-expanded">
-                ${renderExpandedList(labels.roles, getArray(project.expanded?.roles))}
-                ${renderExpandedList(labels.challenges, getArray(project.expanded?.challenges))}
-                ${renderExpandedList(labels.solutions, getArray(project.expanded?.solutions))}
+                ${renderExpandedList(labels.roles, _getArray(project.expanded?.roles))}
+                ${renderExpandedList(labels.challenges, _getArray(project.expanded?.challenges))}
+                ${renderExpandedList(labels.solutions, _getArray(project.expanded?.solutions))}
                 ${renderCertifications(project.expanded?.certifications)}
             </div>
         </article>
@@ -247,7 +208,7 @@ function renderProjectCard(project) {
 
 // Render an open source project card
 function renderOpenSourceCard(project) {
-    const lang = getLang();
+    const lang = _getLang();
     const labels = lang === 'ko'
         ? { features: '주요 기능', performance: '성능 특징', viewOnGithub: 'GitHub에서 보기' }
         : { features: 'Key Features', performance: 'Performance', viewOnGithub: 'View on GitHub' };
@@ -260,10 +221,10 @@ function renderOpenSourceCard(project) {
                     ${Icons.github}
                 </a>
             </div>
-            <h3 class="project-title">${getText(project.title)}</h3>
-            ${project.period ? `<span class="project-period">${getText(project.period)}</span>` : ''}
+            <h3 class="project-title">${_getText(project.title)}</h3>
+            ${project.period ? `<span class="project-period">${_getText(project.period)}</span>` : ''}
             ${project.stars ? `<div class="project-stats"><span class="star-count">${project.stars} stars</span></div>` : ''}
-            <p class="project-description">${getText(project.description)}</p>
+            <p class="project-description">${_getText(project.description)}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
                 <span>${t('expand')}</span>
@@ -272,8 +233,8 @@ function renderOpenSourceCard(project) {
                 </svg>
             </button>
             <div class="project-expanded">
-                ${renderExpandedList(labels.features, getArray(project.expanded?.features))}
-                ${renderExpandedList(labels.performance, getArray(project.expanded?.performance))}
+                ${renderExpandedList(labels.features, _getArray(project.expanded?.features))}
+                ${renderExpandedList(labels.performance, _getArray(project.expanded?.performance))}
             </div>
         </article>
     `;
@@ -281,7 +242,7 @@ function renderOpenSourceCard(project) {
 
 // Render all projects with filter tabs
 function renderProjects(data, container) {
-    const lang = getLang();
+    const lang = _getLang();
     let html = `
         <h2 class="section-title">${t('projects.title')}</h2>
         <p class="section-description">${t('projects.desc')}</p>
@@ -394,9 +355,9 @@ function initializeProjectFilters(container) {
 function renderTestimonials(data, container) {
     const renderLabels = (labels) => {
         if (!labels) return '';
-        const arr = getArray(labels);
+        const arr = _getArray(labels);
         return arr.map(l =>
-            `<span class="testimonial-label ${l.type}">${getText(l.text)}</span>`
+            `<span class="testimonial-label ${l.type}">${_getText(l.text)}</span>`
         ).join('');
     };
 
@@ -407,12 +368,12 @@ function renderTestimonials(data, container) {
         <!-- Leadership Highlight -->
         <div class="testimonial-highlight">
             <blockquote class="testimonial-featured">
-                <p class="testimonial-quote">"${getText(data.featured.quote)}"</p>
+                <p class="testimonial-quote">"${_getText(data.featured.quote)}"</p>
                 <div class="testimonial-labels">${renderLabels(data.featured.labels)}</div>
                 <footer class="testimonial-author">
-                    <span class="author-name">${getText(data.featured.author)}</span>
-                    <span class="author-role">${getText(data.featured.role)}</span>
-                    <span class="author-relation">${getText(data.featured.relation)}</span>
+                    <span class="author-name">${_getText(data.featured.author)}</span>
+                    <span class="author-role">${_getText(data.featured.role)}</span>
+                    <span class="author-relation">${_getText(data.featured.relation)}</span>
                 </footer>
             </blockquote>
         </div>
@@ -422,14 +383,14 @@ function renderTestimonials(data, container) {
                 <div class="testimonial-card">
                     <div class="testimonial-meta">
                         <span class="testimonial-date">${item.date}</span>
-                        <span class="testimonial-context">${getText(item.context)}</span>
+                        <span class="testimonial-context">${_getText(item.context)}</span>
                     </div>
-                    <p class="testimonial-text">"${getText(item.text)}"</p>
+                    <p class="testimonial-text">"${_getText(item.text)}"</p>
                     <div class="testimonial-labels">${renderLabels(item.labels)}</div>
                     <footer class="testimonial-author">
-                        <span class="author-name">${getText(item.author)}</span>
-                        <span class="author-role">${getText(item.role)}</span>
-                        <span class="author-relation">${getText(item.relation)}</span>
+                        <span class="author-name">${_getText(item.author)}</span>
+                        <span class="author-role">${_getText(item.role)}</span>
+                        <span class="author-relation">${_getText(item.relation)}</span>
                     </footer>
                 </div>
             `).join('')}
@@ -440,7 +401,7 @@ function renderTestimonials(data, container) {
 
 // Render career timeline
 function renderCareer(data, container) {
-    const lang = getLang();
+    const lang = _getLang();
     const labels = lang === 'ko'
         ? {
             responsibilities: '담당 업무',
@@ -470,7 +431,7 @@ function renderCareer(data, container) {
         ];
 
         const project = allProjects.find(p => p.id === projectId);
-        return project ? getText(project.title) : projectId;
+        return project ? _getText(project.title) : projectId;
     };
 
     const renderRelatedProjects = (projectIds) => {
@@ -486,10 +447,10 @@ function renderCareer(data, container) {
     };
 
     const renderTimelinePeriod = (period) => {
-        let periodStr = getText(period);
+        let periodStr = _getText(period);
         // Remove any existing duration from the period string
         periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
-        const duration = calculateDuration(period);
+        const duration = _calculateDuration(period);
         if (duration) {
             return `${periodStr} <span class="timeline-duration">(${duration})</span>`;
         }
@@ -498,11 +459,11 @@ function renderCareer(data, container) {
 
     const renderAchievements = (achievements) => {
         if (!achievements) return '';
-        const arr = getArray(achievements);
+        const arr = _getArray(achievements);
         if (arr.length === 0) return '';
         return `
             <ul class="timeline-achievements">
-                ${arr.map(a => `<li>${getText(a)}</li>`).join('')}
+                ${arr.map(a => `<li>${_getText(a)}</li>`).join('')}
             </ul>
         `;
     };
@@ -511,8 +472,8 @@ function renderCareer(data, container) {
         if (!scale) return '';
         return `
             <div class="timeline-scale">
-                ${scale.company ? `<span class="scale-item"><strong>${labels.companyScale}:</strong> ${getText(scale.company)}</span>` : ''}
-                ${scale.team ? `<span class="scale-item"><strong>${labels.teamScale}:</strong> ${getText(scale.team)}</span>` : ''}
+                ${scale.company ? `<span class="scale-item"><strong>${labels.companyScale}:</strong> ${_getText(scale.company)}</span>` : ''}
+                ${scale.team ? `<span class="scale-item"><strong>${labels.teamScale}:</strong> ${_getText(scale.team)}</span>` : ''}
             </div>
         `;
     };
@@ -525,18 +486,18 @@ function renderCareer(data, container) {
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3 class="timeline-title">${getText(item.company)}</h3>
+                            <h3 class="timeline-title">${_getText(item.company)}</h3>
                             <span class="timeline-period">${renderTimelinePeriod(item.period)}</span>
-                            ${item.badge ? `<span class="timeline-badge">${getText(item.badge)}</span>` : ''}
+                            ${item.badge ? `<span class="timeline-badge">${_getText(item.badge)}</span>` : ''}
                         </div>
-                        <p class="timeline-role">${getText(item.role)}</p>
-                        ${item.companyDescription ? `<p class="timeline-company-desc">${getText(item.companyDescription)}</p>` : ''}
-                        ${item.description ? `<p class="timeline-description">${getText(item.description)}</p>` : ''}
-                        ${item.responsibilities ? `<p class="timeline-responsibilities"><strong>${labels.responsibilities}:</strong> ${getText(item.responsibilities)}</p>` : ''}
+                        <p class="timeline-role">${_getText(item.role)}</p>
+                        ${item.companyDescription ? `<p class="timeline-company-desc">${_getText(item.companyDescription)}</p>` : ''}
+                        ${item.description ? `<p class="timeline-description">${_getText(item.description)}</p>` : ''}
+                        ${item.responsibilities ? `<p class="timeline-responsibilities"><strong>${labels.responsibilities}:</strong> ${_getText(item.responsibilities)}</p>` : ''}
                         ${renderScale(item.scale)}
                         ${renderAchievements(item.achievements)}
-                        ${item.note ? `<div class="timeline-note"><p>${getText(item.note)}</p></div>` : ''}
-                        ${item.leaveReason ? `<p class="timeline-leave-reason"><strong>${labels.leaveReason}:</strong> ${getText(item.leaveReason)}</p>` : ''}
+                        ${item.note ? `<div class="timeline-note"><p>${_getText(item.note)}</p></div>` : ''}
+                        ${item.leaveReason ? `<p class="timeline-leave-reason"><strong>${labels.leaveReason}:</strong> ${_getText(item.leaveReason)}</p>` : ''}
                         ${renderRelatedProjects(item.relatedProjects)}
                         ${item.tags ? `<div class="timeline-tags">${renderTags(item.tags)}</div>` : ''}
                     </div>
@@ -581,7 +542,7 @@ function renderExpertise(data, container) {
                         <div class="expertise-category">
                             <h3 class="expertise-title">
                                 <span class="expertise-icon">${iconMap[cat.icon] || '📌'}</span>
-                                ${getText(cat.title)}
+                                ${_getText(cat.title)}
                             </h3>
                             <div class="tech-tags">
                                 ${cat.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
@@ -589,15 +550,15 @@ function renderExpertise(data, container) {
                         </div>
                     `;
                 }
-                const items = getArray(cat.items);
+                const items = _getArray(cat.items);
                 return `
                     <div class="expertise-category">
                         <h3 class="expertise-title">
                             <span class="expertise-icon">${iconMap[cat.icon] || '📌'}</span>
-                            ${getText(cat.title)}
+                            ${_getText(cat.title)}
                         </h3>
                         <ul class="expertise-list">
-                            ${items.map(item => `<li>${getText(item)}</li>`).join('')}
+                            ${items.map(item => `<li>${_getText(item)}</li>`).join('')}
                         </ul>
                     </div>
                 `;
@@ -621,37 +582,29 @@ function renderLifecycleDetails(data, container) {
     container.innerHTML = data.lifecycleDetails.map(item => `
         <div class="lifecycle-card">
             <div class="lifecycle-icon">${iconMap[item.icon] || '📌'}</div>
-            <h4>${getText(item.title)}</h4>
-            <p>${getText(item.description)}</p>
+            <h4>${_getText(item.title)}</h4>
+            <p>${_getText(item.description)}</p>
         </div>
     `).join('');
 }
 
 // Render manager/leadership section
 function renderManager(data, container) {
-    const lang = getLang();
+    const lang = _getLang();
 
-    // Icon mapping for PM capabilities
-    const iconMap = {
-        'users': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
-        'handshake': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path></svg>',
-        'calendar-check': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M9 16l2 2 4-4"></path></svg>',
-        'shield': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
-        'trending-up': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>',
-        'message-circle': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>',
-        'compass': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
-        'book-open': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>',
-        'unlock': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>',
-        'check-circle': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+    // Helper to get icon from consolidated Icons object
+    const getIcon = (iconKey) => {
+        const mappedKey = IconKeyMap[iconKey] || iconKey;
+        return Icons[mappedKey] || Icons.users;
     };
 
     // Render PM Capabilities
     const renderCapabilities = (capabilities) => {
         return capabilities.map(cap => `
             <div class="manager-capability-card">
-                <div class="capability-icon">${iconMap[cap.icon] || iconMap['users']}</div>
-                <h3 class="capability-title">${getText(cap.title)}</h3>
-                <p class="capability-description">${getText(cap.description)}</p>
+                <div class="capability-icon">${getIcon(cap.icon)}</div>
+                <h3 class="capability-title">${_getText(cap.title)}</h3>
+                <p class="capability-description">${_getText(cap.description)}</p>
                 ${cap.metrics ? `
                     <div class="capability-metrics">
                         ${cap.metrics.onTimeDelivery ? `<span class="metric-badge">${cap.metrics.onTimeDelivery} ${lang === 'ko' ? '일정 준수' : 'On-time'}</span>` : ''}
@@ -666,10 +619,10 @@ function renderManager(data, container) {
     // Render Leadership Style
     const renderLeadershipStyle = (style) => {
         if (!style) return '';
-        const principles = getArray(style.principles);
+        const principles = _getArray(style.principles);
         return `
             <div class="leadership-style-section">
-                <h3 class="subsection-title">${getText(style.title)}</h3>
+                <h3 class="subsection-title">${_getText(style.title)}</h3>
                 <div class="leadership-principles">
                     ${principles.map(p => `
                         <div class="principle-item">
@@ -685,7 +638,7 @@ function renderManager(data, container) {
     // Render Business Impact
     const renderBusinessImpact = (impact) => {
         if (!impact) return '';
-        const highlights = getArray(impact.highlights);
+        const highlights = _getArray(impact.highlights);
         const numbers = impact.keyNumbers;
         return `
             <div class="business-impact-section">
@@ -724,8 +677,8 @@ function renderManager(data, container) {
                 <div class="soft-skills-grid">
                     ${skills.map(skill => `
                         <div class="soft-skill-item">
-                            <div class="skill-icon">${iconMap[skill.icon] || '📌'}</div>
-                            <span class="skill-name">${getText(skill.title)}</span>
+                            <div class="skill-icon">${getIcon(skill.icon)}</div>
+                            <span class="skill-name">${_getText(skill.title)}</span>
                             <div class="skill-level">
                                 ${Array(5).fill(0).map((_, i) => `<span class="level-dot ${i < skill.level ? 'filled' : ''}"></span>`).join('')}
                             </div>
@@ -747,13 +700,13 @@ function renderManager(data, container) {
                         <div class="management-project-card">
                             <div class="project-header">
                                 <h4>${proj.title}</h4>
-                                <span class="project-duration">${getText(proj.duration)}</span>
+                                <span class="project-duration">${_getText(proj.duration)}</span>
                             </div>
                             ${proj.teamSize ? `<div class="project-team"><span class="team-icon">👥</span> ${lang === 'ko' ? `팀 ${proj.teamSize}명` : `Team of ${proj.teamSize}`}</div>` : ''}
                             ${proj.certifications ? `<div class="project-certs">${proj.certifications.map(c => `<span class="cert-badge-small">${c}</span>`).join('')}</div>` : ''}
                             ${proj.outcomes ? `
                                 <ul class="project-outcomes">
-                                    ${getArray(proj.outcomes).map(o => `<li>${o}</li>`).join('')}
+                                    ${_getArray(proj.outcomes).map(o => `<li>${o}</li>`).join('')}
                                 </ul>
                             ` : ''}
                             ${proj.onTime ? `<span class="on-time-badge">${lang === 'ko' ? '일정 준수' : 'On-time'}</span>` : ''}
