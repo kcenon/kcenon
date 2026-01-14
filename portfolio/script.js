@@ -4,7 +4,7 @@
 
 // Initialize portfolio using inline data (no server required)
 function initializePortfolio() {
-    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails } = window.PortfolioComponents;
+    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager } = window.PortfolioComponents;
 
     // Get data from inline JavaScript (data/data.js)
     const data = window.PortfolioData;
@@ -36,6 +36,12 @@ function initializePortfolio() {
 
         const lifecycleDetails = document.getElementById('lifecycle-details');
         if (lifecycleDetails) renderLifecycleDetails(data.expertise, lifecycleDetails);
+    }
+
+    // Render manager/leadership section
+    if (data.manager) {
+        const managerContainer = document.getElementById('manager-container');
+        if (managerContainer) renderManager(data.manager, managerContainer);
     }
 
     // Initialize expand buttons after rendering
@@ -103,7 +109,11 @@ const translations = {
         'nav.projects': '프로젝트',
         'nav.testimonials': '추천서',
         'nav.career': '경력',
+        'nav.manager': '리더십',
         'nav.contact': '연락처',
+        // Manager Section
+        'manager.title': '리더십 & 관리',
+        'manager.desc': '팀 성장과 비즈니스 성과를 기반으로 한 리더십 경험',
         // Hero
         'hero.status': 'Open to Opportunities',
         'hero.name': '신동철',
@@ -162,7 +172,11 @@ const translations = {
         'nav.projects': 'Projects',
         'nav.testimonials': 'Testimonials',
         'nav.career': 'Career',
+        'nav.manager': 'Leadership',
         'nav.contact': 'Contact',
+        // Manager Section
+        'manager.title': 'Leadership & Management',
+        'manager.desc': 'Leadership experience based on team growth and business results',
         // Hero
         'hero.status': 'Open to Opportunities',
         'hero.name': 'Dongcheol Shin',
@@ -497,7 +511,7 @@ async function downloadResumePDF() {
 
         // Generate PDF with current language
         await window.PDFExporter.generatePDF(data, {
-            sections: ['expertise', 'projects', 'career', 'testimonials'],
+            sections: ['expertise', 'projects', 'manager', 'career', 'testimonials'],
             filename: msg.filename,
             title: msg.title,
             author: msg.author,

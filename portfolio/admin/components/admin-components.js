@@ -277,6 +277,97 @@ const AdminComponents = {
   },
 
   /**
+   * Render PM Capability form
+   */
+  renderPMCapabilityForm(capability = {}) {
+    const iconOptions = [
+      { value: 'users', label: 'Users (Team)' },
+      { value: 'handshake', label: 'Handshake (Stakeholder)' },
+      { value: 'calendar-check', label: 'Calendar (Delivery)' },
+      { value: 'shield', label: 'Shield (Risk)' },
+      { value: 'trending-up', label: 'Trending Up (Process)' }
+    ];
+
+    return `
+      ${FormFields.textInput({ id: 'id', label: 'ID', value: capability.id, required: true, placeholder: 'team-management' })}
+      ${FormFields.select({ id: 'icon', label: 'Icon', value: capability.icon, options: iconOptions })}
+      ${FormFields.textInput({ id: 'title', label: 'Title', value: capability.title, required: true })}
+      ${FormFields.textArea({ id: 'description', label: 'Description', value: capability.description, required: true, rows: 3 })}
+    `;
+  },
+
+  /**
+   * Render Leadership Style form
+   */
+  renderLeadershipStyleForm(style = {}) {
+    return `
+      ${FormFields.textInput({ id: 'title', label: 'Title', value: style.title, required: true })}
+      ${FormFields.arrayInput({ id: 'principles', label: 'Principles', values: style.principles })}
+    `;
+  },
+
+  /**
+   * Render Business Impact form
+   */
+  renderBusinessImpactForm(impact = {}) {
+    return `
+      ${FormFields.arrayInput({ id: 'highlights', label: 'Highlights', values: impact.highlights })}
+      <div class="form-section">
+        <h4>Key Numbers</h4>
+        ${FormFields.textInput({ id: 'keyNumbers.certifications', label: 'Certifications Count', value: impact.keyNumbers?.certifications, type: 'number' })}
+        ${FormFields.textInput({ id: 'keyNumbers.ipos', label: 'IPOs Count', value: impact.keyNumbers?.ipos, type: 'number' })}
+        ${FormFields.textInput({ id: 'keyNumbers.performanceImprovement', label: 'Performance Improvement', value: impact.keyNumbers?.performanceImprovement, placeholder: '2x' })}
+        ${FormFields.textInput({ id: 'keyNumbers.latencyReduction', label: 'Latency Reduction', value: impact.keyNumbers?.latencyReduction, placeholder: '50%' })}
+        ${FormFields.textInput({ id: 'keyNumbers.projectsDelivered', label: 'Projects Delivered', value: impact.keyNumbers?.projectsDelivered, placeholder: '15+' })}
+      </div>
+    `;
+  },
+
+  /**
+   * Render Soft Skill form
+   */
+  renderSoftSkillForm(skill = {}) {
+    const iconOptions = [
+      { value: 'message-circle', label: 'Message (Communication)' },
+      { value: 'users', label: 'Users (Mentoring)' },
+      { value: 'compass', label: 'Compass (Direction)' },
+      { value: 'book-open', label: 'Book (Learning)' },
+      { value: 'unlock', label: 'Unlock (Openness)' },
+      { value: 'check-circle', label: 'Check (Quality)' }
+    ];
+
+    const levelOptions = [
+      { value: '1', label: '1 - Basic' },
+      { value: '2', label: '2 - Developing' },
+      { value: '3', label: '3 - Competent' },
+      { value: '4', label: '4 - Advanced' },
+      { value: '5', label: '5 - Expert' }
+    ];
+
+    return `
+      ${FormFields.textInput({ id: 'id', label: 'ID', value: skill.id, required: true, placeholder: 'communication' })}
+      ${FormFields.select({ id: 'icon', label: 'Icon', value: skill.icon, options: iconOptions })}
+      ${FormFields.textInput({ id: 'title', label: 'Title', value: skill.title, required: true })}
+      ${FormFields.select({ id: 'level', label: 'Level', value: String(skill.level || 3), options: levelOptions })}
+    `;
+  },
+
+  /**
+   * Render Management Project form
+   */
+  renderManagementProjectForm(project = {}) {
+    return `
+      ${FormFields.textInput({ id: 'projectId', label: 'Project ID', value: project.projectId, required: true, placeholder: 'smartdent-v3' })}
+      ${FormFields.textInput({ id: 'title', label: 'Title', value: project.title, required: true })}
+      ${FormFields.textInput({ id: 'duration', label: 'Duration', value: project.duration, placeholder: '18 months' })}
+      ${FormFields.textInput({ id: 'teamSize', label: 'Team Size', value: project.teamSize, type: 'number' })}
+      ${FormFields.checkbox({ id: 'onTime', label: 'Delivered On Time', checked: project.onTime })}
+      ${FormFields.arrayInput({ id: 'certifications', label: 'Certifications', values: project.certifications })}
+      ${FormFields.arrayInput({ id: 'outcomes', label: 'Outcomes', values: project.outcomes })}
+    `;
+  },
+
+  /**
    * Render editor panel
    */
   renderEditorPanel(formHtml, isNew = false) {

@@ -1162,5 +1162,118 @@ window.PortfolioData = {
     { "icon": "users", "title": { "ko": "SQA 협업", "en": "SQA Collaboration" }, "description": { "ko": "SQA 팀과 긴밀히 협업하여 품질 보증 프로세스 수립 및 준수", "en": "Close collaboration with SQA team for quality assurance process" } },
     { "icon": "flask", "title": { "ko": "테스트 자동화", "en": "Test Automation" }, "description": { "ko": "단위 테스트 기반 자동화 검증 강화로 회귀 오류 방지 및 품질 향상", "en": "Enhanced automated verification with unit tests to prevent regression and improve quality" } }
   ]
-}
+},
+
+  manager: {
+    pmCapabilities: [
+      {
+        id: "team-management",
+        icon: "users",
+        title: { ko: "팀 관리", en: "Team Management" },
+        description: { ko: "2~11명 규모 개발팀 리딩 및 주니어 개발자 멘토링", en: "Led development teams of 2-11 members and mentored junior developers" },
+        metrics: { teamSizes: [2, 3, 4, 5, 6, 10, 11], yearsLeading: 14, projectsLed: 10 }
+      },
+      {
+        id: "stakeholder-management",
+        icon: "handshake",
+        title: { ko: "스테이크홀더 관리", en: "Stakeholder Management" },
+        description: { ko: "내외부 이해관계자와의 효과적인 커뮤니케이션 및 협업", en: "Effective communication and collaboration with internal and external stakeholders" },
+        stakeholderTypes: { ko: ["클라이언트", "인증 심사관", "QA팀", "경영진", "글로벌 파트너"], en: ["Clients", "Certification Auditors", "QA Team", "Management", "Global Partners"] }
+      },
+      {
+        id: "project-delivery",
+        icon: "calendar-check",
+        title: { ko: "프로젝트 딜리버리", en: "Project Delivery" },
+        description: { ko: "복잡한 프로젝트의 일정 관리 및 성공적 납품", en: "Schedule management and successful delivery of complex projects" },
+        metrics: { onTimeDelivery: "90%+", certificationSuccess: "100%", majorProjects: 15 }
+      },
+      {
+        id: "risk-management",
+        icon: "shield",
+        title: { ko: "리스크 관리", en: "Risk Management" },
+        description: { ko: "프로젝트 리스크 식별, 평가 및 완화 전략 수립", en: "Project risk identification, assessment, and mitigation strategy development" },
+        frameworks: ["ISO 14971", "FMEA", "Traceability Matrix"]
+      },
+      {
+        id: "process-improvement",
+        icon: "trending-up",
+        title: { ko: "프로세스 개선", en: "Process Improvement" },
+        description: { ko: "개발 프로세스 및 품질 시스템 구축과 개선", en: "Development process and quality system establishment and improvement" }
+      }
+    ],
+    leadershipStyle: {
+      title: { ko: "리더십 스타일", en: "Leadership Style" },
+      principles: {
+        ko: [
+          "동료들이 스스로 문제를 해결할 수 있도록 큰 방향 제시",
+          "아래 직급의 의견도 타당할 경우 적극 수용",
+          "코드 리뷰와 멘토링 기반 팀 성장 추구",
+          "새로운 기술 도입에 대한 열린 자세"
+        ],
+        en: [
+          "Provide direction for colleagues to solve problems independently",
+          "Accept valid opinions from junior staff",
+          "Pursue team growth through code review and mentoring",
+          "Open attitude toward adopting new technologies"
+        ]
+      }
+    },
+    businessImpact: {
+      highlights: {
+        ko: [
+          "글로벌 4대 시장 인증 획득 (CE/FDA/KFDA/CCC)",
+          "2개 회사 IPO 기여 (VATECH, Ray)",
+          "처리량 2배, 지연시간 50% 개선",
+          "삼성전자 등 대형 클라이언트 프로젝트 성공적 납품"
+        ],
+        en: [
+          "4 major global market certifications (CE/FDA/KFDA/CCC)",
+          "Contributed to 2 company IPOs (VATECH, Ray)",
+          "2x throughput, 50% latency improvement",
+          "Successful delivery of major client projects including Samsung"
+        ]
+      },
+      keyNumbers: {
+        certifications: 4,
+        ipos: 2,
+        performanceImprovement: "2x",
+        latencyReduction: "50%",
+        projectsDelivered: "15+"
+      }
+    },
+    softSkills: [
+      { id: "communication", icon: "message-circle", title: { ko: "커뮤니케이션", en: "Communication" }, level: 5 },
+      { id: "mentoring", icon: "users", title: { ko: "멘토링", en: "Mentoring" }, level: 5 },
+      { id: "problem-solving-direction", icon: "compass", title: { ko: "문제 해결 방향 제시", en: "Problem-Solving Direction" }, level: 5 },
+      { id: "continuous-learning", icon: "book-open", title: { ko: "지속적 학습", en: "Continuous Learning" }, level: 5 },
+      { id: "openness", icon: "unlock", title: { ko: "열린 자세", en: "Openness" }, level: 5 },
+      { id: "code-quality-focus", icon: "check-circle", title: { ko: "코드 품질 중시", en: "Code Quality Focus" }, level: 5 }
+    ],
+    managementProjects: [
+      {
+        projectId: "smartdent-v3",
+        title: "SMARTDent v3",
+        duration: { ko: "18개월", en: "18 months" },
+        teamSize: 6,
+        onTime: true,
+        certifications: ["CE", "FDA 510(k)", "KFDA", "CCC"],
+        outcomes: { ko: ["처리량 2배 향상", "지연시간 50% 감소", "4개국 글로벌 시장 진출"], en: ["2x throughput improvement", "50% latency reduction", "4-country global market entry"] }
+      },
+      {
+        projectId: "alpha-project",
+        title: "Alpha Project",
+        duration: { ko: "22개월", en: "22 months" },
+        teamSize: 4,
+        onTime: true,
+        certifications: ["CE", "FDA", "KFDA"]
+      },
+      {
+        projectId: "prs-server",
+        title: "PRS Server",
+        duration: { ko: "13개월", en: "13 months" },
+        teamSize: 3,
+        outcomes: { ko: ["Zero-downtime 배포", "Daily Release 확립", "확장성 10배 향상"], en: ["Zero-downtime deployment", "Daily Release cycle", "10x scalability"] }
+      }
+    ]
+  }
 };

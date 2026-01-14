@@ -34,7 +34,7 @@ class SectionOrderManager {
       try {
         this.sections = JSON.parse(saved);
         // Validate saved data
-        const requiredIds = ['expertise', 'projects', 'career', 'testimonials'];
+        const requiredIds = ['expertise', 'projects', 'manager', 'career', 'testimonials'];
         const savedIds = this.sections.map(s => s.id);
         const hasAllIds = requiredIds.every(id => savedIds.includes(id));
         if (!hasAllIds) {
@@ -56,6 +56,7 @@ class SectionOrderManager {
     return [
       { id: 'expertise', label: 'Expertise', included: true },
       { id: 'projects', label: 'Projects', included: true },
+      { id: 'manager', label: 'Leadership', included: true },
       { id: 'career', label: 'Career', included: true },
       { id: 'testimonials', label: 'Testimonials', included: true }
     ];

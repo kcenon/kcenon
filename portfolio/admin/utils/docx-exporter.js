@@ -119,6 +119,7 @@ class DOCXExporter {
         projects: '프로젝트',
         career: '경력',
         testimonials: '추천서',
+        manager: '리더십 & 관리',
         featuredProjects: '주요 프로젝트',
         medicalImaging: '의료 영상',
         orthodontic: '교정 시스템',
@@ -133,13 +134,22 @@ class DOCXExporter {
         responsibilities: '담당 업무:',
         companyScale: '회사 규모:',
         teamScale: '팀 규모:',
-        reasonForLeaving: '퇴사 사유:'
+        reasonForLeaving: '퇴사 사유:',
+        pmCapabilities: 'PM 역량',
+        leadershipStyle: '리더십 스타일',
+        businessImpact: '비즈니스 임팩트',
+        softSkills: '소프트 스킬',
+        managementProjects: '관리 프로젝트',
+        teamSize: '팀 규모:',
+        duration: '기간:',
+        outcomes: '성과:'
       },
       en: {
         expertise: 'EXPERTISE',
         projects: 'PROJECTS',
         career: 'CAREER',
         testimonials: 'TESTIMONIALS',
+        manager: 'LEADERSHIP & MANAGEMENT',
         featuredProjects: 'Featured Projects',
         medicalImaging: 'Medical Imaging',
         orthodontic: 'Orthodontic Systems',
@@ -154,7 +164,15 @@ class DOCXExporter {
         responsibilities: 'Responsibilities:',
         companyScale: 'Company Size:',
         teamScale: 'Team Size:',
-        reasonForLeaving: 'Reason for Leaving:'
+        reasonForLeaving: 'Reason for Leaving:',
+        pmCapabilities: 'PM Capabilities',
+        leadershipStyle: 'Leadership Style',
+        businessImpact: 'Business Impact',
+        softSkills: 'Soft Skills',
+        managementProjects: 'Management Projects',
+        teamSize: 'Team Size:',
+        duration: 'Duration:',
+        outcomes: 'Outcomes:'
       }
     };
     return labels[this.currentLang] || labels.en;
@@ -359,7 +377,7 @@ class DOCXExporter {
    */
   async generateDOCX(data, options = {}) {
     const {
-      sections = ['expertise', 'projects', 'career', 'testimonials'],
+      sections = ['expertise', 'projects', 'manager', 'career', 'testimonials'],
       filename = 'portfolio.docx',
       title = 'Portfolio',
       author = 'Dongcheol Shin',
@@ -419,6 +437,11 @@ class DOCXExporter {
         case 'testimonials':
           if (data.testimonials) {
             children.push(...this.buildTestimonialsSection(data.testimonials, addPageBreak));
+          }
+          break;
+        case 'manager':
+          if (data.manager) {
+            children.push(...this.buildManagerSection(data.manager, addPageBreak));
           }
           break;
       }
@@ -1143,6 +1166,262 @@ class DOCXExporter {
         indent: { left: this.getSpacing('list.indent') },
         keepLines: true
       }));
+    }
+
+    return children;
+  }
+
+  /**
+   * Build manager/leadership section
+   * @param {Object} manager - Manager data
+   * @param {boolean} addPageBreak - Whether to add page break before section
+   */
+  buildManagerSection(manager, addPageBreak = false) {
+    const children = [];
+    const labels = this.getLabels();
+
+    children.push(this.createHeading2(labels.manager, addPageBreak));
+
+    // PM Capabilities
+    if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
+      children.push(this.createHeading3WithKeep(labels.pmCapabilities, true));
+
+      manager.pmCapabilities.forEach((cap, index) => {
+        const isLast = index === manager.pmCapabilities.length - 1;
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: this.getText(cap.title),
+              bold: true,
+              size: this.toHalfPt(this.getTypography('fontSize.body')),
+              color: this.getColor('text.primary')
+            })
+          ],
+          spacing: { before: 100, after: 30 },
+          keepLines: true,
+          keepNext: true
+        }));
+
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: this.getText(cap.description),
+              size: this.toHalfPt(this.getTypography('fontSize.body')),
+              color: this.getColor('text.secondary')
+            })
+          ],
+          spacing: { after: 80 },
+          indent: { left: this.getSpacing('list.indent') },
+          keepLines: true,
+          keepNext: !isLast
+        }));
+      });
+    }
+
+    // Leadership Style
+    if (manager.leadershipStyle) {
+      const principles = this.getArray(manager.leadershipStyle.principles);
+      if (principles.length > 0) {
+        children.push(this.createHeading3WithKeep(labels.leadershipStyle, true));
+
+        principles.forEach((principle, index) => {
+          const isLast = index === principles.length - 1;
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `• ${this.stripHtml(this.getText(principle))}`,
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                color: this.getColor('text.secondary')
+              })
+            ],
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLast
+          }));
+        });
+      }
+    }
+
+    // Business Impact
+    if (manager.businessImpact) {
+      const highlights = this.getArray(manager.businessImpact.highlights);
+      if (highlights.length > 0) {
+        children.push(this.createHeading3WithKeep(labels.businessImpact, true));
+
+        highlights.forEach((highlight, index) => {
+          const isLast = index === highlights.length - 1;
+          const hasKeyNumbers = manager.businessImpact.keyNumbers && isLast;
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `• ${this.stripHtml(this.getText(highlight))}`,
+                size: this.toHalfPt(this.getTypography('fontSize.body')),
+                color: this.getColor('text.secondary')
+              })
+            ],
+            spacing: { after: this.getSpacing('list.itemSpacing') },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLast || hasKeyNumbers
+          }));
+        });
+
+        // Key numbers
+        if (manager.businessImpact.keyNumbers) {
+          const kn = manager.businessImpact.keyNumbers;
+          const keyNumbersText = [];
+          if (kn.certifications) keyNumbersText.push(`${this.currentLang === 'ko' ? '인증' : 'Certifications'}: ${kn.certifications}`);
+          if (kn.ipos) keyNumbersText.push(`IPO: ${kn.ipos}`);
+          if (kn.performanceImprovement) keyNumbersText.push(`${this.currentLang === 'ko' ? '성능 향상' : 'Performance'}: ${kn.performanceImprovement}`);
+          if (kn.projectsDelivered) keyNumbersText.push(`${this.currentLang === 'ko' ? '프로젝트' : 'Projects'}: ${kn.projectsDelivered}`);
+
+          if (keyNumbersText.length > 0) {
+            children.push(new docx.Paragraph({
+              children: [
+                new docx.TextRun({
+                  text: keyNumbersText.join('  |  '),
+                  bold: true,
+                  size: this.toHalfPt(this.getTypography('fontSize.small')),
+                  color: this.getColor('primary')
+                })
+              ],
+              spacing: { before: 60, after: 100 },
+              indent: { left: this.getSpacing('list.indent') },
+              keepLines: true
+            }));
+          }
+        }
+      }
+    }
+
+    // Soft Skills
+    if (manager.softSkills && manager.softSkills.length > 0) {
+      children.push(this.createHeading3WithKeep(labels.softSkills, true));
+
+      const skillsRuns = [];
+      manager.softSkills.forEach((skill, index) => {
+        const levelDots = '●'.repeat(skill.level || 0) + '○'.repeat(5 - (skill.level || 0));
+        if (index > 0) {
+          skillsRuns.push(new docx.TextRun({
+            text: '  |  ',
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.muted')
+          }));
+        }
+        skillsRuns.push(new docx.TextRun({
+          text: `${this.getText(skill.title)} ${levelDots}`,
+          size: this.toHalfPt(this.getTypography('fontSize.small')),
+          color: this.getColor('text.secondary')
+        }));
+      });
+
+      children.push(new docx.Paragraph({
+        children: skillsRuns,
+        spacing: { after: 100 },
+        indent: { left: this.getSpacing('list.indent') },
+        keepLines: true
+      }));
+    }
+
+    // Management Projects
+    if (manager.managementProjects && manager.managementProjects.length > 0) {
+      children.push(this.createHeading3WithKeep(labels.managementProjects, true));
+
+      manager.managementProjects.forEach((project, projIndex) => {
+        const isLastProject = projIndex === manager.managementProjects.length - 1;
+
+        // Title
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: project.title,
+              bold: true,
+              size: this.toHalfPt(this.getTypography('fontSize.body')),
+              color: this.getColor('text.primary')
+            })
+          ],
+          spacing: { before: 100, after: 30 },
+          keepLines: true,
+          keepNext: true
+        }));
+
+        // Meta info (duration, team size)
+        const metaRuns = [];
+        if (project.duration) {
+          metaRuns.push(new docx.TextRun({
+            text: `${labels.duration} ${this.getText(project.duration)}`,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.muted')
+          }));
+        }
+        if (project.teamSize) {
+          if (metaRuns.length > 0) {
+            metaRuns.push(new docx.TextRun({
+              text: '  |  ',
+              size: this.toHalfPt(this.getTypography('fontSize.small')),
+              color: this.getColor('text.muted')
+            }));
+          }
+          metaRuns.push(new docx.TextRun({
+            text: `${labels.teamSize} ${project.teamSize}`,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.muted')
+          }));
+        }
+
+        if (metaRuns.length > 0) {
+          children.push(new docx.Paragraph({
+            children: metaRuns,
+            spacing: { after: 30 },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: true
+          }));
+        }
+
+        // Certifications
+        if (project.certifications && project.certifications.length > 0) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: project.certifications.join(' | '),
+                bold: true,
+                size: this.toHalfPt(this.getTypography('fontSize.tiny')),
+                color: this.getColor('success')
+              })
+            ],
+            spacing: { after: 30 },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: true
+          }));
+        }
+
+        // Outcomes
+        const outcomes = this.getArray(project.outcomes);
+        if (outcomes.length > 0) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${labels.outcomes} `,
+                bold: true,
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('text.secondary')
+              }),
+              new docx.TextRun({
+                text: outcomes.map(o => this.getText(o)).join(', '),
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('text.secondary')
+              })
+            ],
+            spacing: { after: 80 },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLastProject
+          }));
+        }
+      });
     }
 
     return children;

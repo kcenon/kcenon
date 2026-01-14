@@ -6,6 +6,7 @@ class AdminApp {
   constructor() {
     this.data = {
       projects: null,
+      manager: null,
       career: null,
       expertise: null,
       testimonials: null
@@ -133,6 +134,7 @@ class AdminApp {
     // Try to load from PortfolioData first (inline data from data.js)
     if (window.PortfolioData) {
       this.data.projects = window.PortfolioData.projects || null;
+      this.data.manager = window.PortfolioData.manager || null;
       this.data.career = window.PortfolioData.career || null;
       this.data.expertise = window.PortfolioData.expertise || null;
       this.data.testimonials = window.PortfolioData.testimonials || null;
@@ -152,6 +154,7 @@ class AdminApp {
 
       // Update data if loaded successfully
       if (loadedData.projects) this.data.projects = loadedData.projects;
+      if (loadedData.manager) this.data.manager = loadedData.manager;
       if (loadedData.career) this.data.career = loadedData.career;
       if (loadedData.expertise) this.data.expertise = loadedData.expertise;
       if (loadedData.testimonials) this.data.testimonials = loadedData.testimonials;
@@ -389,6 +392,9 @@ class AdminApp {
     if (tab === 'projects') {
       subTabsContainer.style.display = 'flex';
       this.currentSubTab = 'featured';
+    } else if (tab === 'manager') {
+      subTabsContainer.style.display = 'flex';
+      this.currentSubTab = 'pmCapabilities';
     } else if (tab === 'expertise') {
       subTabsContainer.style.display = 'flex';
       this.currentSubTab = 'categories';
@@ -437,6 +443,14 @@ class AdminApp {
         { id: 'enterprise', label: 'Enterprise' },
         { id: 'openSource', label: 'Open Source' }
       ];
+    } else if (this.currentTab === 'manager') {
+      tabs = [
+        { id: 'pmCapabilities', label: 'PM Capabilities' },
+        { id: 'leadershipStyle', label: 'Leadership Style' },
+        { id: 'businessImpact', label: 'Business Impact' },
+        { id: 'softSkills', label: 'Soft Skills' },
+        { id: 'managementProjects', label: 'Projects' }
+      ];
     } else if (this.currentTab === 'expertise') {
       tabs = [
         { id: 'categories', label: 'Categories' },
@@ -465,6 +479,13 @@ class AdminApp {
     switch (this.currentTab) {
       case 'projects':
         return this.data.projects?.[this.currentSubTab] || [];
+      case 'manager':
+        if (this.currentSubTab === 'leadershipStyle') {
+          return this.data.manager?.leadershipStyle ? [this.data.manager.leadershipStyle] : [];
+        } else if (this.currentSubTab === 'businessImpact') {
+          return this.data.manager?.businessImpact ? [this.data.manager.businessImpact] : [];
+        }
+        return this.data.manager?.[this.currentSubTab] || [];
       case 'career':
         return this.data.career?.timeline || [];
       case 'expertise':
@@ -505,6 +526,19 @@ class AdminApp {
     switch (this.currentTab) {
       case 'projects':
         formHtml = AdminComponents.renderProjectForm(item, this.currentSubTab);
+        break;
+      case 'manager':
+        if (this.currentSubTab === 'pmCapabilities') {
+          formHtml = AdminComponents.renderPMCapabilityForm(item);
+        } else if (this.currentSubTab === 'leadershipStyle') {
+          formHtml = AdminComponents.renderLeadershipStyleForm(item);
+        } else if (this.currentSubTab === 'businessImpact') {
+          formHtml = AdminComponents.renderBusinessImpactForm(item);
+        } else if (this.currentSubTab === 'softSkills') {
+          formHtml = AdminComponents.renderSoftSkillForm(item);
+        } else if (this.currentSubTab === 'managementProjects') {
+          formHtml = AdminComponents.renderManagementProjectForm(item);
+        }
         break;
       case 'career':
         formHtml = AdminComponents.renderCareerForm(item);
@@ -916,6 +950,26 @@ class AdminApp {
         items = this.data.projects[this.currentSubTab];
         dataPath = `this.data.projects.${this.currentSubTab}`;
         break;
+      case 'manager':
+        if (!this.data.manager) this.data.manager = {};
+        // Handle single objects vs arrays
+        if (this.currentSubTab === 'leadershipStyle' || this.currentSubTab === 'businessImpact') {
+          // These are single objects, save directly
+          this.data.manager[this.currentSubTab] = formData;
+          this.unsavedChanges.add(this.currentTab);
+          this.updateStatusBar();
+          this.selectedItem = formData.title || this.currentSubTab;
+          this.isNewItem = false;
+          this.renderList();
+          this.renderEditor();
+          this.showToast('Item saved (not yet written to file)', 'success');
+          console.log('=== saveItem END (Manager single object) ===');
+          return;
+        }
+        if (!this.data.manager[this.currentSubTab]) this.data.manager[this.currentSubTab] = [];
+        items = this.data.manager[this.currentSubTab];
+        dataPath = `this.data.manager.${this.currentSubTab}`;
+        break;
       case 'career':
         if (!this.data.career) this.data.career = {};
         if (!this.data.career.timeline) this.data.career.timeline = [];
@@ -1033,11 +1087,20 @@ class AdminApp {
       return;
     }
 
+    // Special handling for Manager single objects - cannot delete
+    if (this.currentTab === 'manager' && (this.currentSubTab === 'leadershipStyle' || this.currentSubTab === 'businessImpact')) {
+      this.showToast('Cannot delete this item. Edit it instead.', 'error');
+      return;
+    }
+
     // Get direct reference to the data array
     let items;
     switch (this.currentTab) {
       case 'projects':
         items = this.data.projects?.[this.currentSubTab];
+        break;
+      case 'manager':
+        items = this.data.manager?.[this.currentSubTab];
         break;
       case 'career':
         items = this.data.career?.timeline;
@@ -1631,7 +1694,7 @@ class AdminApp {
       const theme = modalEl.querySelector('#export-theme').value;
       const sections = this.sectionOrderManager
         ? this.sectionOrderManager.getOrderedSections()
-        : ['expertise', 'projects', 'career', 'testimonials'];
+        : ['expertise', 'projects', 'manager', 'career', 'testimonials'];
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
       const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
 
@@ -1713,7 +1776,7 @@ class AdminApp {
     const mergedTheme = this.getMergedThemeForPreview(baseTheme);
     const sections = this.sectionOrderManager
       ? this.sectionOrderManager.getOrderedSections()
-      : ['expertise', 'projects', 'career', 'testimonials'];
+      : ['expertise', 'projects', 'manager', 'career', 'testimonials'];
     const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
 
     this.previewRenderer.update(this.data, mergedTheme, sections, { pageBreakBetweenSections });

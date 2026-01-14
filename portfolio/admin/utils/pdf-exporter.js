@@ -121,6 +121,7 @@ class PDFExporter {
         projects: '프로젝트',
         career: '경력',
         testimonials: '추천서',
+        manager: '리더십 & 관리',
         featuredProjects: '주요 프로젝트',
         medicalImaging: '의료 영상',
         orthodontic: '교정 시스템',
@@ -132,13 +133,22 @@ class PDFExporter {
         keyResponsibilities: '주요 역할:',
         achievements: '성과:',
         challenges: '기술적 도전:',
-        solutions: '해결 방법:'
+        solutions: '해결 방법:',
+        pmCapabilities: 'PM 역량',
+        leadershipStyle: '리더십 스타일',
+        businessImpact: '비즈니스 임팩트',
+        softSkills: '소프트 스킬',
+        managementProjects: '관리 프로젝트',
+        teamSize: '팀 규모:',
+        duration: '기간:',
+        outcomes: '성과:'
       },
       en: {
         expertise: 'EXPERTISE',
         projects: 'PROJECTS',
         career: 'CAREER',
         testimonials: 'TESTIMONIALS',
+        manager: 'LEADERSHIP & MANAGEMENT',
         featuredProjects: 'Featured Projects',
         medicalImaging: 'Medical Imaging',
         orthodontic: 'Orthodontic Systems',
@@ -150,7 +160,15 @@ class PDFExporter {
         keyResponsibilities: 'Key Responsibilities:',
         achievements: 'Achievements:',
         challenges: 'Challenges:',
-        solutions: 'Solutions:'
+        solutions: 'Solutions:',
+        pmCapabilities: 'PM Capabilities',
+        leadershipStyle: 'Leadership Style',
+        businessImpact: 'Business Impact',
+        softSkills: 'Soft Skills',
+        managementProjects: 'Management Projects',
+        teamSize: 'Team Size:',
+        duration: 'Duration:',
+        outcomes: 'Outcomes:'
       }
     };
     return labels[this.currentLang] || labels.en;
@@ -441,7 +459,7 @@ class PDFExporter {
    */
   async generatePDF(data, options = {}) {
     const {
-      sections = ['expertise', 'projects', 'career', 'testimonials'],
+      sections = ['expertise', 'projects', 'manager', 'career', 'testimonials'],
       filename = 'portfolio.pdf',
       title = 'Portfolio',
       author = 'Dongcheol Shin',
@@ -508,6 +526,11 @@ class PDFExporter {
         case 'testimonials':
           if (data.testimonials) {
             content.push(...this.buildTestimonialsSection(data.testimonials, addPageBreak));
+          }
+          break;
+        case 'manager':
+          if (data.manager) {
+            content.push(...this.buildManagerSection(data.manager, addPageBreak));
           }
           break;
       }
@@ -1074,6 +1097,189 @@ class PDFExporter {
       stack: items,
       margin: [0, 10, 0, 15]
     };
+  }
+
+  /**
+   * Build manager/leadership section
+   * @param {Object} manager - Manager data
+   * @param {boolean} addPageBreak - Whether to add page break before section
+   */
+  buildManagerSection(manager, addPageBreak = false) {
+    const content = [];
+    const labels = this.getLabels();
+
+    const sectionHeader = {
+      text: labels.manager,
+      style: 'subheader'
+    };
+    if (addPageBreak) {
+      sectionHeader.pageBreak = 'before';
+    }
+    content.push(sectionHeader);
+
+    // PM Capabilities
+    if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
+      content.push({
+        text: labels.pmCapabilities,
+        style: 'sectionTitle'
+      });
+
+      manager.pmCapabilities.forEach(cap => {
+        content.push({
+          unbreakable: true,
+          stack: [
+            {
+              text: this.getText(cap.title),
+              bold: true,
+              fontSize: this.getTypography('fontSize.h3') - 2,
+              color: this.getColor('text.primary'),
+              margin: [0, 5, 0, 2]
+            },
+            {
+              text: this.getText(cap.description),
+              color: this.getColor('text.secondary'),
+              margin: [0, 0, 0, 5]
+            }
+          ],
+          margin: [this.getSpacing('list.indent'), 0, 0, 5]
+        });
+      });
+    }
+
+    // Leadership Style
+    if (manager.leadershipStyle) {
+      content.push({
+        text: labels.leadershipStyle,
+        style: 'sectionTitle'
+      });
+
+      const principles = this.getArray(manager.leadershipStyle.principles);
+      if (principles.length > 0) {
+        content.push({
+          ul: principles.map(p => this.stripHtml(this.getText(p))),
+          margin: [this.getSpacing('list.indent'), 0, 0, 10],
+          markerColor: this.getColor('primary')
+        });
+      }
+    }
+
+    // Business Impact
+    if (manager.businessImpact) {
+      content.push({
+        text: labels.businessImpact,
+        style: 'sectionTitle'
+      });
+
+      const highlights = this.getArray(manager.businessImpact.highlights);
+      if (highlights.length > 0) {
+        content.push({
+          ul: highlights.map(h => this.stripHtml(this.getText(h))),
+          margin: [this.getSpacing('list.indent'), 0, 0, 10],
+          markerColor: this.getColor('success')
+        });
+      }
+
+      // Key numbers
+      if (manager.businessImpact.keyNumbers) {
+        const kn = manager.businessImpact.keyNumbers;
+        const keyNumbersText = [];
+        if (kn.certifications) keyNumbersText.push(`${this.currentLang === 'ko' ? '인증' : 'Certifications'}: ${kn.certifications}`);
+        if (kn.ipos) keyNumbersText.push(`IPO: ${kn.ipos}`);
+        if (kn.performanceImprovement) keyNumbersText.push(`${this.currentLang === 'ko' ? '성능 향상' : 'Performance'}: ${kn.performanceImprovement}`);
+        if (kn.projectsDelivered) keyNumbersText.push(`${this.currentLang === 'ko' ? '프로젝트' : 'Projects'}: ${kn.projectsDelivered}`);
+
+        if (keyNumbersText.length > 0) {
+          content.push({
+            text: keyNumbersText.join('  |  '),
+            color: this.getColor('primary'),
+            bold: true,
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [this.getSpacing('list.indent'), 0, 0, 10]
+          });
+        }
+      }
+    }
+
+    // Soft Skills
+    if (manager.softSkills && manager.softSkills.length > 0) {
+      content.push({
+        text: labels.softSkills,
+        style: 'sectionTitle'
+      });
+
+      const skillsText = manager.softSkills.map(skill => {
+        const levelDots = '●'.repeat(skill.level || 0) + '○'.repeat(5 - (skill.level || 0));
+        return `${this.getText(skill.title)} ${levelDots}`;
+      }).join('  |  ');
+
+      content.push({
+        text: skillsText,
+        color: this.getColor('text.secondary'),
+        fontSize: this.getTypography('fontSize.small'),
+        margin: [this.getSpacing('list.indent'), 0, 0, 10]
+      });
+    }
+
+    // Management Projects
+    if (manager.managementProjects && manager.managementProjects.length > 0) {
+      content.push({
+        text: labels.managementProjects,
+        style: 'sectionTitle'
+      });
+
+      manager.managementProjects.forEach(project => {
+        const items = [];
+
+        items.push({
+          text: project.title,
+          bold: true,
+          fontSize: this.getTypography('fontSize.h3') - 2,
+          color: this.getColor('text.primary'),
+          margin: [0, 5, 0, 2]
+        });
+
+        const metaInfo = [];
+        if (project.duration) metaInfo.push(`${labels.duration} ${this.getText(project.duration)}`);
+        if (project.teamSize) metaInfo.push(`${labels.teamSize} ${project.teamSize}`);
+
+        if (metaInfo.length > 0) {
+          items.push({
+            text: metaInfo.join('  |  '),
+            color: this.getColor('text.muted'),
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [0, 0, 0, 3]
+          });
+        }
+
+        if (project.certifications && project.certifications.length > 0) {
+          items.push({
+            text: project.certifications.join(' | '),
+            color: this.getColor('success'),
+            bold: true,
+            fontSize: this.getTypography('fontSize.tiny'),
+            margin: [0, 0, 0, 3]
+          });
+        }
+
+        const outcomes = this.getArray(project.outcomes);
+        if (outcomes.length > 0) {
+          items.push({
+            text: `${labels.outcomes} ${outcomes.map(o => this.getText(o)).join(', ')}`,
+            color: this.getColor('text.secondary'),
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [0, 0, 0, 5]
+          });
+        }
+
+        content.push({
+          unbreakable: true,
+          stack: items,
+          margin: [this.getSpacing('list.indent'), 0, 0, 8]
+        });
+      });
+    }
+
+    return content;
   }
 
   /**

@@ -627,6 +627,170 @@ function renderLifecycleDetails(data, container) {
     `).join('');
 }
 
+// Render manager/leadership section
+function renderManager(data, container) {
+    const lang = getLang();
+
+    // Icon mapping for PM capabilities
+    const iconMap = {
+        'users': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+        'handshake': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path></svg>',
+        'calendar-check': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M9 16l2 2 4-4"></path></svg>',
+        'shield': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+        'trending-up': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>',
+        'message-circle': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>',
+        'compass': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
+        'book-open': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>',
+        'unlock': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>',
+        'check-circle': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+    };
+
+    // Render PM Capabilities
+    const renderCapabilities = (capabilities) => {
+        return capabilities.map(cap => `
+            <div class="manager-capability-card">
+                <div class="capability-icon">${iconMap[cap.icon] || iconMap['users']}</div>
+                <h3 class="capability-title">${getText(cap.title)}</h3>
+                <p class="capability-description">${getText(cap.description)}</p>
+                ${cap.metrics ? `
+                    <div class="capability-metrics">
+                        ${cap.metrics.onTimeDelivery ? `<span class="metric-badge">${cap.metrics.onTimeDelivery} ${lang === 'ko' ? '일정 준수' : 'On-time'}</span>` : ''}
+                        ${cap.metrics.majorProjects ? `<span class="metric-badge">${cap.metrics.majorProjects}+ ${lang === 'ko' ? '프로젝트' : 'Projects'}</span>` : ''}
+                        ${cap.metrics.yearsLeading ? `<span class="metric-badge">${cap.metrics.yearsLeading}+ ${lang === 'ko' ? '년 리딩' : 'Years Leading'}</span>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    };
+
+    // Render Leadership Style
+    const renderLeadershipStyle = (style) => {
+        if (!style) return '';
+        const principles = getArray(style.principles);
+        return `
+            <div class="leadership-style-section">
+                <h3 class="subsection-title">${getText(style.title)}</h3>
+                <div class="leadership-principles">
+                    ${principles.map(p => `
+                        <div class="principle-item">
+                            <span class="principle-icon">✓</span>
+                            <span>${p}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    };
+
+    // Render Business Impact
+    const renderBusinessImpact = (impact) => {
+        if (!impact) return '';
+        const highlights = getArray(impact.highlights);
+        const numbers = impact.keyNumbers;
+        return `
+            <div class="business-impact-section">
+                <h3 class="subsection-title">${lang === 'ko' ? '비즈니스 임팩트' : 'Business Impact'}</h3>
+                <div class="impact-numbers">
+                    <div class="impact-number">
+                        <span class="number">${numbers.certifications}</span>
+                        <span class="label">${lang === 'ko' ? '글로벌 인증' : 'Global Certs'}</span>
+                    </div>
+                    <div class="impact-number">
+                        <span class="number">${numbers.ipos}</span>
+                        <span class="label">${lang === 'ko' ? 'IPO 기여' : 'IPO Contrib'}</span>
+                    </div>
+                    <div class="impact-number">
+                        <span class="number">${numbers.performanceImprovement}</span>
+                        <span class="label">${lang === 'ko' ? '성능 향상' : 'Performance'}</span>
+                    </div>
+                    <div class="impact-number">
+                        <span class="number">${numbers.projectsDelivered}</span>
+                        <span class="label">${lang === 'ko' ? '프로젝트 납품' : 'Projects'}</span>
+                    </div>
+                </div>
+                <ul class="impact-highlights">
+                    ${highlights.map(h => `<li>${h}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    };
+
+    // Render Soft Skills
+    const renderSoftSkills = (skills) => {
+        if (!skills || skills.length === 0) return '';
+        return `
+            <div class="soft-skills-section">
+                <h3 class="subsection-title">${lang === 'ko' ? '소프트 스킬' : 'Soft Skills'}</h3>
+                <div class="soft-skills-grid">
+                    ${skills.map(skill => `
+                        <div class="soft-skill-item">
+                            <div class="skill-icon">${iconMap[skill.icon] || '📌'}</div>
+                            <span class="skill-name">${getText(skill.title)}</span>
+                            <div class="skill-level">
+                                ${Array(5).fill(0).map((_, i) => `<span class="level-dot ${i < skill.level ? 'filled' : ''}"></span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    };
+
+    // Render Management Projects
+    const renderManagementProjects = (projects) => {
+        if (!projects || projects.length === 0) return '';
+        return `
+            <div class="management-projects-section">
+                <h3 class="subsection-title">${lang === 'ko' ? '주요 리딩 프로젝트' : 'Key Projects Led'}</h3>
+                <div class="management-projects-grid">
+                    ${projects.map(proj => `
+                        <div class="management-project-card">
+                            <div class="project-header">
+                                <h4>${proj.title}</h4>
+                                <span class="project-duration">${getText(proj.duration)}</span>
+                            </div>
+                            ${proj.teamSize ? `<div class="project-team"><span class="team-icon">👥</span> ${lang === 'ko' ? `팀 ${proj.teamSize}명` : `Team of ${proj.teamSize}`}</div>` : ''}
+                            ${proj.certifications ? `<div class="project-certs">${proj.certifications.map(c => `<span class="cert-badge-small">${c}</span>`).join('')}</div>` : ''}
+                            ${proj.outcomes ? `
+                                <ul class="project-outcomes">
+                                    ${getArray(proj.outcomes).map(o => `<li>${o}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                            ${proj.onTime ? `<span class="on-time-badge">${lang === 'ko' ? '일정 준수' : 'On-time'}</span>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    };
+
+    let html = `
+        <h2 class="section-title">${t('manager.title')}</h2>
+        <p class="section-description">${t('manager.desc')}</p>
+
+        <!-- PM Capabilities Grid -->
+        <div class="manager-capabilities-grid">
+            ${renderCapabilities(data.pmCapabilities)}
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="manager-two-column">
+            <div class="manager-column">
+                ${renderLeadershipStyle(data.leadershipStyle)}
+                ${renderSoftSkills(data.softSkills)}
+            </div>
+            <div class="manager-column">
+                ${renderBusinessImpact(data.businessImpact)}
+            </div>
+        </div>
+
+        <!-- Management Projects -->
+        ${renderManagementProjects(data.managementProjects)}
+    `;
+
+    container.innerHTML = html;
+}
+
 // Export functions
 window.PortfolioComponents = {
     renderProjects,
@@ -634,5 +798,6 @@ window.PortfolioComponents = {
     renderCareer,
     renderExpertise,
     renderLifecycleDetails,
+    renderManager,
     Icons
 };
