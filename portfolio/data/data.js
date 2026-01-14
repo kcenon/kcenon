@@ -877,8 +877,8 @@ window.PortfolioData = {
         "team": { "ko": "5명", "en": "5 members" }
       },
       "leaveReason": {
-        "ko": "자회사 보직 이동으로 인한 퇴사처리",
-        "en": "Resignation processed due to subsidiary transfer"
+        "ko": "계열사 이동으로 인한 전배처리",
+        "en": "Transfer to affiliate company"
       },
       "tags": ["C++", "DICOM", "X-ray", "CBCT", "CE/FDA/KFDA"],
       "relatedProjects": ["implagraphy", "ezceph", "orthovision", "easydent"],
