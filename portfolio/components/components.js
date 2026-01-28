@@ -56,7 +56,10 @@ const IconKeyMap = {
 
 const ProjectIconMap = {
     hospital: Icons.hospital,
-    microscope: Icons.microscope
+    microscope: Icons.microscope,
+    clipboard: Icons.clipboard,
+    zap: Icons.zap,
+    tool: Icons.tool
 };
 
 // Use shared calculateDuration from utils/i18n.js
@@ -217,7 +220,7 @@ function renderOpenSourceCard(project) {
         <article class="project-card opensource expandable" id="project-${project.id}">
             <div class="project-header">
                 <span class="project-company-small">Open Source</span>
-                <a href="${project.github}" target="_blank" class="github-link" title="${labels.viewOnGithub}">
+                <a href="${project.github}" target="_blank" rel="noopener noreferrer" class="github-link" title="${labels.viewOnGithub}">
                     ${Icons.github}
                 </a>
             </div>
@@ -309,7 +312,7 @@ function renderProjects(data, container) {
                 ${data.openSource.map(renderOpenSourceCard).join('')}
             </div>
             <div class="opensource-cta">
-                <a href="https://github.com/kcenon" target="_blank" class="btn btn-secondary">
+                <a href="https://github.com/kcenon" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
                     ${Icons.github}
                     ${lang === 'ko' ? '전체 37개 프로젝트 보기' : 'View all 37 projects'}
                 </a>
@@ -530,11 +533,14 @@ function renderExpertise(data, container) {
         'zap': '⚡',
         'tool': '🛠️',
         'file-text': '📄',
-        'git-branch': '🔀'
+        'git-branch': '🔀',
+        'cloud': '☁️',
+        'shield': '🛡️'
     };
 
     let html = `
-        <h2 class="section-title">Expertise</h2>
+        <h2 class="section-title">${_t('nav.expertise')}</h2>
+        <p class="section-description">${_t('expertise.desc')}</p>
         <div class="expertise-grid">
             ${data.categories.map(cat => {
                 if (cat.tags) {

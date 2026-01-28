@@ -16,15 +16,15 @@
     {
       "id": "regulatory",
       "icon": "clipboard",
-      "title": { "ko": "규제 & 인증", "en": "Regulatory & Compliance" },
+      "title": { "ko": "규제 & 컴플라이언스", "en": "Regulatory & Compliance" },
       "items": [
         { "ko": "ISO 13485 (의료기기 품질경영시스템)", "en": "ISO 13485 (Medical Device QMS)" },
         { "ko": "IEC 62304 (의료기기 SW 생명주기)", "en": "IEC 62304 (Medical Device SW Lifecycle)" },
         { "ko": "FDA 510(k) / KFDA (식약처)", "en": "FDA 510(k) / KFDA (Korea FDA)" },
         { "ko": "CE Marking (유럽) / CCC (중국)", "en": "CE Marking (EU) / CCC (China)" },
-        { "ko": "<strong>HIPAA Compliance</strong> (PHI 보안, 감사 로깅)", "en": "<strong>HIPAA Compliance</strong> (PHI Security, Audit Logging)" },
+        { "ko": "<strong>HIPAA Controls</strong> (PHI 보안, 감사 로깅)", "en": "<strong>HIPAA Controls</strong> (PHI security, audit logging)" },
         { "ko": "소프트웨어 위험 관리 (ISO 14971)", "en": "Software Risk Management (ISO 14971)" },
-        { "ko": "설계 통제 문서화", "en": "Design Control Documentation" }
+        { "ko": "설계 통제 문서화 (Design Control)", "en": "Design Control Documentation" }
       ]
     },
     {
@@ -36,11 +36,11 @@
         { "ko": "SDS (소프트웨어 설계 명세서)", "en": "SDS (Software Design Specification)" },
         { "ko": "소프트웨어 아키텍처 문서", "en": "Software Architecture Document" },
         { "ko": "위험 분석 (ISO 14971 / FMEA)", "en": "Risk Analysis (ISO 14971 / FMEA)" },
-        { "ko": "추적성 매트릭스 (요구사항 ↔ 테스트)", "en": "Traceability Matrix (Requirements ↔ Test)" },
-        { "ko": "검증 & 유효성 확인 프로토콜", "en": "Verification & Validation Protocol" },
+        { "ko": "추적성 매트릭스 (요구사항 ↔ 설계 ↔ 테스트)", "en": "Traceability Matrix (Requirements ↔ Design ↔ Test)" },
+        { "ko": "검증 & 유효성 확인(V&V) 프로토콜/리포트", "en": "Verification & Validation (V&V) protocols/reports" },
         { "ko": "단위/통합 테스트 명세서", "en": "Unit/Integration Test Specification" },
-        { "ko": "소프트웨어 릴리즈 노트", "en": "Software Release Note" },
-        { "ko": "SOUP 분석 (미확인 출처 소프트웨어)", "en": "SOUP (Software of Unknown Provenance) Analysis" }
+        { "ko": "SOUP 분석 (미확인 출처 소프트웨어)", "en": "SOUP (Software of Unknown Provenance) Analysis" },
+        { "ko": "릴리즈 노트 & 변경 이력", "en": "Release notes & change history" }
       ]
     },
     {
@@ -59,6 +59,31 @@
       ]
     },
     {
+      "id": "cloud",
+      "icon": "cloud",
+      "title": { "ko": "클라우드 & DevOps", "en": "Cloud & DevOps" },
+      "items": [
+        { "ko": "AWS 기반 서비스 설계 및 운영", "en": "AWS-based service architecture & operations" },
+        { "ko": "Docker 기반 컨테이너 배포", "en": "Containerized deployment with Docker" },
+        { "ko": "Kubernetes 마이그레이션 설계", "en": "Kubernetes migration design" },
+        { "ko": "CI/CD (Daily Release)", "en": "CI/CD (Daily Release)" },
+        { "ko": "관측성 (OpenTelemetry, tracing/metrics/logging)", "en": "Observability (OpenTelemetry, tracing/metrics/logging)" },
+        { "ko": "모니터링 & 알림", "en": "Monitoring & alerting" }
+      ]
+    },
+    {
+      "id": "security",
+      "icon": "shield",
+      "title": { "ko": "보안 & 개인정보", "en": "Security & Privacy" },
+      "items": [
+        { "ko": "PHI/PII 암호화 (전송/저장)", "en": "PHI/PII encryption (in transit/at rest)" },
+        { "ko": "감사 로그(Audit Logging) 설계", "en": "Audit logging design" },
+        { "ko": "접근 통제 및 권한 모델", "en": "Access control & authorization model" },
+        { "ko": "시크릿/키 관리 (운영 관점)", "en": "Secrets/keys handling (operational)" },
+        { "ko": "HIPAA 기술적 보호조치 적용 경험", "en": "HIPAA safeguard implementation experience" }
+      ]
+    },
+    {
       "id": "performance",
       "icon": "zap",
       "title": { "ko": "고성능 시스템", "en": "High Performance Systems" },
@@ -67,8 +92,8 @@
         { "ko": "SIMD 최적화", "en": "SIMD Optimization" },
         { "ko": "비동기 I/O & 이벤트 기반 아키텍처", "en": "Async I/O & Event-driven Architecture" },
         { "ko": "메모리 효율적 설계", "en": "Memory-efficient Design" },
-        { "ko": "마이크로초 단위 레이턴시 시스템", "en": "Sub-microsecond Latency Systems" },
-        { "ko": "분산 시스템 아키텍처", "en": "Distributed System Architecture" }
+        { "ko": "마이크로초 단위 저지연 시스템", "en": "Microsecond-level low-latency systems" },
+        { "ko": "프로파일링 & 성능 튜닝", "en": "Profiling & performance tuning" }
       ]
     },
     {
@@ -77,7 +102,9 @@
       "title": { "ko": "기술 스택", "en": "Technologies" },
       "tags": [
         "C++20", "C#/.NET", "Rust", "Python", "Go", "TypeScript",
-        "Qt", "WPF/MVVM", "OpenGL", "OpenCV", "PostgreSQL", "Redis", "Docker", "AWS"
+        "Qt", "WPF/MVVM", "OpenGL", "OpenCV",
+        "PostgreSQL", "Redis", "RabbitMQ",
+        "Docker", "Kubernetes", "AWS", "OpenTelemetry"
       ]
     }
   ],
@@ -86,7 +113,7 @@
     { "icon": "US", "name": "FDA" },
     { "icon": "KR", "name": "KFDA" },
     { "icon": "CN", "name": "CCC" },
-    { "icon": "US", "name": "HIPAA" }
+    { "icon": "US", "name": "HIPAA Controls" }
   ],
   "heroCapabilities": [
     {

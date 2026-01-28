@@ -18,8 +18,8 @@
       "metrics": [
         {
           "value": "15 MB/s",
-          "label": { "ko": "실효 전송량 @100Mbps", "en": "Effective throughput @100Mbps" },
-          "change": { "ko": "이론값 초과", "en": "Exceeds theoretical limit" },
+          "label": { "ko": "압축 기준 raw-equivalent 전송량 @100Mbps", "en": "Raw-equivalent throughput (with compression) @100Mbps" },
+          "change": { "ko": "12.5 MB/s(이론치) 대비", "en": "vs 12.5 MB/s theoretical" },
           "positive": true
         },
         {

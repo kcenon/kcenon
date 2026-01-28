@@ -4,7 +4,12 @@
 
 // Initialize portfolio using inline data (no server required)
 function initializePortfolio() {
-    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager } = window.PortfolioComponents;
+    const components = window.PortfolioComponents;
+    if (!components) {
+        console.warn('PortfolioComponents not found. Make sure components/components.js is loaded.');
+        return;
+    }
+    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager } = components;
 
     // Get data from inline JavaScript (data/data.js)
     const data = window.PortfolioData;
@@ -74,6 +79,7 @@ function initializeExpandButtons() {
 
 // Initialize scroll animations for dynamically created elements
 function initializeScrollAnimations() {
+    if (typeof IntersectionObserver === 'undefined') return;
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -94,15 +100,28 @@ function initializeScrollAnimations() {
     });
 }
 
-// Initialize portfolio when DOM is ready
-document.addEventListener('DOMContentLoaded', initializePortfolio);
+// NOTE: Portfolio initialization is triggered from setLanguage() so the first render
+// uses the correct language (prevents a KO->EN flash when localStorage is 'en').
 
 // =============================================
 // Language System
 // =============================================
 
+const templateVars = {
+    year: String(new Date().getFullYear())
+};
+
+function interpolateTemplate(str) {
+    if (typeof str !== 'string') return str;
+    return str.replace(/\{(\w+)\}/g, (_, key) => (templateVars[key] ?? `{${key}}`));
+}
+
 const translations = {
     ko: {
+        // Meta
+        'meta.title': '신동철 | Medical Software Architect',
+        'meta.description': '의료 영상/의료기기 소프트웨어 아키텍트 신동철의 포트폴리오. IEC 62304/ISO 13485, DICOM/PACS, 분산 시스템/클라우드, 고성능 C++/C#/.NET 경험.',
+        'meta.locale': 'ko_KR',
         // Navigation
         'nav.about': '소개',
         'nav.expertise': '전문성',
@@ -118,7 +137,7 @@ const translations = {
         'hero.status': 'Open to Opportunities',
         'hero.name': '신동철',
         'hero.title': 'Medical Software Architect',
-        'hero.summary': '<strong>IEC 62304 생명주기 모델</strong> 기반 의료기기 소프트웨어의 전 개발 과정을 경험한 아키텍트. PACS 서버, DICOM 뷰어, 교정 시뮬레이션, 모달리티 장비 제어 시스템까지 의료 영상 분야 전반을 설계하고 구현.',
+        'hero.summary': '<strong>IEC 62304</strong> 기반 의료기기 소프트웨어 전 생명주기 경험. PACS 서버, DICOM 뷰어, 모달리티 장비 제어 등 의료 영상 시스템을 설계·구현했고, <strong>10+ 마이크로서비스</strong>·메시지 큐·CI/CD·관측성을 포함한 분산 시스템/클라우드 환경에서도 즉시 기여할 수 있습니다.',
         'hero.metric1': '년 경력',
         'hero.metric2': 'IPO 성공',
         'hero.metric3': '글로벌 인증',
@@ -157,15 +176,20 @@ const translations = {
         'contact.intro': '의료 소프트웨어 개발, 시스템 아키텍처 설계, 또는 오픈소스 협업에 관심이 있으시다면 언제든 연락주세요.',
         'section.methodology': 'Development Methodology',
         'section.methodology.desc': 'IEC 62304 생명주기 모델 기반의 체계적인 의료기기 소프트웨어 개발',
+        'expertise.desc': '의료 도메인에서 검증된 아키텍처·품질 역량을 분산 시스템·클라우드·고성능 엔지니어링으로 확장합니다.',
         'projects.title': 'Projects',
         'projects.desc': '20년간 참여한 주요 프로젝트들',
         'testimonials.title': 'Testimonials',
         'testimonials.desc': '함께 일한 동료들의 추천서',
         'expand': '상세 보기',
         'collapse': '접기',
-        'footer.copyright': '&copy; 2025 신동철. 의료 소프트웨어에 대한 열정으로 만들었습니다.'
+        'footer.copyright': '&copy; {year} 신동철. 의료 소프트웨어에 대한 열정으로 만들었습니다.'
     },
     en: {
+        // Meta
+        'meta.title': 'Dongcheol Shin | Medical Software Architect',
+        'meta.description': 'Portfolio of Dongcheol Shin, a medical imaging software architect. Experience with IEC 62304/ISO 13485, DICOM/PACS, distributed systems & cloud, and high-performance C++/C#/.NET.',
+        'meta.locale': 'en_US',
         // Navigation
         'nav.about': 'About',
         'nav.expertise': 'Expertise',
@@ -181,7 +205,7 @@ const translations = {
         'hero.status': 'Open to Opportunities',
         'hero.name': 'Dongcheol Shin',
         'hero.title': 'Medical Software Architect',
-        'hero.summary': 'Architect with full lifecycle experience in medical device software based on <strong>IEC 62304 lifecycle model</strong>. Designed and implemented PACS servers, DICOM viewers, orthodontic simulations, and modality equipment control systems across the medical imaging domain.',
+        'hero.summary': 'Architect with full lifecycle experience in medical device software based on <strong>IEC 62304</strong>. Built PACS servers, DICOM viewers, and modality control systems—and also designed <strong>10+ microservices</strong>, message queues, CI/CD, and observability for distributed/cloud platforms.',
         'hero.metric1': 'Years Experience',
         'hero.metric2': 'IPO Success',
         'hero.metric3': 'Global Certs',
@@ -220,22 +244,50 @@ const translations = {
         'contact.intro': 'If you are interested in medical software development, system architecture design, or open source collaboration, please feel free to contact me.',
         'section.methodology': 'Development Methodology',
         'section.methodology.desc': 'Systematic medical device software development based on IEC 62304 lifecycle model',
+        'expertise.desc': 'Transferable strengths from regulated medical software to distributed/cloud platforms and high-performance engineering.',
         'projects.title': 'Projects',
         'projects.desc': 'Key projects over 20 years of experience',
         'testimonials.title': 'Testimonials',
         'testimonials.desc': 'Recommendations from colleagues',
         'expand': 'View Details',
         'collapse': 'Collapse',
-        'footer.copyright': '&copy; 2025 Dongcheol Shin. Built with passion for medical software.'
+        'footer.copyright': '&copy; {year} Dongcheol Shin. Built with passion for medical software.'
     }
 };
 
 let currentLang = localStorage.getItem('lang') || 'ko';
 
+function setMetaContent(selector, content) {
+    const el = document.querySelector(selector);
+    if (!el || !content) return;
+    el.setAttribute('content', content);
+}
+
+function updateMetaForLanguage(lang) {
+    const title = interpolateTemplate(translations?.[lang]?.['meta.title']);
+    const description = interpolateTemplate(translations?.[lang]?.['meta.description']);
+    const locale = translations?.[lang]?.['meta.locale'];
+
+    if (title) {
+        document.title = title;
+        setMetaContent('meta[property="og:title"]', title);
+        setMetaContent('meta[name="twitter:title"]', title);
+    }
+    if (description) {
+        setMetaContent('meta[name="description"]', description);
+        setMetaContent('meta[property="og:description"]', description);
+        setMetaContent('meta[name="twitter:description"]', description);
+    }
+    if (locale) {
+        setMetaContent('meta[property="og:locale"]', locale);
+    }
+}
+
 function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('lang', lang);
     document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.setAttribute('lang', lang === 'ko' ? 'ko' : 'en');
 
     // Update toggle button text
     const langToggle = document.querySelector('.lang-toggle .lang-text');
@@ -247,7 +299,7 @@ function setLanguage(lang) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
-            el.innerHTML = translations[lang][key];
+            el.innerHTML = interpolateTemplate(translations[lang][key]);
         }
     });
 
@@ -258,6 +310,8 @@ function setLanguage(lang) {
             el.textContent = translations[lang][key];
         }
     });
+
+    updateMetaForLanguage(lang);
 
     // Re-render dynamic content
     if (window.PortfolioData && window.PortfolioComponents) {
@@ -309,10 +363,12 @@ function getTheme() {
 // Initialize theme
 setTheme(getTheme());
 
-themeToggle.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    setTheme(current === 'dark' ? 'light' : 'dark');
-});
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+}
 
 // Listen for system theme changes
 prefersDark.addEventListener('change', (e) => {
@@ -359,7 +415,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            const navHeight = document.querySelector('.nav').offsetHeight;
+            const navEl = document.querySelector('.nav');
+            const navHeight = navEl ? navEl.offsetHeight : 0;
             const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
             window.scrollTo({
                 top: targetPosition,
@@ -398,6 +455,7 @@ window.addEventListener('scroll', updateActiveNav);
 const nav = document.querySelector('.nav');
 
 function updateNavBackground() {
+    if (!nav) return;
     if (window.scrollY > 50) {
         nav.classList.add('scrolled');
     } else {
@@ -405,7 +463,9 @@ function updateNavBackground() {
     }
 }
 
-window.addEventListener('scroll', updateNavBackground);
+if (nav) {
+    window.addEventListener('scroll', updateNavBackground);
+}
 
 // =============================================
 // Scroll Animations CSS
@@ -467,8 +527,49 @@ if (backToTopButton) {
 // PDF Download
 // =============================================
 
+const _loadedScripts = new Map();
+
+function loadScriptOnce(src) {
+    if (_loadedScripts.has(src)) return _loadedScripts.get(src);
+
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+        const p = new Promise((resolve, reject) => {
+            if (existing.dataset.loaded === 'true') return resolve();
+            existing.addEventListener('load', () => {
+                existing.dataset.loaded = 'true';
+                resolve();
+            }, { once: true });
+            existing.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true });
+        });
+        _loadedScripts.set(src, p);
+        return p;
+    }
+
+    const p = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        };
+        script.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(script);
+    });
+    _loadedScripts.set(src, p);
+    return p;
+}
+
+async function ensurePdfMakeLoaded() {
+    if (typeof pdfMake !== 'undefined') return;
+    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js');
+    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js');
+}
+
 async function downloadResumePDF() {
     const button = document.querySelector('.pdf-download');
+    if (!button) return;
     const originalText = button.querySelector('span').textContent;
     const lang = getLanguage();
 
@@ -497,6 +598,9 @@ async function downloadResumePDF() {
         // Show loading state
         button.disabled = true;
         button.querySelector('span').textContent = msg.generating;
+
+        // Lazy-load pdfmake only when needed (keeps initial page load lighter)
+        await ensurePdfMakeLoaded();
 
         // Check if PDFExporter is available
         if (!window.PDFExporter) {

@@ -17,6 +17,20 @@ window.PortfolioData = {
         "ko": "치과 CT/X-Ray 장비를 위한 통합 의료 영상 플랫폼. <strong>마이크로서비스 아키텍처</strong> 설계, 영상 취득 소프트웨어, DICOM 2D/3D 시각화 소프트웨어를 개발. <strong>ISO 13485</strong> 인증을 위한 검증 문서 직접 작성.",
         "en": "Integrated medical imaging platform for dental CT/X-Ray equipment. Designed <strong>microservices architecture</strong>, developed image acquisition software, DICOM 2D/3D visualization software. Authored verification documents for <strong>ISO 13485</strong> certification."
       },
+      "metrics": [
+        {
+          "value": "15 MB/s",
+          "label": { "ko": "압축 기준 raw-equivalent 전송량 @100Mbps", "en": "Raw-equivalent throughput (with compression) @100Mbps" },
+          "change": { "ko": "12.5 MB/s(이론치) 대비", "en": "vs 12.5 MB/s theoretical" },
+          "positive": true
+        },
+        {
+          "value": "25 ms",
+          "label": { "ko": "엔드-투-엔드 레이턴시", "en": "End-to-end latency" },
+          "change": "-50%",
+          "positive": true
+        }
+      ],
       "tags": ["C++14", "C#", "WPF", "DICOM", "PostgreSQL", "ISO 13485", "IEC 62304", "DCMTK", "PACS"],
       "expanded": {
         "roles": {
@@ -71,6 +85,13 @@ window.PortfolioData = {
         "ko": "삼성전자 CT/MR 제품을 위한 <strong>DICOM 소프트웨어 플랫폼</strong> 개발. 데이터베이스 서버와 PACS 네트워크 서버(C-STORE/C-FIND/C-MOVE)의 클래스 계층 구조를 설계하고, 처리량 <strong>2배 향상</strong> 달성.",
         "en": "Developed <strong>DICOM software platform</strong> for Samsung CT/MR products. Designed class hierarchy for database server and PACS network server (C-STORE/C-FIND/C-MOVE), achieving <strong>2x throughput improvement</strong>."
       },
+      "metrics": [
+        {
+          "value": "2x",
+          "label": { "ko": "PACS 처리량 향상", "en": "PACS throughput improvement" },
+          "positive": true
+        }
+      ],
       "tags": ["C++11", "Boost", "PostgreSQL", "DCMTK", "PACS", "ISO 13485", "IEC 62304"],
       "expanded": {
         "roles": {
@@ -117,6 +138,81 @@ window.PortfolioData = {
           "en": [
             "Deployed in Samsung CT/MR product line",
             "Successfully launched in global market"
+          ]
+        }
+      }
+    },
+    {
+      "id": "prs-server",
+      "icon": "tool",
+      "company": { "ko": "포자랩스 POZAlabs", "en": "POZAlabs" },
+      "title": "PRS Server",
+      "period": "2024.01 - 2025.02",
+      "roles": ["architect", "lead", "core-dev"],
+      "description": {
+        "ko": "오디오 렌더링 SaaS 플랫폼의 <strong>분산 시스템</strong> 및 마이크로서비스 아키텍처 개발. RabbitMQ 기반 메시지 큐, REST API, CI/CD(Daily Release) 설계·구축.",
+        "en": "Built <strong>distributed system</strong> and microservices architecture for an audio rendering SaaS platform. Designed RabbitMQ-based messaging, REST APIs, and CI/CD (Daily Release)."
+      },
+      "metrics": [
+        {
+          "value": "10+",
+          "label": { "ko": "마이크로서비스", "en": "Microservices" },
+          "positive": true
+        },
+        {
+          "value": "Daily",
+          "label": { "ko": "릴리즈 사이클", "en": "Release cadence" },
+          "positive": true
+        }
+      ],
+      "tags": ["C++17", "RabbitMQ", "PostgreSQL", "Redis", "REST API", "CI/CD", "Observability"],
+      "expanded": {
+        "roles": {
+          "ko": [
+            "마이크로서비스 아키텍처 설계 및 구현",
+            "CI/CD 파이프라인 구축 (Daily Release)",
+            "분산 메시지 큐 시스템 설계"
+          ],
+          "en": [
+            "Designed and implemented microservices architecture",
+            "Built CI/CD pipeline (Daily Release)",
+            "Designed distributed message queue system"
+          ]
+        },
+        "challenges": {
+          "ko": [
+            "저지연 대량 작업(Job) 처리와 안정적인 큐잉",
+            "다수 서비스 간 의존성/버전 관리",
+            "무중단 배포와 빠른 릴리즈 사이클 유지"
+          ],
+          "en": [
+            "Low-latency high-throughput job processing with reliable queuing",
+            "Dependency/version management across many services",
+            "Maintaining zero-downtime deployments with fast release cadence"
+          ]
+        },
+        "solutions": {
+          "ko": [
+            "RabbitMQ 라우팅/재시도/Dead-letter 기반 메시지 흐름 설계",
+            "관측성(Tracing/metrics/logging) 기반 병목 분석과 운영 안정화",
+            "자동화된 CI/CD로 배포 표준화 및 롤백 가능한 릴리즈 프로세스 구축"
+          ],
+          "en": [
+            "Designed message flows with RabbitMQ routing/retry/dead-letter patterns",
+            "Stabilized operations with observability (tracing/metrics/logging) and bottleneck analysis",
+            "Standardized deploys and rollback-safe releases via automated CI/CD"
+          ]
+        },
+        "achievements": {
+          "ko": [
+            "Zero-downtime 배포 체계 구축",
+            "서비스 확장성 10배 향상",
+            "모니터링 및 알림 시스템 구축"
+          ],
+          "en": [
+            "Established zero-downtime deployment system",
+            "Achieved 10x service scalability improvement",
+            "Built monitoring and alerting system"
           ]
         }
       }
@@ -466,44 +562,6 @@ window.PortfolioData = {
     }
   ],
   "enterprise": [
-    {
-      "id": "prs-server",
-      "company": { "ko": "포자랩스 POZAlabs", "en": "POZAlabs" },
-      "title": "PRS Server",
-      "period": "2024.01 - 2025.02",
-      "roles": ["architect", "lead", "core-dev"],
-      "description": {
-        "ko": "오디오 렌더링 SaaS 플랫폼의 마이크로서비스 아키텍처 개발. RabbitMQ 기반 메시지 큐, REST API 설계.",
-        "en": "Developed microservices architecture for audio rendering SaaS platform. Designed RabbitMQ-based message queue and REST API."
-      },
-      "tags": ["C++17", "RabbitMQ", "PostgreSQL", "Redis", "REST API"],
-      "expanded": {
-        "roles": {
-          "ko": [
-            "마이크로서비스 아키텍처 설계 및 구현",
-            "CI/CD 파이프라인 구축 (Daily Release)",
-            "분산 메시지 큐 시스템 설계"
-          ],
-          "en": [
-            "Designed and implemented microservices architecture",
-            "Built CI/CD pipeline (Daily Release)",
-            "Designed distributed message queue system"
-          ]
-        },
-        "achievements": {
-          "ko": [
-            "Zero-downtime 배포 체계 구축",
-            "서비스 확장성 10배 향상",
-            "모니터링 및 알림 시스템 구축"
-          ],
-          "en": [
-            "Established zero-downtime deployment system",
-            "Achieved 10x service scalability improvement",
-            "Built monitoring and alerting system"
-          ]
-        }
-      }
-    },
     {
       "id": "ars-system",
       "company": { "ko": "포자랩스 POZAlabs", "en": "POZAlabs" },
@@ -1063,15 +1121,15 @@ window.PortfolioData = {
     {
       "id": "medical",
       "icon": "hospital",
-      "title": { "ko": "Medical Systems", "en": "Medical Systems" },
+      "title": { "ko": "의료 시스템", "en": "Medical Systems" },
       "items": {
         "ko": [
-          "PACS (Picture Archiving & Communication System)",
-          "DICOM Standard Implementation",
-          "3D Volume Rendering & MPR",
-          "Modality Equipment Control",
+          "PACS (의료영상 저장전송 시스템)",
+          "DICOM 표준 구현",
+          "3D 볼륨 렌더링 & MPR",
+          "모달리티 장비 제어",
           "HIS/RIS Integration (HL7, FHIR)",
-          "Orthodontic Simulation"
+          "교정 시뮬레이션"
         ],
         "en": [
           "PACS (Picture Archiving & Communication System)",
@@ -1086,58 +1144,160 @@ window.PortfolioData = {
     {
       "id": "regulatory",
       "icon": "clipboard",
-      "title": { "ko": "Regulatory & Compliance", "en": "Regulatory & Compliance" },
+      "title": { "ko": "규제 & 컴플라이언스", "en": "Regulatory & Compliance" },
       "items": {
         "ko": [
-          "ISO 13485 (Medical Device QMS)",
-          "IEC 62304 (생명주기 모델 기반 개발)",
-          "FDA 510(k) / KFDA (한국 식약처)",
+          "ISO 13485 (의료기기 품질경영시스템)",
+          "IEC 62304 (의료기기 SW 생명주기)",
+          "FDA 510(k) / KFDA (식약처)",
           "CE Marking (유럽) / CCC (중국)",
-          "<strong>HIPAA Compliance</strong> (PHI 보안, 감사 로깅)",
-          "Software Risk Management (ISO 14971)",
-          "Design Control Documentation"
+          "<strong>HIPAA Controls</strong> (PHI 보안, 감사 로깅)",
+          "소프트웨어 위험 관리 (ISO 14971)",
+          "설계 통제 문서화 (Design Control)"
         ],
         "en": [
           "ISO 13485 (Medical Device QMS)",
-          "IEC 62304 (Lifecycle Model Based Development)",
+          "IEC 62304 (Medical Device SW Lifecycle)",
           "FDA 510(k) / KFDA (Korea FDA)",
-          "CE Marking (Europe) / CCC (China)",
-          "<strong>HIPAA Compliance</strong> (PHI Security, Audit Logging)",
+          "CE Marking (EU) / CCC (China)",
+          "<strong>HIPAA Controls</strong> (PHI security, audit logging)",
           "Software Risk Management (ISO 14971)",
           "Design Control Documentation"
+        ]
+      }
+    },
+    {
+      "id": "documentation",
+      "icon": "file-text",
+      "title": { "ko": "규제 문서 작성", "en": "Regulatory Documentation" },
+      "items": {
+        "ko": [
+          "SRS (소프트웨어 요구사항 명세서)",
+          "SDS (소프트웨어 설계 명세서)",
+          "소프트웨어 아키텍처 문서",
+          "위험 분석 (ISO 14971 / FMEA)",
+          "추적성 매트릭스 (요구사항 ↔ 설계 ↔ 테스트)",
+          "검증 & 유효성 확인(V&V) 프로토콜/리포트",
+          "단위/통합 테스트 명세서",
+          "SOUP 분석 (미확인 출처 소프트웨어)",
+          "릴리즈 노트 & 변경 이력"
+        ],
+        "en": [
+          "SRS (Software Requirements Specification)",
+          "SDS (Software Design Specification)",
+          "Software Architecture Documents",
+          "Risk Analysis (ISO 14971 / FMEA)",
+          "Traceability Matrix (Requirements ↔ Design ↔ Test)",
+          "Verification & Validation (V&V) protocols/reports",
+          "Unit/Integration Test Specifications",
+          "SOUP (Software of Unknown Provenance) analysis",
+          "Release notes & change history"
+        ]
+      }
+    },
+    {
+      "id": "distributed",
+      "icon": "git-branch",
+      "title": { "ko": "분산 시스템", "en": "Distributed Systems" },
+      "items": {
+        "ko": [
+          "서비스 디스커버리 & 로드 밸런싱",
+          "메시지 큐 (RabbitMQ, 자체 구현)",
+          "이벤트 기반 아키텍처 / CQRS",
+          "데이터베이스 샤딩 & 복제",
+          "분산 트랜잭션 (Saga 패턴)",
+          "서킷 브레이커 & 재시도 패턴",
+          "최종 일관성 & 충돌 해결",
+          "무중단 배포 (Blue-Green, Canary)"
+        ],
+        "en": [
+          "Service discovery & load balancing",
+          "Message queues (RabbitMQ, custom implementation)",
+          "Event-driven architecture / CQRS",
+          "Database sharding & replication",
+          "Distributed transactions (Saga pattern)",
+          "Circuit breaker & retry patterns",
+          "Eventual consistency & conflict resolution",
+          "Zero-downtime deployment (Blue-Green, Canary)"
+        ]
+      }
+    },
+    {
+      "id": "cloud",
+      "icon": "cloud",
+      "title": { "ko": "클라우드 & DevOps", "en": "Cloud & DevOps" },
+      "items": {
+        "ko": [
+          "AWS 기반 서비스 설계 및 운영",
+          "Docker 기반 컨테이너 배포",
+          "Kubernetes 마이그레이션 설계",
+          "CI/CD (Daily Release)",
+          "관측성 (OpenTelemetry, tracing/metrics/logging)",
+          "모니터링 & 알림"
+        ],
+        "en": [
+          "AWS-based service architecture & operations",
+          "Containerized deployment with Docker",
+          "Kubernetes migration design",
+          "CI/CD (Daily Release)",
+          "Observability (OpenTelemetry, tracing/metrics/logging)",
+          "Monitoring & alerting"
+        ]
+      }
+    },
+    {
+      "id": "security",
+      "icon": "shield",
+      "title": { "ko": "보안 & 개인정보", "en": "Security & Privacy" },
+      "items": {
+        "ko": [
+          "PHI/PII 암호화 (전송/저장)",
+          "감사 로그(Audit Logging) 설계",
+          "접근 통제 및 권한 모델",
+          "시크릿/키 관리 (운영 관점)",
+          "HIPAA 기술적 보호조치 적용 경험"
+        ],
+        "en": [
+          "PHI/PII encryption (in transit/at rest)",
+          "Audit logging design",
+          "Access control & authorization model",
+          "Secrets/keys handling (operational)",
+          "HIPAA safeguard implementation experience"
         ]
       }
     },
     {
       "id": "performance",
       "icon": "zap",
-      "title": { "ko": "High Performance Systems", "en": "High Performance Systems" },
+      "title": { "ko": "고성능 시스템", "en": "High Performance Systems" },
       "items": {
         "ko": [
-          "Lock-free Data Structures",
-          "SIMD Optimization",
-          "Async I/O & Event-driven Architecture",
-          "Memory-efficient Design",
-          "Sub-microsecond Latency Systems",
-          "Distributed System Architecture"
+          "Lock-free 자료구조",
+          "SIMD 최적화",
+          "비동기 I/O & 이벤트 기반 아키텍처",
+          "메모리 효율적 설계",
+          "마이크로초 단위 저지연 시스템",
+          "프로파일링 & 성능 튜닝"
         ],
         "en": [
-          "Lock-free Data Structures",
-          "SIMD Optimization",
-          "Async I/O & Event-driven Architecture",
-          "Memory-efficient Design",
-          "Sub-microsecond Latency Systems",
-          "Distributed System Architecture"
+          "Lock-free data structures",
+          "SIMD optimization",
+          "Async I/O & event-driven architecture",
+          "Memory-efficient design",
+          "Microsecond-level low-latency systems",
+          "Profiling & performance tuning"
         ]
       }
     },
     {
       "id": "technologies",
       "icon": "tool",
-      "title": { "ko": "Technologies", "en": "Technologies" },
+      "title": { "ko": "기술 스택", "en": "Technologies" },
       "tags": [
         "C++20", "C#/.NET", "Rust", "Python", "Go", "TypeScript",
-        "Qt", "WPF/MVVM", "OpenGL", "OpenCV", "PostgreSQL", "Redis", "Docker", "AWS"
+        "Qt", "WPF/MVVM", "OpenGL", "OpenCV",
+        "PostgreSQL", "Redis", "RabbitMQ",
+        "Docker", "Kubernetes", "AWS", "OpenTelemetry"
       ]
     }
   ],
@@ -1146,7 +1306,7 @@ window.PortfolioData = {
     { "icon": "US", "name": "FDA" },
     { "icon": "KR", "name": "KFDA" },
     { "icon": "CN", "name": "CCC" },
-    { "icon": "US", "name": "HIPAA" }
+    { "icon": "US", "name": "HIPAA Controls" }
   ],
   "heroCapabilities": [
     { "icon": "check-circle", "title": { "ko": "Full Lifecycle", "en": "Full Lifecycle" }, "description": { "ko": "IEC 62304 기반 전 개발 단계 수행", "en": "Complete IEC 62304 development phases" } },

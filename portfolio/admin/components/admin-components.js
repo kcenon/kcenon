@@ -603,7 +603,7 @@ const AdminComponents = {
     // Open source specific
     const githubHtml = isOpenSource && data.github ? `
       <div style="margin-bottom: 1rem;">
-        <a href="${FormFields.escapeHtml(data.github)}" target="_blank" style="color: var(--accent);">
+        <a href="${FormFields.escapeHtml(data.github)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent);">
           ${FormFields.escapeHtml(data.github)}
         </a>
         ${data.stars ? `<span style="margin-left: 0.5rem; color: var(--text-muted);">★ ${data.stars}</span>` : ''}
