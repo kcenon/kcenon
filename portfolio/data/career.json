@@ -11,6 +11,7 @@
         "ko": "소프트웨어 아키텍트",
         "en": "Software Architect"
       },
+      "badge": "SaaS",
       "companyDescription": {
         "ko": "AI를 통한 음악 작곡 자동화 시스템 개발 스타트업",
         "en": "Startup developing AI-powered music composition automation systems"
@@ -38,8 +39,8 @@
         "en": "Series B funding failed, most developers laid off due to lack of operating funds"
       },
       "note": {
-        "ko": "<strong>경험 확장</strong>: 의료 도메인에서 쌓은 역량을 바탕으로 <strong>AI/ML 파이프라인</strong> 및 <strong>클라우드 네이티브 아키텍처</strong>(AWS, Docker, Kubernetes)를 실무에 적용. On-premise 중심의 의료 시스템 경험을 클라우드 환경으로 확장하여, 향후 <strong>클라우드 기반 의료 AI 시스템</strong> 설계에 기여할 수 있는 역량 확보.",
-        "en": "<strong>Experience Expansion</strong>: Applied <strong>AI/ML pipeline</strong> and <strong>cloud-native architecture</strong> (AWS, Docker, Kubernetes) in production, building on medical domain expertise. Extended on-premise medical system experience to cloud environments, gaining capabilities for future <strong>cloud-based medical AI system</strong> design."
+        "ko": "<strong>범용성 확장</strong>: 규제 환경에서 단련된 품질·프로세스 역량을 클라우드 네이티브 SaaS에 적용. 메시징/캐시/관측성/CI·CD 기반으로 운영 가능한 분산 시스템을 설계·구축하며 도메인에 구애받지 않는 플랫폼 역량을 강화.",
+        "en": "<strong>Transferable Impact</strong>: Applied quality/process discipline from regulated environments to a cloud-native SaaS. Designed and built operable distributed systems with messaging/caching/observability/CI/CD, strengthening domain-agnostic platform capabilities."
       },
       "tags": [
         "Rust",
@@ -49,20 +50,18 @@
         "AWS",
         "AI/ML Pipeline"
       ],
-      "highlight": false,
+      "highlight": true,
       "distributedAchievements": {
         "ko": [
           "마이크로서비스 10+ 개 오케스트레이션",
           "RabbitMQ 클러스터 구성 및 메시지 라우팅 설계",
           "Redis Sentinel 기반 고가용성 캐시 레이어",
-          "Docker Compose → Kubernetes 마이그레이션 설계",
           "분산 트레이싱 (OpenTelemetry) 도입"
         ],
         "en": [
           "Orchestration of 10+ microservices",
           "RabbitMQ cluster configuration and message routing design",
           "Redis Sentinel-based high-availability cache layer",
-          "Docker Compose → Kubernetes migration design",
           "Distributed tracing (OpenTelemetry) implementation"
         ]
       }
@@ -108,8 +107,8 @@
         "en": "POSTECH professor (CTO) who provided the business idea declared business withdrawal after PoC failure"
       },
       "note": {
-        "ko": "<strong>경험 확장</strong>: 의료 도메인에서 <strong>반도체/AI 도메인</strong>으로 전환하여 딥러닝 기반 알고리즘과 대규모 데이터 처리 파이프라인 구축 경험 획득. 이 경험을 통해 AI/ML 기술을 의료 영상 분석에 적용할 수 있는 역량 확보.",
-        "en": "<strong>Experience Expansion</strong>: Transitioned from medical to <strong>semiconductor/AI domain</strong>, gaining experience in deep learning algorithms and large-scale data processing pipelines. Acquired capabilities to apply AI/ML technologies to medical image analysis."
+        "ko": "<strong>경험 확장</strong>: 의료 도메인에서 <strong>반도체/AI 도메인</strong>으로 전환하여 딥러닝 기반 알고리즘과 대규모 데이터 처리 파이프라인 구축 경험 획득.",
+        "en": "<strong>Experience Expansion</strong>: Transitioned from medical to <strong>semiconductor/AI domain</strong>, gaining experience in deep learning algorithms and large-scale data processing pipelines."
       },
       "tags": [
         "Python",

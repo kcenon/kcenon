@@ -254,11 +254,11 @@ function renderProjects(data, container) {
         <div class="project-filters">
             <button class="filter-tab active" data-filter="all">All</button>
             <button class="filter-tab" data-filter="featured">Featured</button>
-            <button class="filter-tab" data-filter="medical">Medical Imaging</button>
-            <button class="filter-tab" data-filter="orthodontic">Orthodontic</button>
-            <button class="filter-tab" data-filter="equipment">Equipment</button>
             <button class="filter-tab" data-filter="enterprise">Enterprise</button>
             <button class="filter-tab" data-filter="opensource">Open Source</button>
+            <button class="filter-tab" data-filter="medical">Medical/Regulated</button>
+            <button class="filter-tab" data-filter="orthodontic">Orthodontic</button>
+            <button class="filter-tab" data-filter="equipment">Equipment</button>
         </div>
 
         <!-- Featured Projects -->
@@ -268,9 +268,36 @@ function renderProjects(data, container) {
             </div>
         </div>
 
+        <!-- Enterprise Systems -->
+        <div class="project-category" data-category="enterprise">
+            <h3 class="projects-subtitle">Distributed & Enterprise Systems</h3>
+            <div class="projects-grid">
+                ${data.enterprise.map(renderProjectCard).join('')}
+            </div>
+        </div>
+
+        <!-- Open Source Projects -->
+        <div class="project-category" data-category="opensource">
+            <h3 class="projects-subtitle">Platform Components (Open Source)</h3>
+            <p class="opensource-description">
+                ${lang === 'ko'
+                    ? '네트워크/스레딩/메시징/로깅 등 프로덕션 시스템에 필요한 인프라 컴포넌트를 Modern C++20으로 설계·구현한 오픈소스들.'
+                    : 'Open-source infrastructure components for production systems (networking, threading, messaging, logging), designed and built in Modern C++20.'}
+            </p>
+            <div class="projects-grid">
+                ${data.openSource.map(renderOpenSourceCard).join('')}
+            </div>
+            <div class="opensource-cta">
+                <a href="https://github.com/kcenon" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                    ${Icons.github}
+                    ${lang === 'ko' ? '전체 37개 프로젝트 보기' : 'View all 37 projects'}
+                </a>
+            </div>
+        </div>
+
         <!-- Medical Imaging Platform -->
         <div class="project-category" data-category="medical">
-            <h3 class="projects-subtitle">Medical Imaging Platform</h3>
+            <h3 class="projects-subtitle">Medical & Regulated Systems</h3>
             <div class="projects-grid">
                 ${data.medicalImaging.map(renderProjectCard).join('')}
             </div>
@@ -289,33 +316,6 @@ function renderProjects(data, container) {
             <h3 class="projects-subtitle">Equipment Control & 3D Printing</h3>
             <div class="projects-grid">
                 ${data.equipmentControl.map(renderProjectCard).join('')}
-            </div>
-        </div>
-
-        <!-- Enterprise Systems -->
-        <div class="project-category" data-category="enterprise">
-            <h3 class="projects-subtitle">Enterprise & AI Systems</h3>
-            <div class="projects-grid">
-                ${data.enterprise.map(renderProjectCard).join('')}
-            </div>
-        </div>
-
-        <!-- Open Source Projects -->
-        <div class="project-category" data-category="opensource">
-            <h3 class="projects-subtitle">Open Source Projects</h3>
-            <p class="opensource-description">
-                ${lang === 'ko'
-                    ? '업무 경험을 바탕으로 개발한 오픈소스 프로젝트들. 모든 프로젝트는 Modern C++20 기반.'
-                    : 'Open source projects developed based on professional experience. All projects are based on Modern C++20.'}
-            </p>
-            <div class="projects-grid">
-                ${data.openSource.map(renderOpenSourceCard).join('')}
-            </div>
-            <div class="opensource-cta">
-                <a href="https://github.com/kcenon" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                    ${Icons.github}
-                    ${lang === 'ko' ? '전체 37개 프로젝트 보기' : 'View all 37 projects'}
-                </a>
             </div>
         </div>
     `;
@@ -604,22 +604,75 @@ function renderManager(data, container) {
         return Icons[mappedKey] || Icons.users;
     };
 
+    // Leadership highlight stats (quick proof points)
+    const renderLeadershipHighlights = (highlights) => {
+        if (!highlights || highlights.length === 0) return '';
+        return `
+            <div class="manager-highlights-grid">
+                ${highlights.map(h => `
+                    <div class="manager-highlight-card">
+                        <div class="highlight-icon">${getIcon(h.icon)}</div>
+                        <div class="manager-highlight-value">${_getText(h.value)}</div>
+                        <div class="manager-highlight-label">${_getText(h.label)}</div>
+                        <div class="manager-highlight-description">${_getText(h.description)}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    };
+
     // Render PM Capabilities
     const renderCapabilities = (capabilities) => {
-        return capabilities.map(cap => `
-            <div class="manager-capability-card">
-                <div class="capability-icon">${getIcon(cap.icon)}</div>
-                <h3 class="capability-title">${_getText(cap.title)}</h3>
-                <p class="capability-description">${_getText(cap.description)}</p>
-                ${cap.metrics ? `
-                    <div class="capability-metrics">
-                        ${cap.metrics.onTimeDelivery ? `<span class="metric-badge">${cap.metrics.onTimeDelivery} ${lang === 'ko' ? '일정 준수' : 'On-time'}</span>` : ''}
-                        ${cap.metrics.majorProjects ? `<span class="metric-badge">${cap.metrics.majorProjects}+ ${lang === 'ko' ? '프로젝트' : 'Projects'}</span>` : ''}
-                        ${cap.metrics.yearsLeading ? `<span class="metric-badge">${cap.metrics.yearsLeading}+ ${lang === 'ko' ? '년 리딩' : 'Years Leading'}</span>` : ''}
-                    </div>
-                ` : ''}
-            </div>
-        `).join('');
+        const renderBadges = (items) =>
+            (items || []).filter(Boolean).map(text => `<span class="metric-badge">${text}</span>`).join('');
+
+        return capabilities.map(cap => {
+            const badges = [];
+
+            // Common metrics
+            if (cap.metrics?.onTimeDelivery) {
+                badges.push(`${cap.metrics.onTimeDelivery} ${lang === 'ko' ? '일정 준수' : 'On-time'}`);
+            }
+            if (cap.metrics?.certificationSuccess) {
+                badges.push(`${lang === 'ko' ? '인증' : 'Certs'} ${cap.metrics.certificationSuccess}`);
+            }
+            if (cap.metrics?.majorProjects) {
+                badges.push(`${cap.metrics.majorProjects}+ ${lang === 'ko' ? '프로젝트' : 'Projects'}`);
+            }
+            if (cap.metrics?.yearsLeading) {
+                badges.push(`${cap.metrics.yearsLeading}+ ${lang === 'ko' ? '년 리딩' : 'Years Leading'}`);
+            }
+            if (cap.metrics?.projectsLed) {
+                badges.push(`${cap.metrics.projectsLed}+ ${lang === 'ko' ? '리딩' : 'Projects Led'}`);
+            }
+            if (Array.isArray(cap.metrics?.teamSizes) && cap.metrics.teamSizes.length > 0) {
+                const minSize = Math.min(...cap.metrics.teamSizes);
+                const maxSize = Math.max(...cap.metrics.teamSizes);
+                badges.push(lang === 'ko' ? `팀 ${minSize}~${maxSize}명` : `Team ${minSize}-${maxSize}`);
+            }
+
+            // Stakeholders / frameworks as proof points
+            const stakeholderTypes = _getArray(cap.stakeholderTypes).slice(0, 6);
+            stakeholderTypes.forEach(s => badges.push(s));
+            const frameworks = (cap.frameworks || []).slice(0, 6);
+            frameworks.forEach(f => badges.push(f));
+
+            const highlights = _getArray(cap.highlights);
+
+            return `
+                <div class="manager-capability-card">
+                    <div class="capability-icon">${getIcon(cap.icon)}</div>
+                    <h3 class="capability-title">${_getText(cap.title)}</h3>
+                    <p class="capability-description">${_getText(cap.description)}</p>
+                    ${highlights && highlights.length > 0 ? `
+                        <ul class="capability-highlights">
+                            ${highlights.map(h => `<li>${h}</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                    ${badges.length > 0 ? `<div class="capability-metrics">${renderBadges(badges)}</div>` : ''}
+                </div>
+            `;
+        }).join('');
     };
 
     // Render Leadership Style
@@ -726,6 +779,8 @@ function renderManager(data, container) {
     let html = `
         <h2 class="section-title">${t('manager.title')}</h2>
         <p class="section-description">${t('manager.desc')}</p>
+
+        ${renderLeadershipHighlights(data.leadershipHighlights)}
 
         <!-- PM Capabilities Grid -->
         <div class="manager-capabilities-grid">

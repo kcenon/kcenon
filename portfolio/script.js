@@ -119,8 +119,8 @@ function interpolateTemplate(str) {
 const translations = {
     ko: {
         // Meta
-        'meta.title': '신동철 | Medical Software Architect',
-        'meta.description': '의료 영상/의료기기 소프트웨어 아키텍트 신동철의 포트폴리오. IEC 62304/ISO 13485, DICOM/PACS, 분산 시스템/클라우드, 고성능 C++/C#/.NET 경험.',
+        'meta.title': '신동철 | Software Architect · Distributed Systems',
+        'meta.description': '분산 시스템·플랫폼 엔지니어링 소프트웨어 아키텍트 신동철의 포트폴리오. 마이크로서비스, 메시징, CI/CD, 관측성, 고성능 C++/C#/.NET 및 규제(IEC 62304/ISO 13485) 딜리버리 경험.',
         'meta.locale': 'ko_KR',
         // Navigation
         'nav.about': '소개',
@@ -132,23 +132,28 @@ const translations = {
         'nav.contact': '연락처',
         // Manager Section
         'manager.title': '리더십 & 관리',
-        'manager.desc': '팀 성장과 비즈니스 성과를 기반으로 한 리더십 경험',
+        'manager.desc': '2~11명 팀 리딩, 멘토링/코드리뷰 기반 팀 성장과 인증·납기·품질 성과를 함께 만든 경험',
         // Hero
         'hero.status': 'Open to Opportunities',
         'hero.name': '신동철',
-        'hero.title': 'Medical Software Architect',
-        'hero.summary': '<strong>IEC 62304</strong> 기반 의료기기 소프트웨어 전 생명주기 경험. PACS 서버, DICOM 뷰어, 모달리티 장비 제어 등 의료 영상 시스템을 설계·구현했고, <strong>10+ 마이크로서비스</strong>·메시지 큐·CI/CD·관측성을 포함한 분산 시스템/클라우드 환경에서도 즉시 기여할 수 있습니다.',
+        'hero.title': 'Software Architect · 분산 시스템/플랫폼 엔지니어링',
+        'hero.summary': '프로덕션 환경에서 운영 가능한 <strong>분산 시스템/플랫폼</strong>을 설계·구현해 왔습니다. 마이크로서비스, 메시징(RabbitMQ), 캐시(Redis), <strong>CI/CD(무중단 배포)</strong>, <strong>관측성(OpenTelemetry)</strong>을 통해 확장성과 안정성을 만들고, 필요 시 <strong>IEC 62304/ISO 13485</strong> 같은 규제 환경에서도 요구사항→설계→테스트→문서화까지 end-to-end 딜리버리를 수행합니다.',
         'hero.metric1': '년 경력',
-        'hero.metric2': 'IPO 성공',
-        'hero.metric3': '글로벌 인증',
-        'hero.capability1.title': 'Full Lifecycle',
-        'hero.capability1.desc': 'IEC 62304 기반 전 개발 단계 수행',
-        'hero.capability2.title': 'Regulatory Docs',
-        'hero.capability2.desc': 'ISO 13485, IEC 62304 규격 문서 작성',
-        'hero.capability3.title': 'Team Leadership',
-        'hero.capability3.desc': '코드 리뷰와 멘토링 기반 팀 성장',
-        'hero.capability4.title': 'Clinical Validation',
-        'hero.capability4.desc': '임상 시험 및 검증 단계 완수',
+        'hero.metric2': '마이크로서비스',
+        'hero.metric3': 'Daily Release',
+        'hero.badge1': 'Microservices',
+        'hero.badge2': '무중단 배포',
+        'hero.badge3': '관측성 (OpenTelemetry)',
+        'hero.badge4': 'IEC 62304 / ISO 13485',
+        'hero.badge5': 'CE · FDA · KFDA · CCC',
+        'hero.capability1.title': '분산 시스템',
+        'hero.capability1.desc': '마이크로서비스·메시징·캐시·확장성 패턴',
+        'hero.capability2.title': '신뢰성 & 관측성',
+        'hero.capability2.desc': 'Tracing/metrics/logging, 장애 대응, SLO 기반 운영',
+        'hero.capability3.title': '플랫폼 엔지니어링',
+        'hero.capability3.desc': 'CI/CD, 무중단 배포, 배포 표준화/자동화',
+        'hero.capability4.title': '규제 환경 딜리버리',
+        'hero.capability4.desc': 'IEC 62304/ISO 13485, 추적성, V&V/심사 대응',
         // V-Model
         'vmodel.definition': '정의 & 설계',
         'vmodel.verification': '검증 & 테스트',
@@ -173,22 +178,22 @@ const translations = {
         'vmodel.caption': 'IEC 62304 V-Model: 각 개발 단계와 대응하는 검증 활동의 매핑',
         // Sections
         'contact.title': 'Contact',
-        'contact.intro': '의료 소프트웨어 개발, 시스템 아키텍처 설계, 또는 오픈소스 협업에 관심이 있으시다면 언제든 연락주세요.',
-        'section.methodology': 'Development Methodology',
-        'section.methodology.desc': 'IEC 62304 생명주기 모델 기반의 체계적인 의료기기 소프트웨어 개발',
-        'expertise.desc': '의료 도메인에서 검증된 아키텍처·품질 역량을 분산 시스템·클라우드·고성능 엔지니어링으로 확장합니다.',
+        'contact.intro': '분산 시스템, 플랫폼 엔지니어링, 고성능 C++/.NET, 또는 오픈소스 협업에 관심이 있으시다면 언제든 연락주세요.',
+        'section.methodology': '규제 환경 딜리버리 (IEC 62304)',
+        'section.methodology.desc': '요구사항↔설계↔테스트 추적성과 V&V를 갖춘 규제 환경(IEC 62304) 기반 딜리버리 프로세스',
+        'expertise.desc': '분산 시스템·클라우드·고성능 엔지니어링을 기반으로, 규제 환경에서 단련된 품질/문서화 역량까지 함께 제공합니다.',
         'projects.title': 'Projects',
-        'projects.desc': '20년간 참여한 주요 프로젝트들',
+        'projects.desc': '프로덕션 시스템과 플랫폼 컴포넌트 중심의 주요 프로젝트',
         'testimonials.title': 'Testimonials',
         'testimonials.desc': '함께 일한 동료들의 추천서',
         'expand': '상세 보기',
         'collapse': '접기',
-        'footer.copyright': '&copy; {year} 신동철. 의료 소프트웨어에 대한 열정으로 만들었습니다.'
+        'footer.copyright': '&copy; {year} 신동철. 프로덕션 시스템과 엔지니어링에 대한 열정으로 만들었습니다.'
     },
     en: {
         // Meta
-        'meta.title': 'Dongcheol Shin | Medical Software Architect',
-        'meta.description': 'Portfolio of Dongcheol Shin, a medical imaging software architect. Experience with IEC 62304/ISO 13485, DICOM/PACS, distributed systems & cloud, and high-performance C++/C#/.NET.',
+        'meta.title': 'Dongcheol Shin | Software Architect · Distributed Systems',
+        'meta.description': 'Portfolio of Dongcheol Shin, a software architect focused on distributed systems and platform engineering: microservices, messaging, CI/CD, observability, and high-performance C++/C#/.NET. Also experienced in regulated delivery (IEC 62304/ISO 13485).',
         'meta.locale': 'en_US',
         // Navigation
         'nav.about': 'About',
@@ -200,23 +205,28 @@ const translations = {
         'nav.contact': 'Contact',
         // Manager Section
         'manager.title': 'Leadership & Management',
-        'manager.desc': 'Leadership experience based on team growth and business results',
+        'manager.desc': 'Led teams of 2-11, driving team growth through mentoring/code reviews while delivering on quality, compliance, and deadlines',
         // Hero
         'hero.status': 'Open to Opportunities',
         'hero.name': 'Dongcheol Shin',
-        'hero.title': 'Medical Software Architect',
-        'hero.summary': 'Architect with full lifecycle experience in medical device software based on <strong>IEC 62304</strong>. Built PACS servers, DICOM viewers, and modality control systems—and also designed <strong>10+ microservices</strong>, message queues, CI/CD, and observability for distributed/cloud platforms.',
+        'hero.title': 'Software Architect · Distributed Systems / Platform Engineering',
+        'hero.summary': 'I design and build production-grade <strong>distributed systems/platforms</strong>: microservices, messaging (RabbitMQ), caching (Redis), <strong>CI/CD (zero-downtime releases)</strong>, and <strong>observability (OpenTelemetry)</strong>. I can also deliver end-to-end in regulated contexts such as <strong>IEC 62304 / ISO 13485</strong>—from requirements to design, testing, and documentation.',
         'hero.metric1': 'Years Experience',
-        'hero.metric2': 'IPO Success',
-        'hero.metric3': 'Global Certs',
-        'hero.capability1.title': 'Full Lifecycle',
-        'hero.capability1.desc': 'Complete IEC 62304 development phases',
-        'hero.capability2.title': 'Regulatory Docs',
-        'hero.capability2.desc': 'ISO 13485, IEC 62304 documentation',
-        'hero.capability3.title': 'Team Leadership',
-        'hero.capability3.desc': 'Team growth through code review & mentoring',
-        'hero.capability4.title': 'Clinical Validation',
-        'hero.capability4.desc': 'Clinical trials & validation completion',
+        'hero.metric2': 'Microservices',
+        'hero.metric3': 'Daily Release',
+        'hero.badge1': 'Microservices',
+        'hero.badge2': 'Zero-downtime Deploy',
+        'hero.badge3': 'Observability (OpenTelemetry)',
+        'hero.badge4': 'IEC 62304 / ISO 13485',
+        'hero.badge5': 'CE · FDA · KFDA · CCC',
+        'hero.capability1.title': 'Distributed Systems',
+        'hero.capability1.desc': 'Microservices, messaging, caching, scalability patterns',
+        'hero.capability2.title': 'Reliability & Observability',
+        'hero.capability2.desc': 'Tracing/metrics/logging, incident response, SLO mindset',
+        'hero.capability3.title': 'Platform Engineering',
+        'hero.capability3.desc': 'CI/CD, zero-downtime releases, automation & tooling',
+        'hero.capability4.title': 'Regulated Delivery',
+        'hero.capability4.desc': 'IEC 62304/ISO 13485, traceability, V&V & audits',
         // V-Model
         'vmodel.definition': 'Definition & Design',
         'vmodel.verification': 'Verification & Test',
@@ -241,17 +251,17 @@ const translations = {
         'vmodel.caption': 'IEC 62304 V-Model: Mapping development phases to verification activities',
         // Sections
         'contact.title': 'Contact',
-        'contact.intro': 'If you are interested in medical software development, system architecture design, or open source collaboration, please feel free to contact me.',
-        'section.methodology': 'Development Methodology',
-        'section.methodology.desc': 'Systematic medical device software development based on IEC 62304 lifecycle model',
-        'expertise.desc': 'Transferable strengths from regulated medical software to distributed/cloud platforms and high-performance engineering.',
+        'contact.intro': 'If you are interested in distributed systems, platform engineering, high-performance software, or open source collaboration, please feel free to contact me.',
+        'section.methodology': 'Regulated Delivery (IEC 62304)',
+        'section.methodology.desc': 'Regulated delivery process based on IEC 62304 with end-to-end traceability and V&V',
+        'expertise.desc': 'Distributed/cloud/high-performance engineering, plus quality and documentation discipline from regulated environments.',
         'projects.title': 'Projects',
-        'projects.desc': 'Key projects over 20 years of experience',
+        'projects.desc': 'Selected production systems and platform components across domains',
         'testimonials.title': 'Testimonials',
         'testimonials.desc': 'Recommendations from colleagues',
         'expand': 'View Details',
         'collapse': 'Collapse',
-        'footer.copyright': '&copy; {year} Dongcheol Shin. Built with passion for medical software.'
+        'footer.copyright': '&copy; {year} Dongcheol Shin. Built with passion for production systems and engineering.'
     }
 };
 
@@ -283,6 +293,21 @@ function updateMetaForLanguage(lang) {
     }
 }
 
+function reorderStaticSections() {
+    const lifecycle = document.getElementById('lifecycle');
+    if (!lifecycle) return;
+
+    // Place the regulated delivery section after Leadership and before Testimonials
+    const testimonials = document.getElementById('testimonials');
+    if (testimonials?.parentNode) {
+        testimonials.parentNode.insertBefore(lifecycle, testimonials);
+        return;
+    }
+
+    const manager = document.getElementById('manager');
+    manager?.after?.(lifecycle);
+}
+
 function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('lang', lang);
@@ -312,6 +337,7 @@ function setLanguage(lang) {
     });
 
     updateMetaForLanguage(lang);
+    reorderStaticSections();
 
     // Re-render dynamic content
     if (window.PortfolioData && window.PortfolioComponents) {

@@ -800,13 +800,14 @@ window.PortfolioData = {
       "company": { "ko": "포자랩스", "en": "Poza Labs" },
       "period": "2023.01 - 2025.02",
       "role": { "ko": "소프트웨어 아키텍트", "en": "Software Architect" },
+      "badge": "SaaS",
       "companyDescription": {
         "ko": "AI를 통한 음악 작곡 자동화 시스템 개발 스타트업",
         "en": "Startup developing AI-powered music composition automation systems"
       },
       "responsibilities": {
-        "ko": "오디오 렌더링 SaaS Architecture 설계, 폴리글랏으로 설계된 서비스 오케스트레이션 및 CI/CD 구성",
-        "en": "Audio rendering SaaS Architecture design, polyglot service orchestration and CI/CD configuration"
+        "ko": "오디오 렌더링 SaaS 분산 시스템 아키텍처 설계, 10+ 마이크로서비스 오케스트레이션, 메시징/캐시/관측성, CI/CD(무중단) 구축",
+        "en": "Designed distributed architecture for an audio rendering SaaS, orchestrated 10+ microservices, and built messaging/caching/observability with zero-downtime CI/CD"
       },
       "scale": {
         "company": { "ko": "75명", "en": "75 employees" },
@@ -817,12 +818,12 @@ window.PortfolioData = {
         "en": "Series B funding failed, most developers laid off due to lack of operating funds"
       },
       "note": {
-        "ko": "<strong>경험 확장</strong>: 의료 도메인에서 쌓은 역량을 바탕으로 <strong>AI/ML 파이프라인</strong> 및 <strong>클라우드 네이티브 아키텍처</strong>(AWS, Docker, Kubernetes)를 실무에 적용. On-premise 중심의 의료 시스템 경험을 클라우드 환경으로 확장하여, 향후 <strong>클라우드 기반 의료 AI 시스템</strong> 설계에 기여할 수 있는 역량 확보.",
-        "en": "<strong>Experience Expansion</strong>: Applied <strong>AI/ML pipeline</strong> and <strong>cloud-native architecture</strong> (AWS, Docker, Kubernetes) in production, building on medical domain expertise. Extended on-premise medical system experience to cloud environments, gaining capabilities for future <strong>cloud-based medical AI system</strong> design."
+        "ko": "<strong>범용성 확장</strong>: 규제 환경에서 단련된 품질·프로세스 역량을 클라우드 네이티브 SaaS에 적용. 메시징/캐시/관측성/CI·CD 기반으로 운영 가능한 분산 시스템을 설계·구축하며 도메인에 구애받지 않는 플랫폼 역량을 강화.",
+        "en": "<strong>Transferable Impact</strong>: Applied quality/process discipline from regulated environments to a cloud-native SaaS. Designed and built operable distributed systems with messaging/caching/observability/CI/CD, strengthening domain-agnostic platform capabilities."
       },
       "tags": ["Rust", "Go", "C++", "System Architecture", "AWS", "AI/ML Pipeline"],
       "relatedProjects": ["prs-server", "ars-system"],
-      "highlight": false
+      "highlight": true
     },
     {
       "id": "purplechips",
@@ -846,8 +847,8 @@ window.PortfolioData = {
         "en": "POSTECH professor (CTO) who provided the business idea declared business withdrawal after PoC failure"
       },
       "note": {
-        "ko": "<strong>경험 확장</strong>: 의료 도메인에서 <strong>반도체/AI 도메인</strong>으로 전환하여 딥러닝 기반 알고리즘과 대규모 데이터 처리 파이프라인 구축 경험 획득. 이 경험을 통해 AI/ML 기술을 의료 영상 분석에 적용할 수 있는 역량 확보.",
-        "en": "<strong>Experience Expansion</strong>: Transitioned from medical to <strong>semiconductor/AI domain</strong>, gaining experience in deep learning algorithms and large-scale data processing pipelines. Acquired capabilities to apply AI/ML technologies to medical image analysis."
+        "ko": "<strong>경험 확장</strong>: 의료 도메인에서 <strong>반도체/AI 도메인</strong>으로 전환하여 딥러닝 기반 알고리즘과 대규모 데이터 처리 파이프라인 구축 경험 획득.",
+        "en": "<strong>Experience Expansion</strong>: Transitioned from medical to <strong>semiconductor/AI domain</strong>, gaining experience in deep learning algorithms and large-scale data processing pipelines."
       },
       "tags": ["Python", "C++", "Deep Learning", "EDA", "AI/ML Pipeline", "System Architecture", "ISO 26262"],
       "relatedProjects": ["eda-ai-server"],
@@ -1230,7 +1231,6 @@ window.PortfolioData = {
         "ko": [
           "AWS 기반 서비스 설계 및 운영",
           "Docker 기반 컨테이너 배포",
-          "Kubernetes 마이그레이션 설계",
           "CI/CD (Daily Release)",
           "관측성 (OpenTelemetry, tracing/metrics/logging)",
           "모니터링 & 알림"
@@ -1238,7 +1238,6 @@ window.PortfolioData = {
         "en": [
           "AWS-based service architecture & operations",
           "Containerized deployment with Docker",
-          "Kubernetes migration design",
           "CI/CD (Daily Release)",
           "Observability (OpenTelemetry, tracing/metrics/logging)",
           "Monitoring & alerting"
@@ -1297,7 +1296,7 @@ window.PortfolioData = {
         "C++20", "C#/.NET", "Rust", "Python", "Go", "TypeScript",
         "Qt", "WPF/MVVM", "OpenGL", "OpenCV",
         "PostgreSQL", "Redis", "RabbitMQ",
-        "Docker", "Kubernetes", "AWS", "OpenTelemetry"
+        "Docker", "AWS", "OpenTelemetry"
       ]
     }
   ],
@@ -1325,12 +1324,50 @@ window.PortfolioData = {
 },
 
   manager: {
+    leadershipHighlights: [
+      {
+        icon: "users",
+        value: "14+",
+        label: { ko: "년 리딩", en: "Years Leading" },
+        description: { ko: "2~11명 규모 팀 리딩 경험", en: "Led teams of 2-11 members" }
+      },
+      {
+        icon: "calendar-check",
+        value: "15+",
+        label: { ko: "프로젝트 납품", en: "Projects Delivered" },
+        description: { ko: "대형 클라이언트 포함", en: "Including major clients" }
+      },
+      {
+        icon: "check-square",
+        value: "4",
+        label: { ko: "글로벌 인증", en: "Global Certs" },
+        description: { ko: "CE/FDA/KFDA/CCC", en: "CE/FDA/KFDA/CCC" }
+      },
+      {
+        icon: "trending-up",
+        value: "Daily",
+        label: { ko: "릴리즈", en: "Release Cadence" },
+        description: { ko: "무중단 배포 파이프라인", en: "Zero-downtime deployment pipeline" }
+      }
+    ],
     pmCapabilities: [
       {
         id: "team-management",
         icon: "users",
         title: { ko: "팀 관리", en: "Team Management" },
         description: { ko: "2~11명 규모 개발팀 리딩 및 주니어 개발자 멘토링", en: "Led development teams of 2-11 members and mentored junior developers" },
+        highlights: {
+          ko: [
+            "코드 리뷰/멘토링으로 팀 역량 향상",
+            "온보딩/지식 공유 문서화와 재사용 가능한 개발 툴킷 제공",
+            "역할/책임을 명확히 하여 협업 효율 개선"
+          ],
+          en: [
+            "Improved team capability through code reviews and mentoring",
+            "Provided reusable tooling and onboarding/knowledge documentation",
+            "Improved collaboration by clarifying roles and responsibilities"
+          ]
+        },
         metrics: { teamSizes: [2, 3, 4, 5, 6, 10, 11], yearsLeading: 14, projectsLed: 10 }
       },
       {
@@ -1338,6 +1375,18 @@ window.PortfolioData = {
         icon: "handshake",
         title: { ko: "스테이크홀더 관리", en: "Stakeholder Management" },
         description: { ko: "내외부 이해관계자와의 효과적인 커뮤니케이션 및 협업", en: "Effective communication and collaboration with internal and external stakeholders" },
+        highlights: {
+          ko: [
+            "인증 심사관 Q&A 및 자료 준비 리딩",
+            "클라이언트 요구사항/납기/품질 트레이드오프 조율",
+            "QA/SQA와 프로세스 합의 및 실행"
+          ],
+          en: [
+            "Led auditor Q&A and evidence preparation for certifications",
+            "Aligned trade-offs across requirements, schedule, and quality",
+            "Worked closely with QA/SQA to agree on and execute processes"
+          ]
+        },
         stakeholderTypes: { ko: ["클라이언트", "인증 심사관", "QA팀", "경영진", "글로벌 파트너"], en: ["Clients", "Certification Auditors", "QA Team", "Management", "Global Partners"] }
       },
       {
@@ -1345,6 +1394,18 @@ window.PortfolioData = {
         icon: "calendar-check",
         title: { ko: "프로젝트 딜리버리", en: "Project Delivery" },
         description: { ko: "복잡한 프로젝트의 일정 관리 및 성공적 납품", en: "Schedule management and successful delivery of complex projects" },
+        highlights: {
+          ko: [
+            "SMARTDent v3: 18개월 내 4개국 인증(CE/FDA/KFDA/CCC) 획득 리딩",
+            "Daily Release 및 무중단 배포 체계 확립",
+            "리스크 기반 일정/스코프 관리로 납품 안정성 확보"
+          ],
+          en: [
+            "SMARTDent v3: led 4-country certification (CE/FDA/KFDA/CCC) within 18 months",
+            "Established Daily Release and zero-downtime deployment practices",
+            "Improved delivery reliability with risk-based schedule/scope management"
+          ]
+        },
         metrics: { onTimeDelivery: "90%+", certificationSuccess: "100%", majorProjects: 15 }
       },
       {
@@ -1352,13 +1413,37 @@ window.PortfolioData = {
         icon: "shield",
         title: { ko: "리스크 관리", en: "Risk Management" },
         description: { ko: "프로젝트 리스크 식별, 평가 및 완화 전략 수립", en: "Project risk identification, assessment, and mitigation strategy development" },
+        highlights: {
+          ko: [
+            "ISO 14971 위험 분석과 완화 조치 반영",
+            "추적성(요구사항↔설계↔테스트) 기반 품질 게이트 운영",
+            "변경 영향 분석과 릴리즈 리스크 통제"
+          ],
+          en: [
+            "Applied ISO 14971 risk analysis and mitigations",
+            "Operated quality gates with traceability (requirements↔design↔test)",
+            "Controlled release risk via impact analysis and change management"
+          ]
+        },
         frameworks: ["ISO 14971", "FMEA", "Traceability Matrix"]
       },
       {
         id: "process-improvement",
         icon: "trending-up",
         title: { ko: "프로세스 개선", en: "Process Improvement" },
-        description: { ko: "개발 프로세스 및 품질 시스템 구축과 개선", en: "Development process and quality system establishment and improvement" }
+        description: { ko: "개발 프로세스 및 품질 시스템 구축과 개선", en: "Development process and quality system establishment and improvement" },
+        highlights: {
+          ko: [
+            "IEC 62304 Class B/C 프로세스 수립 및 전사 적용",
+            "V&V 프로세스 정립 및 자동화 도구 개발",
+            "CI/CD 표준화로 배포 품질과 속도 동시 개선"
+          ],
+          en: [
+            "Established IEC 62304 Class B/C process and rolled it out company-wide",
+            "Defined V&V processes and built automation tooling",
+            "Improved both speed and quality by standardizing CI/CD"
+          ]
+        }
       }
     ],
     leadershipStyle: {
@@ -1366,14 +1451,22 @@ window.PortfolioData = {
       principles: {
         ko: [
           "동료들이 스스로 문제를 해결할 수 있도록 큰 방향 제시",
+          "문서/테스트 기반 의사결정 (요구사항-설계-테스트 추적성)",
+          "규제/QA/심사 대응을 개발 프로세스에 내재화",
           "아래 직급의 의견도 타당할 경우 적극 수용",
           "코드 리뷰와 멘토링 기반 팀 성장 추구",
+          "관측성(모니터링/알림/트레이싱) 기반 운영 안정화",
+          "기술 부채를 숨기지 않고 계획적으로 관리",
           "새로운 기술 도입에 대한 열린 자세"
         ],
         en: [
           "Provide direction for colleagues to solve problems independently",
+          "Make decisions grounded in docs/tests (traceability: requirements-design-test)",
+          "Embed regulatory/QA/audit readiness into the development process",
           "Accept valid opinions from junior staff",
           "Pursue team growth through code review and mentoring",
+          "Stabilize operations with observability (monitoring/alerting/tracing)",
+          "Manage technical debt transparently and deliberately",
           "Open attitude toward adopting new technologies"
         ]
       }
@@ -1425,7 +1518,11 @@ window.PortfolioData = {
         duration: { ko: "22개월", en: "22 months" },
         teamSize: 4,
         onTime: true,
-        certifications: ["CE", "FDA", "KFDA"]
+        certifications: ["CE", "FDA", "KFDA"],
+        outcomes: {
+          ko: ["CE/FDA/KFDA 인증 획득", "GPU 가속 이미지 처리 파이프라인 설계", "PACS 연동 구현"],
+          en: ["Achieved CE/FDA/KFDA certifications", "Designed GPU-accelerated image processing pipeline", "Implemented PACS integration"]
+        }
       },
       {
         projectId: "prs-server",

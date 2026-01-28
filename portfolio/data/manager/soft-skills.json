@@ -156,13 +156,13 @@
           "ko": [
             "C++ → C++20 Modern C++ 진화",
             "의료 도메인 → AI/ML, 클라우드 네이티브 확장",
-            "On-premise → 클라우드 (AWS, Docker, Kubernetes)",
+            "On-premise → 클라우드 (AWS, Docker)",
             "단일 언어 → 폴리글랏 (C++, Rust, Go, Python)"
           ],
           "en": [
             "C++ → C++20 Modern C++ evolution",
             "Medical domain → AI/ML, Cloud-native expansion",
-            "On-premise → Cloud (AWS, Docker, Kubernetes)",
+            "On-premise → Cloud (AWS, Docker)",
             "Single language → Polyglot (C++, Rust, Go, Python)"
           ]
         }
