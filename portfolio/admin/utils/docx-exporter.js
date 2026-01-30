@@ -216,17 +216,17 @@ class DOCXExporter {
 
   /**
    * Get fallback styles when StyleManager is not available
-   * Enhanced to match web design more closely
+   * Enhanced to match web design more closely with gradient-like colors
    * @returns {Object} Default DOCX styles
    */
   getFallbackStyles() {
     return {
       heading1: {
-        run: { size: 56, bold: true, color: '0f172a' },
+        run: { size: 56, bold: true, color: '3b82f6' },  // Primary blue for main header
         paragraph: { spacing: { after: 240, line: 300 } }
       },
       heading2: {
-        run: { size: 40, bold: true, color: '3b82f6' },
+        run: { size: 40, bold: true, color: '3b82f6' },  // Primary blue for section headers
         paragraph: { spacing: { before: 480, after: 240, line: 320 } }
       },
       heading3: {
@@ -534,7 +534,7 @@ class DOCXExporter {
         ],
         spacing: { after: 200 }
       }),
-      // Enhanced divider with primary color
+      // Enhanced divider with primary color matching web design
       new docx.Paragraph({
         children: [new docx.TextRun({ text: '' })],
         border: {
@@ -542,7 +542,7 @@ class DOCXExporter {
             color: this.getColor('primary'),
             space: 1,
             style: docx.BorderStyle.SINGLE,
-            size: 18  // Thicker border
+            size: 24  // Thicker border for web-like emphasis
           }
         },
         spacing: { after: 400 }
@@ -590,14 +590,19 @@ class DOCXExporter {
           });
         }
 
-        // Handle tags for Technologies category
+        // Handle tags for Technologies category with web-like styling
         if (hasTags) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
                 text: tags.map(tag => this.getText(tag)).join(' | '),
-                size: this.toHalfPt(this.getTypography('fontSize.small')),
-                color: this.getColor('primary')
+                size: this.toHalfPt(this.getTypography('fontSize.small') + 1),  // Slightly larger
+                color: this.getColor('primary'),
+                bold: true,
+                shading: {
+                  type: docx.ShadingType.CLEAR,
+                  fill: 'dbeafe'  // Light blue background matching web accent-light
+                }
               })
             ],
             spacing: { after: 100 },
@@ -636,7 +641,7 @@ class DOCXExporter {
       });
     }
 
-    // Certifications
+    // Certifications with enhanced web-like styling
     if (expertise.certifications && expertise.certifications.length > 0) {
       children.push(this.createHeading3WithKeep(labels.certifications, true));
 
@@ -645,8 +650,12 @@ class DOCXExporter {
           new docx.TextRun({
             text: expertise.certifications.map(cert => this.getText(cert.name)).join(' | '),
             bold: true,
-            size: this.toHalfPt(this.getTypography('fontSize.body')),
-            color: this.getColor('success')
+            size: this.toHalfPt(this.getTypography('fontSize.body') + 1),
+            color: this.getColor('success'),  // Success green matching web
+            shading: {
+              type: docx.ShadingType.CLEAR,
+              fill: 'd1fae5'  // Light green background
+            }
           })
         ],
         spacing: { after: 150 },
@@ -773,19 +782,19 @@ class DOCXExporter {
       }));
     }
 
-    // Tags with shading
+    // Tags with enhanced web-like shading
     const tags = this.getArray(project.tags);
     if (tags.length > 0) {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
             text: tags.map(tag => this.getText(tag)).join(' • '),
-            size: this.toHalfPt(9),
-            color: '3b82f6',  // Primary color
+            size: this.toHalfPt(10),  // Slightly larger for readability
+            color: '3b82f6',  // Primary blue matching web
             bold: true,
             shading: {
               type: docx.ShadingType.CLEAR,
-              fill: 'f1f5f9'  // Light gray background
+              fill: 'dbeafe'  // Light blue background matching web accent-light
             }
           })
         ],
@@ -799,15 +808,15 @@ class DOCXExporter {
     if (project.expanded) {
       const roles = this.getArray(project.expanded.roles);
       if (roles.length > 0) {
-        // Add separator
+        // Add enhanced separator with web-like styling
         children.push(new docx.Paragraph({
           children: [],
           border: {
             top: {
-              color: 'e2e8f0',
+              color: 'cbd5e1',  // Slightly darker border matching web border-hover
               space: 1,
               style: docx.BorderStyle.SINGLE,
-              size: 8
+              size: 12  // Thicker for better visibility
             }
           },
           spacing: { before: 80, after: 80 }
@@ -818,8 +827,12 @@ class DOCXExporter {
             new docx.TextRun({
               text: '[ ' + labels.keyResponsibilities + ' ]',
               bold: true,
-              size: this.toHalfPt(13),
-              color: '3b82f6'  // Primary color
+              size: this.toHalfPt(14),  // Slightly larger
+              color: '3b82f6',  // Primary blue matching web
+              shading: {
+                type: docx.ShadingType.CLEAR,
+                fill: 'eff6ff'  // Light blue background
+              }
             })
           ],
           spacing: { before: 40, after: 40 },
@@ -854,8 +867,12 @@ class DOCXExporter {
             new docx.TextRun({
               text: '[ ' + labels.achievements + ' ]',
               bold: true,
-              size: this.toHalfPt(13),
-              color: '10b981'  // Success color
+              size: this.toHalfPt(14),  // Slightly larger
+              color: '10b981',  // Success green matching web
+              shading: {
+                type: docx.ShadingType.CLEAR,
+                fill: 'd1fae5'  // Light green background
+              }
             })
           ],
           spacing: { before: 60, after: 40 },
@@ -1064,14 +1081,18 @@ class DOCXExporter {
 
         // Achievements with success color
         if (hasAchievements) {
-          // Add achievements label
+          // Add achievements label with enhanced web-like styling
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
                 text: '[ ' + (this.currentLang === 'ko' ? '주요 성과' : 'Key Achievements') + ' ]',
                 bold: true,
-                size: this.toHalfPt(13),
-                color: '10b981'  // Success color
+                size: this.toHalfPt(14),  // Slightly larger
+                color: '10b981',  // Success green matching web
+                shading: {
+                  type: docx.ShadingType.CLEAR,
+                  fill: 'd1fae5'  // Light green background
+                }
               })
             ],
             spacing: { before: 60, after: 40 },
@@ -1444,7 +1465,7 @@ class DOCXExporter {
         },
         pageBreakBefore
       }),
-      // Add divider line
+      // Add enhanced divider line with web-like styling
       new docx.Paragraph({
         children: [new docx.TextRun({ text: '' })],
         border: {
@@ -1452,7 +1473,7 @@ class DOCXExporter {
             color: this.getColor('primary'),
             space: 1,
             style: docx.BorderStyle.SINGLE,
-            size: 18
+            size: 24  // Thicker for web-like emphasis
           }
         },
         spacing: {

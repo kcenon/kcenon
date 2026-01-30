@@ -208,7 +208,7 @@ class PDFExporter {
 
   /**
    * Get fallback styles when StyleManager is not available
-   * Enhanced to match web design more closely
+   * Enhanced to match web design more closely with gradient-like colors
    * @returns {Object} Default PDF styles
    */
   getFallbackStyles() {
@@ -216,69 +216,69 @@ class PDFExporter {
       defaultStyle: {
         fontSize: 11,
         lineHeight: 1.6,
-        color: '0f172a',
+        color: '#0F172A',
         font: this.fontLoaded ? 'NotoSansKR' : 'Roboto'
       },
       styles: {
         header: {
           fontSize: 28,
           bold: true,
-          color: '0f172a',
+          color: '#3B82F6',  // Primary blue matching web gradient start
           margin: [0, 0, 0, 12],
           lineHeight: 1.2
         },
         subheader: {
           fontSize: 20,
           bold: true,
-          color: '3b82f6',
+          color: '#3B82F6',  // Primary blue for section headers
           margin: [0, 24, 0, 12],
           lineHeight: 1.3
         },
         sectionTitle: {
           fontSize: 16,
           bold: true,
-          color: '3b82f6',
+          color: '#3B82F6',  // Primary blue
           margin: [0, 18, 0, 8],
           lineHeight: 1.3
         },
         subsectionTitle: {
           fontSize: 13,
           bold: true,
-          color: '475569',
+          color: '#475569',
           margin: [0, 14, 0, 6]
         },
         tableHeader: {
           bold: true,
-          fillColor: 'f1f5f9',
+          fillColor: '#F1F5F9',
           margin: [8, 6, 8, 6],
           fontSize: 10
         },
         bodyText: {
           fontSize: 11,
-          color: '475569',
+          color: '#475569',
           lineHeight: 1.7
         },
         smallText: {
           fontSize: 9,
-          color: '94a3b8',
+          color: '#94A3B8',
           lineHeight: 1.5
         },
         tagText: {
           fontSize: 8,
-          color: '3b82f6',
-          background: 'dbeafe',
+          color: '#3B82F6',
+          background: 'DBEAFE',
           margin: [4, 2, 4, 2]
         },
         successText: {
-          color: '10b981',
+          color: '#10B981',
           bold: true
         },
         warningText: {
-          color: 'f59e0b',
+          color: '#F59E0B',
           bold: true
         },
         accentText: {
-          color: '3b82f6',
+          color: '#3B82F6',
           bold: true
         },
         cardBorder: {
@@ -286,12 +286,12 @@ class PDFExporter {
         },
         listItem: {
           fontSize: 10,
-          color: '475569',
+          color: '#475569',
           margin: [0, 3, 0, 3]
         },
         quote: {
           fontSize: 12,
-          color: '475569',
+          color: '#475569',
           italics: true,
           margin: [15, 8, 15, 8],
           lineHeight: 1.8
@@ -307,54 +307,54 @@ class PDFExporter {
   /**
    * Get color from current theme
    * @param {string} colorPath - Dot-notation path to color (e.g., 'primary', 'text.muted')
-   * @returns {string} Color without # prefix
+   * @returns {string} Color WITH # prefix for pdfmake (pdfmake requires #)
    */
   getColor(colorPath) {
     if (!this.currentTheme) {
-      // Enhanced fallback colors matching web design
+      // Enhanced fallback colors matching web design (WITH # for pdfmake)
       const fallbackColors = {
         // Primary colors
-        primary: '3b82f6',
-        'primary.hover': '2563eb',
-        'primary.light': 'dbeafe',
-        secondary: '6b7280',
-        accent: '3b82f6',
-        'accent.hover': '2563eb',
-        'accent.light': 'dbeafe',
+        primary: '#3B82F6',
+        'primary.hover': '#2563EB',
+        'primary.light': '#DBEAFE',
+        secondary: '#6B7280',
+        accent: '#3B82F6',
+        'accent.hover': '#2563EB',
+        'accent.light': '#DBEAFE',
 
         // Gradient colors
-        'gradient.start': '3b82f6',
-        'gradient.end': '8b5cf6',
+        'gradient.start': '#3B82F6',
+        'gradient.end': '#8B5CF6',
 
         // Text colors
-        'text.primary': '0f172a',
-        'text.secondary': '475569',
-        'text.muted': '94a3b8',
+        'text.primary': '#0F172A',
+        'text.secondary': '#475569',
+        'text.muted': '#94A3B8',
 
         // Background colors
-        'background.page': 'ffffff',
-        'background.primary': 'ffffff',
-        'background.secondary': 'f8fafc',
-        'background.tertiary': 'f1f5f9',
-        'background.section': 'f8fafc',
-        'background.card': 'ffffff',
-        'background.table': 'f1f5f9',
+        'background.page': '#FFFFFF',
+        'background.primary': '#FFFFFF',
+        'background.secondary': '#F8FAFC',
+        'background.tertiary': '#F1F5F9',
+        'background.section': '#F8FAFC',
+        'background.card': '#FFFFFF',
+        'background.table': '#F1F5F9',
 
         // Border colors
-        border: 'e2e8f0',
-        'border.hover': 'cbd5e1',
+        border: '#E2E8F0',
+        'border.hover': '#CBD5E1',
 
         // Status colors
-        success: '10b981',
-        warning: 'f59e0b',
-        error: 'ef4444',
-        info: '3b82f6',
+        success: '#10B981',
+        warning: '#F59E0B',
+        error: '#EF4444',
+        info: '#3B82F6',
 
         // Code colors
-        'code.bg': '1e293b',
-        'code.text': 'e2e8f0'
+        'code.bg': '#1E293B',
+        'code.text': '#E2E8F0'
       };
-      return fallbackColors[colorPath] || '000000';
+      return fallbackColors[colorPath] || '#000000';
     }
 
     const parts = colorPath.split('.');
@@ -362,7 +362,12 @@ class PDFExporter {
     for (const part of parts) {
       value = value?.[part];
     }
-    return value ? value.replace('#', '') : '000000';
+    // Ensure # prefix for pdfmake
+    let hexValue = value || '#000000';
+    if (!hexValue.startsWith('#')) {
+      hexValue = '#' + hexValue;
+    }
+    return hexValue;
   }
 
   /**
@@ -690,7 +695,7 @@ class PDFExporter {
         lineHeight: this.getTypography('lineHeight'),
         color: this.getColor('text.primary')
       },
-      styles: this.themeStyles?.styles || this.getFallbackStyles().styles,
+      // No styles object - use inline colors only
       content
     };
   }
@@ -707,8 +712,9 @@ class PDFExporter {
       columns: [
         {
           text: info.author || info.title,
-          style: 'header',
-          color: this.getColor('text.primary')
+          fontSize: this.getTypography('fontSize.h1'),
+          bold: true,
+          color: this.getColor('primary')  // Use primary color directly instead of style
         },
         {
           text: new Date().toLocaleDateString(locale, {
@@ -750,7 +756,7 @@ class PDFExporter {
             x: 0, y: -50,
             w: 515, h: 80,
             lineWidth: 1,
-            lineColor: 'e2e8f0'
+            lineColor: '#E2E8F0'
           }],
           margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
         }
@@ -776,22 +782,27 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
+    // Section header without style (to allow color override)
     const sectionHeader = {
       text: labels.expertise,
-      style: 'subheader'
+      fontSize: this.getTypography('fontSize.h2'),
+      bold: true,
+      color: this.getColor('primary'),
+      margin: [0, 24, 0, 12],
+      lineHeight: 1.3
     };
     if (addPageBreak) {
       sectionHeader.pageBreak = 'before';
     }
     content.push(sectionHeader);
 
-    // Add section divider line
+    // Add enhanced section divider line with gradient-like appearance
     content.push({
       canvas: [{
         type: 'line',
         x1: 0, y1: 0,
         x2: 515, y2: 0,
-        lineWidth: 2,
+        lineWidth: 3,  // Thicker line for web-like emphasis
         lineColor: this.getColor('primary')
       }],
       margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
@@ -802,11 +813,12 @@ class PDFExporter {
       expertise.categories.forEach((category, index) => {
         const categoryContent = [];
 
-        // Category title
+        // Category title with enhanced primary color (style removed to allow color override)
         categoryContent.push({
           text: '[ ' + this.getText(category.title) + ' ]',
-          style: 'sectionTitle',
-          color: '3b82f6',  // Primary
+          fontSize: this.getTypography('fontSize.h3'),
+          color: '#3B82F6',  // Primary blue matching web design
+          bold: true,
           margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
         });
 
@@ -815,19 +827,19 @@ class PDFExporter {
           categoryContent.push({
             ul: items.map(item => this.stripHtml(this.getText(item))),
             fontSize: this.getTypography('fontSize.body'),
-            color: '475569',  // Text secondary
+            color: '#475569',  // Text secondary
             lineHeight: this.getTypography('lineHeight'),
             margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
           });
         }
 
-        // Handle tags for Technologies category
+        // Handle tags for Technologies category with web-like styling
         const tags = this.getArray(category.tags);
         if (tags.length > 0) {
           categoryContent.push({
             text: '[ ' + tags.map(tag => this.getText(tag)).join(' | ') + ' ]',
-            fontSize: this.getTypography('fontSize.small'),
-            color: '3b82f6',  // Primary
+            fontSize: this.getTypography('fontSize.small') + 1,  // Slightly larger
+            color: '#3B82F6',  // Primary blue matching web
             bold: true,
             margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
           });
@@ -867,19 +879,23 @@ class PDFExporter {
       });
     }
 
-    // Certifications
+    // Certifications with enhanced web-like styling
     if (expertise.certifications && expertise.certifications.length > 0) {
       content.push({
         unbreakable: true,
         stack: [
           {
             text: labels.certifications,
-            style: 'sectionTitle'
+            fontSize: this.getTypography('fontSize.h3'),
+            color: '#3B82F6',  // Primary blue
+            bold: true,
+            margin: [0, 18, 0, 8]
           },
           {
             text: expertise.certifications.map(cert => this.getText(cert.name)).join(' | '),
-            color: this.getColor('success'),
+            color: this.getColor('success'),  // Success green matching web
             bold: true,
+            fontSize: this.getTypography('fontSize.body') + 1,
             margin: [this.getSpacing('list.indent'), 0, 0, 10]
           }
         ],
@@ -907,22 +923,27 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
+    // Section header without style (to allow color override)
     const sectionHeader = {
       text: labels.projects,
-      style: 'subheader'
+      fontSize: this.getTypography('fontSize.h2'),
+      bold: true,
+      color: this.getColor('primary'),
+      margin: [0, 24, 0, 12],
+      lineHeight: 1.3
     };
     if (addPageBreak) {
       sectionHeader.pageBreak = 'before';
     }
     content.push(sectionHeader);
 
-    // Add section divider line
+    // Add enhanced section divider line with gradient-like appearance
     content.push({
       canvas: [{
         type: 'line',
         x1: 0, y1: 0,
         x2: 515, y2: 0,
-        lineWidth: 2,
+        lineWidth: 3,  // Thicker line for web-like emphasis
         lineColor: this.getColor('primary')
       }],
       margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
@@ -1032,13 +1053,13 @@ class PDFExporter {
       });
     }
 
-    // Tags with border instead of background (to avoid black rendering issue)
+    // Tags with enhanced web-like styling
     const tags = this.getArray(project.tags);
     if (tags.length > 0) {
       items.push({
         text: '[ ' + tags.map(tag => this.getText(tag)).join(' | ') + ' ]',
-        fontSize: this.getTypography('fontSize.tiny'),
-        color: '3b82f6',  // Primary color
+        fontSize: this.getTypography('fontSize.tiny') + 1,  // Slightly larger for readability
+        color: '#3B82F6',  // Primary blue matching web accent
         bold: true,
         margin: [0, 0, 0, 8]
       });
@@ -1055,7 +1076,7 @@ class PDFExporter {
             x1: 0, y1: 0,
             x2: 150, y2: 0,
             lineWidth: 1,
-            lineColor: 'e2e8f0'
+            lineColor: '#E2E8F0'
           }],
           margin: [0, 8, 0, 8]
         });
@@ -1064,13 +1085,13 @@ class PDFExporter {
           text: '[ ' + labels.keyResponsibilities + ' ]',
           bold: true,
           fontSize: this.getTypography('fontSize.h4'),
-          color: '3b82f6',  // Primary color
+          color: '#3B82F6',  // Primary color
           margin: [0, 0, 0, 4]
         });
         items.push({
           ul: roles.map(r => this.stripHtml(this.getText(r))),
           fontSize: this.getTypography('fontSize.body'),
-          color: '475569',  // Text secondary
+          color: '#475569',  // Text secondary
           lineHeight: this.getTypography('lineHeight'),
           margin: [this.getSpacing('list.indent'), 0, 0, 6]
         });
@@ -1082,13 +1103,13 @@ class PDFExporter {
           text: '[ ' + labels.achievements + ' ]',
           bold: true,
           fontSize: this.getTypography('fontSize.h4'),
-          color: '10b981',  // Success color
+          color: '#10B981',  // Success color
           margin: [0, 6, 0, 4]
         });
         items.push({
           ul: achievements.map(a => this.stripHtml(this.getText(a))),
           fontSize: this.getTypography('fontSize.body'),
-          color: '475569',  // Text secondary
+          color: '#475569',  // Text secondary
           lineHeight: this.getTypography('lineHeight'),
           margin: [this.getSpacing('list.indent'), 0, 0, 6]
         });
@@ -1112,22 +1133,27 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
+    // Section header without style (to allow color override)
     const sectionHeader = {
       text: labels.career,
-      style: 'subheader'
+      fontSize: this.getTypography('fontSize.h2'),
+      bold: true,
+      color: this.getColor('primary'),
+      margin: [0, 24, 0, 12],
+      lineHeight: 1.3
     };
     if (addPageBreak) {
       sectionHeader.pageBreak = 'before';
     }
     content.push(sectionHeader);
 
-    // Add section divider line
+    // Add enhanced section divider line with gradient-like appearance
     content.push({
       canvas: [{
         type: 'line',
         x1: 0, y1: 0,
         x2: 515, y2: 0,
-        lineWidth: 2,
+        lineWidth: 3,  // Thicker line for web-like emphasis
         lineColor: this.getColor('primary')
       }],
       margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
@@ -1142,12 +1168,12 @@ class PDFExporter {
         companyText.push({
           text: this.getText(item.company) || this.getText(item.title) || '',
           bold: true,
-          color: '3b82f6'  // Primary color
+          color: '#3B82F6'  // Primary color
         });
         if (item.badge) {
           companyText.push({
             text: ' [' + this.getText(item.badge) + ']',
-            color: 'f59e0b',  // Warning color
+            color: '#F59E0B',  // Warning color
             bold: true
           });
         }
@@ -1162,7 +1188,7 @@ class PDFExporter {
             {
               text: this.formatPeriodWithDuration(item.period) || '',
               alignment: 'right',
-              color: '3b82f6',  // Primary color for dates
+              color: '#3B82F6',  // Primary color for dates
               fontSize: this.getTypography('fontSize.small'),
               bold: true,
               width: 'auto'
@@ -1174,7 +1200,7 @@ class PDFExporter {
         if (item.role || item.position) {
           entry.push({
             text: '> ' + (this.getText(item.role) || this.getText(item.position)),
-            color: '0f172a',  // Text primary
+            color: '#0F172A',  // Text primary
             fontSize: this.getTypography('fontSize.body'),
             bold: true,
             margin: [0, 0, 0, 4]
@@ -1237,13 +1263,13 @@ class PDFExporter {
             text: '[ ' + (this.currentLang === 'ko' ? '주요 성과' : 'Key Achievements') + ' ]',
             bold: true,
             fontSize: this.getTypography('fontSize.h4'),
-            color: '10b981',  // Success color
+            color: '#10B981',  // Success color
             margin: [0, 6, 0, 3]
           });
           entry.push({
             ul: achievements.map(a => this.stripHtml(this.getText(a))),
             fontSize: this.getTypography('fontSize.body'),
-            color: '475569',  // Text secondary
+            color: '#475569',  // Text secondary
             margin: [this.getSpacing('list.indent'), 0, 0, 6]
           });
         }
@@ -1301,22 +1327,27 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
+    // Section header without style (to allow color override)
     const sectionHeader = {
       text: labels.testimonials,
-      style: 'subheader'
+      fontSize: this.getTypography('fontSize.h2'),
+      bold: true,
+      color: this.getColor('primary'),
+      margin: [0, 24, 0, 12],
+      lineHeight: 1.3
     };
     if (addPageBreak) {
       sectionHeader.pageBreak = 'before';
     }
     content.push(sectionHeader);
 
-    // Add section divider line
+    // Add enhanced section divider line with gradient-like appearance
     content.push({
       canvas: [{
         type: 'line',
         x1: 0, y1: 0,
         x2: 515, y2: 0,
-        lineWidth: 2,
+        lineWidth: 3,  // Thicker line for web-like emphasis
         lineColor: this.getColor('primary')
       }],
       margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
@@ -1348,7 +1379,7 @@ class PDFExporter {
       items.push({
         text: isFeatured ? '[ Featured Testimonial ]' : '',
         fontSize: this.getTypography('fontSize.tiny'),
-        color: '3b82f6',  // Primary
+        color: '#3B82F6',  // Primary
         bold: true,
         margin: [0, 0, 0, 4]
       });
@@ -1361,7 +1392,7 @@ class PDFExporter {
         italics: true,
         fontSize: isFeatured ? this.getTypography('fontSize.body') + 1 : this.getTypography('fontSize.body'),
         margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
-        color: '0f172a',  // Text primary
+        color: '#0F172A',  // Text primary
         lineHeight: this.getTypography('lineHeight.relaxed')
       });
     }
@@ -1371,19 +1402,19 @@ class PDFExporter {
     authorText.push({
       text: this.getText(testimonial.author) || this.getText(testimonial.name) || '',
       bold: true,
-      color: '3b82f6'  // Primary
+      color: '#3B82F6'  // Primary
     });
     if (testimonial.role) {
       authorText.push({
         text: ', ' + this.getText(testimonial.role),
-        color: '475569',  // Text secondary
+        color: '#475569',  // Text secondary
         bold: false
       });
     }
     if (testimonial.relation) {
       authorText.push({
         text: ` (${this.getText(testimonial.relation)})`,
-        color: '3b82f6',  // Primary
+        color: '#3B82F6',  // Primary
         italics: true
       });
     }
@@ -1399,7 +1430,7 @@ class PDFExporter {
       items.push({
         text: '[ ' + testimonial.labels.map(l => this.getText(l.text)).join(' | ') + ' ]',
         fontSize: this.getTypography('fontSize.tiny'),
-        color: '10b981',  // Success
+        color: '#10B981',  // Success
         bold: true,
         margin: [this.getSpacing('list.indent'), 5, 0, 0]
       });
@@ -1421,22 +1452,27 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
+    // Section header without style (to allow color override)
     const sectionHeader = {
       text: labels.manager,
-      style: 'subheader'
+      fontSize: this.getTypography('fontSize.h2'),
+      bold: true,
+      color: this.getColor('primary'),
+      margin: [0, 24, 0, 12],
+      lineHeight: 1.3
     };
     if (addPageBreak) {
       sectionHeader.pageBreak = 'before';
     }
     content.push(sectionHeader);
 
-    // Add section divider line
+    // Add enhanced section divider line with gradient-like appearance
     content.push({
       canvas: [{
         type: 'line',
         x1: 0, y1: 0,
         x2: 515, y2: 0,
-        lineWidth: 2,
+        lineWidth: 3,  // Thicker line for web-like emphasis
         lineColor: this.getColor('primary')
       }],
       margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
