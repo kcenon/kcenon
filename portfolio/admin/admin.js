@@ -1320,6 +1320,7 @@ class AdminApp {
         filename: 'portfolio.pdf',
         author: 'Dongcheol Shin',
         language: this.currentLang || 'ko',
+        pageBreakBetweenSections: true,  // Enable page breaks between sections
         ...options
       });
 
@@ -1348,6 +1349,7 @@ class AdminApp {
         filename: 'portfolio.docx',
         author: 'Dongcheol Shin',
         language: this.currentLang || 'ko',
+        pageBreakBetweenSections: true,  // Enable page breaks between sections
         ...options
       });
 

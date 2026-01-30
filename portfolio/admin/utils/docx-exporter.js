@@ -216,45 +216,65 @@ class DOCXExporter {
 
   /**
    * Get fallback styles when StyleManager is not available
+   * Enhanced to match web design more closely
    * @returns {Object} Default DOCX styles
    */
   getFallbackStyles() {
     return {
       heading1: {
-        run: { size: 48, bold: true, color: '1F2937' },
-        paragraph: { spacing: { after: 200 } }
+        run: { size: 56, bold: true, color: '0f172a' },
+        paragraph: { spacing: { after: 240, line: 300 } }
       },
       heading2: {
-        run: { size: 32, bold: true, color: '3B82F6' },
-        paragraph: { spacing: { before: 400, after: 200 } }
+        run: { size: 40, bold: true, color: '3b82f6' },
+        paragraph: { spacing: { before: 480, after: 240, line: 320 } }
       },
       heading3: {
-        run: { size: 24, bold: true, color: '374151' },
-        paragraph: { spacing: { before: 250, after: 120 } }
+        run: { size: 32, bold: true, color: '3b82f6' },
+        paragraph: { spacing: { before: 360, after: 160, line: 320 } }
+      },
+      heading4: {
+        run: { size: 26, bold: true, color: '475569' },
+        paragraph: { spacing: { before: 280, after: 120 } }
       },
       normal: {
-        run: { size: 22, color: '4B5563' },
-        paragraph: { spacing: { after: 100 } }
+        run: { size: 22, color: '475569' },
+        paragraph: { spacing: { after: 160, line: 360 } }
       },
       small: {
-        run: { size: 18, color: '9CA3AF' }
+        run: { size: 18, color: '94a3b8' },
+        paragraph: { spacing: { after: 120, line: 300 } }
       },
       tag: {
-        run: { size: 16, color: '3B82F6' }
+        run: { size: 16, color: '3b82f6' },
+        paragraph: { spacing: { after: 80 } }
+      },
+      quote: {
+        run: { size: 24, color: '475569', italics: true },
+        paragraph: { spacing: { after: 160, line: 400 } }
       },
       colors: {
-        primary: '3B82F6',
-        secondary: '6B7280',
-        textPrimary: '1F2937',
-        textSecondary: '374151',
-        textMuted: '9CA3AF',
-        success: '22C55E',
-        warning: 'F59E0B',
-        border: 'E5E7EB'
+        primary: '3b82f6',
+        primaryLight: 'dbeafe',
+        secondary: '6b7280',
+        textPrimary: '0f172a',
+        textSecondary: '475569',
+        textMuted: '94a3b8',
+        bgPrimary: 'ffffff',
+        bgSecondary: 'f8fafc',
+        bgTertiary: 'f1f5f9',
+        success: '10b981',
+        warning: 'f59e0b',
+        error: 'ef4444',
+        border: 'e2e8f0',
+        borderHover: 'cbd5e1'
       },
       spacing: {
-        listIndent: 360,
-        itemSpacing: 60
+        listIndent: 400,
+        itemSpacing: 100,
+        cardPadding: 320,
+        sectionMargin: 480,
+        paragraphSpacing: 160
       }
     };
   }
@@ -266,19 +286,42 @@ class DOCXExporter {
    */
   getColor(colorPath) {
     if (!this.currentTheme) {
-      // Use fallback colors
+      // Enhanced fallback colors matching web design
       const fallbackColors = {
-        'primary': '3B82F6',
-        'secondary': '6B7280',
-        'text.primary': '1F2937',
-        'text.secondary': '374151',
-        'text.muted': '9CA3AF',
-        'background.page': 'FFFFFF',
-        'background.section': 'F9FAFB',
-        'background.table': 'F3F4F6',
-        'success': '22C55E',
-        'warning': 'F59E0B',
-        'border': 'E5E7EB'
+        // Primary colors
+        'primary': '3b82f6',
+        'primary.hover': '2563eb',
+        'primary.light': 'dbeafe',
+        'secondary': '6b7280',
+        'accent': '3b82f6',
+
+        // Gradient colors
+        'gradient.start': '3b82f6',
+        'gradient.end': '8b5cf6',
+
+        // Text colors
+        'text.primary': '0f172a',
+        'text.secondary': '475569',
+        'text.muted': '94a3b8',
+
+        // Background colors
+        'background.page': 'ffffff',
+        'background.primary': 'ffffff',
+        'background.secondary': 'f8fafc',
+        'background.tertiary': 'f1f5f9',
+        'background.section': 'f8fafc',
+        'background.card': 'ffffff',
+        'background.table': 'f1f5f9',
+
+        // Border colors
+        'border': 'e2e8f0',
+        'border.hover': 'cbd5e1',
+
+        // Status colors
+        'success': '10b981',
+        'warning': 'f59e0b',
+        'error': 'ef4444',
+        'info': '3b82f6'
       };
       return fallbackColors[colorPath] || '000000';
     }
@@ -457,53 +500,52 @@ class DOCXExporter {
   }
 
   /**
-   * Build document header
+   * Build document header with enhanced styling
    */
   buildHeader(info) {
     const labels = this.getLabels();
     const locale = this.currentLang === 'ko' ? 'ko-KR' : 'en-US';
 
     return [
+      // Main title with gradient-like color
       new docx.Paragraph({
         children: [
           new docx.TextRun({
             text: info.author || info.title,
             bold: true,
-            size: this.toHalfPt(this.getTypography('fontSize.h1') + 4),
+            size: this.toHalfPt(32),
             color: this.getColor('text.primary')
           })
         ],
-        spacing: { after: 100 }
+        spacing: { after: 80 }
       }),
-      new docx.Paragraph({
-        children: [
-          new docx.TextRun({
-            text: labels.professionalPortfolio,
-            size: this.toHalfPt(this.getTypography('fontSize.h2') - 2),
-            color: this.getColor('text.muted')
-          })
-        ],
-        spacing: { after: 100 }
-      }),
+      // Date
       new docx.Paragraph({
         children: [
           new docx.TextRun({
             text: new Date().toLocaleDateString(locale, {
               year: 'numeric',
-              month: 'long'
+              month: 'long',
+              day: 'numeric'
             }),
-            size: this.toHalfPt(this.getTypography('fontSize.body')),
+            size: this.toHalfPt(11),
             color: this.getColor('text.muted')
           })
         ],
-        spacing: { after: 400 }
+        spacing: { after: 200 }
       }),
+      // Enhanced divider with primary color
       new docx.Paragraph({
         children: [new docx.TextRun({ text: '' })],
         border: {
-          bottom: { color: this.getColor('border'), space: 1, style: docx.BorderStyle.SINGLE, size: 6 }
+          bottom: {
+            color: this.getColor('primary'),
+            space: 1,
+            style: docx.BorderStyle.SINGLE,
+            size: 18  // Thicker border
+          }
         },
-        spacing: { after: 300 }
+        spacing: { after: 400 }
       })
     ];
   }
@@ -517,7 +559,7 @@ class DOCXExporter {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.expertise, addPageBreak));
+    children.push(...this.createHeading2(labels.expertise, addPageBreak));
 
     // Categories
     if (expertise.categories && expertise.categories.length > 0) {
@@ -633,7 +675,7 @@ class DOCXExporter {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.projects, addPageBreak));
+    children.push(...this.createHeading2(labels.projects, addPageBreak));
 
     // Featured projects
     if (projects.featured && projects.featured.length > 0) {
@@ -665,85 +707,122 @@ class DOCXExporter {
     const children = [];
     const labels = this.getLabels();
 
-    // Title
+    // Title with primary color for emphasis
     children.push(new docx.Paragraph({
       children: [
         new docx.TextRun({
           text: this.getText(project.title) || this.getText(project.name) || 'Untitled Project',
           bold: true,
-          size: this.toHalfPt(this.getTypography('fontSize.h3') - 2),
-          color: this.getColor('text.primary')
+          size: this.toHalfPt(16),
+          color: this.getColor('primary')  // Primary color for titles
         })
       ],
-      spacing: { before: 150, after: 50 },
+      spacing: { before: 280, after: 80, line: 320 },
       keepLines: true,
       keepNext: true
     }));
 
-    // Company and period
+    // Company and period with distinct colors
     if (project.company || project.period) {
+      const metaParts = [];
+      if (project.company) {
+        metaParts.push(new docx.TextRun({
+          text: this.getText(project.company),
+          size: this.toHalfPt(10),
+          color: this.getColor('text.secondary'),
+          bold: true
+        }));
+      }
+      if (project.period) {
+        if (project.company) {
+          metaParts.push(new docx.TextRun({
+            text: ' | ',
+            size: this.toHalfPt(10),
+            color: this.getColor('text.muted')
+          }));
+        }
+        metaParts.push(new docx.TextRun({
+          text: this.formatPeriodWithDuration(project.period),
+          size: this.toHalfPt(10),
+          color: this.getColor('accent'),  // Accent color for dates
+          italics: true
+        }));
+      }
+
       children.push(new docx.Paragraph({
-        children: [
-          new docx.TextRun({
-            text: [this.getText(project.company), this.formatPeriodWithDuration(project.period)].filter(Boolean).join(' | '),
-            size: this.toHalfPt(this.getTypography('fontSize.small')),
-            color: this.getColor('text.muted'),
-            italics: true
-          })
-        ],
-        spacing: { after: this.getSpacing('list.itemSpacing') },
+        children: metaParts,
+        spacing: { after: 120 },
         keepLines: true,
         keepNext: true
       }));
     }
 
-    // Description
+    // Description with improved line height
     if (project.description) {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
             text: this.stripHtml(this.getText(project.description)),
-            size: this.toHalfPt(this.getTypography('fontSize.body')),
+            size: this.toHalfPt(11),
             color: this.getColor('text.secondary')
           })
         ],
-        spacing: { after: this.getSpacing('list.itemSpacing') },
+        spacing: { after: 160, line: 360 },
         keepLines: true,
         keepNext: true
       }));
     }
 
-    // Tags
+    // Tags with shading
     const tags = this.getArray(project.tags);
     if (tags.length > 0) {
       children.push(new docx.Paragraph({
         children: [
           new docx.TextRun({
             text: tags.map(tag => this.getText(tag)).join(' • '),
-            size: this.toHalfPt(this.getTypography('fontSize.tiny')),
-            color: this.getColor('primary')
+            size: this.toHalfPt(9),
+            color: '3b82f6',  // Primary color
+            bold: true,
+            shading: {
+              type: docx.ShadingType.CLEAR,
+              fill: 'f1f5f9'  // Light gray background
+            }
           })
         ],
-        spacing: { after: 80 },
+        spacing: { after: 160 },
         keepLines: true,
         keepNext: project.expanded ? true : false
       }));
     }
 
-    // Expanded details
+    // Expanded details with color coding
     if (project.expanded) {
       const roles = this.getArray(project.expanded.roles);
       if (roles.length > 0) {
+        // Add separator
+        children.push(new docx.Paragraph({
+          children: [],
+          border: {
+            top: {
+              color: 'e2e8f0',
+              space: 1,
+              style: docx.BorderStyle.SINGLE,
+              size: 8
+            }
+          },
+          spacing: { before: 80, after: 80 }
+        }));
+
         children.push(new docx.Paragraph({
           children: [
             new docx.TextRun({
-              text: labels.keyResponsibilities,
+              text: '[ ' + labels.keyResponsibilities + ' ]',
               bold: true,
-              size: this.toHalfPt(this.getTypography('fontSize.small')),
-              color: this.getColor('text.secondary')
+              size: this.toHalfPt(13),
+              color: '3b82f6'  // Primary color
             })
           ],
-          spacing: { before: 60, after: 40 },
+          spacing: { before: 40, after: 40 },
           keepLines: true,
           keepNext: true
         }));
@@ -756,11 +835,11 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: `• ${this.stripHtml(this.getText(role))}`,
-                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                size: this.toHalfPt(11),
                 color: this.getColor('text.secondary')
               })
             ],
-            spacing: { after: 30 },
+            spacing: { after: 50 },
             indent: { left: this.getSpacing('list.indent') },
             keepLines: true,
             keepNext: !isLast || hasAchievements
@@ -773,10 +852,10 @@ class DOCXExporter {
         children.push(new docx.Paragraph({
           children: [
             new docx.TextRun({
-              text: labels.achievements,
+              text: '[ ' + labels.achievements + ' ]',
               bold: true,
-              size: this.toHalfPt(this.getTypography('fontSize.small')),
-              color: this.getColor('text.secondary')
+              size: this.toHalfPt(13),
+              color: '10b981'  // Success color
             })
           ],
           spacing: { before: 60, after: 40 },
@@ -790,11 +869,11 @@ class DOCXExporter {
             children: [
               new docx.TextRun({
                 text: `• ${this.stripHtml(this.getText(achievement))}`,
-                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                size: this.toHalfPt(11),
                 color: this.getColor('text.secondary')
               })
             ],
-            spacing: { after: 30 },
+            spacing: { after: 50 },
             indent: { left: this.getSpacing('list.indent') },
             keepLines: true,
             keepNext: !isLast
@@ -817,7 +896,7 @@ class DOCXExporter {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.career, addPageBreak));
+    children.push(...this.createHeading2(labels.career, addPageBreak));
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
@@ -834,29 +913,30 @@ class DOCXExporter {
         const tags = this.getArray(item.tags);
         const hasTags = tags.length > 0;
 
-        // Company name with optional badge
+        // Company name with primary color and optional badge
         const companyRuns = [
           new docx.TextRun({
             text: this.getText(item.company) || this.getText(item.title) || '',
             bold: true,
-            size: this.toHalfPt(this.getTypography('fontSize.h3') - 2),
-            color: this.getColor('text.primary')
+            size: this.toHalfPt(15),
+            color: this.getColor('primary')  // Primary color for company
           })
         ];
 
         if (item.badge) {
           companyRuns.push(new docx.TextRun({
-            text: ` [${this.getText(item.badge)}]`,
+            text: ' [' + this.getText(item.badge) + ']',
             bold: true,
-            size: this.toHalfPt(this.getTypography('fontSize.small')),
-            color: this.getColor('warning')
+            size: this.toHalfPt(10),
+            color: 'f59e0b'  // Warning color
           }));
         }
 
         companyRuns.push(new docx.TextRun({
           text: `  ${this.formatPeriodWithDuration(item.period) || ''}`,
-          size: this.toHalfPt(this.getTypography('fontSize.small')),
-          color: this.getColor('text.muted')
+          size: this.toHalfPt(10),
+          color: '3b82f6',  // Primary color for dates
+          bold: true
         }));
 
         children.push(new docx.Paragraph({
@@ -883,14 +963,15 @@ class DOCXExporter {
           }));
         }
 
-        // Role
+        // Role with emphasis
         if (hasRole) {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: this.getText(item.role) || this.getText(item.position),
-                size: this.toHalfPt(this.getTypography('fontSize.body')),
-                color: this.getColor('primary')
+                text: '> ' + (this.getText(item.role) || this.getText(item.position)),
+                size: this.toHalfPt(12),
+                color: '0f172a',  // Text primary
+                bold: true
               })
             ],
             spacing: { after: this.getSpacing('list.itemSpacing') },
@@ -981,19 +1062,34 @@ class DOCXExporter {
           }));
         }
 
-        // Achievements
+        // Achievements with success color
         if (hasAchievements) {
+          // Add achievements label
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: '[ ' + (this.currentLang === 'ko' ? '주요 성과' : 'Key Achievements') + ' ]',
+                bold: true,
+                size: this.toHalfPt(13),
+                color: '10b981'  // Success color
+              })
+            ],
+            spacing: { before: 60, after: 40 },
+            keepLines: true,
+            keepNext: true
+          }));
+
           achievements.forEach((achievement, index) => {
             const isLast = index === achievements.length - 1;
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
                   text: `• ${this.stripHtml(this.getText(achievement))}`,
-                  size: this.toHalfPt(this.getTypography('fontSize.small')),
+                  size: this.toHalfPt(11),
                   color: this.getColor('text.secondary')
                 })
               ],
-              spacing: { after: 40 },
+              spacing: { after: 50 },
               indent: { left: this.getSpacing('list.indent') },
               keepLines: true,
               keepNext: !isLast || hasNote || hasTags || hasLeaveReason
@@ -1072,7 +1168,7 @@ class DOCXExporter {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.testimonials, addPageBreak));
+    children.push(...this.createHeading2(labels.testimonials, addPageBreak));
 
     // Featured testimonial
     if (testimonials.featured) {
@@ -1178,7 +1274,7 @@ class DOCXExporter {
     const children = [];
     const labels = this.getLabels();
 
-    children.push(this.createHeading2(labels.manager, addPageBreak));
+    children.push(...this.createHeading2(labels.manager, addPageBreak));
 
     // PM Capabilities
     if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
@@ -1326,27 +1422,48 @@ class DOCXExporter {
   }
 
   /**
-   * Create heading 2
+   * Create heading 2 with enhanced styling
    * @param {string} text - Heading text
    * @param {boolean} pageBreakBefore - Whether to add page break before heading
    */
   createHeading2(text, pageBreakBefore = false) {
-    return new docx.Paragraph({
-      children: [
-        new docx.TextRun({
-          text,
-          bold: true,
-          size: this.toHalfPt(this.getTypography('fontSize.h2')),
-          color: this.getColor('primary')
-        })
-      ],
-      spacing: { before: this.getSpacing('section.marginTop'), after: this.getSpacing('section.marginBottom') },
-      pageBreakBefore
-    });
+    return [
+      new docx.Paragraph({
+        children: [
+          new docx.TextRun({
+            text,
+            bold: true,
+            size: this.toHalfPt(20),
+            color: this.getColor('primary')
+          })
+        ],
+        spacing: {
+          before: pageBreakBefore ? 0 : 480,
+          after: 120,
+          line: 320
+        },
+        pageBreakBefore
+      }),
+      // Add divider line
+      new docx.Paragraph({
+        children: [new docx.TextRun({ text: '' })],
+        border: {
+          bottom: {
+            color: this.getColor('primary'),
+            space: 1,
+            style: docx.BorderStyle.SINGLE,
+            size: 18
+          }
+        },
+        spacing: {
+          after: 240
+        }
+      })
+    ];
   }
 
   /**
-   * Create heading 3
+   * Create heading 3 with enhanced styling
    */
   createHeading3(text) {
     return new docx.Paragraph({
@@ -1354,11 +1471,15 @@ class DOCXExporter {
         new docx.TextRun({
           text,
           bold: true,
-          size: this.toHalfPt(this.getTypography('fontSize.h3')),
-          color: this.getColor('text.secondary')
+          size: this.toHalfPt(16),
+          color: this.getColor('accent')
         })
       ],
-      spacing: { before: 250, after: 120 }
+      spacing: {
+        before: 360,
+        after: 160,
+        line: 320
+      }
     });
   }
 

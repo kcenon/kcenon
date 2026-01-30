@@ -208,61 +208,99 @@ class PDFExporter {
 
   /**
    * Get fallback styles when StyleManager is not available
+   * Enhanced to match web design more closely
    * @returns {Object} Default PDF styles
    */
   getFallbackStyles() {
     return {
       defaultStyle: {
-        fontSize: 10,
-        lineHeight: 1.4,
-        color: '1F2937'
+        fontSize: 11,
+        lineHeight: 1.6,
+        color: '0f172a',
+        font: this.fontLoaded ? 'NotoSansKR' : 'Roboto'
       },
       styles: {
         header: {
-          fontSize: 24,
+          fontSize: 28,
           bold: true,
-          color: '1F2937',
-          margin: [0, 0, 0, 10]
+          color: '0f172a',
+          margin: [0, 0, 0, 12],
+          lineHeight: 1.2
         },
         subheader: {
-          fontSize: 16,
+          fontSize: 20,
           bold: true,
-          color: '1F2937',
-          margin: [0, 20, 0, 8]
+          color: '3b82f6',
+          margin: [0, 24, 0, 12],
+          lineHeight: 1.3
         },
         sectionTitle: {
-          fontSize: 14,
+          fontSize: 16,
           bold: true,
-          color: '3B82F6',
-          margin: [0, 15, 0, 5]
+          color: '3b82f6',
+          margin: [0, 18, 0, 8],
+          lineHeight: 1.3
+        },
+        subsectionTitle: {
+          fontSize: 13,
+          bold: true,
+          color: '475569',
+          margin: [0, 14, 0, 6]
         },
         tableHeader: {
           bold: true,
-          fillColor: 'F3F4F6',
-          margin: [5, 5, 5, 5]
+          fillColor: 'f1f5f9',
+          margin: [8, 6, 8, 6],
+          fontSize: 10
         },
         bodyText: {
-          fontSize: 10,
-          color: '374151'
+          fontSize: 11,
+          color: '475569',
+          lineHeight: 1.7
         },
         smallText: {
           fontSize: 9,
-          color: '9CA3AF'
+          color: '94a3b8',
+          lineHeight: 1.5
         },
         tagText: {
           fontSize: 8,
-          color: '3B82F6'
+          color: '3b82f6',
+          background: 'dbeafe',
+          margin: [4, 2, 4, 2]
         },
         successText: {
-          color: '22C55E',
+          color: '10b981',
           bold: true
         },
         warningText: {
-          color: 'F59E0B',
+          color: 'f59e0b',
           bold: true
+        },
+        accentText: {
+          color: '3b82f6',
+          bold: true
+        },
+        cardBorder: {
+          margin: [0, 8, 0, 8]
+        },
+        listItem: {
+          fontSize: 10,
+          color: '475569',
+          margin: [0, 3, 0, 3]
+        },
+        quote: {
+          fontSize: 12,
+          color: '475569',
+          italics: true,
+          margin: [15, 8, 15, 8],
+          lineHeight: 1.8
         }
       },
-      pageMargins: [40, 60, 40, 60]
+      pageMargins: [45, 65, 45, 65],
+      background: function(currentPage, pageSize) {
+        return null; // Can add watermark or background here
+      }
     };
   }
 
@@ -273,20 +311,48 @@ class PDFExporter {
    */
   getColor(colorPath) {
     if (!this.currentTheme) {
-      // Fallback colors
+      // Enhanced fallback colors matching web design
       const fallbackColors = {
-        primary: '3B82F6',
-        secondary: '6B7280',
-        accent: '22C55E',
-        'text.primary': '1F2937',
-        'text.secondary': '374151',
-        'text.muted': '9CA3AF',
-        'background.page': 'FFFFFF',
-        'background.section': 'F9FAFB',
-        'background.table': 'F3F4F6',
-        border: 'E5E7EB',
-        success: '22C55E',
-        warning: 'F59E0B'
+        // Primary colors
+        primary: '3b82f6',
+        'primary.hover': '2563eb',
+        'primary.light': 'dbeafe',
+        secondary: '6b7280',
+        accent: '3b82f6',
+        'accent.hover': '2563eb',
+        'accent.light': 'dbeafe',
+
+        // Gradient colors
+        'gradient.start': '3b82f6',
+        'gradient.end': '8b5cf6',
+
+        // Text colors
+        'text.primary': '0f172a',
+        'text.secondary': '475569',
+        'text.muted': '94a3b8',
+
+        // Background colors
+        'background.page': 'ffffff',
+        'background.primary': 'ffffff',
+        'background.secondary': 'f8fafc',
+        'background.tertiary': 'f1f5f9',
+        'background.section': 'f8fafc',
+        'background.card': 'ffffff',
+        'background.table': 'f1f5f9',
+
+        // Border colors
+        border: 'e2e8f0',
+        'border.hover': 'cbd5e1',
+
+        // Status colors
+        success: '10b981',
+        warning: 'f59e0b',
+        error: 'ef4444',
+        info: '3b82f6',
+
+        // Code colors
+        'code.bg': '1e293b',
+        'code.text': 'e2e8f0'
       };
       return fallbackColors[colorPath] || '000000';
     }
@@ -307,15 +373,29 @@ class PDFExporter {
   getTypography(key) {
     if (!this.currentTheme) {
       const fallback = {
-        'fontSize.h1': 24,
-        'fontSize.h2': 16,
-        'fontSize.h3': 14,
-        'fontSize.body': 10,
+        // Font sizes (in pt)
+        'fontSize.h1': 28,
+        'fontSize.h2': 20,
+        'fontSize.h3': 16,
+        'fontSize.h4': 13,
+        'fontSize.body': 11,
         'fontSize.small': 9,
         'fontSize.tiny': 8,
-        'lineHeight': 1.4
+        'fontSize.label': 7,
+
+        // Line heights
+        'lineHeight': 1.6,
+        'lineHeight.tight': 1.3,
+        'lineHeight.relaxed': 1.8,
+        'lineHeight.loose': 2.0,
+
+        // Font weights (pdfmake doesn't support numeric weights directly)
+        'fontWeight.normal': false,
+        'fontWeight.medium': true,
+        'fontWeight.bold': true,
+        'fontWeight.semibold': true
       };
-      return fallback[key] || 10;
+      return fallback[key] !== undefined ? fallback[key] : 11;
     }
 
     const parts = key.split('.');
@@ -334,15 +414,46 @@ class PDFExporter {
   getSpacing(key) {
     if (!this.currentTheme) {
       const fallback = {
-        'page.marginTop': 60,
-        'page.marginRight': 40,
-        'page.marginBottom': 60,
-        'page.marginLeft': 40,
-        'section.marginTop': 20,
-        'section.marginBottom': 15,
-        'paragraph.marginBottom': 5,
-        'list.indent': 15,
-        'list.itemSpacing': 3
+        // Page margins
+        'page.marginTop': 65,
+        'page.marginRight': 45,
+        'page.marginBottom': 65,
+        'page.marginLeft': 45,
+
+        // Section spacing
+        'section.marginTop': 24,
+        'section.marginBottom': 18,
+        'section.paddingTop': 20,
+        'section.paddingBottom': 20,
+
+        // Subsection spacing
+        'subsection.marginTop': 18,
+        'subsection.marginBottom': 12,
+
+        // Paragraph spacing
+        'paragraph.marginTop': 8,
+        'paragraph.marginBottom': 8,
+        'paragraph.spacing': 5,
+
+        // List spacing
+        'list.indent': 20,
+        'list.itemSpacing': 5,
+        'list.marginBottom': 12,
+
+        // Card spacing
+        'card.padding': 20,
+        'card.marginBottom': 16,
+        'card.gap': 12,
+
+        // Header spacing
+        'header.marginBottom': 12,
+        'header.paddingBottom': 8,
+
+        // Gap sizes
+        'gap.small': 4,
+        'gap.medium': 8,
+        'gap.large': 16,
+        'gap.xlarge': 24
       };
       return fallback[key] || 10;
     }
@@ -363,11 +474,37 @@ class PDFExporter {
   getLayout(key) {
     if (!this.currentTheme) {
       const fallback = {
+        // Header styles
         headerStyle: 'bordered',
+        headerAlignment: 'left',
+
+        // Card styles
+        cardStyle: 'bordered',
+        cardBorderRadius: 8,
+        cardBorderWidth: 1,
+        cardShadow: true,
+
+        // List styles
         bulletStyle: 'disc',
+        bulletColor: '3b82f6',
+
+        // Divider styles
         dividerStyle: 'line',
         dividerWeight: 1,
-        tableStyle: 'striped'
+        dividerColor: 'e2e8f0',
+
+        // Table styles
+        tableStyle: 'striped',
+        tableBorderColor: 'e2e8f0',
+        tableHeaderBg: 'f1f5f9',
+
+        // Badge/Tag styles
+        badgeBorderRadius: 4,
+        badgePadding: 6,
+
+        // Section styles
+        sectionDivider: true,
+        sectionBackground: false
       };
       return fallback[key];
     }
@@ -559,32 +696,38 @@ class PDFExporter {
   }
 
   /**
-   * Build document header
+   * Build document header with enhanced styling
    */
   buildHeader(info) {
     const headerStyle = this.getLayout('headerStyle');
     const locale = this.currentLang === 'ko' ? 'ko-KR' : 'en-US';
+
+    // Enhanced header with better typography
     const headerContent = {
       columns: [
         {
           text: info.author || info.title,
-          style: 'header'
+          style: 'header',
+          color: this.getColor('text.primary')
         },
         {
           text: new Date().toLocaleDateString(locale, {
             year: 'numeric',
-            month: 'long'
+            month: 'long',
+            day: 'numeric'
           }),
           alignment: 'right',
+          fontSize: this.getTypography('fontSize.small'),
           color: this.getColor('text.muted'),
-          margin: [0, 5, 0, 0]
+          margin: [0, 8, 0, 0],
+          width: 'auto'
         }
       ],
-      margin: [0, 0, 0, 20]
+      margin: [0, 0, 0, this.getSpacing('header.marginBottom')]
     };
 
-    // Apply header style based on theme layout
-    if (headerStyle === 'underlined') {
+    // Apply header style with gradient-like effect
+    if (headerStyle === 'underlined' || headerStyle === 'bordered') {
       return [
         headerContent,
         {
@@ -592,21 +735,36 @@ class PDFExporter {
             type: 'line',
             x1: 0, y1: 0,
             x2: 515, y2: 0,
-            lineWidth: this.getLayout('dividerWeight') || 1,
-            lineColor: this.getColor('border')
+            lineWidth: 3,
+            lineColor: this.getColor('primary')
           }],
-          margin: [0, 0, 0, 15]
+          margin: [0, this.getSpacing('header.paddingBottom'), 0, this.getSpacing('section.marginTop')]
         }
       ];
     } else if (headerStyle === 'boxed') {
-      return {
-        ...headerContent,
-        fillColor: this.getColor('background.section'),
-        margin: [10, 10, 10, 20]
-      };
+      return [
+        headerContent,
+        {
+          canvas: [{
+            type: 'rect',
+            x: 0, y: -50,
+            w: 515, h: 80,
+            lineWidth: 1,
+            lineColor: 'e2e8f0'
+          }],
+          margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+        }
+      ];
     }
 
-    return headerContent;
+    // Default: simple header with spacing
+    return [
+      headerContent,
+      {
+        text: '',
+        margin: [0, 0, 0, this.getSpacing('section.marginTop')]
+      }
+    ];
   }
 
   /**
@@ -627,22 +785,39 @@ class PDFExporter {
     }
     content.push(sectionHeader);
 
-    // Categories
+    // Add section divider line
+    content.push({
+      canvas: [{
+        type: 'line',
+        x1: 0, y1: 0,
+        x2: 515, y2: 0,
+        lineWidth: 2,
+        lineColor: this.getColor('primary')
+      }],
+      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+    });
+
+    // Categories with color-coded sections
     if (expertise.categories && expertise.categories.length > 0) {
-      expertise.categories.forEach(category => {
+      expertise.categories.forEach((category, index) => {
         const categoryContent = [];
 
+        // Category title
         categoryContent.push({
-          text: this.getText(category.title),
-          style: 'sectionTitle'
+          text: '[ ' + this.getText(category.title) + ' ]',
+          style: 'sectionTitle',
+          color: '3b82f6',  // Primary
+          margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
         });
 
         const items = this.getArray(category.items);
         if (items.length > 0) {
           categoryContent.push({
             ul: items.map(item => this.stripHtml(this.getText(item))),
-            margin: [this.getSpacing('list.indent'), 0, 0, 10],
-            markerColor: this.getColor('primary')
+            fontSize: this.getTypography('fontSize.body'),
+            color: '475569',  // Text secondary
+            lineHeight: this.getTypography('lineHeight'),
+            margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
           });
         }
 
@@ -650,17 +825,18 @@ class PDFExporter {
         const tags = this.getArray(category.tags);
         if (tags.length > 0) {
           categoryContent.push({
-            text: tags.map(tag => this.getText(tag)).join(' | '),
-            color: this.getColor('primary'),
+            text: '[ ' + tags.map(tag => this.getText(tag)).join(' | ') + ' ]',
             fontSize: this.getTypography('fontSize.small'),
-            margin: [this.getSpacing('list.indent'), 0, 0, 10]
+            color: '3b82f6',  // Primary
+            bold: true,
+            margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
           });
         }
 
         content.push({
           unbreakable: true,
           stack: categoryContent,
-          margin: [0, 0, 0, 5]
+          margin: [0, 0, 0, this.getSpacing('gap.medium')]
         });
       });
     }
@@ -740,31 +916,59 @@ class PDFExporter {
     }
     content.push(sectionHeader);
 
+    // Add section divider line
+    content.push({
+      canvas: [{
+        type: 'line',
+        x1: 0, y1: 0,
+        x2: 515, y2: 0,
+        lineWidth: 2,
+        lineColor: this.getColor('primary')
+      }],
+      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+    });
+
     // Featured projects first
     if (projects.featured && projects.featured.length > 0) {
       content.push({
         text: labels.featuredProjects,
-        style: 'sectionTitle'
+        style: 'sectionTitle',
+        margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
       });
 
       projects.featured.forEach(project => {
         content.push(this.formatProject(project));
       });
+
+      // Add spacing after featured projects
+      content.push({
+        text: '',
+        margin: [0, 0, 0, this.getSpacing('gap.large')]
+      });
     }
 
     // Other project categories
     const categories = ['medicalImaging', 'orthodontic', 'equipmentControl', 'enterprise', 'openSource'];
-    categories.forEach(category => {
+    categories.forEach((category, index) => {
       if (projects[category] && projects[category].length > 0) {
         const categoryName = this.formatCategoryName(category);
         content.push({
           text: categoryName,
-          style: 'sectionTitle'
+          style: 'sectionTitle',
+          margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
         });
 
         projects[category].forEach(project => {
           content.push(this.formatProject(project));
         });
+
+        // Add spacing between categories
+        if (index < categories.length - 1) {
+          content.push({
+            text: '',
+            margin: [0, 0, 0, this.getSpacing('gap.large')]
+          });
+        }
       }
     });
 
@@ -772,88 +976,130 @@ class PDFExporter {
   }
 
   /**
-   * Format a single project
+   * Format a single project with enhanced color coding
    */
   formatProject(project) {
     const items = [];
     const labels = this.getLabels();
 
+    // Project title with primary color for emphasis
     items.push({
       text: this.getText(project.title) || this.getText(project.name) || 'Untitled Project',
       bold: true,
-      fontSize: this.getTypography('fontSize.h3') - 2,
-      color: this.getColor('text.primary'),
-      margin: [0, 8, 0, 3]
+      fontSize: this.getTypography('fontSize.h3'),
+      color: this.getColor('primary'),  // Changed to primary for emphasis
+      margin: [0, 0, 0, 4],
+      lineHeight: this.getTypography('lineHeight.tight')
     });
 
+    // Company and period with distinct colors
     if (project.company || project.period) {
+      const metaText = [];
+      if (project.company) {
+        metaText.push({
+          text: this.getText(project.company),
+          color: this.getColor('text.secondary'),
+          bold: true
+        });
+      }
+      if (project.period) {
+        const period = this.formatPeriodWithDuration(project.period);
+        if (project.company) {
+          metaText.push({ text: ' | ', color: this.getColor('text.muted') });
+        }
+        metaText.push({
+          text: period,
+          color: this.getColor('accent')  // Accent color for dates
+        });
+      }
+
       items.push({
-        text: [this.getText(project.company), this.formatPeriodWithDuration(project.period)].filter(Boolean).join(' | '),
-        color: this.getColor('text.muted'),
+        text: metaText,
         fontSize: this.getTypography('fontSize.small'),
-        margin: [0, 0, 0, 3]
+        italics: true,
+        margin: [0, 0, 0, 6]
       });
     }
 
+    // Description with better spacing
     if (project.description) {
       items.push({
         text: this.stripHtml(this.getText(project.description)),
         color: this.getColor('text.secondary'),
-        margin: [0, 0, 0, 5]
+        fontSize: this.getTypography('fontSize.body'),
+        lineHeight: this.getTypography('lineHeight.relaxed'),
+        margin: [0, 0, 0, 8]
       });
     }
 
+    // Tags with border instead of background (to avoid black rendering issue)
     const tags = this.getArray(project.tags);
     if (tags.length > 0) {
       items.push({
-        text: tags.map(tag => this.getText(tag)).join(' | '),
-        color: this.getColor('primary'),
+        text: '[ ' + tags.map(tag => this.getText(tag)).join(' | ') + ' ]',
         fontSize: this.getTypography('fontSize.tiny'),
-        margin: [0, 0, 0, 5]
+        color: '3b82f6',  // Primary color
+        bold: true,
+        margin: [0, 0, 0, 8]
       });
     }
 
-    // Expanded details
+    // Expanded details with color-coded sections
     if (project.expanded) {
       const roles = this.getArray(project.expanded.roles);
       if (roles.length > 0) {
+        // Add a separator line
         items.push({
-          text: labels.keyResponsibilities,
+          canvas: [{
+            type: 'line',
+            x1: 0, y1: 0,
+            x2: 150, y2: 0,
+            lineWidth: 1,
+            lineColor: 'e2e8f0'
+          }],
+          margin: [0, 8, 0, 8]
+        });
+
+        items.push({
+          text: '[ ' + labels.keyResponsibilities + ' ]',
           bold: true,
-          fontSize: this.getTypography('fontSize.small'),
-          color: this.getColor('text.secondary'),
-          margin: [0, 3, 0, 2]
+          fontSize: this.getTypography('fontSize.h4'),
+          color: '3b82f6',  // Primary color
+          margin: [0, 0, 0, 4]
         });
         items.push({
           ul: roles.map(r => this.stripHtml(this.getText(r))),
-          fontSize: this.getTypography('fontSize.small'),
-          margin: [this.getSpacing('list.indent'), 0, 0, 3],
-          markerColor: this.getColor('primary')
+          fontSize: this.getTypography('fontSize.body'),
+          color: '475569',  // Text secondary
+          lineHeight: this.getTypography('lineHeight'),
+          margin: [this.getSpacing('list.indent'), 0, 0, 6]
         });
       }
 
       const achievements = this.getArray(project.expanded.achievements);
       if (achievements.length > 0) {
         items.push({
-          text: labels.achievements,
+          text: '[ ' + labels.achievements + ' ]',
           bold: true,
-          fontSize: this.getTypography('fontSize.small'),
-          color: this.getColor('text.secondary'),
-          margin: [0, 3, 0, 2]
+          fontSize: this.getTypography('fontSize.h4'),
+          color: '10b981',  // Success color
+          margin: [0, 6, 0, 4]
         });
         items.push({
           ul: achievements.map(a => this.stripHtml(this.getText(a))),
-          fontSize: this.getTypography('fontSize.small'),
-          margin: [this.getSpacing('list.indent'), 0, 0, 3],
-          markerColor: this.getColor('primary')
+          fontSize: this.getTypography('fontSize.body'),
+          color: '475569',  // Text secondary
+          lineHeight: this.getTypography('lineHeight'),
+          margin: [this.getSpacing('list.indent'), 0, 0, 6]
         });
       }
     }
 
+    // Return with card-like styling (removed fillColor as it causes black background)
     return {
       unbreakable: true,
       stack: items,
-      margin: [0, 0, 0, 10]
+      margin: [0, 0, 0, this.getSpacing('card.marginBottom')]
     };
   }
 
@@ -875,41 +1121,63 @@ class PDFExporter {
     }
     content.push(sectionHeader);
 
+    // Add section divider line
+    content.push({
+      canvas: [{
+        type: 'line',
+        x1: 0, y1: 0,
+        x2: 515, y2: 0,
+        lineWidth: 2,
+        lineColor: this.getColor('primary')
+      }],
+      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+    });
+
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
         const entry = [];
 
         // Company with optional badge
         const companyText = [];
-        companyText.push({ text: this.getText(item.company) || this.getText(item.title) || '', bold: true, color: this.getColor('text.primary') });
+        companyText.push({
+          text: this.getText(item.company) || this.getText(item.title) || '',
+          bold: true,
+          color: '3b82f6'  // Primary color
+        });
         if (item.badge) {
-          companyText.push({ text: ` [${this.getText(item.badge)}]`, color: this.getColor('warning'), bold: true });
+          companyText.push({
+            text: ' [' + this.getText(item.badge) + ']',
+            color: 'f59e0b',  // Warning color
+            bold: true
+          });
         }
 
         entry.push({
           columns: [
             {
               text: companyText,
-              fontSize: this.getTypography('fontSize.h3') - 2,
+              fontSize: this.getTypography('fontSize.h3'),
               width: '*'
             },
             {
               text: this.formatPeriodWithDuration(item.period) || '',
               alignment: 'right',
-              color: this.getColor('text.muted'),
+              color: '3b82f6',  // Primary color for dates
               fontSize: this.getTypography('fontSize.small'),
+              bold: true,
               width: 'auto'
             }
           ],
-          margin: [0, 8, 0, 2]
+          margin: [0, 8, 0, 4]
         });
 
         if (item.role || item.position) {
           entry.push({
-            text: this.getText(item.role) || this.getText(item.position),
-            color: this.getColor('primary'),
+            text: '> ' + (this.getText(item.role) || this.getText(item.position)),
+            color: '0f172a',  // Text primary
             fontSize: this.getTypography('fontSize.body'),
-            margin: [0, 0, 0, 3]
+            bold: true,
+            margin: [0, 0, 0, 4]
           });
         }
 
@@ -964,11 +1232,19 @@ class PDFExporter {
 
         const achievements = this.getArray(item.achievements);
         if (achievements.length > 0) {
+          // Add achievements label with success color
+          entry.push({
+            text: '[ ' + (this.currentLang === 'ko' ? '주요 성과' : 'Key Achievements') + ' ]',
+            bold: true,
+            fontSize: this.getTypography('fontSize.h4'),
+            color: '10b981',  // Success color
+            margin: [0, 6, 0, 3]
+          });
           entry.push({
             ul: achievements.map(a => this.stripHtml(this.getText(a))),
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [this.getSpacing('list.indent'), 3, 0, 5],
-            markerColor: this.getColor('primary')
+            fontSize: this.getTypography('fontSize.body'),
+            color: '475569',  // Text secondary
+            margin: [this.getSpacing('list.indent'), 0, 0, 6]
           });
         }
 
@@ -1008,7 +1284,7 @@ class PDFExporter {
         content.push({
           unbreakable: true,
           stack: entry,
-          margin: [0, 0, 0, 10]
+          margin: [0, 0, 0, this.getSpacing('gap.xlarge')]
         });
       });
     }
@@ -1034,6 +1310,18 @@ class PDFExporter {
     }
     content.push(sectionHeader);
 
+    // Add section divider line
+    content.push({
+      canvas: [{
+        type: 'line',
+        x1: 0, y1: 0,
+        x2: 515, y2: 0,
+        lineWidth: 2,
+        lineColor: this.getColor('primary')
+      }],
+      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+    });
+
     // Featured testimonial
     if (testimonials.featured) {
       content.push(this.formatTestimonial(testimonials.featured, true));
@@ -1050,28 +1338,58 @@ class PDFExporter {
   }
 
   /**
-   * Format a single testimonial
+   * Format a single testimonial with enhanced visual hierarchy
    */
   formatTestimonial(testimonial, isFeatured) {
     const items = [];
+
+    // Add colored background box for featured testimonials
+    if (isFeatured) {
+      items.push({
+        text: isFeatured ? '[ Featured Testimonial ]' : '',
+        fontSize: this.getTypography('fontSize.tiny'),
+        color: '3b82f6',  // Primary
+        bold: true,
+        margin: [0, 0, 0, 4]
+      });
+    }
 
     if (testimonial.quote || testimonial.text) {
       const quoteText = this.getText(testimonial.quote) || this.getText(testimonial.text);
       items.push({
         text: `"${this.stripHtml(quoteText)}"`,
         italics: true,
-        fontSize: this.getTypography('fontSize.body'),
+        fontSize: isFeatured ? this.getTypography('fontSize.body') + 1 : this.getTypography('fontSize.body'),
         margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
-        color: this.getColor('text.secondary')
+        color: '0f172a',  // Text primary
+        lineHeight: this.getTypography('lineHeight.relaxed')
+      });
+    }
+
+    // Author info with color coding
+    const authorText = [];
+    authorText.push({
+      text: this.getText(testimonial.author) || this.getText(testimonial.name) || '',
+      bold: true,
+      color: '3b82f6'  // Primary
+    });
+    if (testimonial.role) {
+      authorText.push({
+        text: ', ' + this.getText(testimonial.role),
+        color: '475569',  // Text secondary
+        bold: false
+      });
+    }
+    if (testimonial.relation) {
+      authorText.push({
+        text: ` (${this.getText(testimonial.relation)})`,
+        color: '3b82f6',  // Primary
+        italics: true
       });
     }
 
     items.push({
-      text: [
-        { text: this.getText(testimonial.author) || this.getText(testimonial.name) || '', bold: true, color: this.getColor('text.primary') },
-        { text: testimonial.role ? `, ${this.getText(testimonial.role)}` : '', color: this.getColor('text.muted') },
-        { text: testimonial.relation ? ` (${this.getText(testimonial.relation)})` : '', color: this.getColor('text.muted') }
-      ],
+      text: authorText,
       fontSize: this.getTypography('fontSize.small'),
       margin: [this.getSpacing('list.indent'), 0, 0, 0]
     });
@@ -1079,9 +1397,10 @@ class PDFExporter {
     // Labels
     if (testimonial.labels && testimonial.labels.length > 0) {
       items.push({
-        text: testimonial.labels.map(l => this.getText(l.text)).join(' | '),
+        text: '[ ' + testimonial.labels.map(l => this.getText(l.text)).join(' | ') + ' ]',
         fontSize: this.getTypography('fontSize.tiny'),
-        color: this.getColor('primary'),
+        color: '10b981',  // Success
+        bold: true,
         margin: [this.getSpacing('list.indent'), 5, 0, 0]
       });
     }
@@ -1089,7 +1408,7 @@ class PDFExporter {
     return {
       unbreakable: true,
       stack: items,
-      margin: [0, 10, 0, 15]
+      margin: [0, this.getSpacing('card.marginBottom'), 0, this.getSpacing('gap.xlarge')]
     };
   }
 
@@ -1110,6 +1429,18 @@ class PDFExporter {
       sectionHeader.pageBreak = 'before';
     }
     content.push(sectionHeader);
+
+    // Add section divider line
+    content.push({
+      canvas: [{
+        type: 'line',
+        x1: 0, y1: 0,
+        x2: 515, y2: 0,
+        lineWidth: 2,
+        lineColor: this.getColor('primary')
+      }],
+      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+    });
 
     // PM Capabilities
     if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {

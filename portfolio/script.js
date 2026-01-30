@@ -645,7 +645,8 @@ async function downloadResumePDF() {
             filename: msg.filename,
             title: msg.title,
             author: msg.author,
-            theme: 'professional'
+            theme: 'professional',
+            pageBreakBetweenSections: true  // Enable page breaks between sections
         });
 
         // Reset button
