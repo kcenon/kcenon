@@ -961,7 +961,7 @@ window.PortfolioData = {
     },
     "author": { "ko": "이현규", "en": "Hyunkyu Lee" },
     "role": { "ko": "소프트웨어 개발자", "en": "Software Developer" },
-    "relation": { "ko": "2024.08 · 같은 부서", "en": "2024.08 · Same department" },
+    "relation": { "ko": "2024.08 · Pozalabs 동료", "en": "2024.08 · Pozalabs colleague" },
     "labels": [
       { "text": { "ko": "기술 리더십", "en": "Tech Leadership" }, "type": "leadership" },
       { "text": { "ko": "대규모 시스템", "en": "Large-scale Systems" }, "type": "technical" },
@@ -1000,7 +1000,7 @@ window.PortfolioData = {
       ],
       "author": { "ko": "송현진", "en": "Hyunjin Song" },
       "role": { "ko": "S/W 엔지니어, C++ 및 Rust", "en": "S/W Engineer, C++ and Rust" },
-      "relation": { "ko": "Poza Labs 동료", "en": "Poza Labs colleague" }
+      "relation": { "ko": "Pozalabs 동료", "en": "Pozalabs colleague" }
     },
     {
       "id": 3,
@@ -1112,7 +1112,7 @@ window.PortfolioData = {
       ],
       "author": { "ko": "이우석", "en": "Wooseok Lee" },
       "role": { "ko": "Lunit 소프트웨어 개발자", "en": "Lunit Software Developer" },
-      "relation": { "ko": "VATECH 직장선배", "en": "VATECH senior colleague" }
+      "relation": { "ko": "Ray 직장선배", "en": "Ray senior colleague" }
     }
   ]
 },

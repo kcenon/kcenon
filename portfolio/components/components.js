@@ -797,9 +797,6 @@ function renderManager(data, container) {
                 ${renderBusinessImpact(data.businessImpact)}
             </div>
         </div>
-
-        <!-- Management Projects -->
-        ${renderManagementProjects(data.managementProjects)}
     `;
 
     container.innerHTML = html;
