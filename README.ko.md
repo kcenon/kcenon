@@ -2,9 +2,9 @@
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-raphaelshin-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/raphaelshin/)
 [![Email](https://img.shields.io/badge/Email-kcenon@gmail.com-red?style=flat&logo=gmail)](mailto:kcenon@gmail.com)
-[![Portfolio](https://img.shields.io/badge/Portfolio-인터랙티브_보기-green?style=flat&logo=github)](portfolio/index.html)
+[![Portfolio](https://img.shields.io/badge/Portfolio-인터랙티브_보기-green?style=flat&logo=github)](https://kcenon.github.io/kcenon/portfolio/)
 
-**[English README](README.md)** | **[인터랙티브 포트폴리오 →](portfolio/index.html)**
+**[English README](README.md)** | **[인터랙티브 포트폴리오 →](https://kcenon.github.io/kcenon/portfolio/)**
 
 ## 프로필 요약
 
@@ -163,7 +163,7 @@
 
 **기술 스택**: Rust, Go, C++, AWS, RabbitMQ, Redis Sentinel, OpenTelemetry, Docker, GitHub Actions
 
-**[인터랙티브 포트폴리오에서 모든 프로젝트 보기 →](portfolio/index.html)**
+**[인터랙티브 포트폴리오에서 모든 프로젝트 보기 →](https://kcenon.github.io/kcenon/portfolio/)**
 
 ## 🛠️ 기술 스택
 
@@ -249,7 +249,7 @@
 
 - 📧 Email: [kcenon@gmail.com](mailto:kcenon@gmail.com)
 - 💼 LinkedIn: [linkedin.com/in/raphaelshin](https://www.linkedin.com/in/raphaelshin/)
-- 🌐 포트폴리오: [인터랙티브 포트폴리오 보기](portfolio/index.html)
+- 🌐 포트폴리오: [인터랙티브 포트폴리오 보기](https://kcenon.github.io/kcenon/portfolio/)
 
 ---
 

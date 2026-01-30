@@ -2,9 +2,9 @@
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-raphaelshin-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/raphaelshin/)
 [![Email](https://img.shields.io/badge/Email-kcenon@gmail.com-red?style=flat&logo=gmail)](mailto:kcenon@gmail.com)
-[![Portfolio](https://img.shields.io/badge/Portfolio-View_Interactive-green?style=flat&logo=github)](portfolio/index.html)
+[![Portfolio](https://img.shields.io/badge/Portfolio-View_Interactive-green?style=flat&logo=github)](https://kcenon.github.io/kcenon/portfolio/)
 
-**[한국어 README](README.ko.md)** | **[Interactive Portfolio →](portfolio/index.html)**
+**[한국어 README](README.ko.md)** | **[Interactive Portfolio →](https://kcenon.github.io/kcenon/portfolio/)**
 
 ## Professional Summary
 
@@ -163,7 +163,7 @@ Led distributed system architecture design for audio rendering SaaS platform. Or
 
 **Tech Stack**: Rust, Go, C++, AWS, RabbitMQ, Redis Sentinel, OpenTelemetry, Docker, GitHub Actions
 
-**[View all projects in interactive portfolio →](portfolio/index.html)**
+**[View all projects in interactive portfolio →](https://kcenon.github.io/kcenon/portfolio/)**
 
 ## 🛠️ Technical Skills
 
@@ -249,7 +249,7 @@ Inje University | 1997 - 2005
 
 - 📧 Email: [kcenon@gmail.com](mailto:kcenon@gmail.com)
 - 💼 LinkedIn: [linkedin.com/in/raphaelshin](https://www.linkedin.com/in/raphaelshin/)
-- 🌐 Portfolio: [View Interactive Portfolio](portfolio/index.html)
+- 🌐 Portfolio: [View Interactive Portfolio](https://kcenon.github.io/kcenon/portfolio/)
 
 ---
 
