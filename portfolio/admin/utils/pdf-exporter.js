@@ -134,7 +134,6 @@ class PDFExporter {
         leadershipStyle: '리더십 스타일',
         businessImpact: '비즈니스 임팩트',
         softSkills: '소프트 스킬',
-        managementProjects: '관리 프로젝트',
         teamSize: '팀 규모:',
         duration: '기간:',
         outcomes: '성과:'
@@ -161,7 +160,6 @@ class PDFExporter {
         leadershipStyle: 'Leadership Style',
         businessImpact: 'Business Impact',
         softSkills: 'Soft Skills',
-        managementProjects: 'Management Projects',
         teamSize: 'Team Size:',
         duration: 'Duration:',
         outcomes: 'Outcomes:'
@@ -1213,65 +1211,6 @@ class PDFExporter {
         color: this.getColor('text.secondary'),
         fontSize: this.getTypography('fontSize.small'),
         margin: [this.getSpacing('list.indent'), 0, 0, 10]
-      });
-    }
-
-    // Management Projects
-    if (manager.managementProjects && manager.managementProjects.length > 0) {
-      content.push({
-        text: labels.managementProjects,
-        style: 'sectionTitle'
-      });
-
-      manager.managementProjects.forEach(project => {
-        const items = [];
-
-        items.push({
-          text: project.title,
-          bold: true,
-          fontSize: this.getTypography('fontSize.h3') - 2,
-          color: this.getColor('text.primary'),
-          margin: [0, 5, 0, 2]
-        });
-
-        const metaInfo = [];
-        if (project.duration) metaInfo.push(`${labels.duration} ${this.getText(project.duration)}`);
-        if (project.teamSize) metaInfo.push(`${labels.teamSize} ${project.teamSize}`);
-
-        if (metaInfo.length > 0) {
-          items.push({
-            text: metaInfo.join('  |  '),
-            color: this.getColor('text.muted'),
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        if (project.certifications && project.certifications.length > 0) {
-          items.push({
-            text: project.certifications.join(' | '),
-            color: this.getColor('success'),
-            bold: true,
-            fontSize: this.getTypography('fontSize.tiny'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        const outcomes = this.getArray(project.outcomes);
-        if (outcomes.length > 0) {
-          items.push({
-            text: `${labels.outcomes} ${outcomes.map(o => this.getText(o)).join(', ')}`,
-            color: this.getColor('text.secondary'),
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [0, 0, 0, 5]
-          });
-        }
-
-        content.push({
-          unbreakable: true,
-          stack: items,
-          margin: [this.getSpacing('list.indent'), 0, 0, 8]
-        });
       });
     }
 

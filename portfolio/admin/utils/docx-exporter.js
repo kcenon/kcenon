@@ -139,7 +139,6 @@ class DOCXExporter {
         leadershipStyle: '리더십 스타일',
         businessImpact: '비즈니스 임팩트',
         softSkills: '소프트 스킬',
-        managementProjects: '관리 프로젝트',
         teamSize: '팀 규모:',
         duration: '기간:',
         outcomes: '성과:'
@@ -169,7 +168,6 @@ class DOCXExporter {
         leadershipStyle: 'Leadership Style',
         businessImpact: 'Business Impact',
         softSkills: 'Soft Skills',
-        managementProjects: 'Management Projects',
         teamSize: 'Team Size:',
         duration: 'Duration:',
         outcomes: 'Outcomes:'
@@ -1322,106 +1320,6 @@ class DOCXExporter {
         indent: { left: this.getSpacing('list.indent') },
         keepLines: true
       }));
-    }
-
-    // Management Projects
-    if (manager.managementProjects && manager.managementProjects.length > 0) {
-      children.push(this.createHeading3WithKeep(labels.managementProjects, true));
-
-      manager.managementProjects.forEach((project, projIndex) => {
-        const isLastProject = projIndex === manager.managementProjects.length - 1;
-
-        // Title
-        children.push(new docx.Paragraph({
-          children: [
-            new docx.TextRun({
-              text: project.title,
-              bold: true,
-              size: this.toHalfPt(this.getTypography('fontSize.body')),
-              color: this.getColor('text.primary')
-            })
-          ],
-          spacing: { before: 100, after: 30 },
-          keepLines: true,
-          keepNext: true
-        }));
-
-        // Meta info (duration, team size)
-        const metaRuns = [];
-        if (project.duration) {
-          metaRuns.push(new docx.TextRun({
-            text: `${labels.duration} ${this.getText(project.duration)}`,
-            size: this.toHalfPt(this.getTypography('fontSize.small')),
-            color: this.getColor('text.muted')
-          }));
-        }
-        if (project.teamSize) {
-          if (metaRuns.length > 0) {
-            metaRuns.push(new docx.TextRun({
-              text: '  |  ',
-              size: this.toHalfPt(this.getTypography('fontSize.small')),
-              color: this.getColor('text.muted')
-            }));
-          }
-          metaRuns.push(new docx.TextRun({
-            text: `${labels.teamSize} ${project.teamSize}`,
-            size: this.toHalfPt(this.getTypography('fontSize.small')),
-            color: this.getColor('text.muted')
-          }));
-        }
-
-        if (metaRuns.length > 0) {
-          children.push(new docx.Paragraph({
-            children: metaRuns,
-            spacing: { after: 30 },
-            indent: { left: this.getSpacing('list.indent') },
-            keepLines: true,
-            keepNext: true
-          }));
-        }
-
-        // Certifications
-        if (project.certifications && project.certifications.length > 0) {
-          children.push(new docx.Paragraph({
-            children: [
-              new docx.TextRun({
-                text: project.certifications.join(' | '),
-                bold: true,
-                size: this.toHalfPt(this.getTypography('fontSize.tiny')),
-                color: this.getColor('success')
-              })
-            ],
-            spacing: { after: 30 },
-            indent: { left: this.getSpacing('list.indent') },
-            keepLines: true,
-            keepNext: true
-          }));
-        }
-
-        // Outcomes
-        const outcomes = this.getArray(project.outcomes);
-        if (outcomes.length > 0) {
-          children.push(new docx.Paragraph({
-            children: [
-              new docx.TextRun({
-                text: `${labels.outcomes} `,
-                bold: true,
-                size: this.toHalfPt(this.getTypography('fontSize.small')),
-                color: this.getColor('text.secondary')
-              }),
-              new docx.TextRun({
-                text: outcomes.map(o => this.getText(o)).join(', '),
-                size: this.toHalfPt(this.getTypography('fontSize.small')),
-                color: this.getColor('text.secondary')
-              })
-            ],
-            spacing: { after: 80 },
-            indent: { left: this.getSpacing('list.indent') },
-            keepLines: true,
-            keepNext: !isLastProject
-          }));
-        }
-      });
     }
 
     return children;
