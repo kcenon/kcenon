@@ -210,31 +210,11 @@ class AdminApp {
       }
     });
 
-    // List panel events (delegated)
+    // List panel events (delegated) - simplified for preview only
     document.getElementById('list-panel')?.addEventListener('click', (e) => {
-      // Add new button
-      if (e.target.closest('.btn-add-new')) {
-        this.createNewItem();
-        return;
-      }
-
-      // Edit button
-      if (e.target.closest('.btn-edit')) {
-        const id = e.target.closest('.btn-edit').dataset.id;
-        this.selectItem(id);
-        return;
-      }
-
-      // Delete button
-      if (e.target.closest('.btn-delete')) {
-        const id = e.target.closest('.btn-delete').dataset.id;
-        this.confirmDelete(id);
-        return;
-      }
-
-      // Item click
+      // Item click - show preview
       const item = e.target.closest('.item-list-item');
-      if (item && !e.target.closest('.item-actions')) {
+      if (item) {
         this.selectItem(item.dataset.id);
       }
     });
@@ -246,11 +226,17 @@ class AdminApp {
       }
     });
 
-    // Editor panel events (delegated)
-    document.getElementById('editor-panel')?.addEventListener('click', (e) => {
-      // Preview toggle button
-      if (e.target.closest('#btn-toggle-preview')) {
-        this.togglePreview();
+    // Preview panel events (delegated) - simplified for preview only
+    document.getElementById('preview-panel-main')?.addEventListener('click', (e) => {
+      // Export PDF button
+      if (e.target.closest('#export-pdf')) {
+        this.exportPDF();
+        return;
+      }
+
+      // Export Word button
+      if (e.target.closest('#export-docx')) {
+        this.exportDOCX();
         return;
       }
 
@@ -259,140 +245,11 @@ class AdminApp {
         this.setDefaultCoverLetterTemplate();
         return;
       }
-
-      // Cancel button
-      if (e.target.classList.contains('btn-cancel')) {
-        this.cancelEdit();
-        return;
-      }
-
-      // Delete button in editor
-      if (e.target.classList.contains('btn-delete-item')) {
-        this.confirmDelete(this.selectedItem);
-        return;
-      }
-
-      // Toggle nested
-      if (e.target.closest('.btn-toggle-nested')) {
-        const target = e.target.closest('.btn-toggle-nested').dataset.target;
-        this.toggleNested(target);
-        return;
-      }
-
-      // Add tag
-      if (e.target.classList.contains('btn-add')) {
-        const field = e.target.dataset.field;
-        this.addArrayItem(field);
-        this.updatePreviewDebounced();
-        return;
-      }
-
-      // Remove tag
-      if (e.target.classList.contains('tag-remove')) {
-        const field = e.target.dataset.field;
-        const index = parseInt(e.target.dataset.index);
-        this.removeArrayItem(field, index);
-        this.updatePreviewDebounced();
-        return;
-      }
-
-      // Add object array item
-      if (e.target.classList.contains('btn-add-object')) {
-        const field = e.target.dataset.field;
-        this.addObjectArrayItem(field);
-        this.updatePreviewDebounced();
-        return;
-      }
-
-      // Remove object array item
-      if (e.target.classList.contains('btn-remove-object')) {
-        const field = e.target.dataset.field;
-        const index = parseInt(e.target.dataset.index);
-        this.removeObjectArrayItem(field, index);
-        this.updatePreviewDebounced();
-        return;
-      }
     });
 
-    // Form input changes for live preview
-    document.getElementById('editor-panel')?.addEventListener('input', (e) => {
-      if (e.target.closest('#editor-form')) {
-        this.updatePreviewDebounced();
-      }
-    });
+    // Status bar - removed for preview-only mode
 
-    // Checkbox changes for live preview
-    document.getElementById('editor-panel')?.addEventListener('change', (e) => {
-      if (e.target.type === 'checkbox' && e.target.closest('#editor-form')) {
-        this.updatePreviewDebounced();
-      }
-    });
-
-    // Form submission
-    const editorPanel = document.getElementById('editor-panel');
-    console.log('bindEvents: editor-panel found:', !!editorPanel);
-
-    if (editorPanel) {
-      editorPanel.addEventListener('submit', (e) => {
-        console.log('Submit event captured! target:', e.target, 'target.id:', e.target.id);
-        if (e.target.id === 'editor-form') {
-          e.preventDefault();
-          console.log('Calling saveItem...');
-          this.saveItem();
-        }
-      });
-
-      // Backup: Direct click handler on Save button
-      editorPanel.addEventListener('click', (e) => {
-        const saveBtn = e.target.closest('button[type="submit"]');
-        if (saveBtn && saveBtn.closest('#editor-form')) {
-          console.log('Save button clicked via click handler!');
-          // Manually trigger save if submit event didn't fire
-          e.preventDefault();
-          const form = saveBtn.closest('#editor-form');
-          if (form) {
-            // Check if saveItem was already called by submit event
-            if (!this._saveInProgress) {
-              this._saveInProgress = true;
-              this.saveItem().finally(() => {
-                this._saveInProgress = false;
-              });
-            }
-          }
-        }
-      });
-    }
-
-    // Array input enter key
-    document.getElementById('editor-panel')?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.target.id?.endsWith('-input')) {
-        e.preventDefault();
-        const field = e.target.id.replace('-input', '');
-        this.addArrayItem(field);
-      }
-    });
-
-    // Status bar
-    document.querySelector('.status-bar')?.addEventListener('click', (e) => {
-      if (e.target.closest('#btn-connect-folder')) {
-        this.connectFolder();
-        return;
-      }
-      if (e.target.closest('.btn-save-all')) {
-        this.saveAll();
-        return;
-      }
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        if (this.selectedItem || this.isNewItem) {
-          this.saveItem();
-        }
-      }
-    });
+    // Keyboard shortcuts - removed for preview-only mode
   }
 
   /**
@@ -556,17 +413,17 @@ class AdminApp {
   }
 
   /**
-   * Render the editor panel
+   * Render the preview panel (read-only)
    */
   renderEditor() {
-    const container = document.getElementById('editor-panel');
+    const container = document.getElementById('preview-panel-main');
 
-    if (!this.selectedItem && !this.isNewItem) {
+    if (!this.selectedItem) {
       container.innerHTML = AdminComponents.renderEmptyEditor();
       return;
     }
 
-    let formHtml = '';
+    let previewHtml = '';
     let item = null;
 
     // Special handling for cover-letter tab
@@ -580,56 +437,34 @@ class AdminApp {
         return;
       }
 
-      formHtml = this.renderCoverLetterPreview(item);
+      previewHtml = this.renderCoverLetterPreview(item);
+      container.innerHTML = previewHtml;
     } else {
-      item = this.isNewItem ? {} : this.findItem(this.selectedItem);
+      item = this.findItem(this.selectedItem);
+
+      if (!item) {
+        container.innerHTML = AdminComponents.renderEmptyEditor();
+        return;
+      }
 
       switch (this.currentTab) {
         case 'projects':
-          formHtml = AdminComponents.renderProjectForm(item, this.currentSubTab);
-          break;
-        case 'manager':
-          if (this.currentSubTab === 'pmCapabilities') {
-            formHtml = AdminComponents.renderPMCapabilityForm(item);
-          } else if (this.currentSubTab === 'leadershipStyle') {
-            formHtml = AdminComponents.renderLeadershipStyleForm(item);
-          } else if (this.currentSubTab === 'businessImpact') {
-            formHtml = AdminComponents.renderBusinessImpactForm(item);
-          } else if (this.currentSubTab === 'softSkills') {
-            formHtml = AdminComponents.renderSoftSkillForm(item);
-          } else if (this.currentSubTab === 'managementProjects') {
-            formHtml = AdminComponents.renderManagementProjectForm(item);
-          }
+          previewHtml = AdminComponents.renderProjectPreview(item, this.currentSubTab);
           break;
         case 'career':
-          formHtml = AdminComponents.renderCareerForm(item);
+          previewHtml = AdminComponents.renderCareerPreview(item);
           break;
         case 'expertise':
-          if (this.currentSubTab === 'categories') {
-            formHtml = AdminComponents.renderExpertiseCategoryForm(item);
-          } else if (this.currentSubTab === 'certifications') {
-            formHtml = AdminComponents.renderCertificationForm(item);
-          } else {
-            formHtml = AdminComponents.renderLifecycleForm(item);
-          }
+          previewHtml = AdminComponents.renderExpertisePreview(item, this.currentSubTab);
           break;
         case 'testimonials':
-          if (this.currentSubTab === 'featured') {
-            formHtml = AdminComponents.renderFeaturedTestimonialForm(item);
-          } else {
-            formHtml = AdminComponents.renderTestimonialForm(item);
-          }
+          previewHtml = AdminComponents.renderTestimonialPreview(item, this.currentSubTab === 'featured');
           break;
+        default:
+          previewHtml = AdminComponents.renderPreviewEmpty();
       }
-    }
 
-    container.innerHTML = this.currentTab === 'cover-letter'
-      ? formHtml
-      : AdminComponents.renderEditorPanelWithPreview(formHtml, this.isNewItem, this.previewActive);
-
-    // Update preview if active
-    if (this.previewActive) {
-      this.updatePreview();
+      container.innerHTML = AdminComponents.renderPreviewOnlyPanel(previewHtml);
     }
   }
 
@@ -1287,12 +1122,13 @@ class AdminApp {
   }
 
   /**
-   * Update status bar
+   * Update status bar (preview mode)
    */
   updateStatusBar() {
     const container = document.querySelector('.status-bar');
-    const status = window.FileHandler.getStatus();
-    container.innerHTML = AdminComponents.renderStatusBar(this.unsavedChanges.size, status);
+    if (container) {
+      container.innerHTML = AdminComponents.renderStatusBar(0, {});
+    }
   }
 
   /**
