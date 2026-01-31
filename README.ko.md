@@ -100,6 +100,11 @@ AI 기반 EDA 스타트업 - 반도체 설계 자동화 AI 작업 서빙 시스�
 **의료기기**: IEC 62304 (Class B/C), ISO 13485, ISO 14971, FDA 510(k), CE, KFDA, CCC
 **헬스케어 규제 준수**: HIPAA 기술적 보호조치, DICOM PS3.15 익명화
 
+## 📈 GitHub 통계
+
+![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
+![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
+
 ## 🎓 학력
 
 **전자공학 학사** | 인제대학교 (1997 - 2005)

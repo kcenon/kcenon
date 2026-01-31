@@ -100,6 +100,11 @@ Medical imaging software development
 **Medical Device**: IEC 62304 (Class B/C), ISO 13485, ISO 14971, FDA 510(k), CE, KFDA, CCC
 **Healthcare Compliance**: HIPAA Technical Safeguards, DICOM PS3.15 De-identification
 
+## 📈 GitHub Stats
+
+![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
+![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
+
 ## 🎓 Education
 
 **Bachelor of Science in Electronic Engineering** | Inje University (1997 - 2005)
