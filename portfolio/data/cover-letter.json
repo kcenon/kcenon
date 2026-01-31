@@ -16,8 +16,8 @@
       },
       "keyPoints": [
         {
-          "ko": "**분산 시스템 설계 & 운영**: Poza Labs (AI 음악 SaaS)에서 C++/Rust/Go/Python으로 구성된 **10+ 마이크로서비스 오케스트레이션**. RabbitMQ 클러스터 메시지 라우팅, Redis Sentinel 고가용성 캐시 설계. OpenTelemetry 기반 분산 트레이싱으로 MTTD/MTTR 단축.",
-          "en": "**Distributed Systems Design & Operations**: Orchestrated **10+ microservices** in C++/Rust/Go/Python at Poza Labs (AI music SaaS). Designed RabbitMQ cluster message routing and Redis Sentinel high-availability cache. Reduced MTTD/MTTR with OpenTelemetry-based distributed tracing."
+          "ko": "**분산 시스템 설계 & 운영**: Pozalabs (AI 음악 SaaS)에서 C++/Rust/Go/Python으로 구성된 **10+ 마이크로서비스 오케스트레이션**. RabbitMQ 클러스터 메시지 라우팅, Redis Sentinel 고가용성 캐시 설계. OpenTelemetry 기반 분산 트레이싱으로 MTTD/MTTR 단축.",
+          "en": "**Distributed Systems Design & Operations**: Orchestrated **10+ microservices** in C++/Rust/Go/Python at Pozalabs (AI music SaaS). Designed RabbitMQ cluster message routing and Redis Sentinel high-availability cache. Reduced MTTD/MTTR with OpenTelemetry-based distributed tracing."
         },
         {
           "ko": "**성능 최적화 & 안정성**: Ray에서 12년간 의료영상 시스템 아키텍처 설계. 마이크로서비스 전환으로 **처리량 2배 향상, 레이턴시 50→25ms (50% 감소)**. 100Mbps 네트워크에서 이론값(12.5MB/s)을 초과하는 **15MB/s 실효 전송량** 달성. 비동기 I/O와 멀티스레드 파이프라인으로 처리량 10배 개선.",
@@ -98,8 +98,8 @@
       },
       "keyPoints": [
         {
-          "ko": "**CI/CD & Zero-Downtime 배포**: Poza Labs에서 **Daily Release** 체계 확립. GitHub Actions, Docker 기반 무중단 배포 파이프라인 구축. Blue-Green, Canary 배포 전략 구현. Infrastructure as Code로 재현 가능한 환경 구성. 배포 자동화로 릴리스 사이클 단축.",
-          "en": "**CI/CD & Zero-Downtime Deployment**: Established **Daily Release** cycle at Poza Labs. Built zero-downtime deployment pipeline with GitHub Actions and Docker. Implemented Blue-Green and Canary deployment strategies. Reproducible environments with Infrastructure as Code. Shortened release cycles through deployment automation."
+          "ko": "**CI/CD & Zero-Downtime 배포**: Pozalabs에서 **Daily Release** 체계 확립. GitHub Actions, Docker 기반 무중단 배포 파이프라인 구축. Blue-Green, Canary 배포 전략 구현. Infrastructure as Code로 재현 가능한 환경 구성. 배포 자동화로 릴리스 사이클 단축.",
+          "en": "**CI/CD & Zero-Downtime Deployment**: Established **Daily Release** cycle at Pozalabs. Built zero-downtime deployment pipeline with GitHub Actions and Docker. Implemented Blue-Green and Canary deployment strategies. Reproducible environments with Infrastructure as Code. Shortened release cycles through deployment automation."
         },
         {
           "ko": "**관측성 & SRE**: **OpenTelemetry 기반 분산 트레이싱** 도입으로 마이크로서비스 간 요청 흐름 추적. Prometheus/Grafana 메트릭 수집 및 대시보드 구축. 로그 통합 (ELK/Loki) 및 중앙화. **MTTD/MTTR 단축**으로 장애 대응 시간 개선. Health Check 기반 자동 복구로 **99.9% 가동률** 달성.",
@@ -143,8 +143,8 @@
           "en": "**High-Performance Backend**: Designed medical imaging system backend for 12 years at Ray. **2x throughput improvement, 50→25ms latency reduction (50%)** through microservices migration. **10x throughput improvement** with async I/O and multi-threaded pipeline. Achieved **15MB/s effective throughput** exceeding 12.5MB/s theoretical limit on 100Mbps network."
         },
         {
-          "ko": "**분산 시스템 & 메시징**: Poza Labs에서 C++/Rust/Go/Python **10+ 마이크로서비스** 설계·구현. **RabbitMQ 클러스터** 메시지 라우팅 설계, **Redis Sentinel** 고가용성 캐시. Database Gateway 패턴으로 분산 노드 간 데이터 일관성 보장. Event-Driven 아키텍처로 네트워크 전체 상태 동기화.",
-          "en": "**Distributed Systems & Messaging**: Designed and implemented **10+ microservices** in C++/Rust/Go/Python at Poza Labs. Designed **RabbitMQ cluster** message routing, **Redis Sentinel** high-availability cache. Ensured data consistency across distributed nodes with Database Gateway pattern. Network-wide state sync with Event-Driven architecture."
+          "ko": "**분산 시스템 & 메시징**: Pozalabs에서 C++/Rust/Go/Python **10+ 마이크로서비스** 설계·구현. **RabbitMQ 클러스터** 메시지 라우팅 설계, **Redis Sentinel** 고가용성 캐시. Database Gateway 패턴으로 분산 노드 간 데이터 일관성 보장. Event-Driven 아키텍처로 네트워크 전체 상태 동기화.",
+          "en": "**Distributed Systems & Messaging**: Designed and implemented **10+ microservices** in C++/Rust/Go/Python at Pozalabs. Designed **RabbitMQ cluster** message routing, **Redis Sentinel** high-availability cache. Ensured data consistency across distributed nodes with Database Gateway pattern. Network-wide state sync with Event-Driven architecture."
         },
         {
           "ko": "**데이터베이스 & 스토리지**: PostgreSQL, MySQL 스키마 설계 및 쿼리 최적화. DCMTK 기반 DICOM 데이터 모델링. 인덱스 전략 및 파티셔닝으로 대용량 데이터 처리. 트랜잭션 격리 레벨 조정으로 동시성 제어. 백업/복구 전략 수립.",
@@ -180,8 +180,8 @@
       },
       "keyPoints": [
         {
-          "ko": "**기술 리더십 & 아키텍처**: Poza Labs에서 **3명 팀** 리딩, 10+ 마이크로서비스 아키텍처 설계. Ray에서 **11명 팀** 총괄, 12년간 의료영상 시스템 아키텍처 설계·구축. 처리량 2배 향상, 레이턴시 50% 감소 등 **측정 가능한 기술 성과** 달성. 삼성전자 CT/MR 프로젝트에서 DICOM 플랫폼 0→1 설계 주도.",
-          "en": "**Technical Leadership & Architecture**: Led **3-member team** at Poza Labs, designed 10+ microservices architecture. Managed **11-member team** at Ray, designed medical imaging system architecture for 12 years. Achieved **measurable technical results** like 2x throughput improvement and 50% latency reduction. Led 0→1 DICOM platform design for Samsung CT/MR project."
+          "ko": "**기술 리더십 & 아키텍처**: Pozalabs에서 **3명 팀** 리딩, 10+ 마이크로서비스 아키텍처 설계. Ray에서 **11명 팀** 총괄, 12년간 의료영상 시스템 아키텍처 설계·구축. 처리량 2배 향상, 레이턴시 50% 감소 등 **측정 가능한 기술 성과** 달성. 삼성전자 CT/MR 프로젝트에서 DICOM 플랫폼 0→1 설계 주도.",
+          "en": "**Technical Leadership & Architecture**: Led **3-member team** at Pozalabs, designed 10+ microservices architecture. Managed **11-member team** at Ray, designed medical imaging system architecture for 12 years. Achieved **measurable technical results** like 2x throughput improvement and 50% latency reduction. Led 0→1 DICOM platform design for Samsung CT/MR project."
         },
         {
           "ko": "**프로세스 구축 & 품질 문화**: **IEC 62304 Class B/C** 소프트웨어 생명주기 프로세스를 전사 수립. 코드 리뷰 문화 정착 (.NET/C++ 베스트 프랙티스 중심). V&V 프로세스 정립 및 자동화 도구 개발 (SQA 팀 협업). 기술 문서 체계화 및 리뷰 프로세스 구축. Daily Release 체계 확립으로 릴리스 사이클 단축.",

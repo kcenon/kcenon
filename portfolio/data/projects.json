@@ -4,8 +4,8 @@
       "id": "prs-server",
       "icon": "tool",
       "company": {
-        "ko": "포자랩스 POZAlabs",
-        "en": "POZAlabs"
+        "ko": "포자랩스",
+        "en": "Pozalabs"
       },
       "title": "PRS Server",
       "period": "2024.01 - 2025.02",
@@ -834,8 +834,8 @@
     {
       "id": "ars-system",
       "company": {
-        "ko": "포자랩스 POZAlabs",
-        "en": "POZAlabs"
+        "ko": "포자랩스",
+        "en": "Pozalabs"
       },
       "title": "ARS System",
       "period": "2023.04 - 2024.01",
