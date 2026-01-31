@@ -239,6 +239,104 @@
   ],
   "medicalImaging": [
     {
+      "id": "automation-alignment",
+      "company": "주식회사 레이",
+      "title": "Automation Alignment Software",
+      "period": "2015.07 - 2016.04",
+      "roles": [
+        "architect",
+        "core-dev",
+        "qa-doc"
+      ],
+      "description": "의료기기 자동 정렬 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 영상 처리. ISO 13485 검증 문서 작성.",
+      "tags": [
+        "C#",
+        "WPF",
+        "DirectX",
+        "ISO 13485",
+        "IEC 62304"
+      ],
+      "expanded": {
+        "roles": [
+          "영상 정합 알고리즘 설계",
+          "GPU 기반 실시간 처리 구현",
+          "IEC 62304 검증 문서 작성"
+        ],
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
+      }
+    },
+    {
+      "id": "intraoral-sensor-sdk",
+      "company": "주식회사 레이",
+      "title": "Intraoral Sensor SDK",
+      "period": "2015.01 - 2015.06",
+      "roles": [
+        "architect",
+        "core-dev"
+      ],
+      "description": "구강 내 센서용 SDK 및 TWAIN 드라이버 개발. C++, Boost 기반 SDK와 C#, WPF 기반 이미징 뷰어.",
+      "tags": [
+        "C++14",
+        "C#",
+        "SDK",
+        "TWAIN",
+        "ISO 13485",
+        "IEC 62304"
+      ],
+      "expanded": {
+        "roles": [
+          "센서 하드웨어 인터페이스 SDK 설계",
+          "TWAIN 호환 드라이버 개발",
+          "3rd party 연동 API 문서 작성"
+        ],
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA"
+        ]
+      }
+    },
+    {
+      "id": "3d-visualization",
+      "company": "주식회사 레이",
+      "title": "3D Visualization Software",
+      "period": "2014.01 - 2015.06",
+      "roles": [
+        "core-dev"
+      ],
+      "description": "DICOM 3D 뷰어 개발. <strong>Fovia 엔진</strong> 기반 Volume Rendering, MPR, MIP 시각화 구현.",
+      "tags": [
+        "C#",
+        "WPF",
+        "Fovia",
+        "Volume Rendering",
+        "GPU",
+        "PACS",
+        "TCP/IP",
+        "ISO 13485",
+        "IEC 62304"
+      ],
+      "expanded": {
+        "roles": [
+          "Fovia 엔진 기반 3D 볼륨 렌더링 통합",
+          "GPU 가속 Volume Rendering 파이프라인 구축",
+          "MPR(Multi-Planar Reconstruction) 뷰어 개발",
+          "MIP(Maximum Intensity Projection) 시각화 구현",
+          "3D 측정 도구 구현"
+        ],
+        "certifications": [
+          "CE",
+          "FDA",
+          "KFDA",
+          "CCC"
+        ]
+      }
+    },
+    {
       "id": "alpha-project",
       "company": "주식회사 레이",
       "title": "Alpha Project",
@@ -315,104 +413,6 @@
       }
     },
     {
-      "id": "3d-visualization",
-      "company": "주식회사 레이",
-      "title": "3D Visualization Software",
-      "period": "2014.01 - 2015.06",
-      "roles": [
-        "core-dev"
-      ],
-      "description": "DICOM 3D 뷰어 개발. <strong>Fovia 엔진</strong> 기반 Volume Rendering, MPR, MIP 시각화 구현.",
-      "tags": [
-        "C#",
-        "WPF",
-        "Fovia",
-        "Volume Rendering",
-        "GPU",
-        "PACS",
-        "TCP/IP",
-        "ISO 13485",
-        "IEC 62304"
-      ],
-      "expanded": {
-        "roles": [
-          "Fovia 엔진 기반 3D 볼륨 렌더링 통합",
-          "GPU 가속 Volume Rendering 파이프라인 구축",
-          "MPR(Multi-Planar Reconstruction) 뷰어 개발",
-          "MIP(Maximum Intensity Projection) 시각화 구현",
-          "3D 측정 도구 구현"
-        ],
-        "certifications": [
-          "CE",
-          "FDA",
-          "KFDA",
-          "CCC"
-        ]
-      }
-    },
-    {
-      "id": "automation-alignment",
-      "company": "주식회사 레이",
-      "title": "Automation Alignment Software",
-      "period": "2015.07 - 2016.04",
-      "roles": [
-        "architect",
-        "core-dev",
-        "qa-doc"
-      ],
-      "description": "의료기기 자동 정렬 소프트웨어. <strong>DirectX Shader(HLSL)</strong> 기반 영상 처리. ISO 13485 검증 문서 작성.",
-      "tags": [
-        "C#",
-        "WPF",
-        "DirectX",
-        "ISO 13485",
-        "IEC 62304"
-      ],
-      "expanded": {
-        "roles": [
-          "영상 정합 알고리즘 설계",
-          "GPU 기반 실시간 처리 구현",
-          "IEC 62304 검증 문서 작성"
-        ],
-        "certifications": [
-          "CE",
-          "FDA",
-          "KFDA"
-        ]
-      }
-    },
-    {
-      "id": "intraoral-sensor-sdk",
-      "company": "주식회사 레이",
-      "title": "Intraoral Sensor SDK",
-      "period": "2015.01 - 2015.06",
-      "roles": [
-        "architect",
-        "core-dev"
-      ],
-      "description": "구강 내 센서용 SDK 및 TWAIN 드라이버 개발. C++, Boost 기반 SDK와 C#, WPF 기반 이미징 뷰어.",
-      "tags": [
-        "C++14",
-        "C#",
-        "SDK",
-        "TWAIN",
-        "ISO 13485",
-        "IEC 62304"
-      ],
-      "expanded": {
-        "roles": [
-          "센서 하드웨어 인터페이스 SDK 설계",
-          "TWAIN 호환 드라이버 개발",
-          "3rd party 연동 API 문서 작성"
-        ],
-        "certifications": [
-          "CE",
-          "FDA",
-          "KFDA"
-        ]
-      }
-    },
-    {
       "id": "implagraphy",
       "company": "바텍 VATECH",
       "title": "Implagraphy Project",
@@ -446,33 +446,34 @@
   ],
   "orthodontic": [
     {
-      "id": "ezceph",
+      "id": "sherpa",
       "company": "바텍 VATECH",
-      "title": "EzCeph Project",
-      "period": "2004.07 - 2005.12",
+      "title": "Sherpa Project",
+      "period": "2008.01 - 2009.07",
       "roles": [
         "core-dev",
         "qa-doc"
       ],
-      "description": "교정 시뮬레이션 소프트웨어. 이미지 편집기, Morphing/Superimposition/<strong>VTO/STO 시뮬레이션</strong>, Level Anchorage 시뮬레이션 개발.",
+      "description": "치과 CT/X-Ray 취득 및 치과 영상 시각화 소프트웨어. 차트 관리자, 카메라/프린터/스캐너 모듈, TCP/IP 통신 개발.",
       "tags": [
-        "C++",
-        "MFC",
-        "DCMTK",
-        "Simulation",
+        "C#",
+        "WPF",
+        "DirectShow",
+        "LINQ",
         "ISO 13485",
         "IEC 62304"
       ],
       "expanded": {
         "roles": [
-          "VTO(Visual Treatment Objective) 시뮬레이션 알고리즘 개발",
-          "STO(Surgical Treatment Objective) 시뮬레이션 개발",
-          "이미지 Morphing 및 Superimposition 기능 구현"
+          "전체 소프트웨어 아키텍처 설계",
+          "DirectShow 기반 카메라 모듈 개발",
+          "TCP/IP 기반 장비 통신 프로토콜 설계"
         ],
         "certifications": [
           "CE",
           "FDA",
-          "KFDA"
+          "KFDA",
+          "CCC"
         ]
       }
     },
@@ -508,70 +509,38 @@
       }
     },
     {
-      "id": "sherpa",
+      "id": "ezceph",
       "company": "바텍 VATECH",
-      "title": "Sherpa Project",
-      "period": "2008.01 - 2009.07",
+      "title": "EzCeph Project",
+      "period": "2004.07 - 2005.12",
       "roles": [
         "core-dev",
         "qa-doc"
       ],
-      "description": "치과 CT/X-Ray 취득 및 치과 영상 시각화 소프트웨어. 차트 관리자, 카메라/프린터/스캐너 모듈, TCP/IP 통신 개발.",
+      "description": "교정 시뮬레이션 소프트웨어. 이미지 편집기, Morphing/Superimposition/<strong>VTO/STO 시뮬레이션</strong>, Level Anchorage 시뮬레이션 개발.",
       "tags": [
-        "C#",
-        "WPF",
-        "DirectShow",
-        "LINQ",
+        "C++",
+        "MFC",
+        "DCMTK",
+        "Simulation",
         "ISO 13485",
         "IEC 62304"
       ],
       "expanded": {
         "roles": [
-          "전체 소프트웨어 아키텍처 설계",
-          "DirectShow 기반 카메라 모듈 개발",
-          "TCP/IP 기반 장비 통신 프로토콜 설계"
+          "VTO(Visual Treatment Objective) 시뮬레이션 알고리즘 개발",
+          "STO(Surgical Treatment Objective) 시뮬레이션 개발",
+          "이미지 Morphing 및 Superimposition 기능 구현"
         ],
         "certifications": [
           "CE",
           "FDA",
-          "KFDA",
-          "CCC"
+          "KFDA"
         ]
       }
     }
   ],
   "equipmentControl": [
-    {
-      "id": "3d-printer",
-      "company": "주식회사 레이",
-      "title": "3D Printer Software",
-      "period": "2016.05 - 2017.07",
-      "roles": [
-        "core-dev",
-        "qa-doc"
-      ],
-      "description": "3D 프린터 제어 프로그램. C++11, Qt QML, MFC 기반 DCMTK 연동 개발.",
-      "tags": [
-        "C++11",
-        "Qt QML",
-        "MFC",
-        "DCMTK",
-        "OpenGL",
-        "ISO 13485",
-        "IEC 62304"
-      ],
-      "expanded": {
-        "roles": [
-          "Qt QML 기반 사용자 인터페이스 개발",
-          "프린터 하드웨어 제어 프로토콜 구현",
-          "DICOM 데이터에서 3D 프린팅 모델 변환"
-        ],
-        "certifications": [
-          "CE",
-          "KFDA"
-        ]
-      }
-    },
     {
       "id": "high-speed-download",
       "company": "주식회사 레이",
@@ -608,6 +577,37 @@
           "동기 전송 방식의 시간 손실을 비동기 파이프라인으로 해결하여 다중 파일 전송 속도 10배 향상",
           "대용량 의료 영상 파일의 네트워크 전송 최적화",
           "불안정한 네트워크 환경에서의 재시도 로직"
+        ]
+      }
+    },
+    {
+      "id": "3d-printer",
+      "company": "주식회사 레이",
+      "title": "3D Printer Software",
+      "period": "2016.05 - 2017.07",
+      "roles": [
+        "core-dev",
+        "qa-doc"
+      ],
+      "description": "3D 프린터 제어 프로그램. C++11, Qt QML, MFC 기반 DCMTK 연동 개발.",
+      "tags": [
+        "C++11",
+        "Qt QML",
+        "MFC",
+        "DCMTK",
+        "OpenGL",
+        "ISO 13485",
+        "IEC 62304"
+      ],
+      "expanded": {
+        "roles": [
+          "Qt QML 기반 사용자 인터페이스 개발",
+          "프린터 하드웨어 제어 프로토콜 구현",
+          "DICOM 데이터에서 3D 프린팅 모델 변환"
+        ],
+        "certifications": [
+          "CE",
+          "KFDA"
         ]
       }
     },

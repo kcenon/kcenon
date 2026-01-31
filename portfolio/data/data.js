@@ -1532,5 +1532,215 @@ window.PortfolioData = {
         outcomes: { ko: ["Zero-downtime 배포", "Daily Release 확립", "확장성 10배 향상"], en: ["Zero-downtime deployment", "Daily Release cycle", "10x scalability"] }
       }
     ]
+  },
+
+  coverLetter: {
+    templates: [
+      {
+        id: "distributed-systems",
+        targetRole: {
+          ko: "분산 시스템 아키텍트 / Staff Engineer",
+          en: "Distributed Systems Architect / Staff Engineer"
+        },
+        greeting: {
+          ko: "채용 담당자님께,",
+          en: "Dear Hiring Manager,"
+        },
+        opening: {
+          ko: "20년간 의료·SaaS 도메인에서 규제 환경의 품질 프로세스와 클라우드 네이티브 분산 시스템을 결합해온 소프트웨어 아키텍트로서, 프로덕션급 시스템 설계 및 팀 성장에 기여하고자 지원합니다.",
+          en: "As a Software Architect with 20 years of experience combining regulated-environment quality processes with cloud-native distributed systems across medical and SaaS domains, I am applying to contribute to production-grade system design and team growth."
+        },
+        keyPoints: [
+          {
+            ko: "**분산 시스템 설계 & 운영**: Poza Labs (AI 음악 SaaS)에서 C++/Rust/Go/Python으로 구성된 **10+ 마이크로서비스 오케스트레이션**. RabbitMQ 클러스터 메시지 라우팅, Redis Sentinel 고가용성 캐시 설계. OpenTelemetry 기반 분산 트레이싱으로 MTTD/MTTR 단축.",
+            en: "**Distributed Systems Design & Operations**: Orchestrated **10+ microservices** in C++/Rust/Go/Python at Poza Labs (AI music SaaS). Designed RabbitMQ cluster message routing and Redis Sentinel high-availability cache. Reduced MTTD/MTTR with OpenTelemetry-based distributed tracing."
+          },
+          {
+            ko: "**성능 최적화 & 안정성**: Ray에서 12년간 의료영상 시스템 아키텍처 설계. 마이크로서비스 전환으로 **처리량 2배 향상, 레이턴시 50→25ms (50% 감소)**. 100Mbps 네트워크에서 이론값(12.5MB/s)을 초과하는 **15MB/s 실효 전송량** 달성. 비동기 I/O와 멀티스레드 파이프라인으로 처리량 10배 개선.",
+            en: "**Performance Optimization & Reliability**: Designed medical imaging system architecture for 12 years at Ray. **2x throughput improvement, 50→25ms latency reduction (50%)** through microservices migration. Achieved **15MB/s effective throughput** exceeding 12.5MB/s theoretical limit on 100Mbps network. 10x throughput improvement with async I/O and multi-threaded pipeline."
+          },
+          {
+            ko: "**CI/CD & DevOps**: Daily Release 체계 확립. Zero-downtime 배포 파이프라인 구축 (GitHub Actions, Docker). Health Check 기반 장애 자동 복구로 **99.9% 가동률** 달성. Infrastructure as Code로 재현 가능한 환경 구성.",
+            en: "**CI/CD & DevOps**: Established Daily Release cycle. Built zero-downtime deployment pipeline (GitHub Actions, Docker). Achieved **99.9% uptime** with health check-based auto-recovery. Reproducible environments with Infrastructure as Code."
+          },
+          {
+            ko: "**규제 환경 경험 → 범용 시스템 품질**: FDA 510(k), CE, KFDA 인증 프로세스 주도. **IEC 62304 Class B/C** 소프트웨어 생명주기 프로세스를 전사 수립. **1,200+ 페이지 SRS/SDS** 직접 작성. 이 경험을 SaaS 환경에 적용하여 운영 가능한(operable) 분산 시스템 설계·구축.",
+            en: "**Regulated Environment → General System Quality**: Led FDA 510(k), CE, KFDA certification processes. Established company-wide **IEC 62304 Class B/C** software lifecycle. Authored **1,200+ pages of SRS/SDS**. Applied this discipline to design and build operable distributed systems in SaaS environments."
+          }
+        ],
+        closing: {
+          ko: "규제 환경에서 단련된 품질 프로세스와 클라우드 네이티브 시스템 설계 경험을 바탕으로, 귀사의 분산 시스템 아키텍처와 엔지니어링 문화 발전에 기여하고 싶습니다. 자세한 논의를 기대합니다.",
+          en: "I look forward to contributing to your distributed systems architecture and engineering culture with quality processes honed in regulated environments and cloud-native system design experience. I would welcome the opportunity to discuss this further."
+        },
+        signature: {
+          ko: "신동철 드림",
+          en: "Sincerely,\nDongcheol Shin"
+        }
+      },
+      {
+        id: "medical-regulatory",
+        targetRole: {
+          ko: "의료 소프트웨어 아키텍트 / 규제 전문가",
+          en: "Medical Software Architect / Regulatory Specialist"
+        },
+        greeting: {
+          ko: "채용 담당자님께,",
+          en: "Dear Hiring Manager,"
+        },
+        opening: {
+          ko: "18년간 치과·CT/MR 의료영상 도메인에서 **PACS, DICOM 뷰어, 모달리티 제어 시스템**을 0→1로 구축하고, **FDA 510(k), CE, KFDA, CCC** 글로벌 인증 전 과정을 주도한 경험을 바탕으로 지원합니다.",
+          en: "With 18 years of building **PACS, DICOM viewers, and modality control systems from scratch (0→1)** in dental and CT/MR medical imaging domains, and leading the full **FDA 510(k), CE, KFDA, CCC** global certification processes, I am applying to contribute my expertise."
+        },
+        keyPoints: [
+          {
+            ko: "**규제 프로세스 전문성**: **IEC 62304 Class B/C** 소프트웨어 생명주기 프로세스를 전사 수립. SRS/SDS **1,200+ 페이지** 직접 작성. FDA 510(k) Submission Package 기술 섹션 작성 및 **심사관 Q&A 직접 대응**. 요구사항↔설계↔테스트 추적성 매트릭스 구축으로 10+ 프로젝트 인증 획득.",
+            en: "**Regulatory Process Expertise**: Established company-wide **IEC 62304 Class B/C** software lifecycle. Authored **1,200+ pages of SRS/SDS**. Wrote FDA 510(k) Submission Package technical sections and **directly handled auditor Q&A**. Built requirements↔design↔test traceability matrices, achieving certifications for 10+ projects."
+          },
+          {
+            ko: "**의료영상 시스템 아키텍처**: Ray에서 12년간 **PACS 서버, DICOM 뷰어, 2D 교정 시뮬레이션** 설계·구축. 삼성전자 CT/MR용 DICOM 플랫폼을 백지 상태에서 설계 (0→1), **처리량 2배 향상** 달성. C-STORE/C-FIND/C-MOVE 프로토콜 구현, DCMTK 기반 클래스 계층 설계.",
+            en: "**Medical Imaging System Architecture**: Designed and built **PACS server, DICOM viewer, 2D orthodontic simulation** for 12 years at Ray. Designed DICOM platform for Samsung CT/MR from scratch (0→1), achieving **2x throughput improvement**. Implemented C-STORE/C-FIND/C-MOVE protocols, designed class hierarchy based on DCMTK."
+          },
+          {
+            ko: "**성능 & 안정성**: 마이크로서비스 전환으로 **레이턴시 50→25ms (50% 감소)**. 실시간 압축/직렬화로 100Mbps 네트워크에서 **15MB/s 실효 전송량** 달성 (이론값 12.5MB/s 초과). Database Gateway 패턴으로 분산 노드 간 데이터 일관성 보장, 네트워크 전체 시스템 상태 자동 동기화.",
+            en: "**Performance & Reliability**: **50→25ms latency reduction (50%)** through microservices migration. Achieved **15MB/s effective throughput** on 100Mbps network (exceeds 12.5MB/s theoretical limit) via real-time compression/serialization. Ensured data consistency across distributed nodes with Database Gateway pattern, automatic network-wide system state sync."
+          },
+          {
+            ko: "**HIPAA & 보안**: HIPAA Technical Safeguards 구현. DICOM PS3.15 기반 개인정보 비식별화(De-identification) 표준 적용. PHI 암호화 및 감사 로깅 시스템 설계. ISO 14971 위험 분석 문서 작성 및 FMEA 수행.",
+            en: "**HIPAA & Security**: Implemented HIPAA Technical Safeguards. Applied DICOM PS3.15 de-identification standards. Designed PHI encryption and audit logging systems. Authored ISO 14971 risk analysis documents and performed FMEA."
+          }
+        ],
+        closing: {
+          ko: "18년간 축적한 의료기기 소프트웨어 아키텍처 설계 및 글로벌 규제 대응 경험을 바탕으로, 귀사의 제품 품질 향상과 안정적인 인증 획득에 기여하고 싶습니다.",
+          en: "With 18 years of medical device software architecture design and global regulatory compliance experience, I look forward to contributing to your product quality improvement and stable certification acquisition."
+        },
+        signature: {
+          ko: "신동철 드림",
+          en: "Sincerely,\nDongcheol Shin"
+        }
+      },
+      {
+        id: "platform-engineering",
+        targetRole: {
+          ko: "플랫폼 엔지니어 / DevOps Engineer",
+          en: "Platform Engineer / DevOps Engineer"
+        },
+        greeting: {
+          ko: "채용 담당자님께,",
+          en: "Dear Hiring Manager,"
+        },
+        opening: {
+          ko: "20년간 C++/Rust/Go/Python 폴리글랏 시스템에서 CI/CD, 관측성, 고가용성 인프라를 설계·운영하며 개발자 생산성과 서비스 안정성을 동시에 향상시킨 경험을 바탕으로 지원합니다.",
+          en: "With 20 years of designing and operating CI/CD, observability, and high-availability infrastructure for C++/Rust/Go/Python polyglot systems—improving both developer productivity and service reliability—I am applying to contribute my expertise."
+        },
+        keyPoints: [
+          {
+            ko: "**CI/CD & Zero-Downtime 배포**: Poza Labs에서 **Daily Release** 체계 확립. GitHub Actions, Docker 기반 무중단 배포 파이프라인 구축. Blue-Green, Canary 배포 전략 구현. Infrastructure as Code로 재현 가능한 환경 구성. 배포 자동화로 릴리스 사이클 단축.",
+            en: "**CI/CD & Zero-Downtime Deployment**: Established **Daily Release** cycle at Poza Labs. Built zero-downtime deployment pipeline with GitHub Actions and Docker. Implemented Blue-Green and Canary deployment strategies. Reproducible environments with Infrastructure as Code. Shortened release cycles through deployment automation."
+          },
+          {
+            ko: "**관측성 & SRE**: **OpenTelemetry 기반 분산 트레이싱** 도입으로 마이크로서비스 간 요청 흐름 추적. Prometheus/Grafana 메트릭 수집 및 대시보드 구축. 로그 통합 (ELK/Loki) 및 중앙화. **MTTD/MTTR 단축**으로 장애 대응 시간 개선. Health Check 기반 자동 복구로 **99.9% 가동률** 달성.",
+            en: "**Observability & SRE**: Implemented **OpenTelemetry-based distributed tracing** to track request flows across microservices. Built Prometheus/Grafana metrics collection and dashboards. Centralized log aggregation (ELK/Loki). **Reduced MTTD/MTTR** for faster incident response. Achieved **99.9% uptime** with health check-based auto-recovery."
+          },
+          {
+            ko: "**메시징 & 캐시 인프라**: **RabbitMQ 클러스터** 구성 및 메시지 라우팅 설계. **Redis Sentinel** 고가용성 캐시 레이어 구축. 분산 시스템 간 비동기 통신 패턴 설계. Circuit Breaker, Retry, Timeout 패턴으로 장애 전파 차단.",
+            en: "**Messaging & Cache Infrastructure**: Configured **RabbitMQ cluster** and designed message routing. Built **Redis Sentinel** high-availability cache layer. Designed async communication patterns between distributed systems. Prevented fault propagation with Circuit Breaker, Retry, Timeout patterns."
+          },
+          {
+            ko: "**개발자 도구 & 라이브러리**: 사내 공통 라이브러리 개발로 개발 생산성 향상 (messaging, threading, network, database). 코드 리뷰 문화 정착 (.NET/C++ 베스트 프랙티스). 기술 문서 체계화 및 리뷰 프로세스 구축. 주니어 엔지니어 멘토링 (분산 시스템, 성능 최적화).",
+            en: "**Developer Tools & Libraries**: Improved developer productivity by building internal common libraries (messaging, threading, network, database). Established code review culture (.NET/C++ best practices). Systematized technical documentation and review processes. Mentored junior engineers (distributed systems, performance optimization)."
+          }
+        ],
+        closing: {
+          ko: "개발팀의 생산성을 극대화하고 서비스 안정성을 강화하는 플랫폼 인프라를 구축하여, 엔지니어들이 비즈니스 로직에 집중할 수 있는 환경을 만들고 싶습니다.",
+          en: "I look forward to building platform infrastructure that maximizes developer productivity and service reliability, creating an environment where engineers can focus on business logic."
+        },
+        signature: {
+          ko: "신동철 드림",
+          en: "Sincerely,\nDongcheol Shin"
+        }
+      },
+      {
+        id: "backend-engineer",
+        targetRole: {
+          ko: "시니어 백엔드 엔지니어",
+          en: "Senior Backend Engineer"
+        },
+        greeting: {
+          ko: "채용 담당자님께,",
+          en: "Dear Hiring Manager,"
+        },
+        opening: {
+          ko: "20년간 C++, Rust, Go, C#으로 고성능 백엔드 시스템을 설계·구축하고, 처리량 2배 향상·레이턴시 50% 감소 등 측정 가능한 성과를 달성한 경험을 바탕으로 지원합니다.",
+          en: "With 20 years of designing and building high-performance backend systems in C++, Rust, Go, and C#—achieving measurable results like 2x throughput improvement and 50% latency reduction—I am applying to contribute my expertise."
+        },
+        keyPoints: [
+          {
+            ko: "**고성능 백엔드**: Ray에서 12년간 의료영상 시스템 백엔드 설계. **마이크로서비스 전환**으로 처리량 2배 향상, 레이턴시 50→25ms (50% 감소). 비동기 I/O와 멀티스레드 파이프라인으로 **처리량 10배 개선**. 100Mbps 네트워크에서 이론값(12.5MB/s)을 초과하는 **15MB/s 실효 전송량** 달성.",
+            en: "**High-Performance Backend**: Designed medical imaging system backend for 12 years at Ray. **2x throughput improvement, 50→25ms latency reduction (50%)** through microservices migration. **10x throughput improvement** with async I/O and multi-threaded pipeline. Achieved **15MB/s effective throughput** exceeding 12.5MB/s theoretical limit on 100Mbps network."
+          },
+          {
+            ko: "**분산 시스템 & 메시징**: Poza Labs에서 C++/Rust/Go/Python **10+ 마이크로서비스** 설계·구현. **RabbitMQ 클러스터** 메시지 라우팅 설계, **Redis Sentinel** 고가용성 캐시. Database Gateway 패턴으로 분산 노드 간 데이터 일관성 보장. Event-Driven 아키텍처로 네트워크 전체 상태 동기화.",
+            en: "**Distributed Systems & Messaging**: Designed and implemented **10+ microservices** in C++/Rust/Go/Python at Poza Labs. Designed **RabbitMQ cluster** message routing, **Redis Sentinel** high-availability cache. Ensured data consistency across distributed nodes with Database Gateway pattern. Network-wide state sync with Event-Driven architecture."
+          },
+          {
+            ko: "**데이터베이스 & 스토리지**: PostgreSQL, MySQL 스키마 설계 및 쿼리 최적화. DCMTK 기반 DICOM 데이터 모델링. 인덱스 전략 및 파티셔닝으로 대용량 데이터 처리. 트랜잭션 격리 레벨 조정으로 동시성 제어. 백업/복구 전략 수립.",
+            en: "**Database & Storage**: PostgreSQL, MySQL schema design and query optimization. DICOM data modeling based on DCMTK. Large-scale data processing with indexing strategies and partitioning. Concurrency control through transaction isolation level tuning. Backup/recovery strategy establishment."
+          },
+          {
+            ko: "**API & 네트워크**: ASP.NET Web API, REST API 설계 및 구현. C-STORE/C-FIND/C-MOVE DICOM 프로토콜 구현. TCP/IP 소켓 프로그래밍, WebSocket 실시간 통신. 고속 파일 전송 시스템 구축. 네트워크 프로토콜 설계 및 최적화.",
+            en: "**API & Network**: ASP.NET Web API, REST API design and implementation. C-STORE/C-FIND/C-MOVE DICOM protocol implementation. TCP/IP socket programming, WebSocket real-time communication. High-speed file transfer system. Network protocol design and optimization."
+          }
+        ],
+        closing: {
+          ko: "측정 가능한 성능 개선과 시스템 안정성 향상에 집중하며, 비즈니스 임팩트를 만들어내는 백엔드 시스템 설계에 기여하고 싶습니다.",
+          en: "I look forward to contributing to backend system design that creates business impact, focusing on measurable performance improvements and system reliability enhancements."
+        },
+        signature: {
+          ko: "신동철 드림",
+          en: "Sincerely,\nDongcheol Shin"
+        }
+      },
+      {
+        id: "engineering-manager",
+        targetRole: {
+          ko: "엔지니어링 매니저 / Technical Lead",
+          en: "Engineering Manager / Technical Lead"
+        },
+        greeting: {
+          ko: "채용 담당자님께,",
+          en: "Dear Hiring Manager,"
+        },
+        opening: {
+          ko: "20년간 3~11명 규모 팀을 리딩하며 기술 아키텍처 설계와 팀 성장을 동시에 이끌어온 경험을 바탕으로, 높은 품질의 제품 딜리버리와 지속 가능한 팀 문화를 만들고자 지원합니다.",
+          en: "With 20 years of leading teams of 3-11 members while driving both technical architecture design and team growth, I am applying to deliver high-quality products and build sustainable team culture."
+        },
+        keyPoints: [
+          {
+            ko: "**기술 리더십 & 아키텍처**: Poza Labs에서 **3명 팀** 리딩, 10+ 마이크로서비스 아키텍처 설계. Ray에서 **11명 팀** 총괄, 12년간 의료영상 시스템 아키텍처 설계·구축. 처리량 2배 향상, 레이턴시 50% 감소 등 **측정 가능한 기술 성과** 달성. 삼성전자 CT/MR 프로젝트에서 DICOM 플랫폼 0→1 설계 주도.",
+            en: "**Technical Leadership & Architecture**: Led **3-member team** at Poza Labs, designed 10+ microservices architecture. Managed **11-member team** at Ray, designed medical imaging system architecture for 12 years. Achieved **measurable technical results** like 2x throughput improvement and 50% latency reduction. Led 0→1 DICOM platform design for Samsung CT/MR project."
+          },
+          {
+            ko: "**프로세스 구축 & 품질 문화**: **IEC 62304 Class B/C** 소프트웨어 생명주기 프로세스를 전사 수립. 코드 리뷰 문화 정착 (.NET/C++ 베스트 프랙티스 중심). V&V 프로세스 정립 및 자동화 도구 개발 (SQA 팀 협업). 기술 문서 체계화 및 리뷰 프로세스 구축. Daily Release 체계 확립으로 릴리스 사이클 단축.",
+            en: "**Process Establishment & Quality Culture**: Established company-wide **IEC 62304 Class B/C** software lifecycle. Built code review culture (focused on .NET/C++ best practices). Established V&V process and developed automation tools (collaborated with SQA team). Systematized technical documentation and review processes. Shortened release cycles by establishing Daily Release system."
+          },
+          {
+            ko: "**팀 성장 & 멘토링**: 주니어 엔지니어 멘토링 (분산 시스템 아키텍처, 규제 준수). 코드 리뷰를 통한 팀 역량 향상. 기술 변화와 이해관계자 요구에 유연하게 대응하는 개발 문화 조성. 글로벌 인증 프로세스(FDA, CE, KFDA) 참여로 규제 환경 경험 전수.",
+            en: "**Team Growth & Mentoring**: Mentored junior engineers (distributed systems architecture, regulatory compliance). Elevated team capabilities through code reviews. Fostered flexible development culture responsive to technological changes and stakeholder needs. Transferred regulatory environment experience through global certification processes (FDA, CE, KFDA)."
+          },
+          {
+            ko: "**크로스펑셔널 협업 & 딜리버리**: SQA 팀과 협업하여 V&V 자동화 도구 개발. FDA 510(k) 심사관 Q&A 직접 대응 (규제 기관과 커뮤니케이션). 이해관계자 요구사항을 기술 설계로 변환. 2개 IPO 기업(VATECH, Ray) 경험, 벤처 성장 과정 체험. 다수 Zero-to-One 프로젝트 주도.",
+            en: "**Cross-Functional Collaboration & Delivery**: Developed V&V automation tools collaborating with SQA team. Directly handled FDA 510(k) auditor Q&A (communication with regulatory agencies). Translated stakeholder requirements into technical designs. Experienced 2 IPO companies (VATECH, Ray), witnessed venture growth. Led multiple Zero-to-One projects."
+          }
+        ],
+        closing: {
+          ko: "기술 아키텍처 설계와 팀 성장을 동시에 이끌며, 측정 가능한 비즈니스 임팩트와 지속 가능한 엔지니어링 문화를 만들어가고 싶습니다.",
+          en: "I look forward to driving both technical architecture design and team growth, creating measurable business impact and sustainable engineering culture."
+        },
+        signature: {
+          ko: "신동철 드림",
+          en: "Sincerely,\nDongcheol Shin"
+        }
+      }
+    ]
   }
 };

@@ -2321,3 +2321,181 @@
   color: var(--text-muted);
   line-height: 1.4;
 }
+
+/* ==========================================
+   Cover Letter Preview Styles
+   ========================================== */
+
+.cover-letter-preview {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cover-letter-preview .preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.cover-letter-preview .preview-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.cover-letter-preview .preview-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cover-letter-content {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  line-height: 1.8;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.cover-letter-content .letter-section {
+  margin-bottom: 1.5rem;
+}
+
+.cover-letter-content .letter-section:last-child {
+  margin-bottom: 0;
+}
+
+.cover-letter-content .letter-greeting {
+  font-weight: 600;
+  font-size: 1.0625rem;
+  color: var(--text-primary);
+}
+
+.cover-letter-content .letter-opening,
+.cover-letter-content .letter-closing {
+  text-align: justify;
+  color: var(--text-primary);
+}
+
+.cover-letter-content .letter-subtitle {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.cover-letter-content .key-points {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cover-letter-content .key-points li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.cover-letter-content .key-points li:last-child {
+  margin-bottom: 0;
+}
+
+.cover-letter-content .key-points li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.cover-letter-content .key-points li strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.cover-letter-content .letter-signature {
+  margin-top: 2rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--text-primary);
+  white-space: pre-line;
+}
+
+.cover-letter-preview .preview-footer {
+  margin-top: 2rem;
+}
+
+.cover-letter-preview .info-box {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.cover-letter-preview .info-box svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--primary);
+}
+
+.cover-letter-preview .info-box strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.badge-success {
+  background: var(--accent);
+  color: white;
+}
+
+/* List Header for Cover Letter */
+.list-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.list-header h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.list-header .list-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

@@ -3022,3 +3022,257 @@ body {
         padding: 15px 0;
     }
 }
+
+/* =============================================
+   Cover Letter Section
+   ============================================= */
+
+.cover-letter-section {
+    background: var(--bg-secondary);
+    padding: 80px 20px;
+}
+
+.cover-letter-section .section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.cover-letter-section .section-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    font-weight: 400;
+}
+
+/* Template Selector */
+.cover-letter-selector {
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.cover-letter-selector label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.template-dropdown {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.template-dropdown:hover {
+    border-color: var(--primary-color);
+}
+
+.template-dropdown:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Cover Letter Content */
+.cover-letter-content {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 48px;
+    max-width: 800px;
+    margin: 0 auto 40px;
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+}
+
+.letter-greeting {
+    margin-bottom: 28px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.letter-opening {
+    margin-bottom: 28px;
+    text-align: justify;
+}
+
+.letter-body {
+    margin: 28px 0;
+}
+
+.key-points {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.key-points li {
+    margin-bottom: 20px;
+    padding-left: 28px;
+    position: relative;
+    text-align: justify;
+}
+
+.key-points li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 1.8rem;
+}
+
+.key-points li strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.letter-closing {
+    margin-top: 32px;
+    margin-bottom: 36px;
+    text-align: justify;
+}
+
+.letter-signature {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Actions */
+.cover-letter-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 800px;
+    margin: 0 auto 20px;
+}
+
+.cover-letter-note {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    padding: 0 20px;
+}
+
+.cover-letter-actions button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-family: inherit;
+}
+
+.cover-letter-actions .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.cover-letter-actions .btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.cover-letter-actions .btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.cover-letter-actions .btn-secondary:hover:not(:disabled) {
+    background: var(--bg-primary);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.cover-letter-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cover-letter-actions button svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cover-letter-section {
+        padding: 60px 20px;
+    }
+
+    .cover-letter-content {
+        padding: 32px 24px;
+        font-size: 1rem;
+    }
+
+    .cover-letter-actions {
+        flex-direction: column;
+    }
+
+    .cover-letter-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .key-points li {
+        padding-left: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cover-letter-content {
+        padding: 24px 20px;
+    }
+
+    .letter-greeting,
+    .letter-opening,
+    .letter-closing {
+        text-align: left;
+    }
+
+    .key-points li {
+        text-align: left;
+    }
+}
+
+/* Print styles for cover letter */
+@media print {
+    .cover-letter-section {
+        background: white;
+        padding: 0;
+    }
+
+    .cover-letter-selector,
+    .cover-letter-actions {
+        display: none;
+    }
+
+    .cover-letter-content {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+    }
+}

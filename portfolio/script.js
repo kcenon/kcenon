@@ -176,7 +176,7 @@ const translations = {
         'vmodel.acceptance': '인수 테스트 / 릴리스',
         'vmodel.acceptance.sub': 'Acceptance / Release',
         'vmodel.caption': 'IEC 62304 V-Model: 각 개발 단계와 대응하는 검증 활동의 매핑',
-        // Sections
+        // Contact
         'contact.title': 'Contact',
         'contact.intro': '분산 시스템, 플랫폼 엔지니어링, 고성능 C++/.NET, 또는 오픈소스 협업에 관심이 있으시다면 언제든 연락주세요.',
         'section.methodology': '규제 환경 딜리버리 (IEC 62304)',
@@ -665,6 +665,37 @@ async function downloadResumePDF() {
         }, 2000);
     }
 }
+
+// =============================================
+// Cover Letter Functionality (Admin Only)
+// =============================================
+
+/**
+ * Get selected cover letter template for PDF/DOCX export
+ * Called by admin page exporters
+ * Returns template object based on saved template ID in localStorage
+ */
+window.getCoverLetterTemplate = function() {
+    try {
+        // Get selected template ID from localStorage (set by admin page)
+        const selectedTemplateId = localStorage.getItem('cover-letter-template-id') || 'distributed-systems';
+
+        // Load templates from window.PortfolioData
+        if (window.PortfolioData && window.PortfolioData.coverLetter) {
+            const data = window.PortfolioData.coverLetter;
+
+            // Find and return the selected template
+            const template = data.templates.find(t => t.id === selectedTemplateId);
+            return template || data.templates[0]; // Fallback to first template
+        } else {
+            console.error('window.PortfolioData.coverLetter not found');
+            return null;
+        }
+    } catch (error) {
+        console.error('Failed to load cover letter template:', error);
+        return null;
+    }
+};
 
 // =============================================
 // Console Easter Egg

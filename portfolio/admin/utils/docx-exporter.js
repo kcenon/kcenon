@@ -424,6 +424,7 @@ class DOCXExporter {
       author = 'Dongcheol Shin',
       theme = 'professional',
       themeOverrides = {},
+      includeCoverLetter = false,
       pageBreakBetweenSections = false,
       language = null
     } = options;
@@ -435,7 +436,13 @@ class DOCXExporter {
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
 
-      const doc = this.buildDocument(data, sections, { title, author, pageBreakBetweenSections });
+      // Load cover letter if requested
+      let coverLetterTemplate = null;
+      if (includeCoverLetter) {
+        coverLetterTemplate = this.loadCoverLetterTemplate();
+      }
+
+      const doc = this.buildDocument(data, sections, { title, author, includeCoverLetter, coverLetterTemplate, pageBreakBetweenSections });
       const blob = await docx.Packer.toBlob(doc);
       saveAs(blob, filename);
       return { success: true, filename };
@@ -446,11 +453,46 @@ class DOCXExporter {
   }
 
   /**
+   * Load cover letter template from selected template ID
+   */
+  loadCoverLetterTemplate() {
+    try {
+      // Try to get currently selected template from parent window
+      if (window.parent && typeof window.parent.getCoverLetterTemplate === 'function') {
+        const template = window.parent.getCoverLetterTemplate();
+        if (template) return template;
+      }
+
+      // Fallback: Load from window.PortfolioData
+      if (window.PortfolioData && window.PortfolioData.coverLetter) {
+        const data = window.PortfolioData.coverLetter;
+        // Default to first template (distributed-systems)
+        return data.templates && data.templates.length > 0 ? data.templates[0] : null;
+      }
+
+      console.warn('Cover letter template not found');
+      return null;
+    } catch (error) {
+      console.warn('Failed to load cover letter template:', error);
+      return null;
+    }
+  }
+
+  /**
    * Build docx document
    */
   buildDocument(data, sections, info) {
     const children = [];
-    const { pageBreakBetweenSections = false } = info;
+    const { includeCoverLetter = false, coverLetterTemplate = null, pageBreakBetweenSections = false } = info;
+
+    // Cover Letter (if included)
+    if (includeCoverLetter && coverLetterTemplate) {
+      children.push(...this.buildCoverLetterPage(coverLetterTemplate));
+      children.push(new docx.Paragraph({
+        text: '',
+        pageBreakBefore: true
+      }));
+    }
 
     // Header
     children.push(...this.buildHeader(info));
@@ -497,6 +539,92 @@ class DOCXExporter {
         children
       }]
     });
+  }
+
+  /**
+   * Build cover letter page for DOCX
+   * @param {Object} template - Cover letter template object
+   * @returns {Array} docx Paragraph array for cover letter
+   */
+  buildCoverLetterPage(template) {
+    const children = [];
+
+    // Greeting
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: this.getText(template.greeting),
+        size: this.toHalfPt(this.getTypography('fontSize.body'))
+      })],
+      spacing: { after: this.getSpacing('section.gap') * 20 }
+    }));
+
+    // Opening paragraph
+    const position = this.getText(template.targetRole);
+    const opening = this.getText(template.opening).replace('{position}', position);
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: opening,
+        size: this.toHalfPt(this.getTypography('fontSize.body'))
+      })],
+      alignment: docx.AlignmentType.JUSTIFIED,
+      spacing: { after: this.getSpacing('section.gap') * 20 }
+    }));
+
+    // Key points
+    const keyPoints = this.getArray(template.keyPoints);
+    keyPoints.forEach(point => {
+      const text = this.getText(point);
+      // Parse **bold** text
+      const parts = text.split(/\*\*(.+?)\*\*/g);
+      const runs = parts.map((part, index) => {
+        if (index % 2 === 1) {
+          // Odd indices are inside **...**
+          return new docx.TextRun({
+            text: part,
+            bold: true,
+            color: this.getColor('primary'),
+            size: this.toHalfPt(this.getTypography('fontSize.body'))
+          });
+        }
+        return new docx.TextRun({
+          text: part,
+          size: this.toHalfPt(this.getTypography('fontSize.body'))
+        });
+      });
+
+      children.push(new docx.Paragraph({
+        children: runs,
+        bullet: { level: 0 },
+        spacing: { after: this.getSpacing('list.itemGap') * 20 }
+      }));
+    });
+
+    // Add spacing after bullet list
+    children.push(new docx.Paragraph({
+      text: '',
+      spacing: { after: this.getSpacing('section.gap') * 10 }
+    }));
+
+    // Closing paragraph
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: this.getText(template.closing),
+        size: this.toHalfPt(this.getTypography('fontSize.body'))
+      })],
+      alignment: docx.AlignmentType.JUSTIFIED,
+      spacing: { after: this.getSpacing('section.gap') * 30 }
+    }));
+
+    // Signature
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: this.getText(template.signature),
+        size: this.toHalfPt(this.getTypography('fontSize.body'))
+      })],
+      spacing: { after: 0 }
+    }));
+
+    return children;
   }
 
   /**

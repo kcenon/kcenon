@@ -601,6 +601,7 @@ class PDFExporter {
       author = 'Dongcheol Shin',
       theme = 'professional',
       themeOverrides = {},
+      includeCoverLetter = false,
       pageBreakBetweenSections = false,
       language = null
     } = options;
@@ -616,7 +617,13 @@ class PDFExporter {
       // Load Korean font first
       await this.loadKoreanFont();
 
-      const docDefinition = this.buildDocument(data, sections, { title, author, pageBreakBetweenSections });
+      // Load cover letter if requested
+      let coverLetterTemplate = null;
+      if (includeCoverLetter) {
+        coverLetterTemplate = this.loadCoverLetterTemplate();
+      }
+
+      const docDefinition = this.buildDocument(data, sections, { title, author, includeCoverLetter, coverLetterTemplate, pageBreakBetweenSections });
 
       return new Promise((resolve, reject) => {
         const pdfDoc = pdfMake.createPdf(docDefinition);
@@ -630,11 +637,44 @@ class PDFExporter {
   }
 
   /**
+   * Load cover letter template from selected template ID
+   * Uses parent window's cover letter data if available
+   */
+  loadCoverLetterTemplate() {
+    try {
+      // Try to get currently selected template from parent window
+      if (window.parent && typeof window.parent.getCoverLetterTemplate === 'function') {
+        const template = window.parent.getCoverLetterTemplate();
+        if (template) return template;
+      }
+
+      // Fallback: Load from window.PortfolioData
+      if (window.PortfolioData && window.PortfolioData.coverLetter) {
+        const data = window.PortfolioData.coverLetter;
+        // Default to first template (distributed-systems)
+        return data.templates && data.templates.length > 0 ? data.templates[0] : null;
+      }
+
+      console.warn('Cover letter template not found');
+      return null;
+    } catch (error) {
+      console.warn('Failed to load cover letter template:', error);
+      return null;
+    }
+  }
+
+  /**
    * Build pdfmake document definition
    */
   buildDocument(data, sections, info) {
     const content = [];
-    const { pageBreakBetweenSections = false } = info;
+    const { includeCoverLetter = false, coverLetterTemplate = null, pageBreakBetweenSections = false } = info;
+
+    // Cover Letter (if included)
+    if (includeCoverLetter && coverLetterTemplate) {
+      content.push(...this.buildCoverLetterPage(coverLetterTemplate));
+      content.push({ text: '', pageBreak: 'after' }); // Page break after cover letter
+    }
 
     // Header
     content.push(this.buildHeader(info));
@@ -698,6 +738,78 @@ class PDFExporter {
       // No styles object - use inline colors only
       content
     };
+  }
+
+  /**
+   * Build cover letter page
+   * @param {Object} template - Cover letter template object
+   * @returns {Array} pdfmake content array for cover letter
+   */
+  buildCoverLetterPage(template) {
+    const lang = this.currentLang;
+    const content = [];
+
+    // Greeting
+    content.push({
+      text: this.getText(template.greeting),
+      fontSize: this.getTypography('fontSize.body'),
+      margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
+    });
+
+    // Opening paragraph (with variable substitution)
+    const position = this.getText(template.targetRole);
+    const opening = this.getText(template.opening).replace('{position}', position);
+    content.push({
+      text: opening,
+      fontSize: this.getTypography('fontSize.body'),
+      lineHeight: this.getTypography('lineHeight') * 1.1,
+      alignment: 'justify',
+      margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
+    });
+
+    // Key points
+    const keyPointsContent = [];
+    const keyPoints = this.getArray(template.keyPoints);
+    keyPoints.forEach(point => {
+      const text = this.getText(point);
+      // Convert **text** to bold
+      const parts = text.split(/\*\*(.+?)\*\*/g);
+      const formattedText = parts.map((part, index) => {
+        if (index % 2 === 1) {
+          // Odd indices are inside **...**
+          return { text: part, bold: true, color: this.getColor('primary') };
+        }
+        return part;
+      });
+
+      keyPointsContent.push({
+        text: formattedText,
+        margin: [0, 0, 0, this.getSpacing('list.itemGap') * 1.2]
+      });
+    });
+
+    content.push({
+      ul: keyPointsContent,
+      margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
+    });
+
+    // Closing paragraph
+    content.push({
+      text: this.getText(template.closing),
+      fontSize: this.getTypography('fontSize.body'),
+      lineHeight: this.getTypography('lineHeight') * 1.1,
+      alignment: 'justify',
+      margin: [0, 0, 0, this.getSpacing('section.gap') * 2]
+    });
+
+    // Signature
+    content.push({
+      text: this.getText(template.signature),
+      fontSize: this.getTypography('fontSize.body'),
+      margin: [0, 0, 0, 0]
+    });
+
+    return content;
   }
 
   /**

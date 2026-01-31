@@ -11,6 +11,7 @@ class AdminApp {
       expertise: null,
       testimonials: null
     };
+    this.coverLetterData = { templates: [] };
     this.originalData = {};
     this.currentTab = 'projects';
     this.currentSubTab = 'featured';
@@ -140,6 +141,20 @@ class AdminApp {
       this.data.testimonials = window.PortfolioData.testimonials || null;
     }
 
+    // Load cover letter templates from window.PortfolioData
+    try {
+      if (window.PortfolioData && window.PortfolioData.coverLetter) {
+        this.coverLetterData = window.PortfolioData.coverLetter;
+        console.log('Cover letter data loaded:', this.coverLetterData.templates.length, 'templates');
+      } else {
+        console.warn('window.PortfolioData.coverLetter not found');
+        this.coverLetterData = { templates: [] };
+      }
+    } catch (error) {
+      console.error('Failed to load cover letter data:', error);
+      this.coverLetterData = { templates: [] };
+    }
+
     // Deep clone for comparison
     this.originalData = JSON.parse(JSON.stringify(this.data));
   }
@@ -236,6 +251,12 @@ class AdminApp {
       // Preview toggle button
       if (e.target.closest('#btn-toggle-preview')) {
         this.togglePreview();
+        return;
+      }
+
+      // Set default cover letter template button
+      if (e.target.closest('#btn-set-default-template')) {
+        this.setDefaultCoverLetterTemplate();
         return;
       }
 
@@ -401,6 +422,24 @@ class AdminApp {
     } else if (tab === 'testimonials') {
       subTabsContainer.style.display = 'flex';
       this.currentSubTab = 'featured';
+    } else if (tab === 'cover-letter') {
+      subTabsContainer.style.display = 'none';
+      this.currentSubTab = null;
+      // Auto-select first template or saved template
+      const savedTemplateId = localStorage.getItem('cover-letter-template-id');
+      const templates = this.coverLetterData?.templates || [];
+      console.log('Cover Letter tab:', {
+        savedTemplateId,
+        templatesCount: templates.length,
+        templateIds: templates.map(t => t.id)
+      });
+      if (savedTemplateId && templates.find(t => t.id === savedTemplateId)) {
+        this.selectedItem = savedTemplateId;
+        console.log('Selected saved template:', savedTemplateId);
+      } else if (templates.length > 0) {
+        this.selectedItem = templates[0].id;
+        console.log('Selected first template:', templates[0].id);
+      }
     } else {
       subTabsContainer.style.display = 'none';
       this.currentSubTab = null;
@@ -495,6 +534,8 @@ class AdminApp {
           return this.data.testimonials?.featured ? [this.data.testimonials.featured] : [];
         }
         return this.data.testimonials?.testimonials || [];
+      case 'cover-letter':
+        return this.coverLetterData?.templates || [];
       default:
         return [];
     }
@@ -506,7 +547,12 @@ class AdminApp {
   renderList() {
     const container = document.getElementById('list-panel');
     const items = this.getCurrentItems();
-    container.innerHTML = AdminComponents.renderItemList(items, this.currentTab, this.selectedItem);
+
+    if (this.currentTab === 'cover-letter') {
+      container.innerHTML = this.renderCoverLetterList(items);
+    } else {
+      container.innerHTML = AdminComponents.renderItemList(items, this.currentTab, this.selectedItem);
+    }
   }
 
   /**
@@ -521,47 +567,65 @@ class AdminApp {
     }
 
     let formHtml = '';
-    const item = this.isNewItem ? {} : this.findItem(this.selectedItem);
+    let item = null;
 
-    switch (this.currentTab) {
-      case 'projects':
-        formHtml = AdminComponents.renderProjectForm(item, this.currentSubTab);
-        break;
-      case 'manager':
-        if (this.currentSubTab === 'pmCapabilities') {
-          formHtml = AdminComponents.renderPMCapabilityForm(item);
-        } else if (this.currentSubTab === 'leadershipStyle') {
-          formHtml = AdminComponents.renderLeadershipStyleForm(item);
-        } else if (this.currentSubTab === 'businessImpact') {
-          formHtml = AdminComponents.renderBusinessImpactForm(item);
-        } else if (this.currentSubTab === 'softSkills') {
-          formHtml = AdminComponents.renderSoftSkillForm(item);
-        } else if (this.currentSubTab === 'managementProjects') {
-          formHtml = AdminComponents.renderManagementProjectForm(item);
-        }
-        break;
-      case 'career':
-        formHtml = AdminComponents.renderCareerForm(item);
-        break;
-      case 'expertise':
-        if (this.currentSubTab === 'categories') {
-          formHtml = AdminComponents.renderExpertiseCategoryForm(item);
-        } else if (this.currentSubTab === 'certifications') {
-          formHtml = AdminComponents.renderCertificationForm(item);
-        } else {
-          formHtml = AdminComponents.renderLifecycleForm(item);
-        }
-        break;
-      case 'testimonials':
-        if (this.currentSubTab === 'featured') {
-          formHtml = AdminComponents.renderFeaturedTestimonialForm(item);
-        } else {
-          formHtml = AdminComponents.renderTestimonialForm(item);
-        }
-        break;
+    // Special handling for cover-letter tab
+    if (this.currentTab === 'cover-letter') {
+      const templates = this.coverLetterData?.templates || [];
+      item = templates.find(t => t.id === this.selectedItem);
+
+      if (!item) {
+        console.error('Cover letter template not found:', this.selectedItem);
+        container.innerHTML = '<div class="empty-state"><p>Template not found</p></div>';
+        return;
+      }
+
+      formHtml = this.renderCoverLetterPreview(item);
+    } else {
+      item = this.isNewItem ? {} : this.findItem(this.selectedItem);
+
+      switch (this.currentTab) {
+        case 'projects':
+          formHtml = AdminComponents.renderProjectForm(item, this.currentSubTab);
+          break;
+        case 'manager':
+          if (this.currentSubTab === 'pmCapabilities') {
+            formHtml = AdminComponents.renderPMCapabilityForm(item);
+          } else if (this.currentSubTab === 'leadershipStyle') {
+            formHtml = AdminComponents.renderLeadershipStyleForm(item);
+          } else if (this.currentSubTab === 'businessImpact') {
+            formHtml = AdminComponents.renderBusinessImpactForm(item);
+          } else if (this.currentSubTab === 'softSkills') {
+            formHtml = AdminComponents.renderSoftSkillForm(item);
+          } else if (this.currentSubTab === 'managementProjects') {
+            formHtml = AdminComponents.renderManagementProjectForm(item);
+          }
+          break;
+        case 'career':
+          formHtml = AdminComponents.renderCareerForm(item);
+          break;
+        case 'expertise':
+          if (this.currentSubTab === 'categories') {
+            formHtml = AdminComponents.renderExpertiseCategoryForm(item);
+          } else if (this.currentSubTab === 'certifications') {
+            formHtml = AdminComponents.renderCertificationForm(item);
+          } else {
+            formHtml = AdminComponents.renderLifecycleForm(item);
+          }
+          break;
+        case 'testimonials':
+          if (this.currentSubTab === 'featured') {
+            formHtml = AdminComponents.renderFeaturedTestimonialForm(item);
+          } else {
+            formHtml = AdminComponents.renderTestimonialForm(item);
+          }
+          break;
+      }
     }
 
-    container.innerHTML = AdminComponents.renderEditorPanelWithPreview(formHtml, this.isNewItem, this.previewActive);
+    container.innerHTML = this.currentTab === 'cover-letter'
+      ? formHtml
+      : AdminComponents.renderEditorPanelWithPreview(formHtml, this.isNewItem, this.previewActive);
 
     // Update preview if active
     if (this.previewActive) {
@@ -1254,6 +1318,162 @@ class AdminApp {
   }
 
   /**
+   * Render cover letter template list
+   */
+  renderCoverLetterList(templates) {
+    const selectedTemplateId = localStorage.getItem('cover-letter-template-id') || 'distributed-systems';
+    const currentLang = this.currentLang;
+
+    const listHtml = templates.map(template => {
+      const id = template.id;
+      const title = FormFields.getText(template.targetRole);
+      const isSelected = id === selectedTemplateId;
+      const isActive = this.selectedItem === id;
+
+      return `
+        <div class="item-list-item ${isActive ? 'active' : ''}" data-id="${id}">
+          <div class="item-content">
+            <div class="item-title">
+              ${FormFields.escapeHtml(title)}
+              ${isSelected ? '<span class="badge badge-primary" style="margin-left: 8px; font-size: 0.75rem;">Selected for Export</span>' : ''}
+            </div>
+            <div class="item-subtitle">${id}</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-icon btn-edit" data-id="${id}" title="View/Edit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="list-header">
+        <h3>Cover Letter Templates</h3>
+        <p class="list-description">Select a template to preview and set as default for export</p>
+      </div>
+      <div class="item-list">
+        ${listHtml}
+      </div>
+    `;
+  }
+
+  /**
+   * Render cover letter preview/editor
+   */
+  renderCoverLetterPreview(template) {
+    if (!template) {
+      console.error('renderCoverLetterPreview: template is null or undefined');
+      return '<div class="empty-state"><p>No template selected</p></div>';
+    }
+
+    const currentLang = this.currentLang;
+    const selectedTemplateId = localStorage.getItem('cover-letter-template-id') || 'distributed-systems';
+    const isSelectedForExport = template.id === selectedTemplateId;
+
+    // Extract text values based on current language
+    const targetRole = FormFields.getText(template.targetRole);
+    const greeting = FormFields.getText(template.greeting);
+    const opening = FormFields.getText(template.opening);
+    const keyPoints = template.keyPoints ? template.keyPoints.map(kp => FormFields.getText(kp)) : [];
+    const closing = FormFields.getText(template.closing);
+    const signature = FormFields.getText(template.signature);
+
+    // Convert markdown **bold** to HTML
+    const formatText = (text) => {
+      if (!text) return '';
+      return FormFields.escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    };
+
+    return `
+      <div class="cover-letter-preview">
+        <div class="preview-header">
+          <h2>${FormFields.escapeHtml(targetRole)}</h2>
+          <div class="preview-actions">
+            ${!isSelectedForExport ? `
+              <button type="button" class="btn btn-primary" id="btn-set-default-template">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Set as Default for Export
+              </button>
+            ` : `
+              <div class="badge badge-success" style="font-size: 0.875rem; padding: 8px 16px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 4px;">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Default Template for Export
+              </div>
+            `}
+          </div>
+        </div>
+
+        <div class="cover-letter-content">
+          <div class="letter-section">
+            <div class="letter-greeting">${formatText(greeting)}</div>
+          </div>
+
+          <div class="letter-section">
+            <div class="letter-opening">${formatText(opening)}</div>
+          </div>
+
+          <div class="letter-section">
+            <div class="letter-subtitle">Key Qualifications & Achievements</div>
+            <ul class="key-points">
+              ${keyPoints.map(point => `<li>${formatText(point)}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="letter-section">
+            <div class="letter-closing">${formatText(closing)}</div>
+          </div>
+
+          <div class="letter-section">
+            <div class="letter-signature">${formatText(signature)}</div>
+          </div>
+        </div>
+
+        <div class="preview-footer">
+          <div class="info-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <div>
+              <strong>Note:</strong> This template will be included as the first page when you export the portfolio with "Include cover letter" option enabled.
+              <br>
+              Template editing functionality will be added in a future update.
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Set default cover letter template for export
+   */
+  setDefaultCoverLetterTemplate() {
+    if (this.currentTab !== 'cover-letter' || !this.selectedItem) {
+      return;
+    }
+
+    // Save selected template ID to localStorage
+    localStorage.setItem('cover-letter-template-id', this.selectedItem);
+
+    // Re-render list and editor to update UI
+    this.renderList();
+    this.renderEditor();
+
+    this.showToast('Cover letter template set as default for export', 'success');
+  }
+
+  /**
    * Main render function
    */
   render() {
@@ -1612,6 +1832,15 @@ class AdminApp {
                 <div id="section-order-container"></div>
               </div>
 
+              <div class="form-group cover-letter-option">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="include-cover-letter" ${this.getSavedCoverLetterOption() ? 'checked' : ''}>
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Include cover letter as first page</span>
+                </label>
+                <p class="form-hint">Add selected cover letter template as the first page of the exported document</p>
+              </div>
+
               <div class="form-group page-break-option">
                 <label class="checkbox-label">
                   <input type="checkbox" id="page-break-sections" ${this.getSavedPageBreakOption() ? 'checked' : ''}>
@@ -1698,11 +1927,13 @@ class AdminApp {
         ? this.sectionOrderManager.getOrderedSections()
         : ['expertise', 'projects', 'manager', 'career', 'testimonials'];
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
+      const includeCoverLetter = modalEl.querySelector('#include-cover-letter')?.checked || false;
       const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
 
       // Save preferences
       this.saveExportTheme(theme);
       this.saveExportLanguage(language);
+      this.saveCoverLetterOption(includeCoverLetter);
       this.savePageBreakOption(pageBreakBetweenSections);
       this.saveExportPreferences();
 
@@ -1719,6 +1950,7 @@ class AdminApp {
         author: fileInfo.author,
         theme,
         themeOverrides: this.buildExportOverrides(),
+        includeCoverLetter,
         pageBreakBetweenSections,
         language
       };
@@ -2187,6 +2419,22 @@ class AdminApp {
     if (!hasOverrides) return null;
 
     return JSON.parse(JSON.stringify(this.customOverrides));
+  }
+
+  /**
+   * Get saved cover letter option from localStorage
+   * @returns {boolean} Whether cover letter is included
+   */
+  getSavedCoverLetterOption() {
+    return localStorage.getItem('export-include-cover-letter') === 'true';
+  }
+
+  /**
+   * Save cover letter option to localStorage
+   * @param {boolean} enabled - Whether cover letter is included
+   */
+  saveCoverLetterOption(enabled) {
+    localStorage.setItem('export-include-cover-letter', enabled.toString());
   }
 
   /**
