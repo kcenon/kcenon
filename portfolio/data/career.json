@@ -16,13 +16,9 @@
         "ko": "AI를 통한 음악 작곡 자동화 시스템 개발 스타트업",
         "en": "Startup developing AI-powered music composition automation systems"
       },
-      "description": {
-        "ko": "오디오 렌더링 SaaS 플랫폼의 <strong>분산 시스템 아키텍처</strong> 설계 총괄. C++, Rust, Go, Python <strong>10+ 마이크로서비스</strong> 오케스트레이션. <strong>RabbitMQ 클러스터</strong> 기반 메시지 큐, <strong>Redis Sentinel</strong> 고가용성 캐시 설계. Zero-downtime 배포가 가능한 CI/CD 파이프라인 구축으로 <strong>Daily Release</strong> 체계 확립.",
-        "en": "Led <strong>distributed system architecture</strong> design for audio rendering SaaS platform. Orchestrated <strong>10+ microservices</strong> in C++, Rust, Go, Python. Designed <strong>RabbitMQ cluster</strong>-based message queue and <strong>Redis Sentinel</strong> high-availability cache. Established <strong>Daily Release</strong> cycle with zero-downtime deployment CI/CD pipeline."
-      },
       "responsibilities": {
-        "ko": "오디오 렌더링 SaaS Architecture 설계, 폴리글랏으로 설계된 서비스 오케스트레이션 및 CI/CD 구성",
-        "en": "Audio rendering SaaS Architecture design, polyglot service orchestration and CI/CD configuration"
+        "ko": "오디오 렌더링 SaaS 분산 시스템 아키텍처 설계, 10+ 마이크로서비스 오케스트레이션, 메시징/캐시/관측성, CI/CD(무중단) 구축",
+        "en": "Designed distributed architecture for an audio rendering SaaS, orchestrated 10+ microservices, and built messaging/caching/observability with zero-downtime CI/CD"
       },
       "scale": {
         "company": {
@@ -50,21 +46,11 @@
         "AWS",
         "AI/ML Pipeline"
       ],
-      "highlight": true,
-      "distributedAchievements": {
-        "ko": [
-          "마이크로서비스 10+ 개 오케스트레이션",
-          "RabbitMQ 클러스터 구성 및 메시지 라우팅 설계",
-          "Redis Sentinel 기반 고가용성 캐시 레이어",
-          "분산 트레이싱 (OpenTelemetry) 도입"
-        ],
-        "en": [
-          "Orchestration of 10+ microservices",
-          "RabbitMQ cluster configuration and message routing design",
-          "Redis Sentinel-based high-availability cache layer",
-          "Distributed tracing (OpenTelemetry) implementation"
-        ]
-      }
+      "relatedProjects": [
+        "prs-server",
+        "ars-system"
+      ],
+      "highlight": true
     },
     {
       "id": "purplechips",
@@ -73,8 +59,8 @@
         "en": "Purplechips (POSTECH)"
       },
       "period": {
-        "ko": "2022.03 - 2022.10",
-        "en": "2022.03 - 2022.10"
+        "ko": "2022.03 - 2022.10 (8개월)",
+        "en": "2022.03 - 2022.10 (8 months)"
       },
       "role": {
         "ko": "리드 프로그래머",
@@ -83,10 +69,6 @@
       "companyDescription": {
         "ko": "POSTECH과 POSCO의 합작 벤처로 기획된 AI 기반 EDA 스타트업",
         "en": "AI-based EDA startup planned as a joint venture between POSTECH and POSCO"
-      },
-      "description": {
-        "ko": "<strong>POSTECH</strong>과 <strong>POSCO</strong>의 합작 벤처로 기획된 AI 기반 EDA 스타트업. 딥러닝 기반 반도체 설계 자동화 솔루션 개발 프로젝트에서 리드 프로그래머로 참여하여 AI 작업 서빙 시스템 아키텍처 설계.",
-        "en": "AI-based EDA startup planned as a joint venture between <strong>POSTECH</strong> and <strong>POSCO</strong>. Participated as lead programmer in deep learning-based semiconductor design automation solution, designing AI job serving system architecture."
       },
       "responsibilities": {
         "ko": "AI 작업에 대한 서빙 시스템 Architecture 설계/구현",
@@ -119,6 +101,9 @@
         "System Architecture",
         "ISO 26262"
       ],
+      "relatedProjects": [
+        "eda-ai-server"
+      ],
       "highlight": false
     },
     {
@@ -136,10 +121,6 @@
       "companyDescription": {
         "ko": "삼성전자 의료사업부 자회사에서 분사한 치과 의료영상 시스템 전문 기업",
         "en": "Dental medical imaging company spun off from Samsung Electronics Medical Division"
-      },
-      "description": {
-        "ko": "<strong>삼성전자 의료사업부 자회사</strong>에서 분사한 치과 의료영상 시스템 전문 기업에서 <strong>12년간</strong> 핵심 개발자로 근무. PACS 서버, DICOM 뷰어, 2D 교정 시뮬레이션, 모달리티 장비 제어 시스템을 직접 설계하고 개발.",
-        "en": "Worked as core developer for <strong>12 years</strong> at a dental medical imaging company spun off from <strong>Samsung Electronics Medical Division</strong>. Directly designed and developed PACS server, DICOM viewer, 2D orthodontic simulation, and modality equipment control systems."
       },
       "responsibilities": {
         "ko": "PACS, DICOM 뷰어, 영상 획득 장비 제어, 영상 관리/전송 서버 Architecture 설계/구현",
@@ -159,26 +140,6 @@
         "ko": "새로운 분야에 대한 도전",
         "en": "Seeking new challenges in different domains"
       },
-      "achievements": {
-        "ko": [
-          "<strong>C++</strong>이 백그라운드에서 무거운 영상 처리를 담당하고, <strong>.NET</strong>이 시각화를 담당하는 마이크로서비스 구조로 전환",
-          "실시간 압축/직렬화로 100Mbps 네트워크에서 이론값(12.5MB/s)을 초과하는 <strong>15 MB/s</strong> 실효 전송량 달성",
-          "레이턴시 <strong>50→25ms</strong> (50% 감소)",
-          "<strong>IEC 62304 Class B/C</strong> 소프트웨어 개발 프로세스 수립 및 전사 적용",
-          "FDA 510(k), CE, KFDA 인증 심사 대응 기술 문서 <strong>직접 작성 및 심사관 Q&A 대응</strong>",
-          "SQA 팀과 협업하여 <strong>V&V 프로세스</strong> 정립 및 자동화 도구 개발",
-          "<strong>CE, FDA, KFDA, CCC</strong> 전 글로벌 인증 프로세스 참여 및 획득"
-        ],
-        "en": [
-          "Migrated to microservices: <strong>C++</strong> handles heavy image processing in background, <strong>.NET</strong> handles visualization",
-          "Achieved <strong>15 MB/s</strong> effective throughput on 100Mbps network (exceeds theoretical 12.5MB/s) via real-time compression/serialization",
-          "Latency reduction <strong>50→25ms</strong> (50% decrease)",
-          "Established <strong>IEC 62304 Class B/C</strong> software development process and company-wide deployment",
-          "Authored FDA 510(k), CE, KFDA certification technical documents <strong>directly and handled auditor Q&A</strong>",
-          "Collaborated with SQA team to establish <strong>V&V process</strong> and develop automation tools",
-          "Participated in and obtained <strong>CE, FDA, KFDA, CCC</strong> all global certifications"
-        ]
-      },
       "tags": [
         "C++",
         "C#",
@@ -189,43 +150,18 @@
         "IEC 62304",
         "ISO 14971"
       ],
-      "highlight": true,
-      "regulatoryDocumentation": {
-        "ko": [
-          "SRS (소프트웨어 요구사항 명세서) - 10+ 프로젝트",
-          "SDS (소프트웨어 설계 명세서) - 10+ 프로젝트",
-          "소프트웨어 아키텍처 문서",
-          "위험 분석 문서 (ISO 14971 / FMEA)",
-          "추적성 매트릭스 (요구사항 ↔ 설계 ↔ 테스트)",
-          "단위/통합 테스트 명세서 및 결과 보고서",
-          "SOUP (미확인 출처 소프트웨어) 분석 문서",
-          "FDA 510(k) Submission Package 기술 섹션"
-        ],
-        "en": [
-          "SRS (Software Requirements Specification) - 10+ projects",
-          "SDS (Software Design Specification) - 10+ projects",
-          "Software Architecture Documents",
-          "Risk Analysis Documents (ISO 14971 / FMEA)",
-          "Traceability Matrix (Requirements ↔ Design ↔ Test)",
-          "Unit/Integration Test Specifications and Result Reports",
-          "SOUP (Software of Unknown Provenance) Analysis Documents",
-          "FDA 510(k) Submission Package Technical Sections"
-        ]
-      },
-      "zeroToOneProjects": {
-        "ko": [
-          "SMARTDent v3 마이크로서비스 아키텍처 (기존 모놀리식에서 완전 재설계)",
-          "Database Gateway 시스템 (신규 구축)",
-          "고속 파일 전송 시스템 (신규 구축)",
-          "Intraoral Sensor SDK 및 TWAIN 드라이버 (신규 구축)"
-        ],
-        "en": [
-          "SMARTDent v3 microservices architecture (complete redesign from monolithic)",
-          "Database Gateway system (built from scratch)",
-          "High-speed file transfer system (built from scratch)",
-          "Intraoral Sensor SDK and TWAIN driver (built from scratch)"
-        ]
-      }
+      "relatedProjects": [
+        "smartdent-v3",
+        "samsung-ct",
+        "alpha-project",
+        "dicom-visualization",
+        "3d-visualization",
+        "automation-alignment",
+        "intraoral-sensor-sdk",
+        "3d-printer",
+        "high-speed-download"
+      ],
+      "highlight": true
     },
     {
       "id": "tilon",
@@ -234,8 +170,8 @@
         "en": "Tilon Co., Ltd."
       },
       "period": {
-        "ko": "2009.07 - 2009.12",
-        "en": "2009.07 - 2009.12"
+        "ko": "2009.07 - 2009.12 (6개월)",
+        "en": "2009.07 - 2009.12 (6 months)"
       },
       "role": {
         "ko": "시니어 프로그래머",
@@ -256,15 +192,14 @@
         }
       },
       "leaveReason": {
-        "ko": "사업 아이템을 제공한 POSTECH 교수(CTO)가 에이디테크놀로지(ADT)와 진행한 PoC 실패 이후 사업 철수 선언",
-        "en": "POSTECH professor (CTO) declared business withdrawal after PoC failure with AD Technology (ADT)"
+        "ko": "경영진 간 비전 차이로 안정적인 개발 환경 확보가 어려워 새로운 기회 모색",
+        "en": "Sought new opportunities due to leadership alignment challenges affecting development environment stability"
       },
       "tags": [
-        "Python",
-        "Deep Learning",
-        "EDA",
-        "AI/ML",
-        "System Architecture"
+        "C++",
+        "Windows Driver",
+        "Virtualization",
+        "System Programming"
       ],
       "highlight": false
     },
@@ -304,6 +239,9 @@
         "CBCT",
         "CE/FDA/KFDA"
       ],
+      "relatedProjects": [
+        "sherpa"
+      ],
       "highlight": false
     },
     {
@@ -321,10 +259,6 @@
       "companyDescription": {
         "ko": "치과용 X-ray 및 CBCT 의료영상 장비 전문 기업",
         "en": "Company specializing in dental X-ray and CBCT medical imaging equipment"
-      },
-      "description": {
-        "ko": "치과용 X-ray 및 CBCT 의료영상 장비 전문 기업에서 소프트웨어 개발자로 경력 시작. <strong>DICOM 뷰어, 모달리티 장비 제어 시스템</strong>을 직접 설계하고 개발하며 <strong>2D 교정 시뮬레이션</strong> 개발에 참여. <strong>CE, FDA, KFDA</strong> 글로벌 인증 획득에 기여. 첫 번째 <strong>IPO 경험</strong>으로 벤처기업의 성장 과정을 직접 체험.",
-        "en": "Started career as software developer at a company specializing in dental X-ray and CBCT medical imaging equipment. Directly designed and developed <strong>DICOM viewer and modality equipment control systems</strong>, participated in <strong>2D orthodontic simulation</strong> development. Contributed to obtaining <strong>CE, FDA, KFDA</strong> global certifications. First <strong>IPO experience</strong>, witnessing venture company growth firsthand."
       },
       "scale": {
         "company": {
@@ -346,6 +280,12 @@
         "X-ray",
         "CBCT",
         "CE/FDA/KFDA"
+      ],
+      "relatedProjects": [
+        "implagraphy",
+        "ezceph",
+        "orthovision",
+        "easydent"
       ],
       "highlight": false
     },

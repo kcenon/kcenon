@@ -350,9 +350,22 @@ function getLanguage() {
     return currentLang;
 }
 
-// Initialize language
+// Initialize language and wait for data
 document.addEventListener('DOMContentLoaded', () => {
-    setLanguage(currentLang);
+    // Initialize when portfolio data is ready
+    function initWhenReady() {
+        if (window.PortfolioData && window.PortfolioData.projects) {
+            // Data is already loaded
+            setLanguage(currentLang);
+        } else {
+            // Wait for data to load
+            window.addEventListener('portfolioDataReady', () => {
+                setLanguage(currentLang);
+            }, { once: true });
+        }
+    }
+
+    initWhenReady();
 
     // Language toggle event
     const langToggle = document.querySelector('.lang-toggle');

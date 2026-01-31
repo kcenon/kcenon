@@ -3,169 +3,354 @@
     {
       "id": "medical",
       "icon": "hospital",
-      "title": { "ko": "의료 시스템", "en": "Medical Systems" },
-      "items": [
-        { "ko": "PACS (의료영상 저장전송 시스템)", "en": "PACS (Picture Archiving & Communication System)" },
-        { "ko": "DICOM 표준 구현", "en": "DICOM Standard Implementation" },
-        { "ko": "3D 볼륨 렌더링 & MPR", "en": "3D Volume Rendering & MPR" },
-        { "ko": "모달리티 장비 제어", "en": "Modality Equipment Control" },
-        { "ko": "HIS/RIS 연동 (HL7, FHIR)", "en": "HIS/RIS Integration (HL7, FHIR)" },
-        { "ko": "교정 시뮬레이션", "en": "Orthodontic Simulation" }
-      ]
+      "title": {
+        "ko": "의료 시스템",
+        "en": "Medical Systems"
+      },
+      "items": {
+        "ko": [
+          "PACS (의료영상 저장전송 시스템)",
+          "DICOM 표준 구현",
+          "3D 볼륨 렌더링 & MPR",
+          "모달리티 장비 제어",
+          "HIS/RIS Integration (HL7, FHIR)",
+          "교정 시뮬레이션"
+        ],
+        "en": [
+          "PACS (Picture Archiving & Communication System)",
+          "DICOM Standard Implementation",
+          "3D Volume Rendering & MPR",
+          "Modality Equipment Control",
+          "HIS/RIS Integration (HL7, FHIR)",
+          "Orthodontic Simulation"
+        ]
+      }
     },
     {
       "id": "regulatory",
       "icon": "clipboard",
-      "title": { "ko": "규제 & 컴플라이언스", "en": "Regulatory & Compliance" },
-      "items": [
-        { "ko": "ISO 13485 (의료기기 품질경영시스템)", "en": "ISO 13485 (Medical Device QMS)" },
-        { "ko": "IEC 62304 (의료기기 SW 생명주기)", "en": "IEC 62304 (Medical Device SW Lifecycle)" },
-        { "ko": "FDA 510(k) / KFDA (식약처)", "en": "FDA 510(k) / KFDA (Korea FDA)" },
-        { "ko": "CE Marking (유럽) / CCC (중국)", "en": "CE Marking (EU) / CCC (China)" },
-        { "ko": "<strong>HIPAA Controls</strong> (PHI 보안, 감사 로깅)", "en": "<strong>HIPAA Controls</strong> (PHI security, audit logging)" },
-        { "ko": "소프트웨어 위험 관리 (ISO 14971)", "en": "Software Risk Management (ISO 14971)" },
-        { "ko": "설계 통제 문서화 (Design Control)", "en": "Design Control Documentation" }
-      ]
+      "title": {
+        "ko": "규제 & 컴플라이언스",
+        "en": "Regulatory & Compliance"
+      },
+      "items": {
+        "ko": [
+          "ISO 13485 (의료기기 품질경영시스템)",
+          "IEC 62304 (의료기기 SW 생명주기)",
+          "FDA 510(k) / KFDA (식약처)",
+          "CE Marking (유럽) / CCC (중국)",
+          "<strong>HIPAA Controls</strong> (PHI 보안, 감사 로깅)",
+          "소프트웨어 위험 관리 (ISO 14971)",
+          "설계 통제 문서화 (Design Control)"
+        ],
+        "en": [
+          "ISO 13485 (Medical Device QMS)",
+          "IEC 62304 (Medical Device SW Lifecycle)",
+          "FDA 510(k) / KFDA (Korea FDA)",
+          "CE Marking (EU) / CCC (China)",
+          "<strong>HIPAA Controls</strong> (PHI security, audit logging)",
+          "Software Risk Management (ISO 14971)",
+          "Design Control Documentation"
+        ]
+      }
     },
     {
       "id": "documentation",
       "icon": "file-text",
-      "title": { "ko": "규제 문서 작성", "en": "Regulatory Documentation" },
-      "items": [
-        { "ko": "SRS (소프트웨어 요구사항 명세서)", "en": "SRS (Software Requirements Specification)" },
-        { "ko": "SDS (소프트웨어 설계 명세서)", "en": "SDS (Software Design Specification)" },
-        { "ko": "소프트웨어 아키텍처 문서", "en": "Software Architecture Document" },
-        { "ko": "위험 분석 (ISO 14971 / FMEA)", "en": "Risk Analysis (ISO 14971 / FMEA)" },
-        { "ko": "추적성 매트릭스 (요구사항 ↔ 설계 ↔ 테스트)", "en": "Traceability Matrix (Requirements ↔ Design ↔ Test)" },
-        { "ko": "검증 & 유효성 확인(V&V) 프로토콜/리포트", "en": "Verification & Validation (V&V) protocols/reports" },
-        { "ko": "단위/통합 테스트 명세서", "en": "Unit/Integration Test Specification" },
-        { "ko": "SOUP 분석 (미확인 출처 소프트웨어)", "en": "SOUP (Software of Unknown Provenance) Analysis" },
-        { "ko": "릴리즈 노트 & 변경 이력", "en": "Release notes & change history" }
-      ]
+      "title": {
+        "ko": "규제 문서 작성",
+        "en": "Regulatory Documentation"
+      },
+      "items": {
+        "ko": [
+          "SRS (소프트웨어 요구사항 명세서)",
+          "SDS (소프트웨어 설계 명세서)",
+          "소프트웨어 아키텍처 문서",
+          "위험 분석 (ISO 14971 / FMEA)",
+          "추적성 매트릭스 (요구사항 ↔ 설계 ↔ 테스트)",
+          "검증 & 유효성 확인(V&V) 프로토콜/리포트",
+          "단위/통합 테스트 명세서",
+          "SOUP 분석 (미확인 출처 소프트웨어)",
+          "릴리즈 노트 & 변경 이력"
+        ],
+        "en": [
+          "SRS (Software Requirements Specification)",
+          "SDS (Software Design Specification)",
+          "Software Architecture Documents",
+          "Risk Analysis (ISO 14971 / FMEA)",
+          "Traceability Matrix (Requirements ↔ Design ↔ Test)",
+          "Verification & Validation (V&V) protocols/reports",
+          "Unit/Integration Test Specifications",
+          "SOUP (Software of Unknown Provenance) analysis",
+          "Release notes & change history"
+        ]
+      }
     },
     {
       "id": "distributed",
       "icon": "git-branch",
-      "title": { "ko": "분산 시스템", "en": "Distributed Systems" },
-      "items": [
-        { "ko": "서비스 디스커버리 & 로드 밸런싱", "en": "Service Discovery & Load Balancing" },
-        { "ko": "메시지 큐 (RabbitMQ, 자체 구현)", "en": "Message Queue (RabbitMQ, Custom Implementation)" },
-        { "ko": "이벤트 기반 아키텍처 / CQRS", "en": "Event-Driven Architecture / CQRS" },
-        { "ko": "데이터베이스 샤딩 & 복제", "en": "Database Sharding & Replication" },
-        { "ko": "분산 트랜잭션 (Saga 패턴)", "en": "Distributed Transaction (Saga Pattern)" },
-        { "ko": "서킷 브레이커 & 재시도 패턴", "en": "Circuit Breaker & Retry Pattern" },
-        { "ko": "최종 일관성 & 충돌 해결", "en": "Eventual Consistency & Conflict Resolution" },
-        { "ko": "무중단 배포 (Blue-Green, Canary)", "en": "Zero-Downtime Deployment (Blue-Green, Canary)" }
-      ]
+      "title": {
+        "ko": "분산 시스템",
+        "en": "Distributed Systems"
+      },
+      "items": {
+        "ko": [
+          "서비스 디스커버리 & 로드 밸런싱",
+          "메시지 큐 (RabbitMQ, 자체 구현)",
+          "이벤트 기반 아키텍처 / CQRS",
+          "데이터베이스 샤딩 & 복제",
+          "분산 트랜잭션 (Saga 패턴)",
+          "서킷 브레이커 & 재시도 패턴",
+          "최종 일관성 & 충돌 해결",
+          "무중단 배포 (Blue-Green, Canary)"
+        ],
+        "en": [
+          "Service discovery & load balancing",
+          "Message queues (RabbitMQ, custom implementation)",
+          "Event-driven architecture / CQRS",
+          "Database sharding & replication",
+          "Distributed transactions (Saga pattern)",
+          "Circuit breaker & retry patterns",
+          "Eventual consistency & conflict resolution",
+          "Zero-downtime deployment (Blue-Green, Canary)"
+        ]
+      }
     },
     {
       "id": "cloud",
       "icon": "cloud",
-      "title": { "ko": "클라우드 & DevOps", "en": "Cloud & DevOps" },
-      "items": [
-        { "ko": "AWS 기반 서비스 설계 및 운영", "en": "AWS-based service architecture & operations" },
-        { "ko": "Docker 기반 컨테이너 배포", "en": "Containerized deployment with Docker" },
-        { "ko": "CI/CD (Daily Release)", "en": "CI/CD (Daily Release)" },
-        { "ko": "관측성 (OpenTelemetry, tracing/metrics/logging)", "en": "Observability (OpenTelemetry, tracing/metrics/logging)" },
-        { "ko": "모니터링 & 알림", "en": "Monitoring & alerting" }
-      ]
+      "title": {
+        "ko": "클라우드 & DevOps",
+        "en": "Cloud & DevOps"
+      },
+      "items": {
+        "ko": [
+          "AWS 기반 서비스 설계 및 운영",
+          "Docker 기반 컨테이너 배포",
+          "CI/CD (Daily Release)",
+          "관측성 (OpenTelemetry, tracing/metrics/logging)",
+          "모니터링 & 알림"
+        ],
+        "en": [
+          "AWS-based service architecture & operations",
+          "Containerized deployment with Docker",
+          "CI/CD (Daily Release)",
+          "Observability (OpenTelemetry, tracing/metrics/logging)",
+          "Monitoring & alerting"
+        ]
+      }
     },
     {
       "id": "security",
       "icon": "shield",
-      "title": { "ko": "보안 & 개인정보", "en": "Security & Privacy" },
-      "items": [
-        { "ko": "PHI/PII 암호화 (전송/저장)", "en": "PHI/PII encryption (in transit/at rest)" },
-        { "ko": "감사 로그(Audit Logging) 설계", "en": "Audit logging design" },
-        { "ko": "접근 통제 및 권한 모델", "en": "Access control & authorization model" },
-        { "ko": "시크릿/키 관리 (운영 관점)", "en": "Secrets/keys handling (operational)" },
-        { "ko": "HIPAA 기술적 보호조치 적용 경험", "en": "HIPAA safeguard implementation experience" }
-      ]
+      "title": {
+        "ko": "보안 & 개인정보",
+        "en": "Security & Privacy"
+      },
+      "items": {
+        "ko": [
+          "PHI/PII 암호화 (전송/저장)",
+          "감사 로그(Audit Logging) 설계",
+          "접근 통제 및 권한 모델",
+          "시크릿/키 관리 (운영 관점)",
+          "HIPAA 기술적 보호조치 적용 경험"
+        ],
+        "en": [
+          "PHI/PII encryption (in transit/at rest)",
+          "Audit logging design",
+          "Access control & authorization model",
+          "Secrets/keys handling (operational)",
+          "HIPAA safeguard implementation experience"
+        ]
+      }
     },
     {
       "id": "performance",
       "icon": "zap",
-      "title": { "ko": "고성능 시스템", "en": "High Performance Systems" },
-      "items": [
-        { "ko": "Lock-free 자료구조", "en": "Lock-free Data Structures" },
-        { "ko": "SIMD 최적화", "en": "SIMD Optimization" },
-        { "ko": "비동기 I/O & 이벤트 기반 아키텍처", "en": "Async I/O & Event-driven Architecture" },
-        { "ko": "메모리 효율적 설계", "en": "Memory-efficient Design" },
-        { "ko": "마이크로초 단위 저지연 시스템", "en": "Microsecond-level low-latency systems" },
-        { "ko": "프로파일링 & 성능 튜닝", "en": "Profiling & performance tuning" }
-      ]
+      "title": {
+        "ko": "고성능 시스템",
+        "en": "High Performance Systems"
+      },
+      "items": {
+        "ko": [
+          "Lock-free 자료구조",
+          "SIMD 최적화",
+          "비동기 I/O & 이벤트 기반 아키텍처",
+          "메모리 효율적 설계",
+          "마이크로초 단위 저지연 시스템",
+          "프로파일링 & 성능 튜닝"
+        ],
+        "en": [
+          "Lock-free data structures",
+          "SIMD optimization",
+          "Async I/O & event-driven architecture",
+          "Memory-efficient design",
+          "Microsecond-level low-latency systems",
+          "Profiling & performance tuning"
+        ]
+      }
     },
     {
       "id": "technologies",
       "icon": "tool",
-      "title": { "ko": "기술 스택", "en": "Technologies" },
+      "title": {
+        "ko": "기술 스택",
+        "en": "Technologies"
+      },
       "tags": [
-        "C++20", "C#/.NET", "Rust", "Python", "Go", "TypeScript",
-        "Qt", "WPF/MVVM", "OpenGL", "OpenCV",
-        "PostgreSQL", "Redis", "RabbitMQ",
-        "Docker", "AWS", "OpenTelemetry"
+        "C++20",
+        "C#/.NET",
+        "Rust",
+        "Python",
+        "Go",
+        "TypeScript",
+        "Qt",
+        "WPF/MVVM",
+        "OpenGL",
+        "OpenCV",
+        "PostgreSQL",
+        "Redis",
+        "RabbitMQ",
+        "Docker",
+        "AWS",
+        "OpenTelemetry"
       ]
     }
   ],
   "certifications": [
-    { "icon": "EU", "name": "CE" },
-    { "icon": "US", "name": "FDA" },
-    { "icon": "KR", "name": "KFDA" },
-    { "icon": "CN", "name": "CCC" },
-    { "icon": "US", "name": "HIPAA Controls" }
+    {
+      "icon": "EU",
+      "name": "CE"
+    },
+    {
+      "icon": "US",
+      "name": "FDA"
+    },
+    {
+      "icon": "KR",
+      "name": "KFDA"
+    },
+    {
+      "icon": "CN",
+      "name": "CCC"
+    },
+    {
+      "icon": "US",
+      "name": "HIPAA Controls"
+    }
   ],
   "heroCapabilities": [
     {
       "icon": "check-circle",
-      "title": { "ko": "전체 생명주기", "en": "Full Lifecycle" },
-      "description": { "ko": "IEC 62304 기반 전 개발 단계 수행", "en": "Complete development phases based on IEC 62304" }
+      "title": {
+        "ko": "Full Lifecycle",
+        "en": "Full Lifecycle"
+      },
+      "description": {
+        "ko": "IEC 62304 기반 전 개발 단계 수행",
+        "en": "Complete IEC 62304 development phases"
+      }
     },
     {
       "icon": "file-text",
-      "title": { "ko": "규제 문서", "en": "Regulatory Docs" },
-      "description": { "ko": "ISO 13485, IEC 62304 규격 문서 작성", "en": "ISO 13485, IEC 62304 documentation authoring" }
+      "title": {
+        "ko": "Regulatory Docs",
+        "en": "Regulatory Docs"
+      },
+      "description": {
+        "ko": "ISO 13485, IEC 62304 규격 문서 작성",
+        "en": "ISO 13485, IEC 62304 documentation"
+      }
     },
     {
       "icon": "users",
-      "title": { "ko": "팀 리더십", "en": "Team Leadership" },
-      "description": { "ko": "코드 리뷰와 멘토링 기반 팀 성장", "en": "Team growth through code review and mentoring" }
+      "title": {
+        "ko": "Team Leadership",
+        "en": "Team Leadership"
+      },
+      "description": {
+        "ko": "코드 리뷰와 멘토링 기반 팀 성장",
+        "en": "Team growth through code review & mentoring"
+      }
     },
     {
       "icon": "check-square",
-      "title": { "ko": "임상 검증", "en": "Clinical Validation" },
-      "description": { "ko": "임상 시험 및 검증 단계 완수", "en": "Clinical trials and validation completion" }
+      "title": {
+        "ko": "Clinical Validation",
+        "en": "Clinical Validation"
+      },
+      "description": {
+        "ko": "임상 시험 및 검증 단계 완수",
+        "en": "Clinical trials & validation completion"
+      }
     }
   ],
   "lifecycleDetails": [
     {
       "icon": "clipboard",
-      "title": { "ko": "문서화", "en": "Documentation" },
-      "description": { "ko": "SRS, SDS, 위험분석, 추적성 매트릭스 등 IEC 62304 필수 문서 작성", "en": "SRS, SDS, Risk Analysis, Traceability Matrix - IEC 62304 required documents" }
+      "title": {
+        "ko": "문서화",
+        "en": "Documentation"
+      },
+      "description": {
+        "ko": "SRS, SDS, 위험분석, 추적성 매트릭스 등 IEC 62304 필수 문서 작성",
+        "en": "IEC 62304 required documents: SRS, SDS, risk analysis, traceability matrix"
+      }
     },
     {
       "icon": "search",
-      "title": { "ko": "검증 & 확인", "en": "V&V" },
-      "description": { "ko": "각 단계별 검증 활동 및 독립적인 유효성 확인 수행", "en": "Verification activities and independent validation at each phase" }
+      "title": {
+        "ko": "검증 & 확인",
+        "en": "Verification & Validation"
+      },
+      "description": {
+        "ko": "각 단계별 검증 활동 및 독립적인 유효성 확인 수행",
+        "en": "Verification activities per phase and independent validation"
+      }
     },
     {
       "icon": "alert-triangle",
-      "title": { "ko": "위험 관리", "en": "Risk Management" },
-      "description": { "ko": "ISO 14971 기반 소프트웨어 위험 분석 및 완화 조치", "en": "Software risk analysis and mitigation based on ISO 14971" }
+      "title": {
+        "ko": "위험 관리",
+        "en": "Risk Management"
+      },
+      "description": {
+        "ko": "ISO 14971 기반 소프트웨어 위험 분석 및 완화 조치",
+        "en": "ISO 14971-based software risk analysis and mitigation"
+      }
     },
     {
       "icon": "refresh-cw",
-      "title": { "ko": "변경 관리", "en": "Change Control" },
-      "description": { "ko": "체계적인 변경 통제 및 영향 분석 프로세스", "en": "Systematic change control and impact analysis process" }
+      "title": {
+        "ko": "변경 관리",
+        "en": "Change Management"
+      },
+      "description": {
+        "ko": "체계적인 변경 통제 및 영향 분석 프로세스",
+        "en": "Systematic change control and impact analysis process"
+      }
     },
     {
       "icon": "users",
-      "title": { "ko": "SQA 협업", "en": "SQA Collaboration" },
-      "description": { "ko": "SQA 팀과 긴밀히 협업하여 품질 보증 프로세스 수립 및 준수", "en": "Close collaboration with SQA team to establish and follow QA processes" }
+      "title": {
+        "ko": "SQA 협업",
+        "en": "SQA Collaboration"
+      },
+      "description": {
+        "ko": "SQA 팀과 긴밀히 협업하여 품질 보증 프로세스 수립 및 준수",
+        "en": "Close collaboration with SQA team for quality assurance process"
+      }
     },
     {
       "icon": "flask",
-      "title": { "ko": "테스트 자동화", "en": "Test Automation" },
-      "description": { "ko": "단위 테스트 기반 자동화 검증 강화로 회귀 오류 방지 및 품질 향상", "en": "Automated verification with unit tests to prevent regressions and improve quality" }
+      "title": {
+        "ko": "테스트 자동화",
+        "en": "Test Automation"
+      },
+      "description": {
+        "ko": "단위 테스트 기반 자동화 검증 강화로 회귀 오류 방지 및 품질 향상",
+        "en": "Enhanced automated verification with unit tests to prevent regression and improve quality"
+      }
     }
   ]
 }
