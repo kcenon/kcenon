@@ -5,13 +5,15 @@
 
 (async function() {
   const DATA_BASE_PATH = 'data';
+  // Bump on every content change to invalidate browser/CDN caches.
+  const DATA_VERSION = '1.2.0';
 
   /**
    * Load a JSON file
    */
   async function loadJSON(filename) {
     try {
-      const response = await fetch(`${DATA_BASE_PATH}/${filename}`);
+      const response = await fetch(`${DATA_BASE_PATH}/${filename}?v=${DATA_VERSION}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
