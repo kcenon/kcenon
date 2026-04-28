@@ -33,57 +33,6 @@
 | **Zero-to-One** | 4개 이상 시스템 백지에서 구축 |
 | **IPO 경험** | 2개 회사 (바텍, 레이) |
 
-## 💼 주요 경력
-
-### 포자랩스 | 소프트웨어 아키텍트 (2023.01 - 2025.02)
-**AI 음악 작곡 자동화 SaaS 스타트업** | 75명
-
-오디오 렌더링 SaaS 플랫폼의 분산 시스템 아키텍처 설계 주도. C++, Rust, Go, Python으로 **10개 이상 마이크로서비스** 오케스트레이션, Daily Release 체계 확립.
-
-**핵심 임팩트**: RabbitMQ 클러스터, Redis Sentinel HA, OpenTelemetry 트레이싱, zero-downtime CI/CD
-
-**기술 스택**: Rust, Go, C++, AWS, RabbitMQ, Redis, OpenTelemetry, Docker, GitHub Actions
-
----
-
-### 주식회사 레이 | 리드 엔지니어 → 수석 엔지니어 (2010.02 - 2022.03)
-**치과 의료영상 시스템 (삼성전자 분사)** | 300명 이상 | 12년 | IPO
-
-**PACS 서버, DICOM 뷰어, 2D 교정 시뮬레이션, 모달리티 제어 시스템**을 백지 상태에서 구축.
-
-**핵심 임팩트**:
-- 100Mbps 네트워크에서 **15 MB/s** 전송량 달성 (이론값 12.5 MB/s 초과)
-- 비동기 I/O 파이프라인으로 **레이턴시 50% 감소** (50ms → 25ms)
-- **IEC 62304 Class B/C** 프로세스 전사 수립
-- **FDA 510(k), CE, KFDA, CCC** 글로벌 인증 주도
-
-**Zero-to-One 프로젝트**: SMARTDent v3 마이크로서비스, Database Gateway, 고속 파일 전송, Intraoral Sensor SDK
-
-**기술 스택**: C++14, C#, .NET Core, ASP.NET Web API, WPF, DICOM, PostgreSQL, DCMTK
-
----
-
-### 주식회사 바텍 | 소프트웨어 엔지니어 (2004.07 - 2008.10)
-**치과용 X-ray 및 CBCT 장비** | 300명 이상 | IPO
-
-치과용 X-ray/CBCT 장비의 **DICOM 뷰어**와 **모달리티 제어 시스템** 개발.
-
-**핵심 임팩트**: **CE, FDA, KFDA** 인증 기여, 첫 IPO 경험
-
-**기술 스택**: C++, DICOM, X-ray, CBCT, 의료기기 인증
-
----
-
-### 기타 경력
-
-**퍼플칩스 (POSTECH)** | 리드 프로그래머 (2022.03 - 2022.10)
-AI 기반 EDA 스타트업 - 반도체 설계 자동화 AI 작업 서빙 시스템 아키텍처 설계
-
-**바텍이우홀딩스** | 시니어 엔지니어 (2008.10 - 2009.07)
-의료영상 소프트웨어 개발
-
-**[💼 상세 경력, 프로젝트 및 기술 기여도 보기 →](https://kcenon.github.io/kcenon/portfolio/)**
-
 ## 🛠️ 핵심 기술
 
 **언어**: C++ (14/17), C#, Rust, Go, Python
@@ -104,14 +53,6 @@ AI 기반 EDA 스타트업 - 반도체 설계 자동화 AI 작업 서빙 시스�
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
 ![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
-
-## 🎓 학력
-
-**전자공학 학사** | 인제대학교 (1997 - 2005)
-
-## 🌐 사용 언어
-
-**영어**: 업무 협업 가능 (OPIC IM2, IELTS 6.0) | **한국어**: 모국어
 
 ## 🔭 현재
 

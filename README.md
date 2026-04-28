@@ -33,57 +33,6 @@ Currently seeking opportunities in **cloud-native platforms** and **backend infr
 | **Zero-to-One** | 4+ systems built from scratch |
 | **IPO Experience** | 2 companies (VATECH, Ray) |
 
-## 💼 Professional Experience
-
-### Poza Labs | Software Architect (2023.01 - 2025.02)
-**AI Music Composition SaaS Startup** | 75 employees
-
-Led distributed system architecture for audio rendering SaaS platform. Orchestrated **10+ microservices** in C++, Rust, Go, Python with daily release cycle.
-
-**Key Impact**: RabbitMQ cluster, Redis Sentinel HA, OpenTelemetry tracing, zero-downtime CI/CD
-
-**Tech**: Rust, Go, C++, AWS, RabbitMQ, Redis, OpenTelemetry, Docker, GitHub Actions
-
----
-
-### Ray Co., Ltd. | Lead Engineer → Principal Engineer (2010.02 - 2022.03)
-**Dental Medical Imaging (Samsung Electronics Spinoff)** | 300+ employees | 12 years | IPO
-
-Built **PACS server, DICOM viewer, 2D orthodontic simulation**, and **modality control systems** from scratch.
-
-**Key Impact**:
-- **15 MB/s** throughput on 100Mbps network (exceeds theoretical 12.5 MB/s)
-- **50% latency reduction** (50ms → 25ms) through async I/O pipeline
-- Established **IEC 62304 Class B/C** processes company-wide
-- Led **FDA 510(k), CE, KFDA, CCC** global certifications
-
-**Zero-to-One Projects**: SMARTDent v3 microservices, Database Gateway, High-speed file transfer, Intraoral Sensor SDK
-
-**Tech**: C++14, C#, .NET Core, ASP.NET Web API, WPF, DICOM, PostgreSQL, DCMTK
-
----
-
-### VATECH Co., Ltd. | Software Engineer (2004.07 - 2008.10)
-**Dental X-ray & CBCT Equipment** | 300+ employees | IPO
-
-Developed **DICOM viewer** and **modality control systems** for dental X-ray/CBCT equipment.
-
-**Key Impact**: Contributed to **CE, FDA, KFDA** certifications, first IPO experience
-
-**Tech**: C++, DICOM, X-ray, CBCT, Medical Device Certification
-
----
-
-### Other Experience
-
-**Purplechips (POSTECH)** | Lead Programmer (2022.03 - 2022.10)
-AI-based EDA startup - Designed AI job serving system for semiconductor design automation
-
-**VATECH E-WOO Holdings** | Senior Engineer (2008.10 - 2009.07)
-Medical imaging software development
-
-**[💼 Detailed experience, projects & technical contributions →](https://kcenon.github.io/kcenon/portfolio/)**
-
 ## 🛠️ Core Skills
 
 **Languages**: C++ (14/17), C#, Rust, Go, Python
@@ -104,14 +53,6 @@ Medical imaging software development
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
 ![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
-
-## 🎓 Education
-
-**Bachelor of Science in Electronic Engineering** | Inje University (1997 - 2005)
-
-## 🌐 Languages
-
-**English**: Conversational (OPIC IM2, IELTS 6.0) | **Korean**: Native
 
 ## 🔭 Currently
 
