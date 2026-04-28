@@ -1,6 +1,43 @@
 {
   "timeline": [
     {
+      "id": "flonics",
+      "company": {
+        "ko": "플로닉스",
+        "en": "Flonics"
+      },
+      "period": {
+        "ko": "2026.03 - 현재",
+        "en": "2026.03 - Present"
+      },
+      "role": {
+        "ko": "최고기술책임자 (CTO)",
+        "en": "Chief Technology Officer (CTO)"
+      },
+      "badge": "MedTech",
+      "companyDescription": {
+        "ko": "의료영상 기반 혈류 진단 솔루션을 개발하는 의료기기 기업 (flonics.co.kr)",
+        "en": "Medical device company developing medical imaging-based blood flow diagnostic solutions (flonics.co.kr)"
+      },
+      "responsibilities": {
+        "ko": "기술 전략 수립 및 R&D 총괄, 의료영상 기반 혈류 진단 시스템 아키텍처 설계, 의료기기 인허가(IEC 62304/ISO 13485) 프로세스 정립",
+        "en": "Lead technology strategy and R&D, architect medical imaging-based blood flow diagnostic systems, and establish medical device regulatory processes (IEC 62304/ISO 13485)"
+      },
+      "note": {
+        "ko": "<strong>도메인 회귀·확장</strong>: 분산 시스템 SaaS에서 축적한 플랫폼 역량을 의료영상 도메인으로 다시 가져와, 혈류 진단이라는 신규 임상 영역에 적용. 규제 환경(IEC 62304/ISO 13485)과 클라우드 네이티브 운영 경험을 결합한 CTO 역할.",
+        "en": "<strong>Domain Return & Expansion</strong>: Bringing platform expertise accumulated in distributed SaaS back to the medical imaging domain, applied to the novel clinical area of blood flow diagnostics. CTO role combining regulated-environment discipline (IEC 62304/ISO 13485) with cloud-native operational experience."
+      },
+      "tags": [
+        "Medical Imaging",
+        "Blood Flow Diagnostics",
+        "System Architecture",
+        "IEC 62304",
+        "ISO 13485",
+        "CTO"
+      ],
+      "highlight": true
+    },
+    {
       "id": "pozalabs",
       "company": {
         "ko": "포자랩스",
