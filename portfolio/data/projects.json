@@ -1082,34 +1082,6 @@
           ]
         }
       }
-    },
-    {
-      "id": "database-system",
-      "title": "database_system",
-      "github": "https://github.com/kcenon/database_system",
-      "description": {
-        "ko": "경량 C++20 Core DAL 라이브러리. 타입 안전 쿼리, 커넥션 풀링, 트랜잭션 관리.",
-        "en": "Lightweight C++20 Core DAL library. Type-safe queries, connection pooling, transaction management."
-      },
-      "tags": [
-        "C++20",
-        "DAL",
-        "Type-safe"
-      ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "헤더 전용 경량 라이브러리",
-            "타입 안전 쿼리 빌더",
-            "자동 커넥션 풀 관리"
-          ],
-          "en": [
-            "Header-only lightweight library",
-            "Type-safe query builder",
-            "Automatic connection pool management"
-          ]
-        }
-      }
     }
   ]
 }
