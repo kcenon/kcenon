@@ -460,10 +460,10 @@ const executiveTheme = {
   },
   spacing: {
     page: {
-      marginTop: 65,
-      marginRight: 45,
-      marginBottom: 65,
-      marginLeft: 45
+      marginTop: 72,
+      marginRight: 72,
+      marginBottom: 72,
+      marginLeft: 72
     },
     section: {
       marginTop: 22,

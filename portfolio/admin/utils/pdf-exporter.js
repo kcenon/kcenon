@@ -297,7 +297,7 @@ class PDFExporter {
           lineHeight: 1.8
         }
       },
-      pageMargins: [45, 65, 45, 65],
+      pageMargins: [72, 72, 72, 72],
       background: function(currentPage, pageSize) {
         return null; // Can add watermark or background here
       }
@@ -413,10 +413,10 @@ class PDFExporter {
     if (!this.currentTheme) {
       const fallback = {
         // Page margins
-        'page.marginTop': 65,
-        'page.marginRight': 45,
-        'page.marginBottom': 65,
-        'page.marginLeft': 45,
+        'page.marginTop': 72,
+        'page.marginRight': 72,
+        'page.marginBottom': 72,
+        'page.marginLeft': 72,
 
         // Section spacing
         'section.marginTop': 24,
@@ -878,7 +878,7 @@ class PDFExporter {
         ];
 
     content.push({
-      canvas: [{ type: 'rect', x: 0, y: 0, w: 80, h: 3, color: this.getColor('primary') }],
+      canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 3, color: this.getColor('primary') }],
       margin: [0, 40, 0, 48]
     });
 
@@ -912,7 +912,7 @@ class PDFExporter {
     });
 
     content.push({
-      canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+      canvas: [{ type: 'line', x1: 0, y1: 0, x2: 451, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
       margin: [0, 0, 0, 26]
     });
 
@@ -1018,10 +1018,10 @@ class PDFExporter {
     return (currentPage, pageCount) => {
       if (currentPage === 1) return null;
       return {
-        margin: [45, 0, 45, 0],
+        margin: [72, 0, 72, 0],
         stack: [
           {
-            canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: '#E2E8F0' }],
+            canvas: [{ type: 'line', x1: 0, y1: 0, x2: 451, y2: 0, lineWidth: 0.5, lineColor: '#E2E8F0' }],
             margin: [0, 0, 0, 6]
           },
           {
@@ -1081,7 +1081,7 @@ class PDFExporter {
           canvas: [{
             type: 'line',
             x1: 0, y1: 0,
-            x2: 515, y2: 0,
+            x2: 451, y2: 0,
             lineWidth: 3,
             lineColor: this.getColor('primary')
           }],
@@ -1095,7 +1095,7 @@ class PDFExporter {
           canvas: [{
             type: 'rect',
             x: 0, y: -50,
-            w: 515, h: 80,
+            w: 451, h: 80,
             lineWidth: 1,
             lineColor: '#E2E8F0'
           }],
@@ -1122,6 +1122,42 @@ class PDFExporter {
    * @returns {Array} pdfmake content nodes
    */
   /**
+   * Render a bullet list as a stack of paragraphs that mirrors the DOCX
+   * '·  ' style — colored leading marker + indented body text. This keeps
+   * PDF and DOCX visually consistent (pdfmake's native `ul:` produces a
+   * tighter disc bullet that does not match Word's rendering).
+   * @param {Array<string>} items - Plain-text items
+   * @param {Object} [options]
+   * @param {string} [options.markerColor] - Color hex for the leading marker
+   * @param {number} [options.fontSize] - Body font size
+   * @param {string} [options.color] - Body text color
+   * @param {number} [options.indentLeft] - Left indent in pt
+   * @param {number} [options.bottomMargin] - Bottom margin after the list
+   * @returns {Object} pdfmake stack node
+   */
+  buildBulletList(items, options = {}) {
+    const {
+      markerColor = this.getColor('accent'),
+      fontSize = 10.5,
+      color = this.getColor('text.secondary'),
+      indentLeft = 12,
+      bottomMargin = 10
+    } = options;
+
+    return {
+      stack: items.map((item, i) => ({
+        text: [
+          { text: '·  ', bold: true, color: markerColor },
+          { text: item, color }
+        ],
+        fontSize,
+        lineHeight: 1.45,
+        margin: [indentLeft, 0, 0, i === items.length - 1 ? bottomMargin : 3]
+      }))
+    };
+  }
+
+  /**
    * Editorial-style subsection header (category level inside a section).
    * Smaller than H2 with a short gold/accent underline so the visual
    * hierarchy is distinct from the navy section bands.
@@ -1130,43 +1166,43 @@ class PDFExporter {
    * @returns {Array} pdfmake content nodes
    */
   buildSubsectionHeader(text, addPageBreak = false) {
+    // Single full-width accent thin rule under the heading,
+    // matching the DOCX H3 paragraph bottom border (1pt accent).
     const titleNode = {
       text: (text || '').toString(),
       fontSize: 12.5,
       bold: true,
       color: this.getColor('primary'),
-      margin: [0, addPageBreak ? 0 : 10, 0, 5]
+      margin: [0, addPageBreak ? 0 : 10, 0, 4]
     };
     if (addPageBreak) titleNode.pageBreak = 'before';
 
     return [
       titleNode,
       {
-        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 60, y2: 0, lineWidth: 1.5, lineColor: this.getColor('accent') }],
+        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 451, y2: 0, lineWidth: 1, lineColor: this.getColor('accent') }],
         margin: [0, 0, 0, 10]
       }
     ];
   }
 
   buildSectionHeader(text, addPageBreak = false) {
+    // Single full-width primary-color rule under the heading,
+    // matching the DOCX H2 paragraph bottom border (1.5pt primary).
     const titleNode = {
       text: (text || '').toString().toUpperCase(),
       fontSize: 16,
       bold: true,
       color: this.getColor('primary'),
       characterSpacing: 3,
-      margin: [0, 0, 0, 8]
+      margin: [0, 0, 0, 6]
     };
     if (addPageBreak) titleNode.pageBreak = 'before';
 
     return [
       titleNode,
       {
-        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 80, y2: 0, lineWidth: 2, lineColor: this.getColor('primary') }],
-        margin: [0, 0, 0, 4]
-      },
-      {
-        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 451, y2: 0, lineWidth: 1.5, lineColor: this.getColor('primary') }],
         margin: [0, 0, 0, 18]
       }
     ];
@@ -1199,13 +1235,9 @@ class PDFExporter {
 
         const items = this.getArray(category.items);
         if (items.length > 0) {
-          categoryContent.push({
-            ul: items.map(item => this.stripHtml(this.getText(item))),
-            fontSize: this.getTypography('fontSize.body'),
-            color: '#475569',  // Text secondary
-            lineHeight: this.getTypography('lineHeight'),
-            margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
-          });
+          categoryContent.push(this.buildBulletList(
+            items.map(item => this.stripHtml(this.getText(item)))
+          ));
         }
 
         // Handle tags for Technologies category with web-like styling
@@ -1419,13 +1451,10 @@ class PDFExporter {
           color: '#3B82F6',  // Primary color
           margin: [0, 0, 0, 4]
         });
-        items.push({
-          ul: roles.map(r => this.stripHtml(this.getText(r))),
-          fontSize: this.getTypography('fontSize.body'),
-          color: '#475569',  // Text secondary
-          lineHeight: this.getTypography('lineHeight'),
-          margin: [this.getSpacing('list.indent'), 0, 0, 6]
-        });
+        items.push(this.buildBulletList(
+          roles.map(r => this.stripHtml(this.getText(r))),
+          { markerColor: this.getColor('accent'), bottomMargin: 6 }
+        ));
       }
 
       const achievements = this.getArray(project.expanded.achievements);
@@ -1437,13 +1466,10 @@ class PDFExporter {
           color: '#10B981',  // Success color
           margin: [0, 6, 0, 4]
         });
-        items.push({
-          ul: achievements.map(a => this.stripHtml(this.getText(a))),
-          fontSize: this.getTypography('fontSize.body'),
-          color: '#475569',  // Text secondary
-          lineHeight: this.getTypography('lineHeight'),
-          margin: [this.getSpacing('list.indent'), 0, 0, 6]
-        });
+        items.push(this.buildBulletList(
+          achievements.map(a => this.stripHtml(this.getText(a))),
+          { markerColor: this.getColor('success'), bottomMargin: 6 }
+        ));
       }
     }
 
@@ -1574,12 +1600,10 @@ class PDFExporter {
             color: '#10B981',  // Success color
             margin: [0, 6, 0, 3]
           });
-          entry.push({
-            ul: achievements.map(a => this.stripHtml(this.getText(a))),
-            fontSize: this.getTypography('fontSize.body'),
-            color: '#475569',  // Text secondary
-            margin: [this.getSpacing('list.indent'), 0, 0, 6]
-          });
+          entry.push(this.buildBulletList(
+            achievements.map(a => this.stripHtml(this.getText(a))),
+            { markerColor: this.getColor('success'), bottomMargin: 6 }
+          ));
         }
 
         if (item.note) {
@@ -1776,14 +1800,10 @@ class PDFExporter {
 
         const highlights = this.getArray(cap.highlights);
         if (highlights.length > 0) {
-          items.push({
-            ul: highlights.map(h => this.stripHtml(this.getText(h))),
-            fontSize: 10.5,
-            color: this.getColor('text.secondary'),
-            lineHeight: 1.5,
-            markerColor: this.getColor('accent'),
-            margin: [16, 0, 0, 6]
-          });
+          items.push(this.buildBulletList(
+            highlights.map(h => this.stripHtml(this.getText(h))),
+            { markerColor: this.getColor('accent'), bottomMargin: 6 }
+          ));
         }
 
         const m = cap.metrics || {};
@@ -1829,14 +1849,10 @@ class PDFExporter {
       const principles = this.getArray(manager.leadershipStyle.principles);
       if (principles.length > 0) {
         content.push(...this.buildSubsectionHeader(labels.leadershipStyle, false));
-        content.push({
-          ul: principles.map(p => this.stripHtml(this.getText(p))),
-          fontSize: 10.5,
-          color: this.getColor('text.secondary'),
-          lineHeight: 1.6,
-          markerColor: this.getColor('accent'),
-          margin: [16, 0, 0, 10]
-        });
+        content.push(this.buildBulletList(
+          principles.map(p => this.stripHtml(this.getText(p))),
+          { markerColor: this.getColor('accent') }
+        ));
       }
     }
 
@@ -1847,14 +1863,10 @@ class PDFExporter {
       const highlights = this.getArray(manager.businessImpact.highlights);
       if (highlights.length > 0) {
         content.push(...this.buildSubsectionHeader(labels.businessImpact, false));
-        content.push({
-          ul: highlights.map(h => this.stripHtml(this.getText(h))),
-          fontSize: 10.5,
-          color: this.getColor('text.secondary'),
-          lineHeight: 1.6,
-          markerColor: this.getColor('success'),
-          margin: [16, 0, 0, 10]
-        });
+        content.push(this.buildBulletList(
+          highlights.map(h => this.stripHtml(this.getText(h))),
+          { markerColor: this.getColor('success') }
+        ));
       }
     }
 
