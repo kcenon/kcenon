@@ -6,7 +6,7 @@
 (async function() {
   const DATA_BASE_PATH = 'data';
   // Bump on every content change to invalidate browser/CDN caches.
-  const DATA_VERSION = '1.3.0';
+  const DATA_VERSION = '1.4.0';
 
   /**
    * Load a JSON file

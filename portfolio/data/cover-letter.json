@@ -204,6 +204,47 @@
         "ko": "신동철 드림",
         "en": "Sincerely,\nDongcheol Shin"
       }
+    },
+    {
+      "id": "regulated-cto",
+      "targetRole": {
+        "ko": "CTO / R&D 총괄 / 연구소장 (규제·표준 기반 산업)",
+        "en": "CTO / Head of R&D / Research Director (Regulated & Standards-Driven Industries)"
+      },
+      "greeting": {
+        "ko": "채용 담당자님께,",
+        "en": "Dear Hiring Manager,"
+      },
+      "opening": {
+        "ko": "20년 이상 ISO/IEC 표준 기반 SDLC 위에서 R&D 조직과 플랫폼 아키텍처를 구축해온 경험을 바탕으로, 자동차 기능안전·항공·산업 IoT·방위·규제 SaaS 등 표준 제약 하의 엔지니어링 조직을 책임지는 CTO·연구소장 포지션에 지원합니다. 의료기기 도메인에서 검증된 규율(IEC 62304, ISO 13485, ISO 14971)은 ISO 26262, DO-178C, IEC 61508, ISO 27001 등 인접 표준과 메타 수준에서 동형(isomorphic)이며, 이 이전 가능성을 직접 입증해 보이고자 합니다.",
+        "en": "With 20+ years building R&D organizations and platform architectures on ISO/IEC standard-driven SDLC, I am applying for CTO and Head of R&D roles in standards-constrained engineering — automotive functional safety, aerospace, industrial IoT, defense, and regulated SaaS. The discipline proven in medical-device development (IEC 62304, ISO 13485, ISO 14971) is isomorphic at the meta level to ISO 26262, DO-178C, IEC 61508, and ISO 27001, and I am positioned to demonstrate that transferability directly."
+      },
+      "keyPoints": [
+        {
+          "ko": "**표준 기반 SDLC 메타-역량**: IEC 62304(Class B/C) 소프트웨어 생명주기를 전사 수립한 경험은 **ISO 26262 ASIL, DO-178C DAL, IEC 61508 SIL** 등급 체계와 동일한 구조 — 위험 분류 → 수명주기 활동 → V&V 증거 → 추적성 — 를 따릅니다. 표준 명칭이 바뀌어도 SQA·릴리스·변경 통제 거버넌스는 그대로 작동합니다.",
+          "en": "**Standard-Driven SDLC Meta-Skill**: Establishing a company-wide IEC 62304 (Class B/C) software lifecycle follows the same structure as **ISO 26262 ASIL, DO-178C DAL, IEC 61508 SIL** — hazard classification → lifecycle activities → V&V evidence → traceability. The SQA, release, and change-control governance transfers regardless of which standard names appear on the cover page."
+        },
+        {
+          "ko": "**감사 대응 1,200+ 페이지 추적성 문서**: SRS/SDS/위험분석/V&V 프로토콜/추적성 매트릭스를 직접 작성하고 FDA·CE·KFDA·CCC **4개국 인증 심사관 Q&A를 직접 대응**한 경험. 같은 문서 체계가 자동차 Type Approval, 항공 EASA/FAA, AS9100, SOC 2 / ISO 27001 감사에 그대로 매핑됩니다.",
+          "en": "**1,200+ Pages of Audit-Ready Traceability**: Authored SRS/SDS, risk analyses, V&V protocols, and traceability matrices, and **directly handled auditor Q&A** for FDA, CE, KFDA, and CCC submissions across 4 jurisdictions. The same documentation system maps onto automotive Type Approval, EASA/FAA aerospace audits, AS9100, and SOC 2 / ISO 27001."
+        },
+        {
+          "ko": "**다언어 R&D 조직 운영**: C++/Rust/Go/Python 폴리글랏 환경에서 **3-11명 팀을 2개 IPO 기업**(바텍, 레이)에서 리딩. 코드 리뷰 문화·SQA 협업·릴리스 사이클(Daily Release)·관측성(OpenTelemetry) 도입을 통해 **처리량 2배·레이턴시 50% 감소**라는 측정 가능한 성과 달성. 표준 준수와 빠른 출시 속도가 양립할 수 있다는 것을 실제 운영으로 입증.",
+          "en": "**Multi-Language R&D Organization**: Led 3–11 person teams at **two IPO companies** (VATECH, Ray) in C++/Rust/Go/Python polyglot environments. Through code-review culture, SQA collaboration, daily-release cadence, and OpenTelemetry observability, achieved **2x throughput and 50% latency reduction** as measurable outcomes — demonstrating that standards compliance and fast delivery are not opposites in practice."
+        },
+        {
+          "ko": "**0→1 시스템화 + 인증 출시**: PACS, DICOM 뷰어, 교정 시뮬레이션, 음악 SaaS 등 **4개 이상의 프로덕션 시스템**을 백지에서 인증·시판 단계까지 구축. 이 경험의 핵심은 도메인 지식이 아니라 — 요구사항 동결 → 위험 분석 → 아키텍처 → V&V → 시판 후 감시(PMS) 라는 **반복 가능한 0→1 프로토콜**입니다. 어떤 ISO 표준 환경에서도 즉시 작동합니다.",
+          "en": "**Zero-to-One System Building under Certification**: Built **4+ production systems** — PACS, DICOM viewer, orthodontic simulation, AI music SaaS — from blank repo to certified shipment. The transferable asset is not domain knowledge but a **repeatable 0→1 protocol**: requirements freeze → hazard analysis → architecture → V&V → post-market surveillance. The protocol works the moment you sit down in any ISO-certified environment."
+        }
+      ],
+      "closing": {
+        "ko": "도메인은 도구이지 정체성이 아닙니다. 표준 제약 하에서 엄정한 엔지니어링 조직을 만들어내는 일이라면, 산업 분야와 무관하게 즉시 기여할 준비가 되어 있습니다. 귀사의 R&D 거버넌스와 기술 전략에 대해 깊이 있게 논의할 기회를 기대합니다.",
+        "en": "Domain is a tool, not an identity. Wherever the work is to build a rigorous engineering organization under standard-driven constraints, I am positioned to contribute from day one — independent of industry vertical. I would welcome a substantive conversation about your R&D governance and technical strategy."
+      },
+      "signature": {
+        "ko": "신동철 드림",
+        "en": "Sincerely,\nDongcheol Shin"
+      }
     }
   ]
 }
