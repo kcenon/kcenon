@@ -1,56 +1,28 @@
 {
   "categories": [
     {
-      "id": "medical",
-      "icon": "hospital",
-      "title": {
-        "ko": "의료 시스템",
-        "en": "Medical Systems"
-      },
-      "items": {
-        "ko": [
-          "PACS (의료영상 저장전송 시스템)",
-          "DICOM 표준 구현",
-          "3D 볼륨 렌더링 & MPR",
-          "모달리티 장비 제어",
-          "HIS/RIS Integration (HL7, FHIR)",
-          "교정 시뮬레이션"
-        ],
-        "en": [
-          "PACS (Picture Archiving & Communication System)",
-          "DICOM Standard Implementation",
-          "3D Volume Rendering & MPR",
-          "Modality Equipment Control",
-          "HIS/RIS Integration (HL7, FHIR)",
-          "Orthodontic Simulation"
-        ]
-      }
-    },
-    {
       "id": "regulatory",
       "icon": "clipboard",
       "title": {
-        "ko": "규제 & 컴플라이언스",
-        "en": "Regulatory & Compliance"
+        "ko": "규제 SDLC & 표준 엔지니어링",
+        "en": "Regulated SDLC & Standards Engineering"
       },
       "items": {
         "ko": [
-          "ISO 13485 (의료기기 품질경영시스템)",
-          "IEC 62304 (의료기기 SW 생명주기)",
-          "FDA 510(k) / KFDA (식약처)",
-          "CE Marking (유럽) / CCC (중국)",
-          "<strong>HIPAA Controls</strong> (PHI 보안, 감사 로깅)",
-          "소프트웨어 위험 관리 (ISO 14971)",
-          "설계 통제 문서화 (Design Control)"
+          "ISO 13485 (의료기기 품질경영시스템) — IATF 16949, AS9100, ISO 9001로 이전 가능",
+          "IEC 62304 (의료기기 SW 생명주기) — ISO 26262, DO-178C, IEC 61508과 동형",
+          "ISO 14971 (위험 관리) — ARP4761, ISO 27005, FMEA로 이전 가능",
+          "FDA 510(k) / KFDA / CE / CCC 등 4개국 인증 통과 경험",
+          "<strong>HIPAA Controls</strong> (PHI 보안, 감사 로깅) — GDPR, PCI-DSS, ISMS-P 적용 가능",
+          "설계 통제(Design Control) 및 형상 관리 프로세스 정립"
         ],
         "en": [
-          "ISO 13485 (Medical Device QMS)",
-          "IEC 62304 (Medical Device SW Lifecycle)",
-          "FDA 510(k) / KFDA (Korea FDA)",
-          "CE Marking (EU) / CCC (China)",
-          "<strong>HIPAA Controls</strong> (PHI security, audit logging)",
-          "Software Risk Management (ISO 14971)",
-          "Design Control Documentation"
+          "ISO 13485 (Medical Device QMS) — transferable to IATF 16949, AS9100, ISO 9001",
+          "IEC 62304 (Medical SW Lifecycle) — isomorphic to ISO 26262, DO-178C, IEC 61508",
+          "ISO 14971 (Risk Management) — transferable to ARP4761, ISO 27005, FMEA",
+          "4 international approvals (FDA 510(k), KFDA, CE, CCC)",
+          "<strong>HIPAA Controls</strong> (PHI security, audit logging) — applicable to GDPR, PCI-DSS, ISMS-P",
+          "Design Control & Configuration Management process establishment"
         ]
       }
     },
@@ -58,8 +30,8 @@
       "id": "documentation",
       "icon": "file-text",
       "title": {
-        "ko": "규제 문서 작성",
-        "en": "Regulatory Documentation"
+        "ko": "규제 문서 & 추적성",
+        "en": "Regulatory Documentation & Traceability"
       },
       "items": {
         "ko": [
@@ -141,6 +113,32 @@
       }
     },
     {
+      "id": "performance",
+      "icon": "zap",
+      "title": {
+        "ko": "고성능 시스템",
+        "en": "High Performance Systems"
+      },
+      "items": {
+        "ko": [
+          "Lock-free 자료구조",
+          "SIMD 최적화",
+          "비동기 I/O & 이벤트 기반 아키텍처",
+          "메모리 효율적 설계",
+          "마이크로초 단위 저지연 시스템",
+          "프로파일링 & 성능 튜닝"
+        ],
+        "en": [
+          "Lock-free data structures",
+          "SIMD optimization",
+          "Async I/O & event-driven architecture",
+          "Memory-efficient design",
+          "Microsecond-level low-latency systems",
+          "Profiling & performance tuning"
+        ]
+      }
+    },
+    {
       "id": "security",
       "icon": "shield",
       "title": {
@@ -165,28 +163,28 @@
       }
     },
     {
-      "id": "performance",
-      "icon": "zap",
+      "id": "medical",
+      "icon": "hospital",
       "title": {
-        "ko": "고성능 시스템",
-        "en": "High Performance Systems"
+        "ko": "의료 도메인 적용 사례",
+        "en": "Medical Domain Applications"
       },
       "items": {
         "ko": [
-          "Lock-free 자료구조",
-          "SIMD 최적화",
-          "비동기 I/O & 이벤트 기반 아키텍처",
-          "메모리 효율적 설계",
-          "마이크로초 단위 저지연 시스템",
-          "프로파일링 & 성능 튜닝"
+          "PACS (의료영상 저장전송 시스템)",
+          "DICOM 표준 구현",
+          "3D 볼륨 렌더링 & MPR",
+          "모달리티 장비 제어",
+          "HIS/RIS Integration (HL7, FHIR)",
+          "교정 시뮬레이션"
         ],
         "en": [
-          "Lock-free data structures",
-          "SIMD optimization",
-          "Async I/O & event-driven architecture",
-          "Memory-efficient design",
-          "Microsecond-level low-latency systems",
-          "Profiling & performance tuning"
+          "PACS (Picture Archiving & Communication System)",
+          "DICOM Standard Implementation",
+          "3D Volume Rendering & MPR",
+          "Modality Equipment Control",
+          "HIS/RIS Integration (HL7, FHIR)",
+          "Orthodontic Simulation"
         ]
       }
     },
@@ -243,12 +241,12 @@
     {
       "icon": "check-circle",
       "title": {
-        "ko": "Full Lifecycle",
-        "en": "Full Lifecycle"
+        "ko": "Standard-Driven SDLC",
+        "en": "Standard-Driven SDLC"
       },
       "description": {
-        "ko": "IEC 62304 기반 전 개발 단계 수행",
-        "en": "Complete IEC 62304 development phases"
+        "ko": "IEC 62304/ISO 13485 기반 전 개발 단계 운영 — 타 표준 이전 가능",
+        "en": "Full IEC 62304/ISO 13485 lifecycle — transferable to other standards"
       }
     },
     {
@@ -258,30 +256,30 @@
         "en": "Regulatory Docs"
       },
       "description": {
-        "ko": "ISO 13485, IEC 62304 규격 문서 작성",
-        "en": "ISO 13485, IEC 62304 documentation"
+        "ko": "ISO 13485, IEC 62304 등 1,200+ 페이지 추적성 문서 작성",
+        "en": "1,200+ pages of traceable regulatory documentation"
       }
     },
     {
       "icon": "users",
       "title": {
-        "ko": "Team Leadership",
-        "en": "Team Leadership"
+        "ko": "R&D Leadership",
+        "en": "R&D Leadership"
       },
       "description": {
-        "ko": "코드 리뷰와 멘토링 기반 팀 성장",
-        "en": "Team growth through code review & mentoring"
+        "ko": "3-11명 규모 다언어 R&D 팀 리딩 및 멘토링",
+        "en": "Leading and mentoring 3-11 person multi-language R&D teams"
       }
     },
     {
       "icon": "check-square",
       "title": {
-        "ko": "Clinical Validation",
-        "en": "Clinical Validation"
+        "ko": "V&V Discipline",
+        "en": "V&V Discipline"
       },
       "description": {
-        "ko": "임상 시험 및 검증 단계 완수",
-        "en": "Clinical trials & validation completion"
+        "ko": "검증·유효성확인(V&V) 프로토콜 설계 및 임상시험 완수 경험",
+        "en": "V&V protocol design with clinical trial completion experience"
       }
     }
   ],
