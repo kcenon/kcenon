@@ -646,17 +646,29 @@ class PDFExporter {
    */
   loadCoverLetterTemplate() {
     try {
-      // Try to get currently selected template from parent window
+      // 1. Optional getters (parent or same window)
       if (window.parent && typeof window.parent.getCoverLetterTemplate === 'function') {
-        const template = window.parent.getCoverLetterTemplate();
-        if (template) return template;
+        const t = window.parent.getCoverLetterTemplate();
+        if (t) return t;
+      }
+      if (typeof window.getCoverLetterTemplate === 'function') {
+        const t = window.getCoverLetterTemplate();
+        if (t) return t;
       }
 
-      // Fallback: Load from window.PortfolioData
+      // 2. Honor the user's selection persisted in localStorage by admin.js
       if (window.PortfolioData && window.PortfolioData.coverLetter) {
-        const data = window.PortfolioData.coverLetter;
-        // Default to first template (distributed-systems)
-        return data.templates && data.templates.length > 0 ? data.templates[0] : null;
+        const templates = window.PortfolioData.coverLetter.templates || [];
+        if (templates.length === 0) return null;
+        const selectedId = (typeof localStorage !== 'undefined')
+          ? localStorage.getItem('cover-letter-template-id')
+          : null;
+        if (selectedId) {
+          const found = templates.find(t => t.id === selectedId);
+          if (found) return found;
+        }
+        // 3. Fallback: first template only when nothing was selected
+        return templates[0];
       }
 
       console.warn('Cover letter template not found');
