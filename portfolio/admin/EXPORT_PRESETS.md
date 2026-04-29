@@ -15,7 +15,7 @@ your audience.
 |------------------------------|-----------------------------------|------------------------------------------------|---------------------------|
 | Theme                        | `executive` (navy + gold)         | `executive`                                    | `executive`               |
 | Language                     | match audience                    | **Korean** by default                          | match audience            |
-| Sections (top → bottom)      | Expertise → **Manager** → Projects → Career → Testimonials | same                                           | Expertise → Projects → Manager → Career → Testimonials |
+| Sections (top → bottom)      | Expertise → **Manager** → Projects → Career → Education → Testimonials | same                                           | Expertise → Projects → Manager → Career → Education → Testimonials |
 | Include cover page           | ✅                                | ✅                                              | ✅                         |
 | Include cover letter         | ✅                                | ✅                                              | ✅                         |
 | Cover-letter template        | `regulated-cto`                   | `regulated-cto`                                | `medical-cto`             |
@@ -33,7 +33,7 @@ pharmaceuticals).
 |------------------------------|-----------------------------------------------------------------------|
 | Theme                        | `executive`                                                           |
 | Language                     | `ko` (한국어)                                                          |
-| Section order                | `expertise → manager → projects → career → testimonials`              |
+| Section order                | `expertise → manager → projects → career → education → testimonials`  |
 | Cover page                   | on — author rendered as `신동철`                                       |
 | Cover letter                 | on — template `regulated-cto`                                         |
 | Page break between sections  | on                                                                    |
@@ -51,6 +51,9 @@ pharmaceuticals).
   open-source as discrete blocks.
 - `career` fourth: chronological context after impact — by the time the reader
   reaches the timeline they already know what you can do.
+- `education` fifth: degree credentials sit after work history per
+  international executive-CV norms (HBS Alumni / Microsoft Word resume guide).
+  For senior candidates, education is verification context, not a hook.
 - `testimonials` last: external validation closes the document.
 
 **Cover letter — `regulated-cto`**
@@ -99,7 +102,12 @@ intentionally duplicated — same copy must live in both exporters).
   partner.
 - **Heavily medical-domain audience**: switch to the `medical-cto` cover
   letter and reorder sections to `expertise → projects → manager → career →
-  testimonials` so DICOM / PACS / orthodontic project depth surfaces earlier.
+  education → testimonials` so DICOM / PACS / orthodontic project depth
+  surfaces earlier.
+- **Blind / first-pass screening**: leave **Include personal information**
+  off (default). Recruiters who run anonymized first-rounds can score the
+  candidate without contact metadata leaking into the cover page; toggle it
+  on once the submission turns named.
 - **AI-heavy audience without LLM hands-on background**: keep the
   `regulated-cto` cover letter but in the cover-letter editor adjust the
   closing paragraph to acknowledge the AI/LLM stack as a complementary

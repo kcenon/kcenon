@@ -9,7 +9,9 @@ class AdminApp {
       manager: null,
       career: null,
       expertise: null,
-      testimonials: null
+      testimonials: null,
+      education: null,
+      profile: null
     };
     this.coverLetterData = { templates: [] };
     this.originalData = {};
@@ -139,6 +141,8 @@ class AdminApp {
       this.data.career = window.PortfolioData.career || null;
       this.data.expertise = window.PortfolioData.expertise || null;
       this.data.testimonials = window.PortfolioData.testimonials || null;
+      this.data.education = window.PortfolioData.education || null;
+      this.data.profile = window.PortfolioData.profile || null;
     }
 
     // Load cover letter templates from window.PortfolioData
@@ -1502,6 +1506,43 @@ class AdminApp {
   }
 
   /**
+   * Build the per-field checkboxes for the "Personal information" group.
+   * Reads the canonical field list from data/profile.json (this.data.profile)
+   * so adding/removing fields requires no UI change.
+   * @returns {string} HTML
+   */
+  buildPersonalInfoFieldOptions() {
+    const profile = this.data?.profile;
+    const fields = (profile && Array.isArray(profile.fields)) ? profile.fields : [];
+    if (fields.length === 0) {
+      return '<p class="form-hint">No personal info fields defined in profile.json.</p>';
+    }
+    const enabled = new Set(this.getSavedPersonalInfoFields());
+    const lang = this.currentLang || 'ko';
+    const tx = (v) => (v && typeof v === 'object') ? (v[lang] ?? v.ko ?? v.en ?? '') : (v ?? '');
+    return `
+      <div class="personal-info-fields">
+        ${fields.map(f => {
+          const label = tx(f.label) || f.id;
+          const value = tx(f.value);
+          return `
+            <label class="checkbox-label personal-info-field">
+              <input type="checkbox" class="personal-info-field-input"
+                     data-field-id="${f.id}"
+                     ${enabled.has(f.id) ? 'checked' : ''}>
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                <span class="personal-info-field-label">${label}</span>
+                <span class="personal-info-field-value">${value}</span>
+              </span>
+            </label>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  /**
    * Build theme preview card HTML
    * @param {Object} theme - Theme object with colors
    * @returns {string} HTML string for preview card
@@ -1588,31 +1629,35 @@ class AdminApp {
           <div class="modal-body">
             <!-- Left Panel: Export Options -->
             <div class="export-options-panel">
-              <div class="form-group">
-                <label for="export-format">Format</label>
-                <select id="export-format" class="form-select">
-                  <option value="pdf">PDF (.pdf)</option>
-                  <option value="docx">Word (.docx)</option>
-                </select>
-              </div>
+              <div class="export-options-group">
+                <div class="export-options-group-title">Document</div>
+                <div class="form-group form-group-inline">
+                  <div class="form-group">
+                    <label for="export-format">Format</label>
+                    <select id="export-format" class="form-select">
+                      <option value="pdf">PDF (.pdf)</option>
+                      <option value="docx">Word (.docx)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="export-language">Language</label>
+                    <select id="export-language" class="form-select">
+                      <option value="ko" ${this.getSavedExportLanguage() === 'ko' ? 'selected' : ''}>한국어 (Korean)</option>
+                      <option value="en" ${this.getSavedExportLanguage() === 'en' ? 'selected' : ''}>English</option>
+                    </select>
+                  </div>
+                </div>
 
-              <div class="form-group">
-                <label for="export-language">Language</label>
-                <select id="export-language" class="form-select">
-                  <option value="ko" ${this.getSavedExportLanguage() === 'ko' ? 'selected' : ''}>한국어 (Korean)</option>
-                  <option value="en" ${this.getSavedExportLanguage() === 'en' ? 'selected' : ''}>English</option>
-                </select>
-              </div>
+                <div class="form-group">
+                  <label for="export-theme">Theme</label>
+                  <select id="export-theme" class="form-select">
+                    ${themeOptions}
+                  </select>
+                </div>
 
-              <div class="form-group">
-                <label for="export-theme">Theme</label>
-                <select id="export-theme" class="form-select">
-                  ${themeOptions}
-                </select>
-              </div>
-
-              <div class="theme-preview-container" id="theme-preview-container">
-                ${this.buildThemePreviewCard(selectedTheme)}
+                <div class="theme-preview-container" id="theme-preview-container">
+                  ${this.buildThemePreviewCard(selectedTheme)}
+                </div>
               </div>
 
               <!-- Advanced Options Section -->
@@ -1661,32 +1706,49 @@ class AdminApp {
                 </div>
               </div>
 
-              <div class="form-group">
-                <label>Sections to Include</label>
-                <div id="section-order-container"></div>
+              <div class="export-options-group">
+                <div class="export-options-group-title">Sections</div>
+                <div class="form-group">
+                  <label>Sections to Include</label>
+                  <div id="section-order-container"></div>
+                </div>
               </div>
 
-              <div class="form-group cover-letter-option">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="include-cover-letter" ${this.getSavedCoverLetterOption() ? 'checked' : ''}>
-                  <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Include cover letter as first page</span>
-                </label>
-                <p class="form-hint">Add selected cover letter template as the first page of the exported document</p>
+              <div class="export-options-group">
+                <div class="export-options-group-title">Content Options</div>
+                <div class="form-group cover-letter-option">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="include-cover-letter" ${this.getSavedCoverLetterOption() ? 'checked' : ''}>
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-text">Include cover letter as first page</span>
+                  </label>
+                  <p class="form-hint">Add selected cover letter template as the first page of the exported document</p>
+                </div>
+
+                <div class="form-group personal-info-option">
+                  <div class="personal-info-header">
+                    <span class="checkbox-text">Personal information</span>
+                    <p class="form-hint">Pick which contact fields appear on the cover page (all off by default for blind submissions)</p>
+                  </div>
+                  ${this.buildPersonalInfoFieldOptions()}
+                </div>
+
+                <div class="form-group page-break-option">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="page-break-sections" ${this.getSavedPageBreakOption() ? 'checked' : ''}>
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-text">Page break between sections</span>
+                  </label>
+                  <p class="form-hint">Insert a page break before each section (except the first)</p>
+                </div>
               </div>
 
-              <div class="form-group page-break-option">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="page-break-sections" ${this.getSavedPageBreakOption() ? 'checked' : ''}>
-                  <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Page break between sections</span>
-                </label>
-                <p class="form-hint">Insert a page break before each section (except the first)</p>
-              </div>
-
-              <div class="form-group">
-                <label for="export-filename">Filename</label>
-                <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
+              <div class="export-options-group">
+                <div class="export-options-group-title">Output</div>
+                <div class="form-group">
+                  <label for="export-filename">Filename</label>
+                  <input type="text" class="form-input" id="export-filename" value="portfolio" placeholder="Filename (without extension)">
+                </div>
               </div>
             </div>
 
@@ -1736,6 +1798,19 @@ class AdminApp {
       });
     }
 
+    // Personal info per-field checkbox handlers (refresh preview)
+    modalEl.querySelectorAll('.personal-info-field-input').forEach(el => {
+      el.addEventListener('change', () => this.updateDocumentPreview());
+    });
+
+    // Cover letter checkbox change handler (refresh preview)
+    const coverLetterCheckbox = modalEl.querySelector('#include-cover-letter');
+    if (coverLetterCheckbox) {
+      coverLetterCheckbox.addEventListener('change', () => {
+        this.updateDocumentPreview();
+      });
+    }
+
     const closeModal = () => {
       // Cleanup section order manager
       if (this.sectionOrderManager) {
@@ -1759,16 +1834,20 @@ class AdminApp {
       const theme = modalEl.querySelector('#export-theme').value;
       const sections = this.sectionOrderManager
         ? this.sectionOrderManager.getOrderedSections()
-        : ['expertise', 'projects', 'manager', 'career', 'testimonials'];
+        : ['expertise', 'manager', 'projects', 'career', 'education', 'testimonials'];
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
       const includeCoverLetter = modalEl.querySelector('#include-cover-letter')?.checked || false;
       const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
+      const personalInfoFields = Array.from(
+        modalEl.querySelectorAll('.personal-info-field-input:checked')
+      ).map(el => el.dataset.fieldId);
 
       // Save preferences
       this.saveExportTheme(theme);
       this.saveExportLanguage(language);
       this.saveCoverLetterOption(includeCoverLetter);
       this.savePageBreakOption(pageBreakBetweenSections);
+      this.savePersonalInfoFields(personalInfoFields);
       this.saveExportPreferences();
 
       closeModal();
@@ -1785,6 +1864,7 @@ class AdminApp {
         theme,
         themeOverrides: this.buildExportOverrides(),
         includeCoverLetter,
+        personalInfoFields,
         pageBreakBetweenSections,
         language
       };
@@ -2285,6 +2365,30 @@ class AdminApp {
    */
   savePageBreakOption(enabled) {
     localStorage.setItem('export-page-break-sections', enabled ? 'true' : 'false');
+  }
+
+  /**
+   * Get the list of personal-info field IDs the user has chosen to include
+   * on the export cover page. Returns [] when none are enabled (default).
+   * @returns {string[]}
+   */
+  getSavedPersonalInfoFields() {
+    try {
+      const raw = localStorage.getItem('export-personal-info-fields');
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /**
+   * Save the list of personal-info field IDs to localStorage.
+   * @param {string[]} fieldIds
+   */
+  savePersonalInfoFields(fieldIds) {
+    localStorage.setItem('export-personal-info-fields', JSON.stringify(fieldIds || []));
   }
 
   /**

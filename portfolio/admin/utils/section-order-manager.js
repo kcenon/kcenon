@@ -58,6 +58,7 @@ class SectionOrderManager {
       { id: 'manager', label: 'Leadership', included: true },
       { id: 'projects', label: 'Projects', included: true },
       { id: 'career', label: 'Career', included: true },
+      { id: 'education', label: 'Education', included: true },
       { id: 'testimonials', label: 'Testimonials', included: true }
     ];
   }

@@ -9,7 +9,7 @@ function initializePortfolio() {
         console.warn('PortfolioComponents not found. Make sure components/components.js is loaded.');
         return;
     }
-    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager } = components;
+    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager, renderEducation } = components;
 
     // Get data from inline JavaScript (data/data.js)
     const data = window.PortfolioData;
@@ -47,6 +47,12 @@ function initializePortfolio() {
     if (data.manager) {
         const managerContainer = document.getElementById('manager-container');
         if (managerContainer) renderManager(data.manager, managerContainer);
+    }
+
+    // Render education section
+    if (data.education && renderEducation) {
+        const educationList = document.getElementById('education-list');
+        if (educationList) renderEducation(data.education, educationList);
     }
 
     // Initialize expand buttons after rendering
@@ -128,8 +134,10 @@ const translations = {
         'nav.projects': '프로젝트',
         'nav.testimonials': '추천서',
         'nav.career': '경력',
+        'nav.education': '학력',
         'nav.manager': '리더십',
         'nav.contact': '연락처',
+        'education.title': '학력',
         // Manager Section
         'manager.title': '리더십 & 관리',
         'manager.desc': '2~11명 팀 리딩, 멘토링/코드리뷰 기반 팀 성장과 인증·납기·품질 성과를 함께 만든 경험',
@@ -201,8 +209,10 @@ const translations = {
         'nav.projects': 'Projects',
         'nav.testimonials': 'Testimonials',
         'nav.career': 'Career',
+        'nav.education': 'Education',
         'nav.manager': 'Leadership',
         'nav.contact': 'Contact',
+        'education.title': 'Education',
         // Manager Section
         'manager.title': 'Leadership & Management',
         'manager.desc': 'Led teams of 2-11, driving team growth through mentoring/code reviews while delivering on quality, compliance, and deadlines',

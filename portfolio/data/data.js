@@ -6,7 +6,7 @@
 (async function() {
   const DATA_BASE_PATH = 'data';
   // Bump on every content change to invalidate browser/CDN caches.
-  const DATA_VERSION = '1.8.0';
+  const DATA_VERSION = '1.9.0';
 
   /**
    * Load a JSON file
@@ -26,13 +26,15 @@
 
   try {
     // Load all data files in parallel
-    const [projects, career, expertise, testimonials, manager, coverLetter] = await Promise.all([
+    const [projects, career, expertise, testimonials, manager, coverLetter, education, profile] = await Promise.all([
       loadJSON('projects.json'),
       loadJSON('career.json'),
       loadJSON('expertise.json'),
       loadJSON('testimonials.json'),
       loadJSON('manager.json'),
-      loadJSON('cover-letter.json')
+      loadJSON('cover-letter.json'),
+      loadJSON('education.json'),
+      loadJSON('profile.json')
     ]);
 
     // Set global portfolio data
@@ -42,7 +44,9 @@
       expertise,
       testimonials,
       manager,
-      coverLetter
+      coverLetter,
+      education,
+      profile
     };
 
     console.log('✓ Portfolio data loaded successfully from JSON files');
@@ -60,7 +64,9 @@
       expertise: null,
       testimonials: null,
       manager: null,
-      coverLetter: null
+      coverLetter: null,
+      education: null,
+      profile: null
     };
   }
 })();

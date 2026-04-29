@@ -116,6 +116,7 @@ class PDFExporter {
         expertise: '전문성',
         projects: '프로젝트',
         career: '경력',
+        education: '학력',
         testimonials: '추천서',
         manager: '리더십 & 관리',
         featuredProjects: '주요 프로젝트',
@@ -142,6 +143,7 @@ class PDFExporter {
         expertise: 'EXPERTISE',
         projects: 'PROJECTS',
         career: 'CAREER',
+        education: 'EDUCATION',
         testimonials: 'TESTIMONIALS',
         manager: 'LEADERSHIP & MANAGEMENT',
         featuredProjects: 'Featured Projects',
@@ -588,13 +590,14 @@ class PDFExporter {
    */
   async generatePDF(data, options = {}) {
     const {
-      sections = ['expertise', 'manager', 'projects', 'career', 'testimonials'],
+      sections = ['expertise', 'manager', 'projects', 'career', 'education', 'testimonials'],
       filename = 'portfolio.pdf',
       theme = 'executive',
       themeOverrides = {},
       includeCoverLetter = false,
       includeCoverPage = true,
       pageBreakBetweenSections = true,
+      personalInfoFields = [],
       language = null
     } = options;
 
@@ -625,7 +628,7 @@ class PDFExporter {
 
       const docDefinition = this.buildDocument(data, sections, {
         title, author, includeCoverLetter, coverLetterTemplate,
-        includeCoverPage, pageBreakBetweenSections
+        includeCoverPage, pageBreakBetweenSections, personalInfoFields
       });
 
       return new Promise((resolve, reject) => {
@@ -687,12 +690,13 @@ class PDFExporter {
       includeCoverLetter = false,
       coverLetterTemplate = null,
       includeCoverPage = true,
-      pageBreakBetweenSections = true
+      pageBreakBetweenSections = true,
+      personalInfoFields = []
     } = info;
 
     // Cover Page (hero + stats infographic)
     if (includeCoverPage) {
-      content.push(...this.buildCoverPage(info, data));
+      content.push(...this.buildCoverPage(info, data, { personalInfoFields }));
     }
 
     // Cover Letter (if included). When the cover page precedes it, force
@@ -742,6 +746,11 @@ class PDFExporter {
         case 'manager':
           if (data.manager) {
             content.push(...this.buildManagerSection(data.manager, addPageBreak));
+          }
+          break;
+        case 'education':
+          if (data.education) {
+            content.push(...this.buildEducationSection(data.education, addPageBreak));
           }
           break;
       }
@@ -854,9 +863,11 @@ class PDFExporter {
    * @param {Object} data - Full portfolio data
    * @returns {Array} pdfmake content array (ends with page break)
    */
-  buildCoverPage(info, data) {
+  buildCoverPage(info, data, opts = {}) {
     const content = [];
     const lang = this.currentLang;
+    const selectedFieldIds = Array.isArray(opts.personalInfoFields) ? opts.personalInfoFields : [];
+    const showPersonalInfo = selectedFieldIds.length > 0;
     const locale = lang === 'ko' ? 'ko-KR' : 'en-US';
     const dateStr = new Date().toLocaleDateString(locale, {
       year: 'numeric', month: 'long', day: 'numeric'
@@ -899,8 +910,26 @@ class PDFExporter {
       color: this.getColor('primary'),
       bold: true,
       characterSpacing: 1.5,
-      margin: [0, 0, 0, 26]
+      margin: [0, 0, 0, showPersonalInfo ? 12 : 26]
     });
+
+    // Optional personal info row — only the field IDs the user selected.
+    if (showPersonalInfo && data.profile && Array.isArray(data.profile.fields)) {
+      const byId = new Map(data.profile.fields.map(f => [f.id, f]));
+      const parts = selectedFieldIds
+        .map(id => byId.get(id))
+        .filter(Boolean)
+        .map(f => this.getText(f.value))
+        .filter(v => v && v.length > 0);
+      if (parts.length) {
+        content.push({
+          text: parts.join('   ·   '),
+          fontSize: 9.5,
+          color: this.getColor('text.secondary'),
+          margin: [0, 0, 0, 22]
+        });
+      }
+    }
 
     // Executive summary — 3-line P&L / team-size / impact synthesis (HBS pattern)
     content.push({
@@ -1646,6 +1675,70 @@ class PDFExporter {
         });
       });
     }
+
+    return content;
+  }
+
+  /**
+   * Build education section
+   * @param {Object} education - Education data ({ items: [] })
+   * @param {boolean} addPageBreak - Whether to add page break before section
+   */
+  buildEducationSection(education, addPageBreak = false) {
+    const content = [];
+    const labels = this.getLabels();
+    content.push(...this.buildSectionHeader(labels.education, addPageBreak));
+
+    const items = education?.items || [];
+    items.forEach(item => {
+      const entry = [];
+
+      entry.push({
+        columns: [
+          {
+            text: this.getText(item.institution) || '',
+            fontSize: this.getTypography('fontSize.h3'),
+            bold: true,
+            color: this.getColor('primary'),
+            width: '*'
+          },
+          {
+            text: item.period || '',
+            alignment: 'right',
+            color: this.getColor('primary'),
+            fontSize: this.getTypography('fontSize.small'),
+            bold: true,
+            width: 'auto'
+          }
+        ],
+        margin: [0, 8, 0, 4]
+      });
+
+      if (item.degree) {
+        entry.push({
+          text: this.getText(item.degree),
+          color: this.getColor('text.primary'),
+          fontSize: this.getTypography('fontSize.body'),
+          margin: [0, 0, 0, 3]
+        });
+      }
+
+      if (item.location) {
+        entry.push({
+          text: this.getText(item.location),
+          color: this.getColor('text.muted'),
+          italics: true,
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 3]
+        });
+      }
+
+      content.push({
+        unbreakable: true,
+        stack: entry,
+        margin: [0, 0, 0, this.getSpacing('gap.medium')]
+      });
+    });
 
     return content;
   }

@@ -306,6 +306,10 @@ class DocumentPreviewRenderer {
       case 'testimonials':
         this.buildTestimonialsElements(elements, data, typography);
         break;
+
+      case 'education':
+        this.buildEducationElements(elements, data, typography);
+        break;
     }
 
     return elements;
@@ -408,6 +412,40 @@ class DocumentPreviewRenderer {
   }
 
   /**
+   * Build education section elements
+   */
+  buildEducationElements(elements, data, typography) {
+    const items = data?.items || [];
+    items.slice(0, 3).forEach(entry => {
+      const groupItems = [];
+      groupItems.push({
+        type: 'careerEntry',
+        text: this.getText(entry.institution),
+        height: typography.fontSize.h3 + 8
+      });
+      if (entry.degree) {
+        groupItems.push({
+          type: 'date',
+          text: this.getText(entry.degree),
+          height: typography.fontSize.small + 6
+        });
+      }
+      if (entry.period) {
+        groupItems.push({
+          type: 'date',
+          text: entry.period,
+          height: typography.fontSize.small + 6
+        });
+      }
+      elements.push({
+        type: 'group',
+        items: groupItems,
+        height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
+      });
+    });
+  }
+
+  /**
    * Build testimonials section elements
    * Groups quote with attribution to prevent splitting
    */
@@ -443,6 +481,7 @@ class DocumentPreviewRenderer {
       expertise: 'Expertise',
       projects: 'Projects',
       career: 'Career',
+      education: 'Education',
       testimonials: 'Testimonials'
     };
     return titles[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);

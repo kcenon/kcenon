@@ -802,6 +802,25 @@ function renderManager(data, container) {
     container.innerHTML = html;
 }
 
+function renderEducation(data, container) {
+    if (!container) return;
+    if (!data || !data.items || data.items.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    const items = data.items.map(item => `
+        <article class="education-item">
+            <header class="education-header">
+                <h3 class="education-institution">${_getText(item.institution)}</h3>
+                <span class="education-period">${item.period || ''}</span>
+            </header>
+            ${item.degree ? `<p class="education-degree">${_getText(item.degree)}</p>` : ''}
+            ${item.location ? `<p class="education-location">${_getText(item.location)}</p>` : ''}
+        </article>
+    `).join('');
+    container.innerHTML = items;
+}
+
 // Export functions
 window.PortfolioComponents = {
     renderProjects,
@@ -810,5 +829,6 @@ window.PortfolioComponents = {
     renderExpertise,
     renderLifecycleDetails,
     renderManager,
+    renderEducation,
     Icons
 };

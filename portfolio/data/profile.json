@@ -1,0 +1,42 @@
+{
+  "name": {
+    "ko": "신동철",
+    "en": "Dongcheol Shin"
+  },
+  "title": {
+    "ko": "CTO · 연구소장 · 플랫폼 아키텍트",
+    "en": "CTO · Research Director · Platform Architect"
+  },
+  "fields": [
+    {
+      "id": "email",
+      "label": { "ko": "이메일", "en": "Email" },
+      "value": "kcenon@gmail.com"
+    },
+    {
+      "id": "phone",
+      "label": { "ko": "전화번호", "en": "Phone" },
+      "value": "010-2705-1068"
+    },
+    {
+      "id": "address",
+      "label": { "ko": "주소", "en": "Address" },
+      "value": {
+        "ko": "경기도 용인시",
+        "en": "Yongin, Gyeonggi-do, Republic of Korea"
+      }
+    },
+    {
+      "id": "github",
+      "label": { "ko": "GitHub", "en": "GitHub" },
+      "value": "github.com/kcenon",
+      "url": "https://github.com/kcenon"
+    },
+    {
+      "id": "linkedin",
+      "label": { "ko": "LinkedIn", "en": "LinkedIn" },
+      "value": "linkedin.com/in/raphaelshin",
+      "url": "https://www.linkedin.com/in/raphaelshin/"
+    }
+  ]
+}

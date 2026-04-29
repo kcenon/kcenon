@@ -325,19 +325,6 @@
         "easydent"
       ],
       "highlight": false
-    },
-    {
-      "id": "inje",
-      "company": {
-        "ko": "인제대학교",
-        "en": "Inje University"
-      },
-      "period": "1997.03 - 2005.08",
-      "role": {
-        "ko": "전자공학과 학사",
-        "en": "Bachelor of Science in Electronic Engineering"
-      },
-      "highlight": false
     }
   ]
 }

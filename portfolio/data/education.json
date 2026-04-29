@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "id": "inje",
+      "institution": {
+        "ko": "인제대학교",
+        "en": "Inje University"
+      },
+      "period": "1997.03 - 2005.08",
+      "degree": {
+        "ko": "전자공학과 학사",
+        "en": "Bachelor of Science in Electronic Engineering"
+      },
+      "location": {
+        "ko": "대한민국 경상남도 김해시",
+        "en": "Gimhae, Gyeongsangnam-do, Republic of Korea"
+      }
+    }
+  ]
+}

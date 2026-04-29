@@ -118,6 +118,7 @@ class DOCXExporter {
         expertise: '전문성',
         projects: '프로젝트',
         career: '경력',
+        education: '학력',
         testimonials: '추천서',
         manager: '리더십 & 관리',
         featuredProjects: '주요 프로젝트',
@@ -147,6 +148,7 @@ class DOCXExporter {
         expertise: 'EXPERTISE',
         projects: 'PROJECTS',
         career: 'CAREER',
+        education: 'EDUCATION',
         testimonials: 'TESTIMONIALS',
         manager: 'LEADERSHIP & MANAGEMENT',
         featuredProjects: 'Featured Projects',
@@ -414,13 +416,14 @@ class DOCXExporter {
    */
   async generateDOCX(data, options = {}) {
     const {
-      sections = ['expertise', 'manager', 'projects', 'career', 'testimonials'],
+      sections = ['expertise', 'manager', 'projects', 'career', 'education', 'testimonials'],
       filename = 'portfolio.docx',
       theme = 'executive',
       themeOverrides = {},
       includeCoverLetter = false,
       includeCoverPage = true,
       pageBreakBetweenSections = true,
+      personalInfoFields = [],
       language = null
     } = options;
 
@@ -447,7 +450,7 @@ class DOCXExporter {
 
       const doc = this.buildDocument(data, sections, {
         title, author, includeCoverLetter, coverLetterTemplate,
-        includeCoverPage, pageBreakBetweenSections
+        includeCoverPage, pageBreakBetweenSections, personalInfoFields
       });
       const blob = await docx.Packer.toBlob(doc);
       saveAs(blob, filename);
@@ -505,12 +508,13 @@ class DOCXExporter {
       includeCoverLetter = false,
       coverLetterTemplate = null,
       includeCoverPage = true,
-      pageBreakBetweenSections = true
+      pageBreakBetweenSections = true,
+      personalInfoFields = []
     } = info;
 
     // Cover page (hero + stats infographic)
     if (includeCoverPage) {
-      children.push(...this.buildCoverPage(info, data));
+      children.push(...this.buildCoverPage(info, data, { personalInfoFields }));
     }
 
     // Cover letter (if included)
@@ -556,6 +560,11 @@ class DOCXExporter {
         case 'manager':
           if (data.manager) {
             children.push(...this.buildManagerSection(data.manager, addPageBreak));
+          }
+          break;
+        case 'education':
+          if (data.education) {
+            children.push(...this.buildEducationSection(data.education, addPageBreak));
           }
           break;
       }
@@ -678,9 +687,11 @@ class DOCXExporter {
    * @param {Object} data - Portfolio data
    * @returns {Array<docx.Paragraph|docx.Table>} children for the cover page
    */
-  buildCoverPage(info, data) {
+  buildCoverPage(info, data, opts = {}) {
     const children = [];
     const lang = this.currentLang;
+    const selectedFieldIds = Array.isArray(opts.personalInfoFields) ? opts.personalInfoFields : [];
+    const showPersonalInfo = selectedFieldIds.length > 0;
     const subtitle = lang === 'ko'
       ? 'CTO · 연구소장 · 플랫폼 아키텍트'
       : 'CTO · Research Director · Platform Architect';
@@ -745,8 +756,28 @@ class DOCXExporter {
         color: this.getColor('primary'),
         characterSpacing: 30
       })],
-      spacing: { after: 360 }
+      spacing: { after: showPersonalInfo ? 160 : 360 }
     }));
+
+    // Optional personal info row — only the field IDs the user selected.
+    if (showPersonalInfo && data.profile && Array.isArray(data.profile.fields)) {
+      const byId = new Map(data.profile.fields.map(f => [f.id, f]));
+      const parts = selectedFieldIds
+        .map(id => byId.get(id))
+        .filter(Boolean)
+        .map(f => this.getText(f.value))
+        .filter(v => v && v.length > 0);
+      if (parts.length) {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: parts.join('   ·   '),
+            size: this.toHalfPt(9.5),
+            color: this.getColor('text.secondary')
+          })],
+          spacing: { after: 280 }
+        }));
+      }
+    }
 
     // Executive summary — 3-line P&L / team-size / impact synthesis (HBS pattern)
     summaryLines.forEach((line, i) => {
@@ -1615,6 +1646,64 @@ class DOCXExporter {
         children.push(new docx.Paragraph({ children: [], spacing: { after: 100 } }));
       });
     }
+
+    return children;
+  }
+
+  /**
+   * Build education section
+   * @param {Object} education - { items: [] }
+   * @param {boolean} addPageBreak
+   */
+  buildEducationSection(education, addPageBreak = false) {
+    const children = [];
+    const labels = this.getLabels();
+    children.push(...this.createHeading2(labels.education, addPageBreak));
+
+    const items = education?.items || [];
+    items.forEach(item => {
+      children.push(new docx.Paragraph({
+        children: [
+          new docx.TextRun({
+            text: this.getText(item.institution) || '',
+            bold: true,
+            size: this.toHalfPt(this.getTypography('fontSize.h3')),
+            color: this.getColor('primary')
+          }),
+          new docx.TextRun({
+            text: '\t' + (item.period || ''),
+            bold: true,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('primary')
+          })
+        ],
+        tabStops: [{ type: docx.TabStopType.RIGHT, position: 9000 }],
+        spacing: { before: 120, after: 60 }
+      }));
+
+      if (item.degree) {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: this.getText(item.degree),
+            size: this.toHalfPt(this.getTypography('fontSize.body')),
+            color: this.getColor('text.primary')
+          })],
+          spacing: { after: 40 }
+        }));
+      }
+
+      if (item.location) {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: this.getText(item.location),
+            italics: true,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.muted')
+          })],
+          spacing: { after: 200 }
+        }));
+      }
+    });
 
     return children;
   }
