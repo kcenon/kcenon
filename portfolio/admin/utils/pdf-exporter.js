@@ -684,11 +684,15 @@ class PDFExporter {
       content.push(...this.buildCoverPage(info, data));
     }
 
-    // Cover Letter (if included). Do not append a trailing page break —
-    // the next section's pageBreak: 'before' will handle the page boundary
-    // and combining both produces an empty page.
+    // Cover Letter (if included). When the cover page precedes it, force
+    // the letter onto a new page by setting pageBreak:'before' on its first
+    // node — no trailing break (the next section header handles that one).
     if (includeCoverLetter && coverLetterTemplate) {
-      content.push(...this.buildCoverLetterPage(coverLetterTemplate));
+      const letter = this.buildCoverLetterPage(coverLetterTemplate);
+      if (includeCoverPage && letter.length > 0) {
+        letter[0].pageBreak = 'before';
+      }
+      content.push(...letter);
     }
 
     // Inline header (only when no cover page is used)
