@@ -49,6 +49,19 @@
 **의료기기**: IEC 62304 (Class B/C), ISO 13485, ISO 14971, FDA 510(k), CE, KFDA, CCC
 **헬스케어 규제 준수**: HIPAA 기술적 보호조치, DICOM PS3.15 익명화
 
+## 🛡️ 도메인 간 규제 전문성 (Cross-Domain Regulatory Expertise)
+
+**ISO/IEC 표준 기반 SDLC** 경험은 규제 산업 전반에 그대로 이전됩니다.
+표준 명칭은 다르지만, 요구사항 추적성, 위험 분석, V&V 증거, 형상 관리, 시판 후 감시(PMS)라는
+**핵심 규율은 동일**합니다.
+
+| 역량 | 직접 적용 표준 | 이전 가능 영역 |
+|------|---------------|-----------------|
+| **소프트웨어 라이프사이클** | IEC 62304, ISO 13485 | ISO 26262 (자동차), DO-178C (항공), IEC 61508 (산업 기능안전) |
+| **위험 관리** | ISO 14971, FDA QSR | ARP4761, ISO 27005, IATF 16949 |
+| **인허가 문서화** | 510(k), CE 기술문서 | Type Approval, AS9100, SOC 2, ISO 27001 |
+| **감사 및 추적성** | DICOM PS3.15, HIPAA | GDPR, PCI-DSS, ISMS-P |
+
 ## 📈 GitHub 통계
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)

@@ -49,6 +49,19 @@ Open to **CTO / Head of R&D / 연구소장** roles in any standard-driven, regul
 **Medical Device**: IEC 62304 (Class B/C), ISO 13485, ISO 14971, FDA 510(k), CE, KFDA, CCC
 **Healthcare Compliance**: HIPAA Technical Safeguards, DICOM PS3.15 De-identification
 
+## 🛡️ Cross-Domain Regulatory Expertise
+
+Deep experience in **ISO/IEC standard-driven SDLC** transfers directly across regulated industries.
+The standards differ; the discipline — requirements traceability, hazard analysis, V&V evidence,
+configuration management, post-market surveillance — is the same.
+
+| Capability | Hands-on Standards | Transferable To |
+|------------|-------------------|-----------------|
+| **Software Lifecycle** | IEC 62304, ISO 13485 | ISO 26262 (Automotive), DO-178C (Aerospace), IEC 61508 (Industrial Functional Safety) |
+| **Risk Management** | ISO 14971, FDA QSR | ARP4761, ISO 27005, IATF 16949 |
+| **Compliance Documentation** | 510(k), CE Technical Files | Type Approval, AS9100, SOC 2, ISO 27001 |
+| **Audit & Traceability** | DICOM PS3.15, HIPAA | GDPR, PCI-DSS, ISMS-P |
+
 ## 📈 GitHub Stats
 
 ![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
