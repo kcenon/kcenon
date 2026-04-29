@@ -25,3 +25,7 @@ npm-debug.log*
 
 # DS_Store files
 .DS_Store
+
+# Private data (compensation, salary expectations, sensitive info)
+# Never commit - portfolio/data/private/* is for local viewing only
+data/private/

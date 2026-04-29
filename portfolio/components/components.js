@@ -821,6 +821,137 @@ function renderEducation(data, container) {
     container.innerHTML = items;
 }
 
+function renderCompensation(data, container) {
+    if (!container) return;
+    if (!data) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const lang = _getLang();
+    const expandLabel = lang === 'ko' ? '펼치기' : 'Show';
+    const collapseLabel = lang === 'ko' ? '접기' : 'Hide';
+    const sectionLabels = {
+        current: lang === 'ko' ? '현재 패키지' : 'Current Package',
+        market: lang === 'ko' ? '시장 기준선' : 'Market Baseline',
+        tiers: lang === 'ko' ? '협상 시나리오' : 'Negotiation Scenarios',
+        nonNegotiables: lang === 'ko' ? '비협상 조건' : 'Non-negotiable Terms',
+        stance: lang === 'ko' ? '협상 입장' : 'Negotiation Stance',
+        baseTerm: lang === 'ko' ? '기본급' : 'Base',
+        signingTerm: lang === 'ko' ? '사이닝 보너스' : 'Signing',
+        incentiveTerm: lang === 'ko' ? '성과 인센티브' : 'Incentive',
+        optionsTerm: lang === 'ko' ? '스톡옵션 / RSU' : 'Stock Options / RSU',
+        totalTerm: lang === 'ko' ? '1년차 총보상' : 'First-Year Total',
+        rationaleTerm: lang === 'ko' ? '근거' : 'Rationale',
+        evTerm: lang === 'ko' ? '연환산 EV' : 'Annualized EV',
+        anchorTerm: lang === 'ko' ? '기준 앵커' : 'Anchor',
+        evidenceTerm: lang === 'ko' ? '근거 데이터' : 'Evidence',
+        updatedTerm: lang === 'ko' ? '최종 갱신' : 'Last Updated'
+    };
+
+    const currentBlock = data.currentPackage ? `
+        <div class="compensation-block">
+            <h4 class="compensation-block-title">${_getText(data.currentPackage.label)}</h4>
+            <ul class="compensation-component-list">
+                ${(data.currentPackage.components || []).map(c => `
+                    <li>
+                        <span class="compensation-component-label">${_getText(c.label)}</span>
+                        <span class="compensation-component-value">${c.value || ''}</span>
+                    </li>
+                `).join('')}
+            </ul>
+            ${data.currentPackage.estimatedAnnualEv ? `
+                <p class="compensation-ev"><strong>${sectionLabels.evTerm}:</strong> ${_getText(data.currentPackage.estimatedAnnualEv)}</p>
+            ` : ''}
+        </div>
+    ` : '';
+
+    const marketBlock = data.marketBaseline ? `
+        <div class="compensation-block">
+            <h4 class="compensation-block-title">${_getText(data.marketBaseline.label)}</h4>
+            ${data.marketBaseline.anchor ? `
+                <p class="compensation-anchor"><strong>${sectionLabels.anchorTerm}:</strong> ${_getText(data.marketBaseline.anchor)}</p>
+            ` : ''}
+            ${Array.isArray(data.marketBaseline.evidence) && data.marketBaseline.evidence.length ? `
+                <p class="compensation-evidence-label">${sectionLabels.evidenceTerm}</p>
+                <ul class="compensation-evidence-list">
+                    ${data.marketBaseline.evidence.map(e => `<li>${_getText(e)}</li>`).join('')}
+                </ul>
+            ` : ''}
+        </div>
+    ` : '';
+
+    const tiersBlock = Array.isArray(data.tiers) && data.tiers.length ? `
+        <div class="compensation-block">
+            <h4 class="compensation-block-title">${sectionLabels.tiers}</h4>
+            <div class="compensation-tier-grid">
+                ${data.tiers.map(tier => `
+                    <article class="compensation-tier compensation-tier--${tier.tone || tier.id || 'default'}">
+                        <header class="compensation-tier-header">
+                            <h5 class="compensation-tier-label">${_getText(tier.label)}</h5>
+                        </header>
+                        <dl class="compensation-tier-details">
+                            <dt>${sectionLabels.baseTerm}</dt><dd>${_getText(tier.base)}</dd>
+                            <dt>${sectionLabels.signingTerm}</dt><dd>${_getText(tier.signing)}</dd>
+                            <dt>${sectionLabels.incentiveTerm}</dt><dd>${_getText(tier.incentive)}</dd>
+                            <dt>${sectionLabels.optionsTerm}</dt><dd>${_getText(tier.options)}</dd>
+                            <dt>${sectionLabels.totalTerm}</dt><dd class="compensation-tier-total">${_getText(tier.totalFirstYear)}</dd>
+                        </dl>
+                        ${tier.rationale ? `
+                            <p class="compensation-tier-rationale"><strong>${sectionLabels.rationaleTerm}:</strong> ${_getText(tier.rationale)}</p>
+                        ` : ''}
+                    </article>
+                `).join('')}
+            </div>
+        </div>
+    ` : '';
+
+    const nonNegotiablesBlock = Array.isArray(data.nonNegotiables) && data.nonNegotiables.length ? `
+        <div class="compensation-block">
+            <h4 class="compensation-block-title">${sectionLabels.nonNegotiables}</h4>
+            <ul class="compensation-non-negotiables">
+                ${data.nonNegotiables.map(n => `<li>${_getText(n)}</li>`).join('')}
+            </ul>
+        </div>
+    ` : '';
+
+    const stanceBlock = data.negotiationStance ? `
+        <div class="compensation-block compensation-block--stance">
+            <h4 class="compensation-block-title">${sectionLabels.stance}</h4>
+            <p>${_getText(data.negotiationStance)}</p>
+        </div>
+    ` : '';
+
+    const visibilityNote = data.visibility ? `
+        <p class="compensation-visibility-note">${_getText(data.visibility)}</p>
+    ` : '';
+
+    const lastUpdated = data.lastUpdated ? `
+        <p class="compensation-meta">${sectionLabels.updatedTerm}: ${data.lastUpdated}</p>
+    ` : '';
+
+    container.innerHTML = `
+        <h2 class="section-title">${_getText(data.title)}</h2>
+        ${data.subtitle ? `<p class="section-subtitle">${_getText(data.subtitle)}</p>` : ''}
+        ${data.intro ? `<p class="compensation-intro">${_getText(data.intro)}</p>` : ''}
+        ${visibilityNote}
+        <details class="compensation-details">
+            <summary class="compensation-summary">
+                <span class="compensation-summary-show">${expandLabel}</span>
+                <span class="compensation-summary-hide">${collapseLabel}</span>
+            </summary>
+            <div class="compensation-body">
+                ${currentBlock}
+                ${marketBlock}
+                ${tiersBlock}
+                ${nonNegotiablesBlock}
+                ${stanceBlock}
+                ${lastUpdated}
+            </div>
+        </details>
+    `;
+}
+
 // Export functions
 window.PortfolioComponents = {
     renderProjects,
@@ -830,5 +961,6 @@ window.PortfolioComponents = {
     renderLifecycleDetails,
     renderManager,
     renderEducation,
+    renderCompensation,
     Icons
 };

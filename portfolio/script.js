@@ -9,7 +9,7 @@ function initializePortfolio() {
         console.warn('PortfolioComponents not found. Make sure components/components.js is loaded.');
         return;
     }
-    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager, renderEducation } = components;
+    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager, renderEducation, renderCompensation } = components;
 
     // Get data from inline JavaScript (data/data.js)
     const data = window.PortfolioData;
@@ -53,6 +53,21 @@ function initializePortfolio() {
     if (data.education && renderEducation) {
         const educationList = document.getElementById('education-list');
         if (educationList) renderEducation(data.education, educationList);
+    }
+
+    // Render expected compensation section (private — only when access granted)
+    const hasPrivateAccess = window.PortfolioPrivateAccess?.enabled === true;
+    const compensationSection = document.getElementById('compensation');
+    const compensationNavLink = document.querySelector('a[href="#compensation"]');
+    if (hasPrivateAccess && data.compensation && renderCompensation) {
+        const compensationContainer = document.getElementById('compensation-container');
+        if (compensationContainer) renderCompensation(data.compensation, compensationContainer);
+        if (compensationSection) compensationSection.hidden = false;
+        if (compensationNavLink) compensationNavLink.hidden = false;
+    } else {
+        // Strip section + nav link from DOM so crawlers see nothing
+        if (compensationSection) compensationSection.remove();
+        if (compensationNavLink) compensationNavLink.remove();
     }
 
     // Initialize expand buttons after rendering
@@ -136,6 +151,7 @@ const translations = {
         'nav.career': '경력',
         'nav.education': '학력',
         'nav.manager': '리더십',
+        'nav.compensation': '희망 연봉',
         'nav.contact': '연락처',
         'education.title': '학력',
         // Manager Section
@@ -211,6 +227,7 @@ const translations = {
         'nav.career': 'Career',
         'nav.education': 'Education',
         'nav.manager': 'Leadership',
+        'nav.compensation': 'Compensation',
         'nav.contact': 'Contact',
         'education.title': 'Education',
         // Manager Section

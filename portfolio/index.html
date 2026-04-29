@@ -35,6 +35,7 @@
                 <a href="#career" data-i18n="nav.career">Career</a>
                 <a href="#education" data-i18n="nav.education">Education</a>
                 <a href="#testimonials" data-i18n="nav.testimonials">Testimonials</a>
+                <a href="#compensation" data-i18n="nav.compensation" hidden>Compensation</a>
                 <a href="#contact" data-i18n="nav.contact">Contact</a>
             </div>
             <div class="nav-actions">
@@ -380,6 +381,25 @@
                     <div class="skeleton skeleton-card"></div>
                     <div class="skeleton skeleton-card"></div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!--
+        Expected Compensation Section (PRIVATE)
+        - Hidden by default; removed from DOM unless localStorage 'kcenon.private.access' is set.
+        - Activate via URL parameter: ?private=on
+        - Deactivate via URL parameter: ?private=off
+        - Data file is in data/private/ which is gitignored — never published to the repo.
+    -->
+    <section id="compensation" class="section section-alt" hidden data-private="true">
+        <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+        <div class="container compensation-container" id="compensation-container">
+            <!-- Skeleton UI -->
+            <div class="skeleton-wrapper">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-description"></div>
+                <div class="skeleton skeleton-card"></div>
             </div>
         </div>
     </section>
