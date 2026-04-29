@@ -55,8 +55,8 @@ class SectionOrderManager {
   getDefaultSections() {
     return [
       { id: 'expertise', label: 'Expertise', included: true },
-      { id: 'projects', label: 'Projects', included: true },
       { id: 'manager', label: 'Leadership', included: true },
+      { id: 'projects', label: 'Projects', included: true },
       { id: 'career', label: 'Career', included: true },
       { id: 'testimonials', label: 'Testimonials', included: true }
     ];

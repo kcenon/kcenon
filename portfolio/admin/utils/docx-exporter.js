@@ -414,7 +414,7 @@ class DOCXExporter {
    */
   async generateDOCX(data, options = {}) {
     const {
-      sections = ['expertise', 'projects', 'manager', 'career', 'testimonials'],
+      sections = ['expertise', 'manager', 'projects', 'career', 'testimonials'],
       filename = 'portfolio.docx',
       theme = 'executive',
       themeOverrides = {},

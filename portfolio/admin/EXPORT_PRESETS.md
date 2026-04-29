@@ -15,7 +15,7 @@ your audience.
 |------------------------------|-----------------------------------|------------------------------------------------|---------------------------|
 | Theme                        | `executive` (navy + gold)         | `executive`                                    | `executive`               |
 | Language                     | match audience                    | **Korean** by default                          | match audience            |
-| Sections (top → bottom)      | Expertise → **Manager** → Career → Projects → Testimonials | same                                           | Expertise → Projects → Manager → Career → Testimonials |
+| Sections (top → bottom)      | Expertise → **Manager** → Projects → Career → Testimonials | same                                           | Expertise → Projects → Manager → Career → Testimonials |
 | Include cover page           | ✅                                | ✅                                              | ✅                         |
 | Include cover letter         | ✅                                | ✅                                              | ✅                         |
 | Cover-letter template        | `regulated-cto`                   | `regulated-cto`                                | `medical-cto`             |
@@ -33,7 +33,7 @@ pharmaceuticals).
 |------------------------------|-----------------------------------------------------------------------|
 | Theme                        | `executive`                                                           |
 | Language                     | `ko` (한국어)                                                          |
-| Section order                | `expertise → manager → career → projects → testimonials`              |
+| Section order                | `expertise → manager → projects → career → testimonials`              |
 | Cover page                   | on — author rendered as `신동철`                                       |
 | Cover letter                 | on — template `regulated-cto`                                         |
 | Page break between sections  | on                                                                    |
@@ -46,10 +46,11 @@ pharmaceuticals).
 - `manager` second: R&D leadership and PM capabilities (team-size range, IPOs,
   cert-success rate) are what KOSDAQ executives evaluate first. Pulling them
   to the second section means the second page already shows leadership weight.
-- `career` third: chronology after capability — by the time the reader reaches
-  the timeline they already know what you can do.
-- `projects` fourth: depth proof, with the category page-breaks letting them
-  scan medical / industrial / enterprise / open-source as discrete blocks.
+- `projects` third: depth proof of leadership claims, with the category
+  page-breaks letting the reader scan medical / industrial / enterprise /
+  open-source as discrete blocks.
+- `career` fourth: chronological context after impact — by the time the reader
+  reaches the timeline they already know what you can do.
 - `testimonials` last: external validation closes the document.
 
 **Cover letter — `regulated-cto`**
