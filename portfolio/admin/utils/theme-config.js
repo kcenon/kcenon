@@ -434,7 +434,7 @@ const executiveTheme = {
       table: '#F1F5F9'
     },
     border: '#CBD5E1',
-    success: '#1E3A5F',
+    success: '#0E7C66',
     warning: '#B8860B'
   },
   typography: {
@@ -447,7 +447,7 @@ const executiveTheme = {
       h1: 24,
       h2: 16,
       h3: 14,
-      body: 10,
+      body: 11,
       small: 9,
       tiny: 8
     },

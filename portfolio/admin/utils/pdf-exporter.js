@@ -181,7 +181,7 @@ class PDFExporter {
    * @param {string} themeId - Theme identifier (default: 'professional')
    * @param {Object} overrides - Custom style overrides
    */
-  initializeTheme(themeId = 'professional', overrides = {}) {
+  initializeTheme(themeId = 'executive', overrides = {}) {
     const styleManager = this.getStyleManager();
     if (!styleManager) {
       console.warn('StyleManager not available, using fallback styles');
@@ -311,27 +311,23 @@ class PDFExporter {
    */
   getColor(colorPath) {
     if (!this.currentTheme) {
-      // Enhanced fallback colors matching web design (WITH # for pdfmake)
+      // Executive navy + gold palette (matches executiveTheme in theme-config)
       const fallbackColors = {
-        // Primary colors
-        primary: '#3B82F6',
-        'primary.hover': '#2563EB',
-        'primary.light': '#DBEAFE',
-        secondary: '#6B7280',
-        accent: '#3B82F6',
-        'accent.hover': '#2563EB',
-        'accent.light': '#DBEAFE',
+        primary: '#1E3A5F',
+        'primary.hover': '#0F2A4F',
+        'primary.light': '#E2E8F0',
+        secondary: '#B8860B',
+        accent: '#B8860B',
+        'accent.hover': '#9A7209',
+        'accent.light': '#FAF3E0',
 
-        // Gradient colors
-        'gradient.start': '#3B82F6',
-        'gradient.end': '#8B5CF6',
+        'gradient.start': '#1E3A5F',
+        'gradient.end': '#0F2A4F',
 
-        // Text colors
-        'text.primary': '#0F172A',
+        'text.primary': '#1E293B',
         'text.secondary': '#475569',
         'text.muted': '#94A3B8',
 
-        // Background colors
         'background.page': '#FFFFFF',
         'background.primary': '#FFFFFF',
         'background.secondary': '#F8FAFC',
@@ -340,17 +336,14 @@ class PDFExporter {
         'background.card': '#FFFFFF',
         'background.table': '#F1F5F9',
 
-        // Border colors
-        border: '#E2E8F0',
-        'border.hover': '#CBD5E1',
+        border: '#CBD5E1',
+        'border.hover': '#94A3B8',
 
-        // Status colors
-        success: '#10B981',
-        warning: '#F59E0B',
-        error: '#EF4444',
-        info: '#3B82F6',
+        success: '#0E7C66',
+        warning: '#B8860B',
+        error: '#B91C1C',
+        info: '#1E3A5F',
 
-        // Code colors
         'code.bg': '#1E293B',
         'code.text': '#E2E8F0'
       };
@@ -599,7 +592,7 @@ class PDFExporter {
       filename = 'portfolio.pdf',
       title = 'Portfolio',
       author = 'Dongcheol Shin',
-      theme = 'professional',
+      theme = 'executive',
       themeOverrides = {},
       includeCoverLetter = false,
       includeCoverPage = true,
@@ -866,44 +859,55 @@ class PDFExporter {
     const subtitle = lang === 'ko'
       ? 'CTO · 연구소장 · 플랫폼 아키텍트'
       : 'CTO · Research Director · Platform Architect';
-    const tagline = lang === 'ko'
-      ? '안전 중요(safety-critical)·ISO 인증 도메인에서 R&D와 플랫폼을 20년 넘게 이끌어 왔습니다'
-      : '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains';
+    const summaryLines = lang === 'ko'
+      ? [
+          '안전 중요·ISO 인증 도메인에서 R&D와 플랫폼을 20년 넘게 이끌어 왔습니다.',
+          '4개국 의료기기 인증, 2회 IPO, 3–11명 다언어 R&D 팀 리딩 경험.',
+          '규제 SDLC(IEC 62304 / ISO 13485)를 ISO 26262·DO-178C·IEC 61508로 이전 가능.'
+        ]
+      : [
+          '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains.',
+          '4 international approvals, 2 IPOs, 3–11 person multi-language R&D team leadership.',
+          'Regulated SDLC (IEC 62304 / ISO 13485) transferable to ISO 26262, DO-178C, IEC 61508.'
+        ];
 
     content.push({
       canvas: [{ type: 'rect', x: 0, y: 0, w: 80, h: 3, color: this.getColor('primary') }],
-      margin: [0, 40, 0, 56]
+      margin: [0, 40, 0, 48]
     });
 
+    // Name — 32pt per Microsoft Word resume guide (28–35pt range)
     content.push({
       text: info.author || info.title,
-      fontSize: 42,
+      fontSize: 32,
       bold: true,
       color: this.getColor('text.primary'),
-      lineHeight: 1.1,
+      lineHeight: 1.15,
       margin: [0, 0, 0, 10]
     });
 
+    // Subtitle / role line
     content.push({
       text: subtitle,
-      fontSize: 14,
+      fontSize: 12,
       color: this.getColor('primary'),
       bold: true,
-      margin: [0, 0, 0, 18]
+      characterSpacing: 1.5,
+      margin: [0, 0, 0, 26]
     });
 
+    // Executive summary — 3-line P&L / team-size / impact synthesis (HBS pattern)
     content.push({
-      text: tagline,
-      fontSize: 11,
+      text: summaryLines.join('\n'),
+      fontSize: 10.5,
       color: this.getColor('text.secondary'),
-      italics: true,
-      lineHeight: 1.5,
-      margin: [0, 0, 0, 36]
+      lineHeight: 1.6,
+      margin: [0, 0, 0, 30]
     });
 
     content.push({
-      canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: this.getColor('border') }],
-      margin: [0, 0, 0, 30]
+      canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+      margin: [0, 0, 0, 26]
     });
 
     const stats = this.buildStatsInfographic(data);

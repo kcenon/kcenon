@@ -1476,7 +1476,7 @@ class AdminApp {
    * @returns {string} Theme ID
    */
   getSavedExportTheme() {
-    return localStorage.getItem('portfolioExportTheme') || 'professional';
+    return localStorage.getItem('portfolioExportTheme') || 'executive';
   }
 
   /**
