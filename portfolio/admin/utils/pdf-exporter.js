@@ -867,14 +867,14 @@ class PDFExporter {
       : 'CTO · Research Director · Platform Architect';
     const summaryLines = lang === 'ko'
       ? [
-          '안전 중요·ISO 인증 도메인에서 R&D와 플랫폼을 20년 넘게 이끌어 왔습니다.',
-          '4개국 의료기기 인증, 2회 IPO, 3–11명 다언어 R&D 팀 리딩 경험.',
-          '규제 SDLC(IEC 62304 / ISO 13485)를 ISO 26262·DO-178C·IEC 61508로 이전 가능.'
+          '안전 중요·ISO 인증 도메인에서 R&D 조직과 플랫폼을 20년 넘게 이끌어 왔습니다.',
+          '2회 IPO 기여, 4개국 글로벌 인증 통과, 3–11명 다언어 R&D 팀 리딩 경험.',
+          '규제 SDLC 메타-역량을 의료·자동차·항공·산업 안전 표준으로 이전한 경험.'
         ]
       : [
-          '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains.',
-          '4 international approvals, 2 IPOs, 3–11 person multi-language R&D team leadership.',
-          'Regulated SDLC (IEC 62304 / ISO 13485) transferable to ISO 26262, DO-178C, IEC 61508.'
+          '20+ years leading R&D organizations and platforms in safety-critical, ISO-certified domains.',
+          '2 IPOs delivered, 4 international approvals, 3–11 person multi-language R&D team leadership.',
+          'Regulated SDLC meta-skill transferable across medical, automotive, aerospace, industrial safety standards.'
         ];
 
     content.push({
