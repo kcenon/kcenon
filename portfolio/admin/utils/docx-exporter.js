@@ -1336,7 +1336,9 @@ class DOCXExporter {
       }
     }
 
-    children.push(new docx.Paragraph({ children: [], spacing: { after: 100 } }));
+    // Wider trailing spacer so each project reads as its own block
+    // rather than blending into the next.
+    children.push(new docx.Paragraph({ children: [], spacing: { after: 320 } }));
 
     return children;
   }

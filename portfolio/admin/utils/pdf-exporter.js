@@ -1447,11 +1447,12 @@ class PDFExporter {
       }
     }
 
-    // Return with card-like styling (removed fillColor as it causes black background)
+    // Return with card-like styling. Wider bottom margin so projects within
+    // a category read as discrete blocks rather than running together.
     return {
       unbreakable: true,
       stack: items,
-      margin: [0, 0, 0, this.getSpacing('card.marginBottom')]
+      margin: [0, 0, 0, 28]
     };
   }
 
