@@ -688,12 +688,12 @@ class DOCXExporter {
       ? [
           '안전 중요·ISO 인증 도메인에서 R&D 조직과 플랫폼을 20년 넘게 이끌어 왔습니다.',
           '2회 IPO 기여, 4개국 글로벌 인증 통과, 3–11명 다언어 R&D 팀 리딩 경험.',
-          '규제 SDLC 메타-역량을 의료·자동차·항공·산업 안전 표준으로 이전한 경험.'
+          '규제·표준이 요구되는 도메인이라면 산업에 종속되지 않는 SDLC 운영 패턴으로 적응합니다.'
         ]
       : [
           '20+ years leading R&D organizations and platforms in safety-critical, ISO-certified domains.',
           '2 IPOs delivered, 4 international approvals, 3–11 person multi-language R&D team leadership.',
-          'Regulated SDLC meta-skill transferable across medical, automotive, aerospace, industrial safety standards.'
+          'A regulated-SDLC operating pattern that adapts across industries — not bound to a single domain.'
         ];
 
     // Top accent rule — short bold mark above the name (executive editorial style).
