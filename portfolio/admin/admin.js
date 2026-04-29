@@ -2312,14 +2312,27 @@ window.onerror = function(msg, url, lineNo, columnNo, error) {
   return false;
 };
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready AND portfolio data has finished loading.
+// data.js is an async IIFE that fetches JSON files and only sets
+// window.PortfolioData once Promise.all resolves. Without waiting for the
+// 'portfolioDataReady' event, AdminApp can construct before data exists and
+// render an empty page. script.js applies the same pattern.
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, initializing AdminApp...');
-  try {
-    window.adminApp = new AdminApp();
-    console.log('AdminApp initialized successfully');
-  } catch (err) {
-    console.error('Failed to initialize AdminApp:', err);
-    alert('Failed to initialize AdminApp: ' + err.message);
+  function startApp() {
+    console.log('Initializing AdminApp...');
+    try {
+      window.adminApp = new AdminApp();
+      console.log('AdminApp initialized successfully');
+    } catch (err) {
+      console.error('Failed to initialize AdminApp:', err);
+      alert('Failed to initialize AdminApp: ' + err.message);
+    }
+  }
+
+  if (window.PortfolioData && window.PortfolioData.projects) {
+    startApp();
+  } else {
+    console.log('DOM loaded, waiting for portfolioDataReady...');
+    window.addEventListener('portfolioDataReady', startApp, { once: true });
   }
 });
