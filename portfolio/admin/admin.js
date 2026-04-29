@@ -1741,6 +1741,19 @@ class AdminApp {
                   </label>
                   <p class="form-hint">Insert a page break before each section (except the first)</p>
                 </div>
+
+                <div class="form-group compensation-option">
+                  <label class="checkbox-label${this.hasCompensationData() ? '' : ' is-disabled'}">
+                    <input type="checkbox" id="include-compensation"
+                           ${this.getSavedCompensationOption() && this.hasCompensationData() ? 'checked' : ''}
+                           ${this.hasCompensationData() ? '' : 'disabled'}>
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-text">Include compensation expectations <span class="badge badge-private">PRIVATE</span></span>
+                  </label>
+                  <p class="form-hint">${this.hasCompensationData()
+                    ? 'Append the private compensation section. Use only for personal review or trusted negotiation drafts — never include in public submissions.'
+                    : 'Compensation data not loaded. Visit the portfolio with <code>?private=on</code> first to grant access, then reload this admin page.'}</p>
+                </div>
               </div>
 
               <div class="export-options-group">
@@ -1811,6 +1824,14 @@ class AdminApp {
       });
     }
 
+    // Compensation checkbox change handler (refresh preview)
+    const compensationCheckbox = modalEl.querySelector('#include-compensation');
+    if (compensationCheckbox) {
+      compensationCheckbox.addEventListener('change', () => {
+        this.updateDocumentPreview();
+      });
+    }
+
     const closeModal = () => {
       // Cleanup section order manager
       if (this.sectionOrderManager) {
@@ -1838,6 +1859,7 @@ class AdminApp {
       const filename = modalEl.querySelector('#export-filename').value || 'portfolio';
       const includeCoverLetter = modalEl.querySelector('#include-cover-letter')?.checked || false;
       const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
+      const includeCompensation = (modalEl.querySelector('#include-compensation')?.checked || false) && this.hasCompensationData();
       const personalInfoFields = Array.from(
         modalEl.querySelectorAll('.personal-info-field-input:checked')
       ).map(el => el.dataset.fieldId);
@@ -1847,10 +1869,15 @@ class AdminApp {
       this.saveExportLanguage(language);
       this.saveCoverLetterOption(includeCoverLetter);
       this.savePageBreakOption(pageBreakBetweenSections);
+      this.saveCompensationOption(includeCompensation);
       this.savePersonalInfoFields(personalInfoFields);
       this.saveExportPreferences();
 
       closeModal();
+
+      // When compensation is requested, append it to the section list so the
+      // existing forEach dispatch in the exporters handles it like any other.
+      const finalSections = includeCompensation ? [...sections, 'compensation'] : sections;
 
       // Get localized filename and author based on language
       const fileInfo = language === 'ko'
@@ -1858,12 +1885,13 @@ class AdminApp {
         : { filename: `${filename}_en.${format}`, author: 'Dongcheol Shin' };
 
       const options = {
-        sections,
+        sections: finalSections,
         filename: fileInfo.filename,
         author: fileInfo.author,
         theme,
         themeOverrides: this.buildExportOverrides(),
         includeCoverLetter,
+        includeCompensation,
         personalInfoFields,
         pageBreakBetweenSections,
         language
@@ -1926,8 +1954,10 @@ class AdminApp {
       ? this.sectionOrderManager.getOrderedSections()
       : ['expertise', 'projects', 'manager', 'career', 'testimonials'];
     const pageBreakBetweenSections = modalEl.querySelector('#page-break-sections')?.checked || false;
+    const includeCompensation = (modalEl.querySelector('#include-compensation')?.checked || false) && this.hasCompensationData();
+    const previewSections = includeCompensation ? [...sections, 'compensation'] : sections;
 
-    this.previewRenderer.update(this.data, mergedTheme, sections, { pageBreakBetweenSections });
+    this.previewRenderer.update(this.data, mergedTheme, previewSections, { pageBreakBetweenSections });
   }
 
   /**
@@ -2349,6 +2379,33 @@ class AdminApp {
    */
   saveCoverLetterOption(enabled) {
     localStorage.setItem('export-include-cover-letter', enabled.toString());
+  }
+
+  /**
+   * Whether compensation data is available in the current session.
+   * Compensation lives in data/private/ and is only loaded when the
+   * portfolio's private access token is set.
+   * @returns {boolean}
+   */
+  hasCompensationData() {
+    return !!(window.PortfolioData && window.PortfolioData.compensation);
+  }
+
+  /**
+   * Get saved compensation option from localStorage. Defaults to false so
+   * that the private section is never accidentally included.
+   * @returns {boolean}
+   */
+  getSavedCompensationOption() {
+    return localStorage.getItem('export-include-compensation') === 'true';
+  }
+
+  /**
+   * Save compensation option to localStorage.
+   * @param {boolean} enabled
+   */
+  saveCompensationOption(enabled) {
+    localStorage.setItem('export-include-compensation', enabled ? 'true' : 'false');
   }
 
   /**

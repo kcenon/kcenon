@@ -2655,9 +2655,36 @@
   .preview-export-actions {
     flex-direction: column;
   }
-  
+
   .preview-export-actions .btn {
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Compensation export option (PRIVATE) */
+.compensation-option .checkbox-label.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.compensation-option .badge.badge-private {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: #b91c1c;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.compensation-option .form-hint code {
+  padding: 1px 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: rgba(127, 127, 127, 0.15);
+  border-radius: 3px;
 }

@@ -119,6 +119,7 @@ class PDFExporter {
         education: '학력',
         testimonials: '추천서',
         manager: '리더십 & 관리',
+        compensation: '희망 보상 (비공개)',
         featuredProjects: '주요 프로젝트',
         medicalImaging: '의료 영상',
         orthodontic: '교정 시스템',
@@ -146,6 +147,7 @@ class PDFExporter {
         education: 'EDUCATION',
         testimonials: 'TESTIMONIALS',
         manager: 'LEADERSHIP & MANAGEMENT',
+        compensation: 'COMPENSATION EXPECTATIONS (PRIVATE)',
         featuredProjects: 'Featured Projects',
         medicalImaging: 'Medical Imaging',
         orthodontic: 'Orthodontic Systems',
@@ -751,6 +753,11 @@ class PDFExporter {
         case 'education':
           if (data.education) {
             content.push(...this.buildEducationSection(data.education, addPageBreak));
+          }
+          break;
+        case 'compensation':
+          if (data.compensation) {
+            content.push(...this.buildCompensationSection(data.compensation, addPageBreak));
           }
           break;
       }
@@ -1739,6 +1746,177 @@ class PDFExporter {
         margin: [0, 0, 0, this.getSpacing('gap.medium')]
       });
     });
+
+    return content;
+  }
+
+  /**
+   * Build compensation section (PRIVATE).
+   * Renders the expected compensation tiers as a compact table. Only included
+   * in exports when the user explicitly enables the option in the export modal.
+   * @param {Object} compensation - Compensation data
+   * @param {boolean} addPageBreak - Whether to add page break before section
+   */
+  buildCompensationSection(compensation, addPageBreak = false) {
+    const content = [];
+    const labels = this.getLabels();
+
+    content.push(...this.buildSectionHeader(labels.compensation, addPageBreak));
+
+    if (compensation.subtitle) {
+      content.push({
+        text: this.getText(compensation.subtitle),
+        italics: true,
+        color: this.getColor('text.muted'),
+        fontSize: this.getTypography('fontSize.body'),
+        margin: [0, 0, 0, 6]
+      });
+    }
+    if (compensation.intro) {
+      content.push({
+        text: this.getText(compensation.intro),
+        color: this.getColor('text.primary'),
+        fontSize: this.getTypography('fontSize.small'),
+        margin: [0, 0, 0, 10]
+      });
+    }
+
+    // Confidentiality watermark line
+    content.push({
+      text: this.getText({
+        ko: '※ 본 섹션은 비공개 협상용 자료입니다. 외부 유출 금지.',
+        en: '※ This section is private negotiation material. Do not distribute externally.'
+      }),
+      color: '#b91c1c',
+      bold: true,
+      fontSize: this.getTypography('fontSize.small'),
+      margin: [0, 0, 0, 10]
+    });
+
+    // Current package summary
+    if (compensation.currentPackage) {
+      content.push({
+        text: this.getText(compensation.currentPackage.label) || '',
+        bold: true,
+        color: this.getColor('primary'),
+        fontSize: this.getTypography('fontSize.h3'),
+        margin: [0, 0, 0, 4]
+      });
+      const components = compensation.currentPackage.components || [];
+      components.forEach(c => {
+        content.push({
+          text: `• ${this.getText(c.label)}: ${c.value || ''}`,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.primary'),
+          margin: [0, 0, 0, 2]
+        });
+      });
+      if (compensation.currentPackage.estimatedAnnualEv) {
+        content.push({
+          text: this.getText(compensation.currentPackage.estimatedAnnualEv),
+          italics: true,
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 4, 0, 12]
+        });
+      }
+    }
+
+    // Negotiation tiers as a 5-column table
+    const tiers = compensation.tiers || [];
+    if (tiers.length > 0) {
+      const headerRow = [
+        { text: this.getText({ ko: '시나리오', en: 'Tier' }), bold: true },
+        { text: this.getText({ ko: '기본급', en: 'Base' }), bold: true },
+        { text: this.getText({ ko: '사이닝', en: 'Signing' }), bold: true },
+        { text: this.getText({ ko: '인센티브', en: 'Incentive' }), bold: true },
+        { text: this.getText({ ko: '옵션/RSU', en: 'Options/RSU' }), bold: true },
+        { text: this.getText({ ko: '1년차 총보상', en: '1Y Total' }), bold: true }
+      ];
+      const body = [headerRow];
+      tiers.forEach(tier => {
+        body.push([
+          { text: this.getText(tier.label), bold: true },
+          { text: this.getText(tier.base) || '' },
+          { text: this.getText(tier.signing) || '' },
+          { text: this.getText(tier.incentive) || '' },
+          { text: this.getText(tier.options) || '' },
+          { text: this.getText(tier.totalFirstYear) || '' }
+        ]);
+      });
+
+      content.push({
+        table: {
+          headerRows: 1,
+          widths: ['auto', '*', '*', '*', '*', '*'],
+          body
+        },
+        layout: 'lightHorizontalLines',
+        fontSize: this.getTypography('fontSize.small'),
+        margin: [0, 0, 0, 10]
+      });
+
+      // Per-tier rationale lines
+      tiers.forEach(tier => {
+        if (tier.rationale) {
+          content.push({
+            text: [
+              { text: `${this.getText(tier.label)}: `, bold: true, color: this.getColor('primary') },
+              { text: this.getText(tier.rationale), color: this.getColor('text.muted') }
+            ],
+            fontSize: this.getTypography('fontSize.small'),
+            margin: [0, 0, 0, 3]
+          });
+        }
+      });
+    }
+
+    // Non-negotiables
+    if (Array.isArray(compensation.nonNegotiables) && compensation.nonNegotiables.length) {
+      content.push({
+        text: this.getText({ ko: '비협상 조건', en: 'Non-negotiable Terms' }),
+        bold: true,
+        color: this.getColor('primary'),
+        fontSize: this.getTypography('fontSize.h3'),
+        margin: [0, 12, 0, 4]
+      });
+      compensation.nonNegotiables.forEach(item => {
+        content.push({
+          text: `• ${this.getText(item)}`,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.primary'),
+          margin: [0, 0, 0, 2]
+        });
+      });
+    }
+
+    // Negotiation stance
+    if (compensation.negotiationStance) {
+      content.push({
+        text: this.getText({ ko: '협상 입장', en: 'Negotiation Stance' }),
+        bold: true,
+        color: this.getColor('primary'),
+        fontSize: this.getTypography('fontSize.h3'),
+        margin: [0, 12, 0, 4]
+      });
+      content.push({
+        text: this.getText(compensation.negotiationStance),
+        fontSize: this.getTypography('fontSize.small'),
+        color: this.getColor('text.primary'),
+        margin: [0, 0, 0, 8]
+      });
+    }
+
+    if (compensation.lastUpdated) {
+      content.push({
+        text: this.getText({ ko: `최종 갱신: ${compensation.lastUpdated}`, en: `Last updated: ${compensation.lastUpdated}` }),
+        italics: true,
+        color: this.getColor('text.muted'),
+        fontSize: this.getTypography('fontSize.small'),
+        alignment: 'right',
+        margin: [0, 8, 0, 0]
+      });
+    }
 
     return content;
   }

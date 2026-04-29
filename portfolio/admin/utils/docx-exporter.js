@@ -121,6 +121,7 @@ class DOCXExporter {
         education: '학력',
         testimonials: '추천서',
         manager: '리더십 & 관리',
+        compensation: '희망 보상 (비공개)',
         featuredProjects: '주요 프로젝트',
         medicalImaging: '의료 영상',
         orthodontic: '교정 시스템',
@@ -151,6 +152,7 @@ class DOCXExporter {
         education: 'EDUCATION',
         testimonials: 'TESTIMONIALS',
         manager: 'LEADERSHIP & MANAGEMENT',
+        compensation: 'COMPENSATION EXPECTATIONS (PRIVATE)',
         featuredProjects: 'Featured Projects',
         medicalImaging: 'Medical Imaging',
         orthodontic: 'Orthodontic Systems',
@@ -565,6 +567,11 @@ class DOCXExporter {
         case 'education':
           if (data.education) {
             children.push(...this.buildEducationSection(data.education, addPageBreak));
+          }
+          break;
+        case 'compensation':
+          if (data.compensation) {
+            children.push(...this.buildCompensationSection(data.compensation, addPageBreak));
           }
           break;
       }
@@ -1704,6 +1711,215 @@ class DOCXExporter {
         }));
       }
     });
+
+    return children;
+  }
+
+  /**
+   * Build compensation section (PRIVATE).
+   * Renders the expected compensation tiers as a Word table. Only included
+   * when explicitly enabled via the export modal option.
+   * @param {Object} compensation - Compensation data
+   * @param {boolean} addPageBreak
+   */
+  buildCompensationSection(compensation, addPageBreak = false) {
+    const children = [];
+    const labels = this.getLabels();
+    children.push(...this.createHeading2(labels.compensation, addPageBreak));
+
+    if (compensation.subtitle) {
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText(compensation.subtitle),
+          italics: true,
+          size: this.toHalfPt(this.getTypography('fontSize.body')),
+          color: this.getColor('text.muted')
+        })],
+        spacing: { after: 80 }
+      }));
+    }
+    if (compensation.intro) {
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText(compensation.intro),
+          size: this.toHalfPt(this.getTypography('fontSize.small')),
+          color: this.getColor('text.primary')
+        })],
+        spacing: { after: 120 }
+      }));
+    }
+
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: this.getText({
+          ko: '※ 본 섹션은 비공개 협상용 자료입니다. 외부 유출 금지.',
+          en: '※ This section is private negotiation material. Do not distribute externally.'
+        }),
+        bold: true,
+        size: this.toHalfPt(this.getTypography('fontSize.small')),
+        color: 'B91C1C'
+      })],
+      spacing: { after: 160 }
+    }));
+
+    // Current package
+    if (compensation.currentPackage) {
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText(compensation.currentPackage.label) || '',
+          bold: true,
+          size: this.toHalfPt(this.getTypography('fontSize.h3')),
+          color: this.getColor('primary')
+        })],
+        spacing: { before: 80, after: 60 }
+      }));
+      (compensation.currentPackage.components || []).forEach(c => {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: `• ${this.getText(c.label)}: ${c.value || ''}`,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.primary')
+          })],
+          spacing: { after: 30 }
+        }));
+      });
+      if (compensation.currentPackage.estimatedAnnualEv) {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: this.getText(compensation.currentPackage.estimatedAnnualEv),
+            italics: true,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.muted')
+          })],
+          spacing: { after: 160 }
+        }));
+      }
+    }
+
+    // Tier table
+    const tiers = compensation.tiers || [];
+    if (tiers.length > 0) {
+      const headerCells = [
+        { ko: '시나리오', en: 'Tier' },
+        { ko: '기본급', en: 'Base' },
+        { ko: '사이닝', en: 'Signing' },
+        { ko: '인센티브', en: 'Incentive' },
+        { ko: '옵션/RSU', en: 'Options/RSU' },
+        { ko: '1년차 총보상', en: '1Y Total' }
+      ].map(h => new docx.TableCell({
+        children: [new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: this.getText(h),
+            bold: true,
+            size: this.toHalfPt(this.getTypography('fontSize.small'))
+          })]
+        })]
+      }));
+
+      const rows = [new docx.TableRow({ children: headerCells, tableHeader: true })];
+      tiers.forEach(tier => {
+        const cellsData = [
+          tier.label, tier.base, tier.signing, tier.incentive, tier.options, tier.totalFirstYear
+        ];
+        const cells = cellsData.map((val, idx) => new docx.TableCell({
+          children: [new docx.Paragraph({
+            children: [new docx.TextRun({
+              text: this.getText(val) || '',
+              bold: idx === 0,
+              size: this.toHalfPt(this.getTypography('fontSize.small'))
+            })]
+          })]
+        }));
+        rows.push(new docx.TableRow({ children: cells }));
+      });
+
+      children.push(new docx.Table({
+        rows,
+        width: { size: 100, type: docx.WidthType.PERCENTAGE }
+      }));
+
+      // Rationales beneath the table
+      tiers.forEach(tier => {
+        if (tier.rationale) {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${this.getText(tier.label)}: `,
+                bold: true,
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('primary')
+              }),
+              new docx.TextRun({
+                text: this.getText(tier.rationale),
+                size: this.toHalfPt(this.getTypography('fontSize.small')),
+                color: this.getColor('text.muted')
+              })
+            ],
+            spacing: { before: 60, after: 40 }
+          }));
+        }
+      });
+    }
+
+    // Non-negotiables
+    if (Array.isArray(compensation.nonNegotiables) && compensation.nonNegotiables.length) {
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText({ ko: '비협상 조건', en: 'Non-negotiable Terms' }),
+          bold: true,
+          size: this.toHalfPt(this.getTypography('fontSize.h3')),
+          color: this.getColor('primary')
+        })],
+        spacing: { before: 200, after: 60 }
+      }));
+      compensation.nonNegotiables.forEach(item => {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({
+            text: `• ${this.getText(item)}`,
+            size: this.toHalfPt(this.getTypography('fontSize.small')),
+            color: this.getColor('text.primary')
+          })],
+          spacing: { after: 30 }
+        }));
+      });
+    }
+
+    // Negotiation stance
+    if (compensation.negotiationStance) {
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText({ ko: '협상 입장', en: 'Negotiation Stance' }),
+          bold: true,
+          size: this.toHalfPt(this.getTypography('fontSize.h3')),
+          color: this.getColor('primary')
+        })],
+        spacing: { before: 200, after: 60 }
+      }));
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText(compensation.negotiationStance),
+          size: this.toHalfPt(this.getTypography('fontSize.small')),
+          color: this.getColor('text.primary')
+        })],
+        spacing: { after: 120 }
+      }));
+    }
+
+    if (compensation.lastUpdated) {
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: this.getText({
+            ko: `최종 갱신: ${compensation.lastUpdated}`,
+            en: `Last updated: ${compensation.lastUpdated}`
+          }),
+          italics: true,
+          size: this.toHalfPt(this.getTypography('fontSize.small')),
+          color: this.getColor('text.muted')
+        })],
+        alignment: docx.AlignmentType.RIGHT,
+        spacing: { before: 120 }
+      }));
+    }
 
     return children;
   }

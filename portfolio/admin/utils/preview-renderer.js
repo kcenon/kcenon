@@ -310,9 +310,48 @@ class DocumentPreviewRenderer {
       case 'education':
         this.buildEducationElements(elements, data, typography);
         break;
+
+      case 'compensation':
+        this.buildCompensationElements(elements, data, typography);
+        break;
     }
 
     return elements;
+  }
+
+  /**
+   * Build compensation section preview elements (PRIVATE).
+   * Renders a compact list of negotiation tiers — kept terse so the preview
+   * still reads as "this section will be present" without reproducing the
+   * full table layout.
+   */
+  buildCompensationElements(elements, data, typography) {
+    // Confidentiality warning line
+    elements.push({
+      type: 'paragraph',
+      text: '※ PRIVATE — do not distribute externally',
+      height: typography.fontSize.small + 8
+    });
+
+    const tiers = data?.tiers || [];
+    tiers.forEach(tier => {
+      const groupItems = [];
+      groupItems.push({
+        type: 'subheading',
+        text: this.getText(tier.label),
+        height: typography.fontSize.h3 + 10
+      });
+      groupItems.push({
+        type: 'paragraph',
+        text: `Base ${this.getText(tier.base)} · Total ${this.getText(tier.totalFirstYear)}`,
+        height: typography.fontSize.body + 8
+      });
+      elements.push({
+        type: 'group',
+        items: groupItems,
+        height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
+      });
+    });
   }
 
   /**
@@ -482,7 +521,8 @@ class DocumentPreviewRenderer {
       projects: 'Projects',
       career: 'Career',
       education: 'Education',
-      testimonials: 'Testimonials'
+      testimonials: 'Testimonials',
+      compensation: 'Compensation (private)'
     };
     return titles[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
   }

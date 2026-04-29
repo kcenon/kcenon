@@ -94,6 +94,25 @@ To change the wording, edit `summaryLines` inside `buildCoverPage` in both
 `admin/utils/pdf-exporter.js` and `admin/utils/docx-exporter.js` (they are
 intentionally duplicated — same copy must live in both exporters).
 
+## Compensation expectations (PRIVATE)
+
+The export modal exposes an **Include compensation expectations** checkbox in
+the *Content Options* group. This option appends the private "희망 보상"
+section (current package, market baseline, three negotiation tiers,
+non-negotiable terms, negotiation stance) to the exported document.
+
+| Aspect | Detail |
+|--------|--------|
+| Default | **OFF** — never accidentally included in routine exports |
+| Visibility | Disabled when `data/private/compensation.json` is not loaded; enable private access via `?private=on` on the portfolio page first, then reload the admin page |
+| Persistence | Choice is saved per-browser in `localStorage` under `export-include-compensation` |
+| Use cases | Personal review draft, trusted recruiter who has signed an NDA, internal salary calibration record |
+| Never use for | Public submissions, blind first-round screenings, headhunter cold introductions |
+
+The exported section is rendered with a red "PRIVATE — do not distribute"
+watermark line at the top, plus the section heading is suffixed with
+`(비공개)` / `(PRIVATE)` to make accidental forwarding visually obvious.
+
 ## Variations
 
 - **Bilingual submission**: produce both `portfolio_ko.pdf` and
