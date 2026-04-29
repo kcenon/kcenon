@@ -1135,7 +1135,7 @@ class PDFExporter {
       fontSize: 14,
       bold: true,
       color: this.getColor('primary'),
-      margin: [0, addPageBreak ? 0 : 14, 0, 6]
+      margin: [0, addPageBreak ? 0 : 10, 0, 5]
     };
     if (addPageBreak) titleNode.pageBreak = 'before';
 
@@ -1143,7 +1143,7 @@ class PDFExporter {
       titleNode,
       {
         canvas: [{ type: 'line', x1: 0, y1: 0, x2: 60, y2: 0, lineWidth: 1.5, lineColor: this.getColor('accent') }],
-        margin: [0, 0, 0, 14]
+        margin: [0, 0, 0, 10]
       }
     ];
   }
@@ -1167,7 +1167,7 @@ class PDFExporter {
       },
       {
         canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
-        margin: [0, 0, 0, 22]
+        margin: [0, 0, 0, 18]
       }
     ];
   }
@@ -1447,12 +1447,12 @@ class PDFExporter {
       }
     }
 
-    // Return with card-like styling. Wider bottom margin so projects within
-    // a category read as discrete blocks rather than running together.
+    // Return with card-like styling. Bottom margin sized to keep projects
+    // distinct without leaving large gaps on the page.
     return {
       unbreakable: true,
       stack: items,
-      margin: [0, 0, 0, 28]
+      margin: [0, 0, 0, 22]
     };
   }
 
@@ -1760,7 +1760,7 @@ class PDFExporter {
             { text: '◆ ', color: this.getColor('accent'), fontSize: 12, bold: true },
             { text: this.getText(cap.title), color: this.getColor('primary'), bold: true, fontSize: 12 }
           ],
-          margin: [0, idx === 0 ? 0 : 14, 0, 4]
+          margin: [0, idx === 0 ? 0 : 10, 0, 4]
         });
 
         if (cap.description) {
@@ -1821,7 +1821,7 @@ class PDFExporter {
         content.push({ unbreakable: true, stack: items, margin: [0, 0, 0, 4] });
       });
 
-      content.push({ text: '', margin: [0, 0, 0, 14] });
+      content.push({ text: '', margin: [0, 0, 0, 10] });
     }
 
     // ── Leadership Style ───────────────────────────────────
@@ -1835,7 +1835,7 @@ class PDFExporter {
           color: this.getColor('text.secondary'),
           lineHeight: 1.6,
           markerColor: this.getColor('accent'),
-          margin: [16, 0, 0, 14]
+          margin: [16, 0, 0, 10]
         });
       }
     }
@@ -1853,7 +1853,7 @@ class PDFExporter {
           color: this.getColor('text.secondary'),
           lineHeight: 1.6,
           markerColor: this.getColor('success'),
-          margin: [16, 0, 0, 14]
+          margin: [16, 0, 0, 10]
         });
       }
     }
@@ -1891,12 +1891,12 @@ class PDFExporter {
         layout: {
           hLineWidth: () => 0,
           vLineWidth: () => 0,
-          paddingLeft: () => 12,
-          paddingRight: () => 12,
-          paddingTop: () => 12,
-          paddingBottom: () => 14
+          paddingLeft: () => 10,
+          paddingRight: () => 10,
+          paddingTop: () => 10,
+          paddingBottom: () => 12
         },
-        margin: [0, 0, 0, 8]
+        margin: [0, 0, 0, 6]
       });
     }
 

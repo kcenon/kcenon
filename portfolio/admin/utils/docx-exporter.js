@@ -1336,9 +1336,9 @@ class DOCXExporter {
       }
     }
 
-    // Wider trailing spacer so each project reads as its own block
-    // rather than blending into the next.
-    children.push(new docx.Paragraph({ children: [], spacing: { after: 320 } }));
+    // Trailing spacer keeps each project visually distinct without
+    // wasting too much page height.
+    children.push(new docx.Paragraph({ children: [], spacing: { after: 240 } }));
 
     return children;
   }
@@ -1768,7 +1768,7 @@ class DOCXExporter {
             new docx.TextRun({ text: '◆  ', bold: true, size: this.toHalfPt(12), color: accentHex }),
             new docx.TextRun({ text: this.getText(cap.title), bold: true, size: this.toHalfPt(12), color: primaryHex })
           ],
-          spacing: { before: idx === 0 ? 0 : 240, after: 80 },
+          spacing: { before: idx === 0 ? 0 : 180, after: 70 },
           keepLines: true, keepNext: true
         }));
 
@@ -1910,7 +1910,7 @@ class DOCXExporter {
           })] : [])
         ],
         width: { size: colWidth, type: docx.WidthType.DXA },
-        margins: { top: 160, bottom: 200, left: 200, right: 200 },
+        margins: { top: 120, bottom: 160, left: 180, right: 180 },
         borders: {
           top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
           bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
@@ -1950,7 +1950,7 @@ class DOCXExporter {
           insideVertical: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
         }
       }));
-      children.push(new docx.Paragraph({ children: [], spacing: { after: 160 } }));
+      children.push(new docx.Paragraph({ children: [], spacing: { after: 120 } }));
     }
 
     return children;
@@ -1975,8 +1975,8 @@ class DOCXExporter {
           })
         ],
         spacing: {
-          before: pageBreakBefore ? 0 : 480,
-          after: 320,
+          before: pageBreakBefore ? 0 : 360,
+          after: 240,
           line: 280
         },
         pageBreakBefore,
@@ -2006,8 +2006,8 @@ class DOCXExporter {
         })
       ],
       spacing: {
-        before: pageBreakBefore ? 0 : 360,
-        after: 200,
+        before: pageBreakBefore ? 0 : 280,
+        after: 160,
         line: 320
       },
       pageBreakBefore,
