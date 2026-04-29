@@ -684,10 +684,11 @@ class PDFExporter {
       content.push(...this.buildCoverPage(info, data));
     }
 
-    // Cover Letter (if included)
+    // Cover Letter (if included). Do not append a trailing page break —
+    // the next section's pageBreak: 'before' will handle the page boundary
+    // and combining both produces an empty page.
     if (includeCoverLetter && coverLetterTemplate) {
       content.push(...this.buildCoverLetterPage(coverLetterTemplate));
-      content.push({ text: '', pageBreak: 'after' }); // Page break after cover letter
     }
 
     // Inline header (only when no cover page is used)
@@ -854,8 +855,8 @@ class PDFExporter {
       : '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains';
 
     content.push({
-      canvas: [{ type: 'rect', x: 0, y: 0, w: 515, h: 8, color: this.getColor('primary') }],
-      margin: [0, 40, 0, 60]
+      canvas: [{ type: 'rect', x: 0, y: 0, w: 80, h: 3, color: this.getColor('primary') }],
+      margin: [0, 40, 0, 56]
     });
 
     content.push({
@@ -918,7 +919,8 @@ class PDFExporter {
       margin: [0, 60, 0, 0]
     });
 
-    content.push({ text: '', pageBreak: 'after' });
+    // No trailing pageBreak: 'after' here — the next section header
+    // already carries pageBreak: 'before', so adding both produces a blank page.
     return content;
   }
 
@@ -1094,29 +1096,25 @@ class PDFExporter {
    * @returns {Array} pdfmake content nodes
    */
   buildSectionHeader(text, addPageBreak = false) {
-    const headerNode = {
-      table: {
-        widths: ['*'],
-        body: [[{
-          text,
-          color: '#FFFFFF',
-          fillColor: this.getColor('primary'),
-          bold: true,
-          fontSize: 18,
-          characterSpacing: 1.2,
-          margin: [14, 10, 14, 10]
-        }]]
-      },
-      layout: 'noBorders',
-      margin: [0, 0, 0, 4]
+    const titleNode = {
+      text: (text || '').toString().toUpperCase(),
+      fontSize: 13,
+      bold: true,
+      color: this.getColor('primary'),
+      characterSpacing: 3,
+      margin: [0, 0, 0, 8]
     };
-    if (addPageBreak) headerNode.pageBreak = 'before';
+    if (addPageBreak) titleNode.pageBreak = 'before';
 
     return [
-      headerNode,
+      titleNode,
       {
-        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: this.getColor('border') }],
-        margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 80, y2: 0, lineWidth: 2, lineColor: this.getColor('primary') }],
+        margin: [0, 0, 0, 4]
+      },
+      {
+        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+        margin: [0, 0, 0, 22]
       }
     ];
   }

@@ -674,19 +674,34 @@ class DOCXExporter {
       ? '안전 중요(safety-critical)·ISO 인증 도메인에서 R&D와 플랫폼을 20년 넘게 이끌어 왔습니다'
       : '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains';
 
-    // Top accent band (thick top border on an empty paragraph)
-    children.push(new docx.Paragraph({
-      children: [new docx.TextRun({ text: '' })],
-      spacing: { before: 0, after: 800 },
-      border: {
-        top: {
-          color: this.getColor('primary'),
-          size: 48,
-          space: 1,
-          style: docx.BorderStyle.SINGLE
-        }
+    // Top accent rule — short bold mark above the name (executive editorial style).
+    // Implemented as a 1-cell left-anchored table so the rule does not span full width.
+    children.push(new docx.Table({
+      rows: [new docx.TableRow({
+        children: [new docx.TableCell({
+          children: [new docx.Paragraph({ children: [new docx.TextRun({ text: '' })] })],
+          shading: { type: docx.ShadingType.CLEAR, fill: this.getColor('primary') },
+          width: { size: 1200, type: docx.WidthType.DXA },
+          margins: { top: 60, bottom: 60, left: 0, right: 0 },
+          borders: {
+            top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+            bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+            left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+            right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+          }
+        })]
+      })],
+      width: { size: 1200, type: docx.WidthType.DXA },
+      borders: {
+        top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        insideHorizontal: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        insideVertical: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
       }
     }));
+    children.push(new docx.Paragraph({ children: [], spacing: { after: 600 } }));
 
     // Name
     children.push(new docx.Paragraph({
@@ -968,7 +983,7 @@ class DOCXExporter {
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
-                  text: `• ${this.stripHtml(this.getText(item))}`,
+                  text: `${this.stripHtml(this.getText(item))}`,
                   size: this.toHalfPt(this.getTypography('fontSize.body')),
                   color: this.getColor('text.secondary')
                 })
@@ -1238,7 +1253,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: `• ${this.stripHtml(this.getText(role))}`,
+                text: `${this.stripHtml(this.getText(role))}`,
                 size: this.toHalfPt(11),
                 color: this.getColor('text.secondary')
               })
@@ -1276,7 +1291,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: `• ${this.stripHtml(this.getText(achievement))}`,
+                text: `${this.stripHtml(this.getText(achievement))}`,
                 size: this.toHalfPt(11),
                 color: this.getColor('text.secondary')
               })
@@ -1496,7 +1511,7 @@ class DOCXExporter {
             children.push(new docx.Paragraph({
               children: [
                 new docx.TextRun({
-                  text: `• ${this.stripHtml(this.getText(achievement))}`,
+                  text: `${this.stripHtml(this.getText(achievement))}`,
                   size: this.toHalfPt(11),
                   color: this.getColor('text.secondary')
                 })
@@ -1735,7 +1750,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: `• ${this.stripHtml(this.getText(principle))}`,
+                text: `${this.stripHtml(this.getText(principle))}`,
                 size: this.toHalfPt(this.getTypography('fontSize.body')),
                 color: this.getColor('text.secondary')
               })
@@ -1761,7 +1776,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: `• ${this.stripHtml(this.getText(highlight))}`,
+                text: `${this.stripHtml(this.getText(highlight))}`,
                 size: this.toHalfPt(this.getTypography('fontSize.body')),
                 color: this.getColor('text.secondary')
               })
@@ -1839,36 +1854,31 @@ class DOCXExporter {
    * @param {boolean} pageBreakBefore - Whether to add page break before heading
    */
   createHeading2(text, pageBreakBefore = false) {
+    const upperText = (text || '').toString().toUpperCase();
     return [
       new docx.Paragraph({
         children: [
           new docx.TextRun({
-            text,
+            text: upperText,
             bold: true,
-            size: this.toHalfPt(20),
-            color: this.getColor('primary')
+            size: this.toHalfPt(13),
+            color: this.getColor('primary'),
+            characterSpacing: 60
           })
         ],
         spacing: {
           before: pageBreakBefore ? 0 : 480,
-          after: 120,
-          line: 320
+          after: 320,
+          line: 280
         },
-        pageBreakBefore
-      }),
-      // Add enhanced divider line with web-like styling
-      new docx.Paragraph({
-        children: [new docx.TextRun({ text: '' })],
+        pageBreakBefore,
         border: {
           bottom: {
             color: this.getColor('primary'),
-            space: 1,
+            space: 6,
             style: docx.BorderStyle.SINGLE,
-            size: 24  // Thicker for web-like emphasis
+            size: 12
           }
-        },
-        spacing: {
-          after: 240
         }
       })
     ];
