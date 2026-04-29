@@ -8,15 +8,15 @@
 
 ## 🎯 Professional Summary
 
-**20+ years** architecting distributed systems across **medical imaging**, **audio rendering SaaS**, and **industrial** domains.
+**20+ years** leading R&D and platform architecture in **safety-critical, ISO-certified domains**. Track record spans **medical devices, industrial systems, and SaaS platforms** — built and certified from zero.
 
 **Core Impact**:
-- Orchestrated **10+ microservices** in C++, Rust, Go, Python with RabbitMQ/Redis
-- Led **FDA 510(k), CE, KFDA** certifications, authoring **1,200+ pages** of technical documentation
-- Achieved **2x throughput improvement** and **50% latency reduction** through microservices migration
-- Built **PACS, DICOM viewer, orthodontic simulation** systems from scratch at IPO companies
+- Designed SDLC and quality systems compliant with **IEC 62304, ISO 13485, ISO 14971** — patterns transfer to ISO 26262, DO-178C, IEC 61508, and ISO 27001
+- Led **4 international regulatory approvals** (FDA 510(k), CE, KFDA, CCC) with **1,200+ pages** of auditor-ready traceability documentation
+- Orchestrated **10+ microservices** in C++, Rust, Go, Python (RabbitMQ/Redis) — **2x throughput**, **50% latency reduction**
+- Built **4+ production systems** from blank repo to certified release across **2 IPO companies**
 
-Currently seeking opportunities in **cloud-native platforms** and **backend infrastructure**.
+Open to **CTO / Head of R&D / 연구소장** roles in any standard-driven, regulated industry.
 
 **[📊 View detailed achievements & projects →](https://kcenon.github.io/kcenon/portfolio/)**
 
@@ -24,14 +24,14 @@ Currently seeking opportunities in **cloud-native platforms** and **backend infr
 
 | Metric | Achievement |
 |--------|-------------|
-| **Experience** | 20+ years in distributed systems |
-| **Microservices** | 10+ services (C++, Rust, Go, Python) |
-| **Performance** | 2x throughput, 50% latency reduction |
-| **Certifications** | FDA 510(k), CE, KFDA, CCC |
-| **Documentation** | 1,200+ pages (SRS/SDS) |
-| **Team Leadership** | Led teams of 3-11 members |
-| **Zero-to-One** | 4+ systems built from scratch |
-| **IPO Experience** | 2 companies (VATECH, Ray) |
+| **Leadership Experience** | 20+ years in R&D and platform architecture |
+| **Regulatory Certifications** | 4 international approvals (FDA, CE, KFDA, CCC) |
+| **Quality Systems** | IEC 62304 (Class B/C), ISO 13485, ISO 14971 SDLC design |
+| **Distributed Systems** | 10+ microservices (C++, Rust, Go, Python) — 2x throughput, 50% latency cut |
+| **Documentation Rigor** | 1,200+ pages of traceable, auditor-ready SRS/SDS |
+| **Team Leadership** | Led teams of 3–11 engineers across 2 IPO companies |
+| **Zero-to-One** | 4+ production systems built from blank repo to certified release |
+| **Domain Range** | Medical imaging, audio SaaS, industrial automation |
 
 ## 🛠️ Core Skills
 
