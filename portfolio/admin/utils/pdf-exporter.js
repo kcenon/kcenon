@@ -1115,6 +1115,33 @@ class PDFExporter {
    * @param {boolean} addPageBreak - Force page break before this section
    * @returns {Array} pdfmake content nodes
    */
+  /**
+   * Editorial-style subsection header (category level inside a section).
+   * Smaller than H2 with a short gold/accent underline so the visual
+   * hierarchy is distinct from the navy section bands.
+   * @param {string} text - Subsection title
+   * @param {boolean} addPageBreak - Force a new page before this subsection
+   * @returns {Array} pdfmake content nodes
+   */
+  buildSubsectionHeader(text, addPageBreak = false) {
+    const titleNode = {
+      text: (text || '').toString(),
+      fontSize: 14,
+      bold: true,
+      color: this.getColor('primary'),
+      margin: [0, addPageBreak ? 0 : 14, 0, 6]
+    };
+    if (addPageBreak) titleNode.pageBreak = 'before';
+
+    return [
+      titleNode,
+      {
+        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 60, y2: 0, lineWidth: 1.5, lineColor: this.getColor('accent') }],
+        margin: [0, 0, 0, 14]
+      }
+    ];
+  }
+
   buildSectionHeader(text, addPageBreak = false) {
     const titleNode = {
       text: (text || '').toString().toUpperCase(),
@@ -1267,47 +1294,27 @@ class PDFExporter {
 
     content.push(...this.buildSectionHeader(labels.projects, addPageBreak));
 
-    // Featured projects first
-    if (projects.featured && projects.featured.length > 0) {
-      content.push({
-        text: labels.featuredProjects,
-        style: 'sectionTitle',
-        margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
-      });
+    // Each category that has projects starts on a new page for readability.
+    // The very first category sits on the same page as the PROJECTS header.
+    let firstCategory = true;
 
+    if (projects.featured && projects.featured.length > 0) {
+      content.push(...this.buildSubsectionHeader(labels.featuredProjects, !firstCategory));
+      firstCategory = false;
       projects.featured.forEach(project => {
         content.push(this.formatProject(project));
       });
-
-      // Add spacing after featured projects
-      content.push({
-        text: '',
-        margin: [0, 0, 0, this.getSpacing('gap.large')]
-      });
     }
 
-    // Other project categories
     const categories = ['medicalImaging', 'orthodontic', 'equipmentControl', 'enterprise', 'openSource'];
-    categories.forEach((category, index) => {
+    categories.forEach(category => {
       if (projects[category] && projects[category].length > 0) {
         const categoryName = this.formatCategoryName(category);
-        content.push({
-          text: categoryName,
-          style: 'sectionTitle',
-          margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
-        });
-
+        content.push(...this.buildSubsectionHeader(categoryName, !firstCategory));
+        firstCategory = false;
         projects[category].forEach(project => {
           content.push(this.formatProject(project));
         });
-
-        // Add spacing between categories
-        if (index < categories.length - 1) {
-          content.push({
-            text: '',
-            margin: [0, 0, 0, this.getSpacing('gap.large')]
-          });
-        }
       }
     });
 

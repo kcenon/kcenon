@@ -1113,20 +1113,24 @@ class DOCXExporter {
 
     children.push(...this.createHeading2(labels.projects, addPageBreak));
 
-    // Featured projects
+    // Each category that has projects starts on a new page for readability.
+    // The very first category sits on the same page as the PROJECTS header.
+    let firstCategory = true;
+
     if (projects.featured && projects.featured.length > 0) {
-      children.push(this.createHeading3(labels.featuredProjects));
+      children.push(this.createHeading3(labels.featuredProjects, !firstCategory));
+      firstCategory = false;
       projects.featured.forEach(project => {
         children.push(...this.formatProject(project));
       });
     }
 
-    // Other categories
     const categories = ['medicalImaging', 'orthodontic', 'equipmentControl', 'enterprise', 'openSource'];
     categories.forEach(category => {
       if (projects[category] && projects[category].length > 0) {
         const categoryName = this.formatCategoryName(category);
-        children.push(this.createHeading3(categoryName));
+        children.push(this.createHeading3(categoryName, !firstCategory));
+        firstCategory = false;
         projects[category].forEach(project => {
           children.push(...this.formatProject(project));
         });
@@ -1908,20 +1912,29 @@ class DOCXExporter {
   /**
    * Create heading 3 with enhanced styling
    */
-  createHeading3(text) {
+  createHeading3(text, pageBreakBefore = false) {
     return new docx.Paragraph({
       children: [
         new docx.TextRun({
           text,
           bold: true,
-          size: this.toHalfPt(16),
-          color: this.getColor('accent')
+          size: this.toHalfPt(14),
+          color: this.getColor('primary')
         })
       ],
       spacing: {
-        before: 360,
-        after: 160,
+        before: pageBreakBefore ? 0 : 360,
+        after: 200,
         line: 320
+      },
+      pageBreakBefore,
+      border: {
+        bottom: {
+          color: this.getColor('accent'),
+          space: 4,
+          style: docx.BorderStyle.SINGLE,
+          size: 8
+        }
       }
     });
   }
