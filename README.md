@@ -69,7 +69,9 @@ configuration management, post-market surveillance — is the same.
 
 ## 🔭 Currently
 
-Exploring opportunities in **distributed systems**, **cloud-native platforms**, and **SaaS backend architecture**. Open to **Rust/Go** infrastructure projects and **medical device regulatory consulting**.
+**CTO at Flonics** (since 2026.03) — leading R&D for medical imaging-based blood flow diagnostics, applying ISO 13485 / IEC 62304 processes from day one.
+
+**Long-term interest**: **CTO / Head of R&D / 연구소장** roles in any ISO-certified domain — automotive functional safety, industrial IoT, defense/aerospace, or regulated SaaS. The common thread is **building rigorous engineering organizations under standard-driven constraints**, not the specific industry vertical.
 
 ## 📫 Let's Connect
 
