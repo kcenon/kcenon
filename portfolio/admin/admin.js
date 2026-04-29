@@ -1374,9 +1374,8 @@ class AdminApp {
     try {
       const result = await window.PDFExporter.generatePDF(this.data, {
         filename: 'portfolio.pdf',
-        author: 'Dongcheol Shin',
         language: this.currentLang || 'ko',
-        pageBreakBetweenSections: true,  // Enable page breaks between sections
+        pageBreakBetweenSections: true,
         ...options
       });
 
@@ -1403,9 +1402,8 @@ class AdminApp {
     try {
       const result = await window.DOCXExporter.generateDOCX(this.data, {
         filename: 'portfolio.docx',
-        author: 'Dongcheol Shin',
         language: this.currentLang || 'ko',
-        pageBreakBetweenSections: true,  // Enable page breaks between sections
+        pageBreakBetweenSections: true,
         ...options
       });
 

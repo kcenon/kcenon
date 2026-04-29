@@ -416,8 +416,6 @@ class DOCXExporter {
     const {
       sections = ['expertise', 'projects', 'manager', 'career', 'testimonials'],
       filename = 'portfolio.docx',
-      title = 'Portfolio',
-      author = 'Dongcheol Shin',
       theme = 'executive',
       themeOverrides = {},
       includeCoverLetter = false,
@@ -429,6 +427,14 @@ class DOCXExporter {
     try {
       // Set current language for multilingual support
       this.currentLang = language || this.getLang();
+
+      // Resolve author / title based on language unless caller passed
+      // an explicit value. Korean exports use the Korean rendering of
+      // the author's name on the cover and footer.
+      const author = options.author
+        || (this.currentLang === 'ko' ? '신동철' : 'Dongcheol Shin');
+      const title = options.title
+        || (this.currentLang === 'ko' ? '포트폴리오' : 'Portfolio');
 
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
