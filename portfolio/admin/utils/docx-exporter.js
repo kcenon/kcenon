@@ -1649,7 +1649,7 @@ class DOCXExporter {
               style: docx.BorderStyle.SINGLE
             }
           },
-          spacing: { before: 240, after: 360 },
+          spacing: { before: 100, after: 140 },
           indent: { left: 2400, right: 2400 }
         }));
       }
@@ -1750,177 +1750,172 @@ class DOCXExporter {
 
     children.push(...this.createHeading2(labels.manager, addPageBreak));
 
-    // PM Capabilities
+    const lang = this.currentLang;
+    const accentHex = this.getColor('accent');
+    const primaryHex = this.getColor('primary');
+    const secondaryHex = this.getColor('text.secondary');
+    const mutedHex = this.getColor('text.muted');
+
+    // ── PM Capabilities — title + description + highlights + metrics ────
     if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
-      children.push(this.createHeading3WithKeep(labels.pmCapabilities, true));
+      children.push(this.createHeading3(labels.pmCapabilities, false));
 
-      manager.pmCapabilities.forEach((cap, index) => {
-        const isLast = index === manager.pmCapabilities.length - 1;
+      manager.pmCapabilities.forEach((cap, idx) => {
         children.push(new docx.Paragraph({
           children: [
-            new docx.TextRun({
-              text: this.getText(cap.title),
-              bold: true,
-              size: this.toHalfPt(this.getTypography('fontSize.body')),
-              color: this.getColor('text.primary')
-            })
+            new docx.TextRun({ text: '◆  ', bold: true, size: this.toHalfPt(12), color: accentHex }),
+            new docx.TextRun({ text: this.getText(cap.title), bold: true, size: this.toHalfPt(12), color: primaryHex })
           ],
-          spacing: { before: 100, after: 30 },
-          keepLines: true,
-          keepNext: true
+          spacing: { before: idx === 0 ? 0 : 240, after: 80 },
+          keepLines: true, keepNext: true
         }));
 
-        children.push(new docx.Paragraph({
-          children: [
-            new docx.TextRun({
+        if (cap.description) {
+          children.push(new docx.Paragraph({
+            children: [new docx.TextRun({
               text: this.getText(cap.description),
-              size: this.toHalfPt(this.getTypography('fontSize.body')),
-              color: this.getColor('text.secondary')
-            })
-          ],
-          spacing: { after: 80 },
-          indent: { left: this.getSpacing('list.indent') },
-          keepLines: true,
-          keepNext: !isLast
-        }));
+              italics: true, size: this.toHalfPt(10.5), color: secondaryHex
+            })],
+            spacing: { after: 100, line: 300 },
+            indent: { left: 240 },
+            keepLines: true, keepNext: true
+          }));
+        }
+
+        const highlights = this.getArray(cap.highlights);
+        highlights.forEach(h => {
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({ text: '·  ', bold: true, color: accentHex, size: this.toHalfPt(10.5) }),
+              new docx.TextRun({ text: this.stripHtml(this.getText(h)), size: this.toHalfPt(10.5), color: secondaryHex })
+            ],
+            spacing: { after: 60, line: 300 },
+            indent: { left: 240 },
+            keepLines: true
+          }));
+        });
+
+        const m = cap.metrics || {};
+        const chips = [];
+        if (Array.isArray(m.teamSizes) && m.teamSizes.length > 0) {
+          const min = Math.min(...m.teamSizes), max = Math.max(...m.teamSizes);
+          chips.push(`${lang === 'ko' ? '팀 규모' : 'Team Size'} ${min}–${max}`);
+        }
+        if (m.yearsLeading) chips.push(`${lang === 'ko' ? '리딩 연차' : 'Leading'} ${m.yearsLeading}+ ${lang === 'ko' ? '년' : 'yrs'}`);
+        if (m.projectsLed) chips.push(`${lang === 'ko' ? '리딩 프로젝트' : 'Projects Led'} ${m.projectsLed}+`);
+        if (m.onTimeDelivery) chips.push(`${lang === 'ko' ? '정시 납품' : 'On-Time'} ${m.onTimeDelivery}`);
+        if (m.certificationSuccess) chips.push(`${lang === 'ko' ? '인증 성공률' : 'Cert Success'} ${m.certificationSuccess}`);
+        if (m.majorProjects) chips.push(`${lang === 'ko' ? '주요 프로젝트' : 'Major Projects'} ${m.majorProjects}+`);
+
+        if (chips.length > 0) {
+          children.push(new docx.Paragraph({
+            children: [new docx.TextRun({
+              text: chips.join('   ·   '),
+              bold: true, size: this.toHalfPt(9), color: accentHex
+            })],
+            spacing: { before: 60, after: 80 },
+            indent: { left: 240 }
+          }));
+        }
+
+        const tags = this.getArray(cap.stakeholderTypes).concat(cap.frameworks || []);
+        if (tags.length > 0) {
+          children.push(new docx.Paragraph({
+            children: [new docx.TextRun({
+              text: tags.map(t => this.getText(t)).join(' · '),
+              size: this.toHalfPt(9), color: mutedHex
+            })],
+            spacing: { after: 80 },
+            indent: { left: 240 }
+          }));
+        }
       });
     }
 
-    // Leadership Style
+    // ── Leadership Style ───────────────────────────────────
     if (manager.leadershipStyle) {
       const principles = this.getArray(manager.leadershipStyle.principles);
       if (principles.length > 0) {
-        children.push(this.createHeading3WithKeep(labels.leadershipStyle, true));
+        children.push(this.createHeading3(labels.leadershipStyle, false));
 
-        principles.forEach((principle, index) => {
-          const isLast = index === principles.length - 1;
+        principles.forEach(principle => {
           children.push(new docx.Paragraph({
             children: [
+              new docx.TextRun({ text: '·  ', bold: true, color: accentHex, size: this.toHalfPt(10.5) }),
               new docx.TextRun({
-                text: `${this.stripHtml(this.getText(principle))}`,
-                size: this.toHalfPt(this.getTypography('fontSize.body')),
-                color: this.getColor('text.secondary')
+                text: this.stripHtml(this.getText(principle)),
+                size: this.toHalfPt(10.5), color: secondaryHex
               })
             ],
-            spacing: { after: this.getSpacing('list.itemSpacing') },
-            indent: { left: this.getSpacing('list.indent') },
-            keepLines: true,
-            keepNext: !isLast
+            spacing: { after: 60, line: 300 },
+            indent: { left: 240 },
+            keepLines: true
           }));
         });
       }
     }
 
-    // Business Impact
+    // ── Business Impact ────────────────────────────────────
+    // keyNumbers omitted — already shown on the cover-page stat infographic.
     if (manager.businessImpact) {
       const highlights = this.getArray(manager.businessImpact.highlights);
       if (highlights.length > 0) {
-        children.push(this.createHeading3WithKeep(labels.businessImpact, true));
+        children.push(this.createHeading3(labels.businessImpact, false));
 
-        highlights.forEach((highlight, index) => {
-          const isLast = index === highlights.length - 1;
-          const hasKeyNumbers = manager.businessImpact.keyNumbers && isLast;
+        highlights.forEach(h => {
           children.push(new docx.Paragraph({
             children: [
+              new docx.TextRun({ text: '·  ', bold: true, color: this.getColor('success'), size: this.toHalfPt(10.5) }),
               new docx.TextRun({
-                text: `${this.stripHtml(this.getText(highlight))}`,
-                size: this.toHalfPt(this.getTypography('fontSize.body')),
-                color: this.getColor('text.secondary')
+                text: this.stripHtml(this.getText(h)),
+                size: this.toHalfPt(10.5), color: secondaryHex
               })
             ],
-            spacing: { after: this.getSpacing('list.itemSpacing') },
-            indent: { left: this.getSpacing('list.indent') },
-            keepLines: true,
-            keepNext: !isLast || hasKeyNumbers
+            spacing: { after: 60, line: 300 },
+            indent: { left: 240 },
+            keepLines: true
           }));
         });
-
-        // Key numbers
-        if (manager.businessImpact.keyNumbers) {
-          const kn = manager.businessImpact.keyNumbers;
-          const keyNumbersText = [];
-          if (kn.certifications) keyNumbersText.push(`${this.currentLang === 'ko' ? '인증' : 'Certifications'}: ${kn.certifications}`);
-          if (kn.ipos) keyNumbersText.push(`IPO: ${kn.ipos}`);
-          if (kn.performanceImprovement) keyNumbersText.push(`${this.currentLang === 'ko' ? '성능 향상' : 'Performance'}: ${kn.performanceImprovement}`);
-          if (kn.projectsDelivered) keyNumbersText.push(`${this.currentLang === 'ko' ? '프로젝트' : 'Projects'}: ${kn.projectsDelivered}`);
-
-          if (keyNumbersText.length > 0) {
-            children.push(new docx.Paragraph({
-              children: [
-                new docx.TextRun({
-                  text: keyNumbersText.join('  |  '),
-                  bold: true,
-                  size: this.toHalfPt(this.getTypography('fontSize.small')),
-                  color: this.getColor('primary')
-                })
-              ],
-              spacing: { before: 60, after: 100 },
-              indent: { left: this.getSpacing('list.indent') },
-              keepLines: true
-            }));
-          }
-        }
       }
     }
 
-    // Soft Skills — 3-column grid card layout
+    // ── Soft Skills — 2-column descriptive grid ───────────
     if (manager.softSkills && manager.softSkills.length > 0) {
       children.push(this.createHeading3(labels.softSkills, false));
 
       const totalWidth = 9000;
-      const colWidth = Math.floor(totalWidth / 3);
-      const accentColor = this.getColor('accent');
-      const mutedTrack = 'E2E8F0';
+      const colWidth = Math.floor(totalWidth / 2);
 
-      const buildSkillCell = (skill) => {
-        const level = Math.max(0, Math.min(5, skill.level || 0));
-        return new docx.TableCell({
-          children: [
-            new docx.Paragraph({
-              children: [new docx.TextRun({
+      const buildSkillCell = (skill) => new docx.TableCell({
+        children: [
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun({ text: '◆  ', bold: true, size: this.toHalfPt(11), color: accentHex }),
+              new docx.TextRun({
                 text: this.getText(skill.title),
-                bold: true,
-                size: this.toHalfPt(11),
-                color: this.getColor('text.primary')
-              })],
-              spacing: { after: 140 }
-            }),
-            new docx.Paragraph({
-              children: [
-                new docx.TextRun({
-                  text: '━'.repeat(level),
-                  size: this.toHalfPt(14),
-                  color: accentColor,
-                  bold: true
-                }),
-                new docx.TextRun({
-                  text: '━'.repeat(5 - level),
-                  size: this.toHalfPt(14),
-                  color: mutedTrack,
-                  bold: true
-                })
-              ],
-              spacing: { after: 80 }
-            }),
-            new docx.Paragraph({
-              children: [new docx.TextRun({
-                text: `${level} / 5`,
-                size: this.toHalfPt(8),
-                color: this.getColor('text.muted')
-              })],
-              spacing: { after: 0 }
-            })
-          ],
-          width: { size: colWidth, type: docx.WidthType.DXA },
-          margins: { top: 200, bottom: 240, left: 200, right: 200 },
-          borders: {
-            top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
-            bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
-            left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
-            right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
-          }
-        });
-      };
+                bold: true, size: this.toHalfPt(11.5), color: primaryHex
+              })
+            ],
+            spacing: { after: 100 }
+          }),
+          ...(skill.description ? [new docx.Paragraph({
+            children: [new docx.TextRun({
+              text: this.getText(skill.description),
+              size: this.toHalfPt(9.5), color: secondaryHex
+            })],
+            spacing: { after: 0, line: 280 },
+            indent: { left: 240 }
+          })] : [])
+        ],
+        width: { size: colWidth, type: docx.WidthType.DXA },
+        margins: { top: 160, bottom: 200, left: 200, right: 200 },
+        borders: {
+          top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+        }
+      });
 
       const emptyCell = () => new docx.TableCell({
         children: [new docx.Paragraph({ children: [new docx.TextRun({ text: '' })] })],
@@ -1934,16 +1929,16 @@ class DOCXExporter {
       });
 
       const rows = [];
-      for (let i = 0; i < manager.softSkills.length; i += 3) {
-        const rowCells = manager.softSkills.slice(i, i + 3).map(buildSkillCell);
-        while (rowCells.length < 3) rowCells.push(emptyCell());
+      for (let i = 0; i < manager.softSkills.length; i += 2) {
+        const rowCells = manager.softSkills.slice(i, i + 2).map(buildSkillCell);
+        while (rowCells.length < 2) rowCells.push(emptyCell());
         rows.push(new docx.TableRow({ children: rowCells }));
       }
 
       children.push(new docx.Table({
         rows,
         width: { size: totalWidth, type: docx.WidthType.DXA },
-        columnWidths: [colWidth, colWidth, colWidth],
+        columnWidths: [colWidth, colWidth],
         borders: {
           top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
           bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
@@ -1953,7 +1948,7 @@ class DOCXExporter {
           insideVertical: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
         }
       }));
-      children.push(new docx.Paragraph({ children: [], spacing: { after: 200 } }));
+      children.push(new docx.Paragraph({ children: [], spacing: { after: 160 } }));
     }
 
     return children;

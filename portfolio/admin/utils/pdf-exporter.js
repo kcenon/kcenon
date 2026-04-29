@@ -1647,8 +1647,8 @@ class PDFExporter {
     ordered.forEach(({ t, featured }, idx) => {
       if (idx > 0) {
         content.push({
-          canvas: [{ type: 'line', x1: 180, y1: 0, x2: 335, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
-          margin: [0, 0, 0, 12]
+          canvas: [{ type: 'line', x1: 200, y1: 0, x2: 315, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+          margin: [0, 4, 0, 6]
         });
       }
       content.push(this.formatTestimonial(t, featured));
@@ -1728,9 +1728,7 @@ class PDFExporter {
     return {
       unbreakable: true,
       stack: items,
-      // Generous breathing room between testimonials so each quote reads
-      // as its own block instead of running together.
-      margin: [0, 28, 0, 44]
+      margin: [0, 14, 0, 22]
     };
   }
 
@@ -1745,143 +1743,159 @@ class PDFExporter {
 
     content.push(...this.buildSectionHeader(labels.manager, addPageBreak));
 
-    // PM Capabilities
+    const lang = this.currentLang;
+
+    // ── PM Capabilities ────────────────────────────────────
+    // Each capability is a richer card: title + description +
+    // bullet highlights + optional metrics chip line + tag chips.
     if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
-      content.push({
-        text: labels.pmCapabilities,
-        style: 'sectionTitle'
-      });
+      content.push(...this.buildSubsectionHeader(labels.pmCapabilities, false));
 
-      manager.pmCapabilities.forEach(cap => {
-        content.push({
-          unbreakable: true,
-          stack: [
-            {
-              text: this.getText(cap.title),
-              bold: true,
-              fontSize: this.getTypography('fontSize.h3') - 2,
-              color: this.getColor('text.primary'),
-              margin: [0, 5, 0, 2]
-            },
-            {
-              text: this.getText(cap.description),
-              color: this.getColor('text.secondary'),
-              margin: [0, 0, 0, 5]
-            }
+      manager.pmCapabilities.forEach((cap, idx) => {
+        const items = [];
+
+        items.push({
+          text: [
+            { text: '◆ ', color: this.getColor('accent'), fontSize: 12, bold: true },
+            { text: this.getText(cap.title), color: this.getColor('primary'), bold: true, fontSize: 12 }
           ],
-          margin: [this.getSpacing('list.indent'), 0, 0, 5]
+          margin: [0, idx === 0 ? 0 : 14, 0, 4]
         });
-      });
-    }
 
-    // Leadership Style
-    if (manager.leadershipStyle) {
-      content.push({
-        text: labels.leadershipStyle,
-        style: 'sectionTitle'
-      });
-
-      const principles = this.getArray(manager.leadershipStyle.principles);
-      if (principles.length > 0) {
-        content.push({
-          ul: principles.map(p => this.stripHtml(this.getText(p))),
-          margin: [this.getSpacing('list.indent'), 0, 0, 10],
-          markerColor: this.getColor('primary')
-        });
-      }
-    }
-
-    // Business Impact
-    if (manager.businessImpact) {
-      content.push({
-        text: labels.businessImpact,
-        style: 'sectionTitle'
-      });
-
-      const highlights = this.getArray(manager.businessImpact.highlights);
-      if (highlights.length > 0) {
-        content.push({
-          ul: highlights.map(h => this.stripHtml(this.getText(h))),
-          margin: [this.getSpacing('list.indent'), 0, 0, 10],
-          markerColor: this.getColor('success')
-        });
-      }
-
-      // Key numbers
-      if (manager.businessImpact.keyNumbers) {
-        const kn = manager.businessImpact.keyNumbers;
-        const keyNumbersText = [];
-        if (kn.certifications) keyNumbersText.push(`${this.currentLang === 'ko' ? '인증' : 'Certifications'}: ${kn.certifications}`);
-        if (kn.ipos) keyNumbersText.push(`IPO: ${kn.ipos}`);
-        if (kn.performanceImprovement) keyNumbersText.push(`${this.currentLang === 'ko' ? '성능 향상' : 'Performance'}: ${kn.performanceImprovement}`);
-        if (kn.projectsDelivered) keyNumbersText.push(`${this.currentLang === 'ko' ? '프로젝트' : 'Projects'}: ${kn.projectsDelivered}`);
-
-        if (keyNumbersText.length > 0) {
-          content.push({
-            text: keyNumbersText.join('  |  '),
-            color: this.getColor('primary'),
-            bold: true,
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [this.getSpacing('list.indent'), 0, 0, 10]
+        if (cap.description) {
+          items.push({
+            text: this.getText(cap.description),
+            color: this.getColor('text.secondary'),
+            italics: true,
+            fontSize: 10.5,
+            lineHeight: 1.5,
+            margin: [16, 0, 0, 6]
           });
         }
+
+        const highlights = this.getArray(cap.highlights);
+        if (highlights.length > 0) {
+          items.push({
+            ul: highlights.map(h => this.stripHtml(this.getText(h))),
+            fontSize: 10.5,
+            color: this.getColor('text.secondary'),
+            lineHeight: 1.5,
+            markerColor: this.getColor('accent'),
+            margin: [16, 0, 0, 6]
+          });
+        }
+
+        const m = cap.metrics || {};
+        const chips = [];
+        if (Array.isArray(m.teamSizes) && m.teamSizes.length > 0) {
+          const min = Math.min(...m.teamSizes), max = Math.max(...m.teamSizes);
+          chips.push(`${lang === 'ko' ? '팀 규모' : 'Team Size'} ${min}–${max}`);
+        }
+        if (m.yearsLeading) chips.push(`${lang === 'ko' ? '리딩 연차' : 'Leading'} ${m.yearsLeading}+ ${lang === 'ko' ? '년' : 'yrs'}`);
+        if (m.projectsLed) chips.push(`${lang === 'ko' ? '리딩 프로젝트' : 'Projects Led'} ${m.projectsLed}+`);
+        if (m.onTimeDelivery) chips.push(`${lang === 'ko' ? '정시 납품' : 'On-Time'} ${m.onTimeDelivery}`);
+        if (m.certificationSuccess) chips.push(`${lang === 'ko' ? '인증 성공률' : 'Cert Success'} ${m.certificationSuccess}`);
+        if (m.majorProjects) chips.push(`${lang === 'ko' ? '주요 프로젝트' : 'Major Projects'} ${m.majorProjects}+`);
+
+        if (chips.length > 0) {
+          items.push({
+            text: chips.join('   ·   '),
+            color: this.getColor('accent'),
+            bold: true,
+            fontSize: 9,
+            margin: [16, 4, 0, 0]
+          });
+        }
+
+        const tags = this.getArray(cap.stakeholderTypes).concat(cap.frameworks || []);
+        if (tags.length > 0) {
+          items.push({
+            text: tags.map(t => this.getText(t)).join(' · '),
+            color: this.getColor('text.muted'),
+            fontSize: 9,
+            margin: [16, 4, 0, 0]
+          });
+        }
+
+        content.push({ unbreakable: true, stack: items, margin: [0, 0, 0, 4] });
+      });
+
+      content.push({ text: '', margin: [0, 0, 0, 14] });
+    }
+
+    // ── Leadership Style ───────────────────────────────────
+    if (manager.leadershipStyle) {
+      const principles = this.getArray(manager.leadershipStyle.principles);
+      if (principles.length > 0) {
+        content.push(...this.buildSubsectionHeader(labels.leadershipStyle, false));
+        content.push({
+          ul: principles.map(p => this.stripHtml(this.getText(p))),
+          fontSize: 10.5,
+          color: this.getColor('text.secondary'),
+          lineHeight: 1.6,
+          markerColor: this.getColor('accent'),
+          margin: [16, 0, 0, 14]
+        });
       }
     }
 
-    // Soft Skills — 3-column grid card layout
+    // ── Business Impact ────────────────────────────────────
+    // keyNumbers intentionally omitted — already shown in cover-page stat
+    // infographic. Highlights remain as the qualitative narrative.
+    if (manager.businessImpact) {
+      const highlights = this.getArray(manager.businessImpact.highlights);
+      if (highlights.length > 0) {
+        content.push(...this.buildSubsectionHeader(labels.businessImpact, false));
+        content.push({
+          ul: highlights.map(h => this.stripHtml(this.getText(h))),
+          fontSize: 10.5,
+          color: this.getColor('text.secondary'),
+          lineHeight: 1.6,
+          markerColor: this.getColor('success'),
+          margin: [16, 0, 0, 14]
+        });
+      }
+    }
+
+    // ── Soft Skills — 2-column descriptive grid ────────────
     if (manager.softSkills && manager.softSkills.length > 0) {
       content.push(...this.buildSubsectionHeader(labels.softSkills, false));
 
-      const accentColor = this.getColor('accent');
-      const mutedTrack = '#E2E8F0';
-
-      const buildSkillCell = (skill) => {
-        const level = Math.max(0, Math.min(5, skill.level || 0));
-        return {
-          stack: [
-            {
-              text: this.getText(skill.title),
-              bold: true,
-              fontSize: 11,
-              color: this.getColor('text.primary'),
-              margin: [0, 0, 0, 8]
-            },
-            {
-              text: [
-                { text: '━'.repeat(level), color: accentColor, fontSize: 14, bold: true },
-                { text: '━'.repeat(5 - level), color: mutedTrack, fontSize: 14, bold: true }
-              ],
-              characterSpacing: -1,
-              margin: [0, 0, 0, 4]
-            },
-            {
-              text: `${level} / 5`,
-              fontSize: 8,
-              color: this.getColor('text.muted')
-            }
-          ]
-        };
-      };
+      const buildSkillCell = (skill) => ({
+        stack: [
+          {
+            text: [
+              { text: '◆  ', color: this.getColor('accent'), fontSize: 11, bold: true },
+              { text: this.getText(skill.title), color: this.getColor('primary'), bold: true, fontSize: 11.5 }
+            ],
+            margin: [0, 0, 0, 5]
+          },
+          ...(skill.description ? [{
+            text: this.getText(skill.description),
+            color: this.getColor('text.secondary'),
+            fontSize: 9.5,
+            lineHeight: 1.55,
+            margin: [16, 0, 0, 0]
+          }] : [])
+        ]
+      });
 
       const cells = manager.softSkills.map(buildSkillCell);
-      while (cells.length % 3 !== 0) cells.push({ text: '' });
-
+      while (cells.length % 2 !== 0) cells.push({ text: '' });
       const rows = [];
-      for (let i = 0; i < cells.length; i += 3) {
-        rows.push(cells.slice(i, i + 3));
-      }
+      for (let i = 0; i < cells.length; i += 2) rows.push(cells.slice(i, i + 2));
 
       content.push({
-        table: { widths: ['*', '*', '*'], body: rows },
+        table: { widths: ['*', '*'], body: rows },
         layout: {
           hLineWidth: () => 0,
           vLineWidth: () => 0,
-          paddingLeft: () => 10,
-          paddingRight: () => 10,
+          paddingLeft: () => 12,
+          paddingRight: () => 12,
           paddingTop: () => 12,
           paddingBottom: () => 14
         },
-        margin: [0, 0, 0, 12]
+        margin: [0, 0, 0, 8]
       });
     }
 
