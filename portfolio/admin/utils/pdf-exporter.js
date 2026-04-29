@@ -1132,7 +1132,7 @@ class PDFExporter {
   buildSubsectionHeader(text, addPageBreak = false) {
     const titleNode = {
       text: (text || '').toString(),
-      fontSize: 14,
+      fontSize: 12.5,
       bold: true,
       color: this.getColor('primary'),
       margin: [0, addPageBreak ? 0 : 10, 0, 5]
@@ -1151,7 +1151,7 @@ class PDFExporter {
   buildSectionHeader(text, addPageBreak = false) {
     const titleNode = {
       text: (text || '').toString().toUpperCase(),
-      fontSize: 13,
+      fontSize: 16,
       bold: true,
       color: this.getColor('primary'),
       characterSpacing: 3,

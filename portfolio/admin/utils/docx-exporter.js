@@ -1969,7 +1969,7 @@ class DOCXExporter {
           new docx.TextRun({
             text: upperText,
             bold: true,
-            size: this.toHalfPt(13),
+            size: this.toHalfPt(16),
             color: this.getColor('primary'),
             characterSpacing: 60
           })
@@ -2001,7 +2001,7 @@ class DOCXExporter {
         new docx.TextRun({
           text,
           bold: true,
-          size: this.toHalfPt(14),
+          size: this.toHalfPt(12.5),
           color: this.getColor('primary')
         })
       ],
