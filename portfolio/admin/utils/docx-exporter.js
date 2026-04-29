@@ -425,7 +425,8 @@ class DOCXExporter {
       theme = 'professional',
       themeOverrides = {},
       includeCoverLetter = false,
-      pageBreakBetweenSections = false,
+      includeCoverPage = true,
+      pageBreakBetweenSections = true,
       language = null
     } = options;
 
@@ -442,7 +443,10 @@ class DOCXExporter {
         coverLetterTemplate = this.loadCoverLetterTemplate();
       }
 
-      const doc = this.buildDocument(data, sections, { title, author, includeCoverLetter, coverLetterTemplate, pageBreakBetweenSections });
+      const doc = this.buildDocument(data, sections, {
+        title, author, includeCoverLetter, coverLetterTemplate,
+        includeCoverPage, pageBreakBetweenSections
+      });
       const blob = await docx.Packer.toBlob(doc);
       saveAs(blob, filename);
       return { success: true, filename };
@@ -483,23 +487,36 @@ class DOCXExporter {
    */
   buildDocument(data, sections, info) {
     const children = [];
-    const { includeCoverLetter = false, coverLetterTemplate = null, pageBreakBetweenSections = false } = info;
+    const {
+      includeCoverLetter = false,
+      coverLetterTemplate = null,
+      includeCoverPage = true,
+      pageBreakBetweenSections = true
+    } = info;
 
-    // Cover Letter (if included)
-    if (includeCoverLetter && coverLetterTemplate) {
-      children.push(...this.buildCoverLetterPage(coverLetterTemplate));
-      children.push(new docx.Paragraph({
-        text: '',
-        pageBreakBefore: true
-      }));
+    // Cover page (hero + stats infographic)
+    if (includeCoverPage) {
+      children.push(...this.buildCoverPage(info, data));
     }
 
-    // Header
-    children.push(...this.buildHeader(info));
+    // Cover letter (if included)
+    if (includeCoverLetter && coverLetterTemplate) {
+      children.push(new docx.Paragraph({ children: [], pageBreakBefore: true }));
+      children.push(...this.buildCoverLetterPage(coverLetterTemplate));
+    }
 
-    // Build each section
+    // Inline header (only when no cover page)
+    if (!includeCoverPage) {
+      children.push(...this.buildHeader(info));
+    }
+
+    // Build each section. With cover page (or cover letter), every section
+    // header begins a new page; otherwise only break between sections.
+    const headPlaced = includeCoverPage || includeCoverLetter;
     sections.forEach((section, index) => {
-      const addPageBreak = pageBreakBetweenSections && index > 0;
+      const addPageBreak = headPlaced
+        ? true
+        : (pageBreakBetweenSections && index > 0);
 
       switch (section) {
         case 'expertise':
@@ -530,14 +547,26 @@ class DOCXExporter {
       }
     });
 
+    const sectionConfig = {
+      properties: includeCoverPage ? { titlePage: true } : {},
+      footers: {
+        default: this.buildPageFooter(info)
+      },
+      children
+    };
+
+    // Suppress footer on the cover page (first page) when cover is enabled
+    if (includeCoverPage) {
+      sectionConfig.footers.first = new docx.Footer({
+        children: [new docx.Paragraph({ children: [new docx.TextRun({ text: '' })] })]
+      });
+    }
+
     return new docx.Document({
       creator: info.author,
       title: info.title,
       description: 'Professional Portfolio Document',
-      sections: [{
-        properties: {},
-        children
-      }]
+      sections: [sectionConfig]
     });
   }
 
@@ -625,6 +654,240 @@ class DOCXExporter {
     }));
 
     return children;
+  }
+
+  /**
+   * Build cover page paragraphs (hero + stats infographic).
+   * The caller is responsible for placing this at the start of the document
+   * and ensuring the next heading uses pageBreakBefore.
+   * @param {Object} info - Document info
+   * @param {Object} data - Portfolio data
+   * @returns {Array<docx.Paragraph|docx.Table>} children for the cover page
+   */
+  buildCoverPage(info, data) {
+    const children = [];
+    const lang = this.currentLang;
+    const subtitle = lang === 'ko'
+      ? 'CTO · 연구소장 · 플랫폼 아키텍트'
+      : 'CTO · Research Director · Platform Architect';
+    const tagline = lang === 'ko'
+      ? '안전 중요(safety-critical)·ISO 인증 도메인에서 R&D와 플랫폼을 20년 넘게 이끌어 왔습니다'
+      : '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains';
+
+    // Top accent band (thick top border on an empty paragraph)
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({ text: '' })],
+      spacing: { before: 0, after: 800 },
+      border: {
+        top: {
+          color: this.getColor('primary'),
+          size: 48,
+          space: 1,
+          style: docx.BorderStyle.SINGLE
+        }
+      }
+    }));
+
+    // Name
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: info.author || info.title,
+        bold: true,
+        size: this.toHalfPt(42),
+        color: this.getColor('text.primary')
+      })],
+      spacing: { after: 140 }
+    }));
+
+    // Subtitle
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: subtitle,
+        bold: true,
+        size: this.toHalfPt(14),
+        color: this.getColor('primary')
+      })],
+      spacing: { after: 240 }
+    }));
+
+    // Tagline
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({
+        text: tagline,
+        italics: true,
+        size: this.toHalfPt(11),
+        color: this.getColor('text.secondary')
+      })],
+      spacing: { after: 480, line: 360 }
+    }));
+
+    // Divider
+    children.push(new docx.Paragraph({
+      children: [new docx.TextRun({ text: '' })],
+      border: {
+        bottom: {
+          color: this.getColor('border'),
+          size: 6, space: 1, style: docx.BorderStyle.SINGLE
+        }
+      },
+      spacing: { after: 360 }
+    }));
+
+    // Stats table infographic
+    const statsTable = this.buildStatsTable(data);
+    if (statsTable) {
+      children.push(statsTable);
+      children.push(new docx.Paragraph({ children: [], spacing: { after: 360 } }));
+    }
+
+    // Certifications row
+    if (data?.expertise?.certifications?.length > 0) {
+      const certText = data.expertise.certifications
+        .map(c => this.getText(c.name)).join('  ·  ');
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: lang === 'ko' ? '인증 / Certifications' : 'Certifications',
+          bold: true,
+          size: this.toHalfPt(9),
+          color: this.getColor('text.muted')
+        })],
+        spacing: { before: 200, after: 80 }
+      }));
+      children.push(new docx.Paragraph({
+        children: [new docx.TextRun({
+          text: certText,
+          bold: true,
+          size: this.toHalfPt(11),
+          color: this.getColor('success')
+        })],
+        spacing: { after: 0 }
+      }));
+    }
+
+    return children;
+  }
+
+  /**
+   * Build a 4-column stats infographic table for the cover page
+   * @param {Object} data - Portfolio data
+   * @returns {docx.Table|null} stats table or null when no data
+   */
+  buildStatsTable(data) {
+    const lang = this.currentLang;
+    const kn = data?.manager?.businessImpact?.keyNumbers || {};
+    const certCount = data?.expertise?.certifications?.length || kn.certifications;
+    const stats = [];
+
+    stats.push({ value: '20+', label: lang === 'ko' ? '경력 (년)' : 'Years' });
+    if (certCount) stats.push({ value: String(certCount), label: lang === 'ko' ? '글로벌 인증' : 'Certifications' });
+    if (kn.ipos) stats.push({ value: String(kn.ipos), label: 'IPO' });
+    if (kn.performanceImprovement) stats.push({ value: String(kn.performanceImprovement), label: lang === 'ko' ? '성능 향상' : 'Performance' });
+    if (kn.projectsDelivered && stats.length < 4) {
+      stats.push({ value: String(kn.projectsDelivered), label: lang === 'ko' ? '프로젝트' : 'Projects' });
+    }
+
+    const finalStats = stats.slice(0, 4);
+    if (finalStats.length === 0) return null;
+
+    const totalWidth = 9000;
+    const colWidth = Math.floor(totalWidth / finalStats.length);
+    const primaryFill = this.getColor('primary');
+
+    const valueCells = finalStats.map(s => new docx.TableCell({
+      children: [new docx.Paragraph({
+        alignment: docx.AlignmentType.CENTER,
+        children: [new docx.TextRun({
+          text: s.value, bold: true,
+          size: this.toHalfPt(28), color: 'FFFFFF'
+        })],
+        spacing: { before: 200, after: 120 }
+      })],
+      shading: { type: docx.ShadingType.CLEAR, fill: primaryFill },
+      margins: { top: 80, bottom: 80, left: 80, right: 80 },
+      width: { size: colWidth, type: docx.WidthType.DXA }
+    }));
+
+    const labelCells = finalStats.map(s => new docx.TableCell({
+      children: [new docx.Paragraph({
+        alignment: docx.AlignmentType.CENTER,
+        children: [new docx.TextRun({
+          text: s.label,
+          size: this.toHalfPt(10),
+          color: this.getColor('text.secondary')
+        })],
+        spacing: { before: 100, after: 100 }
+      })],
+      shading: { type: docx.ShadingType.CLEAR, fill: 'F1F5F9' },
+      margins: { top: 60, bottom: 60, left: 80, right: 80 },
+      width: { size: colWidth, type: docx.WidthType.DXA }
+    }));
+
+    return new docx.Table({
+      rows: [
+        new docx.TableRow({ children: valueCells }),
+        new docx.TableRow({ children: labelCells })
+      ],
+      width: { size: totalWidth, type: docx.WidthType.DXA },
+      columnWidths: Array(finalStats.length).fill(colWidth),
+      borders: {
+        top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        insideHorizontal: { style: docx.BorderStyle.SINGLE, size: 24, color: 'FFFFFF' },
+        insideVertical: { style: docx.BorderStyle.SINGLE, size: 24, color: 'FFFFFF' }
+      }
+    });
+  }
+
+  /**
+   * Build the page footer with author + page numbers (default footer).
+   * First-page footer is a separate empty footer to keep the cover clean.
+   * @param {Object} info - Document info
+   * @returns {docx.Footer}
+   */
+  buildPageFooter(info) {
+    const author = info.author || 'Portfolio';
+    return new docx.Footer({
+      children: [
+        new docx.Paragraph({
+          children: [new docx.TextRun({ text: '' })],
+          border: {
+            top: {
+              color: 'E2E8F0',
+              size: 4, space: 1, style: docx.BorderStyle.SINGLE
+            }
+          },
+          spacing: { after: 80 }
+        }),
+        new docx.Paragraph({
+          tabStops: [{ type: docx.TabStopType.RIGHT, position: 9000 }],
+          children: [
+            new docx.TextRun({
+              text: author,
+              size: this.toHalfPt(8),
+              color: this.getColor('text.muted')
+            }),
+            new docx.TextRun({ text: '\t', size: this.toHalfPt(8) }),
+            new docx.TextRun({
+              children: [docx.PageNumber.CURRENT],
+              size: this.toHalfPt(8), bold: true,
+              color: this.getColor('primary')
+            }),
+            new docx.TextRun({
+              text: ' / ',
+              size: this.toHalfPt(8),
+              color: this.getColor('text.muted')
+            }),
+            new docx.TextRun({
+              children: [docx.PageNumber.TOTAL_PAGES],
+              size: this.toHalfPt(8),
+              color: this.getColor('text.muted')
+            })
+          ]
+        })
+      ]
+    });
   }
 
   /**

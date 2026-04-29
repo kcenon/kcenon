@@ -602,7 +602,8 @@ class PDFExporter {
       theme = 'professional',
       themeOverrides = {},
       includeCoverLetter = false,
-      pageBreakBetweenSections = false,
+      includeCoverPage = true,
+      pageBreakBetweenSections = true,
       language = null
     } = options;
 
@@ -623,7 +624,10 @@ class PDFExporter {
         coverLetterTemplate = this.loadCoverLetterTemplate();
       }
 
-      const docDefinition = this.buildDocument(data, sections, { title, author, includeCoverLetter, coverLetterTemplate, pageBreakBetweenSections });
+      const docDefinition = this.buildDocument(data, sections, {
+        title, author, includeCoverLetter, coverLetterTemplate,
+        includeCoverPage, pageBreakBetweenSections
+      });
 
       return new Promise((resolve, reject) => {
         const pdfDoc = pdfMake.createPdf(docDefinition);
@@ -668,7 +672,17 @@ class PDFExporter {
    */
   buildDocument(data, sections, info) {
     const content = [];
-    const { includeCoverLetter = false, coverLetterTemplate = null, pageBreakBetweenSections = false } = info;
+    const {
+      includeCoverLetter = false,
+      coverLetterTemplate = null,
+      includeCoverPage = true,
+      pageBreakBetweenSections = true
+    } = info;
+
+    // Cover Page (hero + stats infographic)
+    if (includeCoverPage) {
+      content.push(...this.buildCoverPage(info, data));
+    }
 
     // Cover Letter (if included)
     if (includeCoverLetter && coverLetterTemplate) {
@@ -676,12 +690,17 @@ class PDFExporter {
       content.push({ text: '', pageBreak: 'after' }); // Page break after cover letter
     }
 
-    // Header
-    content.push(this.buildHeader(info));
+    // Inline header (only when no cover page is used)
+    if (!includeCoverPage) {
+      content.push(this.buildHeader(info));
+    }
 
-    // Build each section
+    // Build each section. With a cover page, every section starts on a new page;
+    // otherwise, only break between sections (skip first).
     sections.forEach((section, index) => {
-      const addPageBreak = pageBreakBetweenSections && index > 0;
+      const addPageBreak = includeCoverPage
+        ? true
+        : (pageBreakBetweenSections && index > 0);
 
       switch (section) {
         case 'expertise':
@@ -729,6 +748,7 @@ class PDFExporter {
       },
       pageSize: 'A4',
       pageMargins,
+      footer: this.getDocFooter(info),
       defaultStyle: {
         font: this.fontLoaded ? 'NotoSansKR' : 'Roboto',
         fontSize: this.getTypography('fontSize.body'),
@@ -813,6 +833,187 @@ class PDFExporter {
   }
 
   /**
+   * Build cover page with hero block and stats infographic
+   * @param {Object} info - Document info ({title, author})
+   * @param {Object} data - Full portfolio data
+   * @returns {Array} pdfmake content array (ends with page break)
+   */
+  buildCoverPage(info, data) {
+    const content = [];
+    const lang = this.currentLang;
+    const locale = lang === 'ko' ? 'ko-KR' : 'en-US';
+    const dateStr = new Date().toLocaleDateString(locale, {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    const subtitle = lang === 'ko'
+      ? 'CTO · 연구소장 · 플랫폼 아키텍트'
+      : 'CTO · Research Director · Platform Architect';
+    const tagline = lang === 'ko'
+      ? '안전 중요(safety-critical)·ISO 인증 도메인에서 R&D와 플랫폼을 20년 넘게 이끌어 왔습니다'
+      : '20+ years leading R&D and platform architecture in safety-critical, ISO-certified domains';
+
+    content.push({
+      canvas: [{ type: 'rect', x: 0, y: 0, w: 515, h: 8, color: this.getColor('primary') }],
+      margin: [0, 40, 0, 60]
+    });
+
+    content.push({
+      text: info.author || info.title,
+      fontSize: 42,
+      bold: true,
+      color: this.getColor('text.primary'),
+      lineHeight: 1.1,
+      margin: [0, 0, 0, 10]
+    });
+
+    content.push({
+      text: subtitle,
+      fontSize: 14,
+      color: this.getColor('primary'),
+      bold: true,
+      margin: [0, 0, 0, 18]
+    });
+
+    content.push({
+      text: tagline,
+      fontSize: 11,
+      color: this.getColor('text.secondary'),
+      italics: true,
+      lineHeight: 1.5,
+      margin: [0, 0, 0, 36]
+    });
+
+    content.push({
+      canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: this.getColor('border') }],
+      margin: [0, 0, 0, 30]
+    });
+
+    const stats = this.buildStatsInfographic(data);
+    if (stats) content.push(stats);
+
+    if (data.expertise?.certifications?.length > 0) {
+      const certText = data.expertise.certifications.map(c => this.getText(c.name)).join('  ·  ');
+      content.push({
+        text: lang === 'ko' ? '인증 / Certifications' : 'Certifications',
+        fontSize: 9,
+        color: this.getColor('text.muted'),
+        bold: true,
+        margin: [0, 28, 0, 6]
+      });
+      content.push({
+        text: certText,
+        fontSize: 11,
+        color: this.getColor('success'),
+        bold: true,
+        margin: [0, 0, 0, 0]
+      });
+    }
+
+    content.push({
+      text: dateStr,
+      fontSize: 9,
+      color: this.getColor('text.muted'),
+      alignment: 'right',
+      margin: [0, 60, 0, 0]
+    });
+
+    content.push({ text: '', pageBreak: 'after' });
+    return content;
+  }
+
+  /**
+   * Build a 4-column stats infographic for the cover page
+   * @param {Object} data - Portfolio data
+   * @returns {Object|null} pdfmake table node or null when no data
+   */
+  buildStatsInfographic(data) {
+    const lang = this.currentLang;
+    const kn = data?.manager?.businessImpact?.keyNumbers || {};
+    const certCount = data?.expertise?.certifications?.length || kn.certifications;
+    const stats = [];
+
+    stats.push({ value: '20+', label: lang === 'ko' ? '경력 (년)' : 'Years' });
+    if (certCount) stats.push({ value: String(certCount), label: lang === 'ko' ? '글로벌 인증' : 'Certifications' });
+    if (kn.ipos) stats.push({ value: String(kn.ipos), label: 'IPO' });
+    if (kn.performanceImprovement) stats.push({ value: String(kn.performanceImprovement), label: lang === 'ko' ? '성능 향상' : 'Performance' });
+    if (kn.projectsDelivered && stats.length < 4) {
+      stats.push({ value: String(kn.projectsDelivered), label: lang === 'ko' ? '프로젝트' : 'Projects' });
+    }
+
+    const finalStats = stats.slice(0, 4);
+    if (finalStats.length === 0) return null;
+
+    const widths = Array(finalStats.length).fill('*');
+    const valueRow = finalStats.map(s => ({
+      text: s.value,
+      fillColor: this.getColor('primary'),
+      color: '#FFFFFF',
+      bold: true,
+      fontSize: 26,
+      alignment: 'center',
+      margin: [0, 14, 0, 6]
+    }));
+    const labelRow = finalStats.map(s => ({
+      text: s.label,
+      fillColor: '#F1F5F9',
+      color: this.getColor('text.secondary'),
+      fontSize: 9,
+      alignment: 'center',
+      margin: [0, 8, 0, 12]
+    }));
+
+    return {
+      table: { widths, heights: [56, 28], body: [valueRow, labelRow] },
+      layout: {
+        hLineWidth: () => 0,
+        vLineWidth: (i, node) => (i === 0 || i === node.table.widths.length) ? 0 : 4,
+        vLineColor: () => '#FFFFFF',
+        paddingLeft: () => 0,
+        paddingRight: () => 0,
+        paddingTop: () => 0,
+        paddingBottom: () => 0
+      },
+      margin: [0, 0, 0, 0]
+    };
+  }
+
+  /**
+   * Build the per-page footer callback (skip page 1 / cover)
+   * @param {Object} info - Document info
+   * @returns {Function} pdfmake footer function
+   */
+  getDocFooter(info) {
+    const author = info.author || 'Portfolio';
+    const accentColor = this.getColor('primary');
+    const mutedColor = this.getColor('text.muted');
+    return (currentPage, pageCount) => {
+      if (currentPage === 1) return null;
+      return {
+        margin: [45, 0, 45, 0],
+        stack: [
+          {
+            canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: '#E2E8F0' }],
+            margin: [0, 0, 0, 6]
+          },
+          {
+            columns: [
+              { text: author, fontSize: 8, color: mutedColor, width: '*' },
+              {
+                text: [
+                  { text: `${currentPage}`, color: accentColor, bold: true },
+                  { text: ` / ${pageCount}`, color: mutedColor }
+                ],
+                fontSize: 8, width: 'auto', alignment: 'right'
+              }
+            ]
+          }
+        ]
+      };
+    };
+  }
+
+  /**
    * Build document header with enhanced styling
    */
   buildHeader(info) {
@@ -886,6 +1087,41 @@ class PDFExporter {
   }
 
   /**
+   * Build a card-style section header with optional page break.
+   * Returns nodes ready to push into pdfmake content (header + spacer).
+   * @param {string} text - Section title (uppercase recommended)
+   * @param {boolean} addPageBreak - Force page break before this section
+   * @returns {Array} pdfmake content nodes
+   */
+  buildSectionHeader(text, addPageBreak = false) {
+    const headerNode = {
+      table: {
+        widths: ['*'],
+        body: [[{
+          text,
+          color: '#FFFFFF',
+          fillColor: this.getColor('primary'),
+          bold: true,
+          fontSize: 18,
+          characterSpacing: 1.2,
+          margin: [14, 10, 14, 10]
+        }]]
+      },
+      layout: 'noBorders',
+      margin: [0, 0, 0, 4]
+    };
+    if (addPageBreak) headerNode.pageBreak = 'before';
+
+    return [
+      headerNode,
+      {
+        canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: this.getColor('border') }],
+        margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+      }
+    ];
+  }
+
+  /**
    * Build expertise section
    * @param {Object} expertise - Expertise data
    * @param {boolean} addPageBreak - Whether to add page break before section
@@ -894,31 +1130,7 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
-    // Section header without style (to allow color override)
-    const sectionHeader = {
-      text: labels.expertise,
-      fontSize: this.getTypography('fontSize.h2'),
-      bold: true,
-      color: this.getColor('primary'),
-      margin: [0, 24, 0, 12],
-      lineHeight: 1.3
-    };
-    if (addPageBreak) {
-      sectionHeader.pageBreak = 'before';
-    }
-    content.push(sectionHeader);
-
-    // Add enhanced section divider line with gradient-like appearance
-    content.push({
-      canvas: [{
-        type: 'line',
-        x1: 0, y1: 0,
-        x2: 515, y2: 0,
-        lineWidth: 3,  // Thicker line for web-like emphasis
-        lineColor: this.getColor('primary')
-      }],
-      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
-    });
+    content.push(...this.buildSectionHeader(labels.expertise, addPageBreak));
 
     // Categories with color-coded sections
     if (expertise.categories && expertise.categories.length > 0) {
@@ -1035,31 +1247,7 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
-    // Section header without style (to allow color override)
-    const sectionHeader = {
-      text: labels.projects,
-      fontSize: this.getTypography('fontSize.h2'),
-      bold: true,
-      color: this.getColor('primary'),
-      margin: [0, 24, 0, 12],
-      lineHeight: 1.3
-    };
-    if (addPageBreak) {
-      sectionHeader.pageBreak = 'before';
-    }
-    content.push(sectionHeader);
-
-    // Add enhanced section divider line with gradient-like appearance
-    content.push({
-      canvas: [{
-        type: 'line',
-        x1: 0, y1: 0,
-        x2: 515, y2: 0,
-        lineWidth: 3,  // Thicker line for web-like emphasis
-        lineColor: this.getColor('primary')
-      }],
-      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
-    });
+    content.push(...this.buildSectionHeader(labels.projects, addPageBreak));
 
     // Featured projects first
     if (projects.featured && projects.featured.length > 0) {
@@ -1245,31 +1433,7 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
-    // Section header without style (to allow color override)
-    const sectionHeader = {
-      text: labels.career,
-      fontSize: this.getTypography('fontSize.h2'),
-      bold: true,
-      color: this.getColor('primary'),
-      margin: [0, 24, 0, 12],
-      lineHeight: 1.3
-    };
-    if (addPageBreak) {
-      sectionHeader.pageBreak = 'before';
-    }
-    content.push(sectionHeader);
-
-    // Add enhanced section divider line with gradient-like appearance
-    content.push({
-      canvas: [{
-        type: 'line',
-        x1: 0, y1: 0,
-        x2: 515, y2: 0,
-        lineWidth: 3,  // Thicker line for web-like emphasis
-        lineColor: this.getColor('primary')
-      }],
-      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
-    });
+    content.push(...this.buildSectionHeader(labels.career, addPageBreak));
 
     if (career.timeline && career.timeline.length > 0) {
       career.timeline.forEach(item => {
@@ -1439,31 +1603,7 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
-    // Section header without style (to allow color override)
-    const sectionHeader = {
-      text: labels.testimonials,
-      fontSize: this.getTypography('fontSize.h2'),
-      bold: true,
-      color: this.getColor('primary'),
-      margin: [0, 24, 0, 12],
-      lineHeight: 1.3
-    };
-    if (addPageBreak) {
-      sectionHeader.pageBreak = 'before';
-    }
-    content.push(sectionHeader);
-
-    // Add enhanced section divider line with gradient-like appearance
-    content.push({
-      canvas: [{
-        type: 'line',
-        x1: 0, y1: 0,
-        x2: 515, y2: 0,
-        lineWidth: 3,  // Thicker line for web-like emphasis
-        lineColor: this.getColor('primary')
-      }],
-      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
-    });
+    content.push(...this.buildSectionHeader(labels.testimonials, addPageBreak));
 
     // Featured testimonial
     if (testimonials.featured) {
@@ -1564,31 +1704,7 @@ class PDFExporter {
     const content = [];
     const labels = this.getLabels();
 
-    // Section header without style (to allow color override)
-    const sectionHeader = {
-      text: labels.manager,
-      fontSize: this.getTypography('fontSize.h2'),
-      bold: true,
-      color: this.getColor('primary'),
-      margin: [0, 24, 0, 12],
-      lineHeight: 1.3
-    };
-    if (addPageBreak) {
-      sectionHeader.pageBreak = 'before';
-    }
-    content.push(sectionHeader);
-
-    // Add enhanced section divider line with gradient-like appearance
-    content.push({
-      canvas: [{
-        type: 'line',
-        x1: 0, y1: 0,
-        x2: 515, y2: 0,
-        lineWidth: 3,  // Thicker line for web-like emphasis
-        lineColor: this.getColor('primary')
-      }],
-      margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
-    });
+    content.push(...this.buildSectionHeader(labels.manager, addPageBreak));
 
     // PM Capabilities
     if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
