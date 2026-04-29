@@ -1622,17 +1622,33 @@ class DOCXExporter {
 
     children.push(...this.createHeading2(labels.testimonials, addPageBreak));
 
-    // Featured testimonial
-    if (testimonials.featured) {
-      children.push(...this.formatTestimonial(testimonials.featured, true));
+    // Build a flat list with a spacer + thin centered rule between
+    // adjacent testimonials so each block reads as its own card.
+    const ordered = [];
+    if (testimonials.featured) ordered.push({ t: testimonials.featured, featured: true });
+    if (testimonials.testimonials && testimonials.testimonials.length > 0) {
+      testimonials.testimonials.forEach(t => ordered.push({ t, featured: false }));
     }
 
-    // Other testimonials
-    if (testimonials.testimonials && testimonials.testimonials.length > 0) {
-      testimonials.testimonials.forEach(testimonial => {
-        children.push(...this.formatTestimonial(testimonial, false));
-      });
-    }
+    ordered.forEach(({ t, featured }, idx) => {
+      if (idx > 0) {
+        children.push(new docx.Paragraph({
+          children: [new docx.TextRun({ text: '' })],
+          alignment: docx.AlignmentType.CENTER,
+          border: {
+            bottom: {
+              color: this.getColor('border'),
+              size: 4,
+              space: 1,
+              style: docx.BorderStyle.SINGLE
+            }
+          },
+          spacing: { before: 240, after: 360 },
+          indent: { left: 2400, right: 2400 }
+        }));
+      }
+      children.push(...this.formatTestimonial(t, featured));
+    });
 
     return children;
   }
@@ -1841,33 +1857,97 @@ class DOCXExporter {
       }
     }
 
-    // Soft Skills
+    // Soft Skills — 3-column grid card layout
     if (manager.softSkills && manager.softSkills.length > 0) {
-      children.push(this.createHeading3WithKeep(labels.softSkills, true));
+      children.push(this.createHeading3(labels.softSkills, false));
 
-      const skillsRuns = [];
-      manager.softSkills.forEach((skill, index) => {
-        const levelDots = '●'.repeat(skill.level || 0) + '○'.repeat(5 - (skill.level || 0));
-        if (index > 0) {
-          skillsRuns.push(new docx.TextRun({
-            text: '  |  ',
-            size: this.toHalfPt(this.getTypography('fontSize.small')),
-            color: this.getColor('text.muted')
-          }));
+      const totalWidth = 9000;
+      const colWidth = Math.floor(totalWidth / 3);
+      const accentColor = this.getColor('accent');
+      const mutedTrack = 'E2E8F0';
+
+      const buildSkillCell = (skill) => {
+        const level = Math.max(0, Math.min(5, skill.level || 0));
+        return new docx.TableCell({
+          children: [
+            new docx.Paragraph({
+              children: [new docx.TextRun({
+                text: this.getText(skill.title),
+                bold: true,
+                size: this.toHalfPt(11),
+                color: this.getColor('text.primary')
+              })],
+              spacing: { after: 140 }
+            }),
+            new docx.Paragraph({
+              children: [
+                new docx.TextRun({
+                  text: '━'.repeat(level),
+                  size: this.toHalfPt(14),
+                  color: accentColor,
+                  bold: true
+                }),
+                new docx.TextRun({
+                  text: '━'.repeat(5 - level),
+                  size: this.toHalfPt(14),
+                  color: mutedTrack,
+                  bold: true
+                })
+              ],
+              spacing: { after: 80 }
+            }),
+            new docx.Paragraph({
+              children: [new docx.TextRun({
+                text: `${level} / 5`,
+                size: this.toHalfPt(8),
+                color: this.getColor('text.muted')
+              })],
+              spacing: { after: 0 }
+            })
+          ],
+          width: { size: colWidth, type: docx.WidthType.DXA },
+          margins: { top: 200, bottom: 240, left: 200, right: 200 },
+          borders: {
+            top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+            bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+            left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+            right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+          }
+        });
+      };
+
+      const emptyCell = () => new docx.TableCell({
+        children: [new docx.Paragraph({ children: [new docx.TextRun({ text: '' })] })],
+        width: { size: colWidth, type: docx.WidthType.DXA },
+        borders: {
+          top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
         }
-        skillsRuns.push(new docx.TextRun({
-          text: `${this.getText(skill.title)} ${levelDots}`,
-          size: this.toHalfPt(this.getTypography('fontSize.small')),
-          color: this.getColor('text.secondary')
-        }));
       });
 
-      children.push(new docx.Paragraph({
-        children: skillsRuns,
-        spacing: { after: 100 },
-        indent: { left: this.getSpacing('list.indent') },
-        keepLines: true
+      const rows = [];
+      for (let i = 0; i < manager.softSkills.length; i += 3) {
+        const rowCells = manager.softSkills.slice(i, i + 3).map(buildSkillCell);
+        while (rowCells.length < 3) rowCells.push(emptyCell());
+        rows.push(new docx.TableRow({ children: rowCells }));
+      }
+
+      children.push(new docx.Table({
+        rows,
+        width: { size: totalWidth, type: docx.WidthType.DXA },
+        columnWidths: [colWidth, colWidth, colWidth],
+        borders: {
+          top: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          bottom: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          left: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          right: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          insideHorizontal: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+          insideVertical: { style: docx.BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+        }
       }));
+      children.push(new docx.Paragraph({ children: [], spacing: { after: 200 } }));
     }
 
     return children;

@@ -1630,17 +1630,23 @@ class PDFExporter {
 
     content.push(...this.buildSectionHeader(labels.testimonials, addPageBreak));
 
-    // Featured testimonial
-    if (testimonials.featured) {
-      content.push(this.formatTestimonial(testimonials.featured, true));
+    // Build a flat list, inserting a thin centered separator rule between
+    // adjacent testimonials so each block visually closes before the next.
+    const ordered = [];
+    if (testimonials.featured) ordered.push({ t: testimonials.featured, featured: true });
+    if (testimonials.testimonials && testimonials.testimonials.length > 0) {
+      testimonials.testimonials.forEach(t => ordered.push({ t, featured: false }));
     }
 
-    // Other testimonials
-    if (testimonials.testimonials && testimonials.testimonials.length > 0) {
-      testimonials.testimonials.forEach(testimonial => {
-        content.push(this.formatTestimonial(testimonial, false));
-      });
-    }
+    ordered.forEach(({ t, featured }, idx) => {
+      if (idx > 0) {
+        content.push({
+          canvas: [{ type: 'line', x1: 180, y1: 0, x2: 335, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+          margin: [0, 0, 0, 12]
+        });
+      }
+      content.push(this.formatTestimonial(t, featured));
+    });
 
     return content;
   }
@@ -1716,7 +1722,9 @@ class PDFExporter {
     return {
       unbreakable: true,
       stack: items,
-      margin: [0, this.getSpacing('card.marginBottom'), 0, this.getSpacing('gap.xlarge')]
+      // Generous breathing room between testimonials so each quote reads
+      // as its own block instead of running together.
+      margin: [0, 28, 0, 44]
     };
   }
 
@@ -1814,23 +1822,60 @@ class PDFExporter {
       }
     }
 
-    // Soft Skills
+    // Soft Skills — 3-column grid card layout
     if (manager.softSkills && manager.softSkills.length > 0) {
-      content.push({
-        text: labels.softSkills,
-        style: 'sectionTitle'
-      });
+      content.push(...this.buildSubsectionHeader(labels.softSkills, false));
 
-      const skillsText = manager.softSkills.map(skill => {
-        const levelDots = '●'.repeat(skill.level || 0) + '○'.repeat(5 - (skill.level || 0));
-        return `${this.getText(skill.title)} ${levelDots}`;
-      }).join('  |  ');
+      const accentColor = this.getColor('accent');
+      const mutedTrack = '#E2E8F0';
+
+      const buildSkillCell = (skill) => {
+        const level = Math.max(0, Math.min(5, skill.level || 0));
+        return {
+          stack: [
+            {
+              text: this.getText(skill.title),
+              bold: true,
+              fontSize: 11,
+              color: this.getColor('text.primary'),
+              margin: [0, 0, 0, 8]
+            },
+            {
+              text: [
+                { text: '━'.repeat(level), color: accentColor, fontSize: 14, bold: true },
+                { text: '━'.repeat(5 - level), color: mutedTrack, fontSize: 14, bold: true }
+              ],
+              characterSpacing: -1,
+              margin: [0, 0, 0, 4]
+            },
+            {
+              text: `${level} / 5`,
+              fontSize: 8,
+              color: this.getColor('text.muted')
+            }
+          ]
+        };
+      };
+
+      const cells = manager.softSkills.map(buildSkillCell);
+      while (cells.length % 3 !== 0) cells.push({ text: '' });
+
+      const rows = [];
+      for (let i = 0; i < cells.length; i += 3) {
+        rows.push(cells.slice(i, i + 3));
+      }
 
       content.push({
-        text: skillsText,
-        color: this.getColor('text.secondary'),
-        fontSize: this.getTypography('fontSize.small'),
-        margin: [this.getSpacing('list.indent'), 0, 0, 10]
+        table: { widths: ['*', '*', '*'], body: rows },
+        layout: {
+          hLineWidth: () => 0,
+          vLineWidth: () => 0,
+          paddingLeft: () => 10,
+          paddingRight: () => 10,
+          paddingTop: () => 12,
+          paddingBottom: () => 14
+        },
+        margin: [0, 0, 0, 12]
       });
     }
 
