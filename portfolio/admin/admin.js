@@ -1752,7 +1752,7 @@ class AdminApp {
                   </label>
                   <p class="form-hint">${this.hasCompensationData()
                     ? 'Append the private compensation section. Use only for personal review or trusted negotiation drafts — never include in public submissions.'
-                    : 'Compensation data not loaded. Visit the portfolio with <code>?private=on</code> first to grant access, then reload this admin page.'}</p>
+                    : `Compensation data not loaded. <a href="?private=on" class="enable-private-link">Click here to enable private access on this admin page</a> (page will reload). Disable later via <code>?private=off</code>.`}</p>
                 </div>
               </div>
 

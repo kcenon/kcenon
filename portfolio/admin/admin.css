@@ -2688,3 +2688,15 @@
   background: rgba(127, 127, 127, 0.15);
   border-radius: 3px;
 }
+
+.compensation-option .enable-private-link {
+  font-weight: 600;
+  color: #b91c1c;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.compensation-option .enable-private-link:hover {
+  color: #dc2626;
+  text-decoration: none;
+}
