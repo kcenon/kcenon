@@ -161,7 +161,7 @@ function renderFeaturedProject(project) {
             ${renderMetrics(project.metrics)}
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
-                <span>${t('expand')}</span>
+                <span>${_t('expand')}</span>
                 ${Icons.chevronDown}
             </button>
             <div class="project-expanded">
@@ -194,7 +194,7 @@ function renderProjectCard(project) {
             ${renderMetrics(project.metrics)}
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
-                <span>${t('expand')}</span>
+                <span>${_t('expand')}</span>
                 <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
@@ -230,7 +230,7 @@ function renderOpenSourceCard(project) {
             <p class="project-description">${_getText(project.description)}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
-                <span>${t('expand')}</span>
+                <span>${_t('expand')}</span>
                 <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
@@ -247,8 +247,8 @@ function renderOpenSourceCard(project) {
 function renderProjects(data, container) {
     const lang = _getLang();
     let html = `
-        <h2 class="section-title">${t('projects.title')}</h2>
-        <p class="section-description">${t('projects.desc')}</p>
+        <h2 class="section-title">${_t('projects.title')}</h2>
+        <p class="section-description">${_t('projects.desc')}</p>
 
         <!-- Filter Tabs -->
         <div class="project-filters">
@@ -365,8 +365,8 @@ function renderTestimonials(data, container) {
     };
 
     let html = `
-        <h2 class="section-title">${t('testimonials.title')}</h2>
-        <p class="section-description">${t('testimonials.desc')}</p>
+        <h2 class="section-title">${_t('testimonials.title')}</h2>
+        <p class="section-description">${_t('testimonials.desc')}</p>
 
         <!-- Leadership Highlight -->
         <div class="testimonial-highlight">
@@ -426,12 +426,8 @@ function renderCareer(data, container) {
         const projectData = window.PortfolioData?.projects;
         if (!projectData) return projectId;
 
-        // Search in all project categories
-        const allProjects = [
-            ...(projectData.featured || []),
-            ...(projectData.medicalImaging || []),
-            ...(projectData.openSource || [])
-        ];
+        // Search across every project category (any array-valued key)
+        const allProjects = Object.values(projectData).filter(Array.isArray).flat();
 
         const project = allProjects.find(p => p.id === projectId);
         return project ? _getText(project.title) : projectId;
@@ -750,37 +746,9 @@ function renderManager(data, container) {
         `;
     };
 
-    // Render Management Projects
-    const renderManagementProjects = (projects) => {
-        if (!projects || projects.length === 0) return '';
-        return `
-            <div class="management-projects-section">
-                <h3 class="subsection-title">${lang === 'ko' ? '주요 리딩 프로젝트' : 'Key Projects Led'}</h3>
-                <div class="management-projects-grid">
-                    ${projects.map(proj => `
-                        <div class="management-project-card">
-                            <div class="project-header">
-                                <h4>${proj.title}</h4>
-                                <span class="project-duration">${_getText(proj.duration)}</span>
-                            </div>
-                            ${proj.teamSize ? `<div class="project-team"><span class="team-icon">👥</span> ${lang === 'ko' ? `팀 ${proj.teamSize}명` : `Team of ${proj.teamSize}`}</div>` : ''}
-                            ${proj.certifications ? `<div class="project-certs">${proj.certifications.map(c => `<span class="cert-badge-small">${c}</span>`).join('')}</div>` : ''}
-                            ${proj.outcomes ? `
-                                <ul class="project-outcomes">
-                                    ${_getArray(proj.outcomes).map(o => `<li>${o}</li>`).join('')}
-                                </ul>
-                            ` : ''}
-                            ${proj.onTime ? `<span class="on-time-badge">${lang === 'ko' ? '일정 준수' : 'On-time'}</span>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    };
-
     let html = `
-        <h2 class="section-title">${t('manager.title')}</h2>
-        <p class="section-description">${t('manager.desc')}</p>
+        <h2 class="section-title">${_t('manager.title')}</h2>
+        <p class="section-description">${_t('manager.desc')}</p>
 
         ${renderLeadershipHighlights(data.leadershipHighlights)}
 

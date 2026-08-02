@@ -2,7 +2,7 @@
 // Data Loading and Rendering
 // =============================================
 
-// Initialize portfolio using inline data (no server required)
+// Initialize portfolio from JSON data fetched by data/data.js (requires a static server for local viewing)
 function initializePortfolio() {
     const components = window.PortfolioComponents;
     if (!components) {
@@ -11,7 +11,7 @@ function initializePortfolio() {
     }
     const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager, renderEducation, renderCompensation } = components;
 
-    // Get data from inline JavaScript (data/data.js)
+    // Get data loaded by data/data.js (fetches JSON files into window.PortfolioData)
     const data = window.PortfolioData;
 
     if (!data) {
@@ -19,7 +19,7 @@ function initializePortfolio() {
         return;
     }
 
-    // Render sections using inline data
+    // Render sections from the loaded data
     if (data.projects) {
         const projectsContainer = document.getElementById('projects-container');
         if (projectsContainer) renderProjects(data.projects, projectsContainer);
@@ -492,8 +492,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navigation active state on scroll
-const sections = document.querySelectorAll('section[id]');
+// Navigation active state on scroll (header[id] covers the About hero)
+const sections = document.querySelectorAll('header[id], section[id]');
 const navLinks = document.querySelectorAll('.nav-links a');
 
 function updateActiveNav() {
@@ -590,123 +590,6 @@ if (backToTopButton) {
 }
 
 // =============================================
-// PDF Download
-// =============================================
-
-const _loadedScripts = new Map();
-
-function loadScriptOnce(src) {
-    if (_loadedScripts.has(src)) return _loadedScripts.get(src);
-
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) {
-        const p = new Promise((resolve, reject) => {
-            if (existing.dataset.loaded === 'true') return resolve();
-            existing.addEventListener('load', () => {
-                existing.dataset.loaded = 'true';
-                resolve();
-            }, { once: true });
-            existing.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true });
-        });
-        _loadedScripts.set(src, p);
-        return p;
-    }
-
-    const p = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = true;
-        script.onload = () => {
-            script.dataset.loaded = 'true';
-            resolve();
-        };
-        script.onerror = () => reject(new Error(`Failed to load ${src}`));
-        document.head.appendChild(script);
-    });
-    _loadedScripts.set(src, p);
-    return p;
-}
-
-async function ensurePdfMakeLoaded() {
-    if (typeof pdfMake !== 'undefined') return;
-    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js');
-    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js');
-}
-
-async function downloadResumePDF() {
-    const button = document.querySelector('.pdf-download');
-    if (!button) return;
-    const originalText = button.querySelector('span').textContent;
-    const lang = getLanguage();
-
-    // Localized messages
-    const messages = {
-        ko: {
-            generating: '생성 중...',
-            downloaded: '다운로드 완료!',
-            error: '오류 발생',
-            filename: '신동철_포트폴리오.pdf',
-            title: '포트폴리오',
-            author: '신동철'
-        },
-        en: {
-            generating: 'Generating...',
-            downloaded: 'Downloaded!',
-            error: 'Error',
-            filename: 'Dongcheol_Shin_Portfolio.pdf',
-            title: 'Portfolio',
-            author: 'Dongcheol Shin'
-        }
-    };
-    const msg = messages[lang] || messages.en;
-
-    try {
-        // Show loading state
-        button.disabled = true;
-        button.querySelector('span').textContent = msg.generating;
-
-        // Lazy-load pdfmake only when needed (keeps initial page load lighter)
-        await ensurePdfMakeLoaded();
-
-        // Check if PDFExporter is available
-        if (!window.PDFExporter) {
-            throw new Error('PDF Exporter not loaded');
-        }
-
-        // Get portfolio data
-        const data = window.PortfolioData;
-        if (!data) {
-            throw new Error('Portfolio data not found');
-        }
-
-        // Generate PDF with current language
-        await window.PDFExporter.generatePDF(data, {
-            sections: ['expertise', 'projects', 'manager', 'career', 'testimonials'],
-            filename: msg.filename,
-            title: msg.title,
-            author: msg.author,
-            theme: 'professional',
-            pageBreakBetweenSections: true  // Enable page breaks between sections
-        });
-
-        // Reset button
-        button.querySelector('span').textContent = msg.downloaded;
-        setTimeout(() => {
-            button.querySelector('span').textContent = originalText;
-            button.disabled = false;
-        }, 2000);
-
-    } catch (error) {
-        console.error('PDF generation failed:', error);
-        button.querySelector('span').textContent = msg.error;
-        setTimeout(() => {
-            button.querySelector('span').textContent = originalText;
-            button.disabled = false;
-        }, 2000);
-    }
-}
-
-// =============================================
 // Cover Letter Functionality (Admin Only)
 // =============================================
 
@@ -742,5 +625,5 @@ window.getCoverLetterTemplate = function() {
 // =============================================
 
 console.log('%c안녕하세요! 신동철입니다.', 'font-size: 20px; font-weight: bold; color: #3b82f6;');
-console.log('%c의료 소프트웨어와 고성능 시스템에 관심이 있으시다면 연락주세요!', 'font-size: 14px; color: #64748b;');
+console.log('%c분산 시스템, 플랫폼 엔지니어링, 고성능 시스템에 관심이 있으시다면 연락주세요!', 'font-size: 14px; color: #64748b;');
 console.log('%ckcenon@gmail.com', 'font-size: 14px; color: #3b82f6;');
