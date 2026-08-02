@@ -270,8 +270,8 @@
           "en": "**Institutionalized Architecture Discipline**: Established a company-wide system where **nothing ships without an architecture review artifact** (IEC 62304 design control), and made pre-implementation failure-mode anticipation standard practice via ISO 14971 risk analysis/FMEA. **1,200+ pages of traceability documentation** and direct auditor Q&A across 4 jurisdictions — discipline enforced with certification on the line."
         },
         {
-          "ko": "**AI-네이티브 운영 (현직)**: GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 게이트, 발견된 문제의 **AI 기반 파악·리포트 자동화**로 최소 인력이 최대 산출을 내는 운영 구조를 설계·적용 중입니다. AI를 실행 보조가 아니라 **요구사항 확장과 검증의 도구**로 사용합니다.",
-          "en": "**AI-Native Operations (Current)**: Designing and running a lean-team leverage system — automated reporting from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, and **AI-driven triage and reporting** of findings. I use AI as a **requirement-expansion and verification tool**, not just an execution aid."
+          "ko": "**AI-네이티브 운영 (현직)**: GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 게이트, AI 코드 리뷰, 발견된 문제의 **AI 기반 파악·리포트 자동화**로 최소 인력이 최대 산출을 내는 운영 구조를 설계·적용 중입니다. 의료기기 인증·규제 문서 생성까지 AI 워크플로로 수행하되 **휴먼 승인 게이트와 추적성 자동 감사**로 검증합니다 — AI를 실행 보조가 아니라 요구사항 확장과 검증의 도구로 사용합니다.",
+          "en": "**AI-Native Operations (Current)**: Designing and running a lean-team leverage system — automated reporting from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, AI code review, and **AI-driven triage and reporting** of findings. AI workflows extend to medical device certification and regulatory documentation, verified through **human approval gates and automated traceability audits** — I use AI as a requirement-expansion and verification tool, not just an execution aid."
         },
         {
           "ko": "**플랫폼·OEM 아키텍처**: DICOM 표준 구현으로 멀티벤더 상호운용을 확보하고, **센서 SDK**로 서드파티 통합을 지원했으며, 공통 컴포넌트(메시징·스레딩·네트워크·로깅) 거버넌스와 **삼성 CT/MR 플랫폼 0→1** 구축을 이끌었습니다. 제품의 집합이 아니라 일관된 플랫폼으로 확장하는 설계를 지향합니다.",
