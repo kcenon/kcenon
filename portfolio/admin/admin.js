@@ -729,6 +729,9 @@ class AdminApp {
       });
 
       this.hideExportProgress();
+      if (result.fontWarning) {
+        this.showToast(result.fontWarning, 'warning');
+      }
       this.showToast(`PDF exported: ${result.filename}`, 'success');
     } catch (error) {
       this.hideExportProgress();
