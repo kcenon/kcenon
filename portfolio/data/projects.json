@@ -100,7 +100,7 @@
       "id": "smartdent-v3",
       "icon": "hospital",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "SMARTDent v3",
@@ -199,7 +199,7 @@
       "id": "samsung-ct",
       "icon": "microscope",
       "company": {
-        "ko": "주식회사 레이 → Samsung",
+        "ko": "(주)레이 → Samsung",
         "en": "Ray Co., Ltd. → Samsung"
       },
       "title": "Medical CT Project for Samsung",
@@ -285,7 +285,7 @@
     {
       "id": "high-speed-download",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "High Speed File Download System",
@@ -336,7 +336,7 @@
     {
       "id": "3d-visualization",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "3D Visualization Software",
@@ -381,7 +381,7 @@
     {
       "id": "alpha-project",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Alpha Project",
@@ -428,7 +428,7 @@
     {
       "id": "dicom-visualization",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Visualization Software for DICOM",
@@ -523,7 +523,7 @@
     {
       "id": "orthovision",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "OrthoVision Project",
@@ -567,7 +567,7 @@
     {
       "id": "ezceph",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "EzCeph Project",
@@ -613,7 +613,7 @@
     {
       "id": "3d-printer",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "3D Printer Software",
@@ -657,7 +657,7 @@
     {
       "id": "automation-alignment",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Automation Alignment Software",
@@ -701,7 +701,7 @@
     {
       "id": "intraoral-sensor-sdk",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Intraoral Sensor SDK",
@@ -745,7 +745,7 @@
     {
       "id": "implagraphy",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "Implagraphy Project",
@@ -789,7 +789,7 @@
     {
       "id": "easydent",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "EasyDent Project",
@@ -882,7 +882,7 @@
     {
       "id": "eda-ai-server",
       "company": {
-        "ko": "Purplechips",
+        "ko": "퍼플칩스 (POSTECH)",
         "en": "Purplechips"
       },
       "title": "EDA AI Server",
@@ -995,7 +995,6 @@
       "id": "messaging-system",
       "title": "messaging_system",
       "github": "https://github.com/kcenon/messaging_system",
-      "stars": 30,
       "description": {
         "ko": "Modern C++20 메시징 인프라. <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, 메시지 파이프라인 패턴 지원.",
         "en": "Modern C++20 messaging infrastructure. Supports <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, and message pipeline patterns."
@@ -1027,7 +1026,6 @@
       "id": "thread-system",
       "title": "thread_system",
       "github": "https://github.com/kcenon/thread_system",
-      "stars": 7,
       "description": {
         "ko": "Modern C++20 멀티스레딩 프레임워크. <strong>1.16M jobs/sec</strong> 처리량, Lock-free 큐, Hazard Pointers, Adaptive Optimization.",
         "en": "Modern C++20 multithreading framework. <strong>1.16M jobs/sec</strong> throughput, Lock-free queue, Hazard Pointers, Adaptive Optimization."

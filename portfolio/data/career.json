@@ -49,7 +49,10 @@
         "ko": "포자랩스",
         "en": "Pozalabs"
       },
-      "period": "2023.01 - 2025.02",
+      "period": {
+        "ko": "2023.01 - 2025.02",
+        "en": "2023.01 - 2025.02"
+      },
       "role": {
         "ko": "소프트웨어 아키텍트",
         "en": "Software Architect"
@@ -155,7 +158,10 @@
         "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
-      "period": "2010.02 - 2022.03",
+      "period": {
+        "ko": "2010.02 - 2022.03",
+        "en": "2010.02 - 2022.03"
+      },
       "role": {
         "ko": "리드 소프트웨어 엔지니어 → 수석 엔지니어",
         "en": "Lead Software Engineer → Principal Engineer"
@@ -252,7 +258,10 @@
         "ko": "(주)바텍이우홀딩스",
         "en": "VATECH E-WOO Holdings"
       },
-      "period": "2008.10 - 2009.07",
+      "period": {
+        "ko": "2008.10 - 2009.07",
+        "en": "2008.10 - 2009.07"
+      },
       "role": {
         "ko": "시니어 소프트웨어 엔지니어",
         "en": "Senior Software Engineer"
@@ -293,7 +302,10 @@
         "ko": "(주)바텍",
         "en": "VATECH Co., Ltd."
       },
-      "period": "2004.07 - 2008.10",
+      "period": {
+        "ko": "2004.07 - 2008.10",
+        "en": "2004.07 - 2008.10"
+      },
       "role": {
         "ko": "소프트웨어 엔지니어",
         "en": "Software Engineer"

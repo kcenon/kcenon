@@ -175,8 +175,8 @@
         "en": "Dear Hiring Manager,"
       },
       "opening": {
-        "ko": "20년간 3~11명 규모 팀을 리딩하며 기술 아키텍처 설계와 팀 성장을 동시에 이끌어온 경험을 바탕으로, 높은 품질의 제품 딜리버리와 지속 가능한 팀 문화를 만들고자 지원합니다.",
-        "en": "With 20 years of leading teams of 3-11 members while driving both technical architecture design and team growth, I am applying to deliver high-quality products and build sustainable team culture."
+        "ko": "20년 경력 중 14년 이상 2~11명 규모 팀을 리딩하며 기술 아키텍처 설계와 팀 성장을 동시에 이끌어온 경험을 바탕으로, 높은 품질의 제품 딜리버리와 지속 가능한 팀 문화를 만들고자 지원합니다.",
+        "en": "With 14+ years of leading teams of 2-11 members over a 20-year career, driving both technical architecture design and team growth, I am applying to deliver high-quality products and build sustainable team culture."
       },
       "keyPoints": [
         {
@@ -229,8 +229,8 @@
           "en": "**1,200+ Pages of Audit-Ready Traceability**: Authored SRS/SDS, risk analyses, V&V protocols, and traceability matrices, and **directly handled auditor Q&A** across 4 international jurisdictions. The same documentation system and audit-response practice carry over regardless of the industry."
         },
         {
-          "ko": "**다언어 R&D 조직 운영**: C++/Rust/Go/Python 환경에서 **3-11명 팀을 두 곳의 IPO 기업**(바텍, 레이)에서 이끌었습니다. 코드 리뷰 문화, SQA와의 협업, Daily Release 사이클, OpenTelemetry 기반 관측성을 도입하면서 **처리량 2배·레이턴시 50% 감소**라는 수치를 실제로 만들어 냈습니다. 표준 준수와 빠른 출시는 둘 중 하나를 골라야 하는 문제가 아니라는 점을, 운영 현장에서 직접 보여 드릴 수 있습니다.",
-          "en": "**Multi-Language R&D Organization**: Led 3–11 person teams at **two IPO companies** (VATECH, Ray) in C++/Rust/Go/Python polyglot environments. Through code-review culture, SQA collaboration, daily-release cadence, and OpenTelemetry observability, achieved **2x throughput and 50% latency reduction** as measurable outcomes — demonstrating that standards compliance and fast delivery are not opposites in practice."
+          "ko": "**다언어 R&D 조직 운영**: C++/Rust/Go/Python 환경에서 **2~11명 규모 팀을 리딩**해 왔고, **두 곳의 IPO 기업**(바텍, 레이)에 재직했습니다 — 팀 리딩은 레이에서였습니다. 코드 리뷰 문화, SQA와의 협업, Daily Release 사이클, OpenTelemetry 기반 관측성을 도입하면서 **처리량 2배·레이턴시 50% 감소**라는 수치를 실제로 만들어 냈습니다. 표준 준수와 빠른 출시는 둘 중 하나를 골라야 하는 문제가 아니라는 점을, 운영 현장에서 직접 보여 드릴 수 있습니다.",
+          "en": "**Multi-Language R&D Organization**: Led teams of 2-11 members in C++/Rust/Go/Python polyglot environments, with tenure at **two IPO companies** (VATECH, Ray) — team leadership at Ray. Through code-review culture, SQA collaboration, daily-release cadence, and OpenTelemetry observability, achieved **2x throughput and 50% latency reduction** as measurable outcomes — demonstrating that standards compliance and fast delivery are not opposites in practice."
         },
         {
           "ko": "**0→1 시스템화와 인증 출시**: 다양한 도메인의 **4개 이상 프로덕션 시스템**을 백지에서 시판 단계까지 만들어 봤습니다. 핵심 자산은 도메인 지식이 아닙니다. 요구사항 동결, 위험 분석, 아키텍처, V&V, 시판 후 감시(PMS)로 이어지는 **반복 가능한 0→1 절차**가 자산입니다. 이 절차는 어떤 표준 환경에 들어가도 첫날부터 작동합니다.",
