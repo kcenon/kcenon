@@ -14,14 +14,9 @@ class AdminApp {
       profile: null
     };
     this.coverLetterData = { templates: [] };
-    this.originalData = {};
     this.currentTab = 'projects';
     this.currentSubTab = 'featured';
     this.selectedItem = null;
-    this.isNewItem = false;
-    this.unsavedChanges = new Set();
-    this.previewActive = false;
-    this.previewDebounceTimer = null;
 
     // Current edit language
     this.currentLang = localStorage.getItem('adminEditLang') || 'ko';
@@ -110,7 +105,7 @@ class AdminApp {
 
     // Re-render to apply language change
     this.render();
-    if (this.selectedItem || this.isNewItem) {
+    if (this.selectedItem) {
       this.renderEditor();
     }
   }
@@ -149,7 +144,6 @@ class AdminApp {
     try {
       if (window.PortfolioData && window.PortfolioData.coverLetter) {
         this.coverLetterData = window.PortfolioData.coverLetter;
-        console.log('Cover letter data loaded:', this.coverLetterData.templates.length, 'templates');
       } else {
         console.warn('window.PortfolioData.coverLetter not found');
         this.coverLetterData = { templates: [] };
@@ -158,31 +152,6 @@ class AdminApp {
       console.error('Failed to load cover letter data:', error);
       this.coverLetterData = { templates: [] };
     }
-
-    // Deep clone for comparison
-    this.originalData = JSON.parse(JSON.stringify(this.data));
-  }
-
-  /**
-   * Connect to folder for file access
-   */
-  async connectFolder() {
-    const success = await window.FileHandler.requestDirectoryAccess();
-    if (success) {
-      const loadedData = await window.FileHandler.loadAllData();
-
-      // Update data if loaded successfully
-      if (loadedData.projects) this.data.projects = loadedData.projects;
-      if (loadedData.manager) this.data.manager = loadedData.manager;
-      if (loadedData.career) this.data.career = loadedData.career;
-      if (loadedData.expertise) this.data.expertise = loadedData.expertise;
-      if (loadedData.testimonials) this.data.testimonials = loadedData.testimonials;
-
-      this.originalData = JSON.parse(JSON.stringify(this.data));
-      this.render();
-      this.showToast('Connected to folder successfully', 'success');
-    }
-    this.updateStatusBar();
   }
 
   /**
@@ -262,7 +231,6 @@ class AdminApp {
   switchTab(tab) {
     this.currentTab = tab;
     this.selectedItem = null;
-    this.isNewItem = false;
 
     // Update tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -289,17 +257,10 @@ class AdminApp {
       // Auto-select first template or saved template
       const savedTemplateId = localStorage.getItem('cover-letter-template-id');
       const templates = this.coverLetterData?.templates || [];
-      console.log('Cover Letter tab:', {
-        savedTemplateId,
-        templatesCount: templates.length,
-        templateIds: templates.map(t => t.id)
-      });
       if (savedTemplateId && templates.find(t => t.id === savedTemplateId)) {
         this.selectedItem = savedTemplateId;
-        console.log('Selected saved template:', savedTemplateId);
       } else if (templates.length > 0) {
         this.selectedItem = templates[0].id;
-        console.log('Selected first template:', templates[0].id);
       }
     } else {
       subTabsContainer.style.display = 'none';
@@ -317,7 +278,6 @@ class AdminApp {
   switchSubTab(subTab) {
     this.currentSubTab = subTab;
     this.selectedItem = null;
-    this.isNewItem = false;
 
     document.querySelectorAll('.sub-tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.subtab === subTab);
@@ -473,78 +433,6 @@ class AdminApp {
   }
 
   /**
-   * Toggle preview panel
-   */
-  togglePreview() {
-    this.previewActive = !this.previewActive;
-
-    const btn = document.getElementById('btn-toggle-preview');
-    const content = document.getElementById('editor-content');
-
-    if (btn) {
-      btn.classList.toggle('active', this.previewActive);
-    }
-
-    if (content) {
-      content.classList.toggle('preview-active', this.previewActive);
-    }
-
-    if (this.previewActive) {
-      this.updatePreview();
-    }
-  }
-
-  /**
-   * Update preview with debounce
-   */
-  updatePreviewDebounced() {
-    if (!this.previewActive) return;
-
-    if (this.previewDebounceTimer) {
-      clearTimeout(this.previewDebounceTimer);
-    }
-
-    this.previewDebounceTimer = setTimeout(() => {
-      this.updatePreview();
-    }, 150);
-  }
-
-  /**
-   * Update preview content
-   */
-  updatePreview() {
-    const previewContent = document.getElementById('preview-content');
-    if (!previewContent) return;
-
-    const formData = this.collectFormData();
-    if (!formData) {
-      previewContent.innerHTML = AdminComponents.renderPreviewEmpty();
-      return;
-    }
-
-    let previewHtml = '';
-
-    switch (this.currentTab) {
-      case 'projects':
-        previewHtml = AdminComponents.renderProjectPreview(formData, this.currentSubTab);
-        break;
-      case 'career':
-        previewHtml = AdminComponents.renderCareerPreview(formData);
-        break;
-      case 'expertise':
-        previewHtml = AdminComponents.renderExpertisePreview(formData, this.currentSubTab);
-        break;
-      case 'testimonials':
-        previewHtml = AdminComponents.renderTestimonialPreview(formData, this.currentSubTab === 'featured');
-        break;
-      default:
-        previewHtml = AdminComponents.renderPreviewEmpty();
-    }
-
-    previewContent.innerHTML = previewHtml;
-  }
-
-  /**
    * Find item by ID
    */
   findItem(id) {
@@ -559,490 +447,12 @@ class AdminApp {
   }
 
   /**
-   * Select an item for editing
+   * Select an item to preview
    */
   selectItem(id) {
     this.selectedItem = id;
-    this.isNewItem = false;
     this.renderList();
     this.renderEditor();
-  }
-
-  /**
-   * Create a new item
-   */
-  createNewItem() {
-    this.selectedItem = null;
-    this.isNewItem = true;
-    this.renderEditor();
-  }
-
-  /**
-   * Cancel editing
-   */
-  cancelEdit() {
-    this.selectedItem = null;
-    this.isNewItem = false;
-    this.renderList();
-    this.renderEditor();
-  }
-
-  /**
-   * Toggle nested section
-   */
-  toggleNested(targetId) {
-    const content = document.getElementById(targetId);
-    const icon = document.querySelector(`[data-target="${targetId}"] .toggle-icon`);
-    if (content) {
-      content.classList.toggle('collapsed');
-      if (icon) {
-        icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : '';
-      }
-    }
-  }
-
-  /**
-   * Add item to array field
-   */
-  addArrayItem(fieldId) {
-    const input = document.getElementById(`${fieldId}-input`);
-    const hiddenInput = document.getElementById(fieldId);
-    const tagsContainer = document.getElementById(`${fieldId}-tags`);
-
-    if (!input || !input.value.trim()) return;
-
-    const values = FormFields.parseArrayValue(hiddenInput.value);
-    values.push(input.value.trim());
-    hiddenInput.value = JSON.stringify(values);
-
-    // Re-render tags
-    tagsContainer.innerHTML = values.map((val, idx) => `
-      <span class="tag-item" data-index="${idx}">
-        ${FormFields.escapeHtml(val)}
-        <button type="button" class="tag-remove" data-field="${fieldId}" data-index="${idx}">&times;</button>
-      </span>
-    `).join('');
-
-    input.value = '';
-    input.focus();
-  }
-
-  /**
-   * Remove item from array field
-   */
-  removeArrayItem(fieldId, index) {
-    const hiddenInput = document.getElementById(fieldId);
-    const tagsContainer = document.getElementById(`${fieldId}-tags`);
-
-    const values = FormFields.parseArrayValue(hiddenInput.value);
-    values.splice(index, 1);
-    hiddenInput.value = JSON.stringify(values);
-
-    // Re-render tags
-    tagsContainer.innerHTML = values.map((val, idx) => `
-      <span class="tag-item" data-index="${idx}">
-        ${FormFields.escapeHtml(val)}
-        <button type="button" class="tag-remove" data-field="${fieldId}" data-index="${idx}">&times;</button>
-      </span>
-    `).join('');
-  }
-
-  /**
-   * Add object to object array field
-   */
-  addObjectArrayItem(fieldId) {
-    const container = document.getElementById(`${fieldId}-container`);
-    const itemsContainer = document.getElementById(`${fieldId}-items`);
-    const hiddenInput = document.getElementById(fieldId);
-
-    const values = FormFields.parseArrayValue(hiddenInput.value);
-    const newIndex = values.length;
-    values.push({});
-    hiddenInput.value = JSON.stringify(values);
-
-    // Get field config based on fieldId
-    let fields = [];
-    if (fieldId === 'metrics') {
-      fields = [
-        { key: 'value', label: 'Value', type: 'text' },
-        { key: 'label', label: 'Label', type: 'text' },
-        { key: 'change', label: 'Change', type: 'text' },
-        { key: 'positive', label: 'Positive', type: 'checkbox' }
-      ];
-    } else if (fieldId === 'labels') {
-      fields = [
-        { key: 'text', label: 'Text', type: 'text' },
-        { key: 'type', label: 'Type', type: 'text' }
-      ];
-    }
-
-    itemsContainer.insertAdjacentHTML('beforeend', FormFields.objectArrayItem(fieldId, newIndex, {}, fields));
-  }
-
-  /**
-   * Remove object from object array field
-   */
-  removeObjectArrayItem(fieldId, index) {
-    const itemsContainer = document.getElementById(`${fieldId}-items`);
-    const hiddenInput = document.getElementById(fieldId);
-    const item = itemsContainer.querySelector(`[data-index="${index}"]`);
-
-    if (item) {
-      item.remove();
-    }
-
-    // Update hidden input
-    const values = FormFields.parseArrayValue(hiddenInput.value);
-    values.splice(index, 1);
-    hiddenInput.value = JSON.stringify(values);
-
-    // Re-index remaining items
-    itemsContainer.querySelectorAll('.object-array-item').forEach((el, idx) => {
-      el.dataset.index = idx;
-      el.querySelectorAll('input').forEach(input => {
-        const name = input.name.replace(/_\d+_/, `_${idx}_`);
-        input.name = name;
-      });
-      el.querySelector('.btn-remove-object').dataset.index = idx;
-    });
-  }
-
-  /**
-   * Collect form data
-   */
-  collectFormData() {
-    const form = document.getElementById('editor-form');
-    if (!form) return null;
-
-    const formData = new FormData(form);
-    const data = {};
-
-    // Get list of object-array and array-input field names to skip
-    const skipFields = new Set();
-    form.querySelectorAll('.object-array input[type="hidden"]').forEach(input => {
-      skipFields.add(input.name);
-    });
-    form.querySelectorAll('.array-input input[type="hidden"]').forEach(input => {
-      skipFields.add(input.name);
-    });
-
-    // Process regular fields
-    for (const [key, value] of formData.entries()) {
-      // Skip array notation fields and special fields (handled separately)
-      if (key.includes('[]') || key.includes('_')) continue;
-      if (skipFields.has(key)) continue;
-      data[key] = value;
-    }
-
-    // Process multi-select (roles)
-    const rolesCheckboxes = form.querySelectorAll('input[name="roles[]"]:checked');
-    if (rolesCheckboxes.length > 0) {
-      data.roles = Array.from(rolesCheckboxes).map(cb => cb.value);
-    }
-
-    // Process nested object (expanded) FIRST - before other array fields
-    const nestedContent = form.querySelector('.nested-content');
-    if (nestedContent) {
-      data.expanded = {};
-      nestedContent.querySelectorAll('.array-input input[type="hidden"]').forEach(input => {
-        const key = input.name.replace('expanded_', '');
-        const values = FormFields.parseArrayValue(input.value);
-        if (values && values.length > 0) {
-          data.expanded[key] = values;
-        }
-      });
-      if (Object.keys(data.expanded).length === 0) {
-        delete data.expanded;
-      }
-    }
-
-    // Process array fields (tags, achievements, etc.) - exclude nested-content
-    form.querySelectorAll('.array-input input[type="hidden"]').forEach(input => {
-      // Skip if inside nested-content (already handled above)
-      if (input.closest('.nested-content')) return;
-      data[input.name] = FormFields.parseArrayValue(input.value);
-    });
-
-    // Process object array fields (metrics, labels)
-    form.querySelectorAll('.object-array input[type="hidden"]').forEach(input => {
-      const fieldId = input.name;
-      const itemsContainer = document.getElementById(`${fieldId}-items`);
-      if (!itemsContainer) return;
-
-      const items = [];
-
-      itemsContainer.querySelectorAll('.object-array-item').forEach((itemEl, idx) => {
-        const item = {};
-        itemEl.querySelectorAll('input').forEach(fieldInput => {
-          const match = fieldInput.name.match(/_\d+_(.+)$/);
-          if (match) {
-            const key = match[1];
-            if (fieldInput.type === 'checkbox') {
-              item[key] = fieldInput.checked;
-            } else {
-              item[key] = fieldInput.value;
-            }
-          }
-        });
-        if (Object.keys(item).length > 0) {
-          items.push(item);
-        }
-      });
-
-      if (items.length > 0) {
-        data[fieldId] = items;
-      }
-    });
-
-    // Process checkbox fields
-    form.querySelectorAll('.form-checkbox input[type="checkbox"]').forEach(cb => {
-      if (!cb.name.includes('[]')) {
-        data[cb.name] = cb.checked;
-      }
-    });
-
-    // Convert number fields
-    if (data.stars) data.stars = parseInt(data.stars) || 0;
-    if (data.id && this.currentTab === 'testimonials') data.id = parseInt(data.id) || Date.now();
-
-    return data;
-  }
-
-  /**
-   * Save current item
-   */
-  async saveItem() {
-    console.log('=== saveItem START ===');
-    console.log('currentTab:', this.currentTab, 'currentSubTab:', this.currentSubTab);
-    console.log('selectedItem:', this.selectedItem, 'isNewItem:', this.isNewItem);
-
-    const formData = this.collectFormData();
-    if (!formData) {
-      console.error('saveItem: No form data collected');
-      alert('ERROR: Failed to collect form data');
-      return;
-    }
-
-    console.log('saveItem: Collected form data:', JSON.stringify(formData, null, 2));
-
-    const category = formData.category;
-    delete formData.category;
-
-    // Special handling for Testimonials Featured - it's a single object, not an array
-    if (this.currentTab === 'testimonials' && this.currentSubTab === 'featured') {
-      console.log('saveItem: Saving Featured Testimonial');
-      this.data.testimonials.featured = formData;
-      this.unsavedChanges.add(this.currentTab);
-      this.updateStatusBar();
-      this.selectedItem = formData.author;
-      this.isNewItem = false;
-      this.renderList();
-      this.renderEditor();
-      this.showToast('Item saved (not yet written to file)', 'success');
-      console.log('=== saveItem END (Featured) ===');
-      return;
-    }
-
-    // Get reference to the data array
-    let items;
-    let dataPath;
-    switch (this.currentTab) {
-      case 'projects':
-        if (!this.data.projects) this.data.projects = {};
-        if (!this.data.projects[this.currentSubTab]) this.data.projects[this.currentSubTab] = [];
-        items = this.data.projects[this.currentSubTab];
-        dataPath = `this.data.projects.${this.currentSubTab}`;
-        break;
-      case 'manager':
-        if (!this.data.manager) this.data.manager = {};
-        // Handle single objects vs arrays
-        if (this.currentSubTab === 'leadershipStyle' || this.currentSubTab === 'businessImpact') {
-          // These are single objects, save directly
-          this.data.manager[this.currentSubTab] = formData;
-          this.unsavedChanges.add(this.currentTab);
-          this.updateStatusBar();
-          this.selectedItem = formData.title || this.currentSubTab;
-          this.isNewItem = false;
-          this.renderList();
-          this.renderEditor();
-          this.showToast('Item saved (not yet written to file)', 'success');
-          console.log('=== saveItem END (Manager single object) ===');
-          return;
-        }
-        if (!this.data.manager[this.currentSubTab]) this.data.manager[this.currentSubTab] = [];
-        items = this.data.manager[this.currentSubTab];
-        dataPath = `this.data.manager.${this.currentSubTab}`;
-        break;
-      case 'career':
-        if (!this.data.career) this.data.career = {};
-        if (!this.data.career.timeline) this.data.career.timeline = [];
-        items = this.data.career.timeline;
-        dataPath = 'this.data.career.timeline';
-        break;
-      case 'expertise':
-        if (!this.data.expertise) this.data.expertise = {};
-        if (!this.data.expertise[this.currentSubTab]) this.data.expertise[this.currentSubTab] = [];
-        items = this.data.expertise[this.currentSubTab];
-        dataPath = `this.data.expertise.${this.currentSubTab}`;
-        break;
-      case 'testimonials':
-        if (!this.data.testimonials) this.data.testimonials = {};
-        if (!this.data.testimonials.testimonials) this.data.testimonials.testimonials = [];
-        items = this.data.testimonials.testimonials;
-        dataPath = 'this.data.testimonials.testimonials';
-        break;
-      default:
-        console.error('saveItem: Unknown tab:', this.currentTab);
-        alert('ERROR: Unknown tab: ' + this.currentTab);
-        return;
-    }
-
-    console.log('saveItem: dataPath:', dataPath);
-    console.log('saveItem: items count before:', items.length);
-
-    if (this.isNewItem) {
-      // Generate ID if not provided
-      if (!formData.id) {
-        formData.id = `${this.currentSubTab || this.currentTab}-${Date.now()}`;
-      }
-      items.push(formData);
-      console.log('saveItem: Added new item with id:', formData.id);
-      console.log('saveItem: items count after:', items.length);
-    } else {
-      // Update existing item - use loose equality for type-agnostic comparison
-      // Handle multilingual objects for id, title, author
-      const index = items.findIndex(item => {
-        const rawItemId = item.id || item.title || item.author;
-        const itemId = FormFields.getText(rawItemId);
-        const matches = itemId == this.selectedItem || String(itemId) === String(this.selectedItem);
-        console.log(`  comparing itemId=${itemId} with selectedItem=${this.selectedItem}: ${matches}`);
-        return matches;
-      });
-
-      console.log('saveItem: Found index:', index);
-
-      if (index !== -1) {
-        console.log('saveItem: Before update, item:', JSON.stringify(items[index], null, 2).substring(0, 200));
-        items[index] = formData;
-        console.log('saveItem: After update, item:', JSON.stringify(items[index], null, 2).substring(0, 200));
-      } else {
-        console.error('saveItem: Could not find item to update');
-        console.error('  selectedItem:', this.selectedItem);
-        console.error('  available IDs:', items.map(i => FormFields.getText(i.id || i.title || i.author)));
-        alert('ERROR: Could not find item to update. selectedItem=' + this.selectedItem);
-        return;
-      }
-    }
-
-    // Mark as changed
-    this.unsavedChanges.add(this.currentTab);
-    console.log('saveItem: Unsaved changes:', Array.from(this.unsavedChanges));
-    this.updateStatusBar();
-
-    // Update selection
-    this.selectedItem = formData.id || formData.title || formData.author;
-    this.isNewItem = false;
-
-    console.log('saveItem: New selectedItem:', this.selectedItem);
-
-    this.renderList();
-    this.renderEditor();
-    this.showToast('Item saved (not yet written to file)', 'success');
-    console.log('=== saveItem END ===');
-  }
-
-  /**
-   * Confirm delete
-   */
-  confirmDelete(id) {
-    const modal = AdminComponents.renderConfirmModal(
-      'Delete Item',
-      'Are you sure you want to delete this item? This action cannot be undone.',
-      'Delete',
-      'Cancel'
-    );
-
-    document.body.insertAdjacentHTML('beforeend', modal);
-
-    const modalEl = document.getElementById('confirm-modal');
-    setTimeout(() => modalEl.classList.add('active'), 10);
-
-    const closeModal = () => {
-      modalEl.classList.remove('active');
-      setTimeout(() => modalEl.remove(), 200);
-    };
-
-    modalEl.querySelector('.modal-close').addEventListener('click', closeModal);
-    modalEl.querySelector('.modal-cancel').addEventListener('click', closeModal);
-    modalEl.querySelector('.modal-confirm').addEventListener('click', () => {
-      this.deleteItem(id);
-      closeModal();
-    });
-  }
-
-  /**
-   * Delete item
-   */
-  deleteItem(id) {
-    // Special handling for Testimonials Featured - cannot delete, only clear
-    if (this.currentTab === 'testimonials' && this.currentSubTab === 'featured') {
-      this.showToast('Cannot delete featured testimonial. Edit it instead.', 'error');
-      return;
-    }
-
-    // Special handling for Manager single objects - cannot delete
-    if (this.currentTab === 'manager' && (this.currentSubTab === 'leadershipStyle' || this.currentSubTab === 'businessImpact')) {
-      this.showToast('Cannot delete this item. Edit it instead.', 'error');
-      return;
-    }
-
-    // Get direct reference to the data array
-    let items;
-    switch (this.currentTab) {
-      case 'projects':
-        items = this.data.projects?.[this.currentSubTab];
-        break;
-      case 'manager':
-        items = this.data.manager?.[this.currentSubTab];
-        break;
-      case 'career':
-        items = this.data.career?.timeline;
-        break;
-      case 'expertise':
-        items = this.data.expertise?.[this.currentSubTab];
-        break;
-      case 'testimonials':
-        items = this.data.testimonials?.testimonials;
-        break;
-    }
-
-    if (!items) {
-      console.error('deleteItem: No items array found');
-      return;
-    }
-
-    // Use loose equality for type-agnostic comparison
-    // Handle multilingual objects for id, title, author
-    const index = items.findIndex(item => {
-      const rawItemId = item.id || item.title || item.author;
-      const itemId = FormFields.getText(rawItemId);
-      return itemId == id || String(itemId) === String(id);
-    });
-
-    if (index !== -1) {
-      items.splice(index, 1);
-      this.unsavedChanges.add(this.currentTab);
-      this.updateStatusBar();
-
-      if (this.selectedItem == id || String(this.selectedItem) === String(id)) {
-        this.selectedItem = null;
-        this.isNewItem = false;
-      }
-
-      this.renderList();
-      this.renderEditor();
-      this.showToast('Item deleted', 'success');
-    }
   }
 
   /**
@@ -1058,71 +468,6 @@ class AdminApp {
       const matches = title.includes(lowerQuery) || subtitle.includes(lowerQuery);
       item.style.display = matches ? '' : 'none';
     });
-  }
-
-  /**
-   * Save all changes
-   */
-  async saveAll() {
-    if (this.unsavedChanges.size === 0) {
-      this.showToast('No unsaved changes to save', 'info');
-      return;
-    }
-
-    let savedCount = 0;
-    let failedCount = 0;
-
-    for (const dataType of this.unsavedChanges) {
-      let filename, data;
-
-      switch (dataType) {
-        case 'projects':
-          filename = 'projects.json';
-          data = this.data.projects;
-          break;
-        case 'career':
-          filename = 'career.json';
-          data = this.data.career;
-          break;
-        case 'expertise':
-          filename = 'expertise.json';
-          data = this.data.expertise;
-          break;
-        case 'testimonials':
-          filename = 'testimonials.json';
-          data = this.data.testimonials;
-          break;
-      }
-
-      if (filename && data) {
-        try {
-          console.log(`Saving ${filename}:`, JSON.stringify(data, null, 2).substring(0, 500) + '...');
-          const result = await window.FileHandler.saveFile(filename, data);
-          if (result.success) {
-            savedCount++;
-            console.log(`Successfully saved ${filename} via ${result.method}`);
-          } else {
-            failedCount++;
-            console.error(`Failed to save ${filename}`);
-          }
-        } catch (err) {
-          failedCount++;
-          console.error(`Error saving ${filename}:`, err);
-        }
-      }
-    }
-
-    if (savedCount > 0) {
-      const method = window.FileHandler.hasAccess() ? 'filesystem' : 'download';
-      this.showToast(`Saved ${savedCount} file(s) via ${method}`, 'success');
-      this.unsavedChanges.clear();
-      this.originalData = JSON.parse(JSON.stringify(this.data));
-    }
-    if (failedCount > 0) {
-      this.showToast(`Failed to save ${failedCount} file(s)`, 'error');
-    }
-
-    this.updateStatusBar();
   }
 
   /**
@@ -1871,7 +1216,6 @@ class AdminApp {
       this.savePageBreakOption(pageBreakBetweenSections);
       this.saveCompensationOption(includeCompensation);
       this.savePersonalInfoFields(personalInfoFields);
-      this.saveExportPreferences();
 
       closeModal();
 
@@ -2447,51 +1791,94 @@ class AdminApp {
   savePersonalInfoFields(fieldIds) {
     localStorage.setItem('export-personal-info-fields', JSON.stringify(fieldIds || []));
   }
-
-  /**
-   * Save export preferences to localStorage
-   */
-  saveExportPreferences() {
-    const fontSizeBtn = document.querySelector('#font-size-group .size-btn.active');
-    const marginBtn = document.querySelector('#margin-group .size-btn.active');
-
-    const prefs = {
-      fontSize: fontSizeBtn?.dataset.size || 'medium',
-      margin: marginBtn?.dataset.margin || 'normal'
-    };
-
-    localStorage.setItem('portfolioExportPrefs', JSON.stringify(prefs));
-  }
 }
 
-// Global error handler
+/**
+ * Render a full-panel error state. Used when the app cannot start, so the
+ * user sees the reason instead of a blank admin page.
+ * @param {string} title - Short headline
+ * @param {string} detail - Explanation shown below the headline
+ */
+function renderAdminErrorState(title, detail) {
+  const preview = document.getElementById('preview-panel-main');
+  if (preview) {
+    // Built with DOM nodes rather than innerHTML: `detail` can carry an
+    // arbitrary error message that must never be parsed as markup.
+    const box = document.createElement('div');
+    box.className = 'editor-empty admin-error-state';
+
+    const heading = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = title;
+    heading.appendChild(strong);
+
+    const body = document.createElement('p');
+    body.textContent = detail;
+
+    box.appendChild(heading);
+    box.appendChild(body);
+
+    preview.innerHTML = '';
+    preview.appendChild(box);
+  }
+
+  const list = document.getElementById('list-panel');
+  if (list) list.innerHTML = '<div class="item-list-empty"><p>No data</p></div>';
+}
+
+// Global error handler. Reuses the app's toast UI instead of alert() so a
+// cascading failure cannot lock the page behind a stack of modal dialogs.
+// Repeats of the same message are suppressed for a short window.
+const recentErrorMessages = new Map();
+const ERROR_REPEAT_WINDOW_MS = 5000;
+
 window.onerror = function(msg, url, lineNo, columnNo, error) {
   console.error('Global error:', msg, 'at', url, lineNo, columnNo);
-  alert('JavaScript Error: ' + msg);
+
+  const key = String(msg);
+  const now = Date.now();
+  const lastShown = recentErrorMessages.get(key);
+  if (lastShown === undefined || now - lastShown > ERROR_REPEAT_WINDOW_MS) {
+    recentErrorMessages.set(key, now);
+    if (window.adminApp && typeof window.adminApp.showToast === 'function') {
+      window.adminApp.showToast('JavaScript error: ' + key, 'error');
+    }
+  }
   return false;
 };
 
 // Initialize when DOM is ready AND portfolio data has finished loading.
-// data.js is an async IIFE that fetches JSON files and only sets
-// window.PortfolioData once Promise.all resolves. Without waiting for the
-// 'portfolioDataReady' event, AdminApp can construct before data exists and
-// render an empty page. script.js applies the same pattern.
+// data.js is an async IIFE that fetches JSON files and dispatches
+// 'portfolioDataReady' once Promise.all settles (including its catch path).
+// The gate below only checks that window.PortfolioData exists: individual
+// fields may be null when a fetch failed, and treating that as "not ready
+// yet" would wait forever for an event that already fired.
 document.addEventListener('DOMContentLoaded', () => {
   function startApp() {
-    console.log('Initializing AdminApp...');
     try {
       window.adminApp = new AdminApp();
-      console.log('AdminApp initialized successfully');
     } catch (err) {
       console.error('Failed to initialize AdminApp:', err);
-      alert('Failed to initialize AdminApp: ' + err.message);
+      renderAdminErrorState('Failed to initialize admin', err.message);
+      return;
+    }
+
+    // Data files are fetched independently; a failed fetch yields null.
+    // Surface that instead of rendering an empty, silent page.
+    const data = window.PortfolioData || {};
+    const missing = ['projects', 'career', 'expertise', 'testimonials', 'manager']
+      .filter(key => !data[key]);
+    if (missing.length > 0) {
+      renderAdminErrorState(
+        'Data load failed',
+        `Could not load: ${missing.join(', ')}. Serve the site over HTTP and reload.`
+      );
     }
   }
 
-  if (window.PortfolioData && window.PortfolioData.projects) {
+  if (window.PortfolioData) {
     startApp();
   } else {
-    console.log('DOM loaded, waiting for portfolioDataReady...');
     window.addEventListener('portfolioDataReady', startApp, { once: true });
   }
 });

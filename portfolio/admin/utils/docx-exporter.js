@@ -1,6 +1,8 @@
 /**
  * DOCX Exporter - Generate Word documents from portfolio data using docx.js
  * Supports theme-based styling via StyleManager
+ *
+ * Dependencies: utils/export-content.js (shared labels, cover-page content)
  */
 
 class DOCXExporter {
@@ -109,75 +111,11 @@ class DOCXExporter {
   }
 
   /**
-   * Get localized labels based on current language
+   * Get localized labels (delegates to the shared ExportContent dictionary)
    * @returns {Object} Localized label strings
    */
   getLabels() {
-    const labels = {
-      ko: {
-        expertise: '전문성',
-        projects: '프로젝트',
-        career: '경력',
-        education: '학력',
-        testimonials: '추천서',
-        manager: '리더십 & 관리',
-        compensation: '희망 보상 (비공개)',
-        featuredProjects: '주요 프로젝트',
-        medicalImaging: '의료 영상',
-        orthodontic: '교정 시스템',
-        equipmentControl: '장비 제어',
-        enterprise: '엔터프라이즈 솔루션',
-        openSource: '오픈 소스',
-        coreCapabilities: '핵심 역량',
-        certifications: '인증',
-        keyResponsibilities: '주요 역할:',
-        achievements: '성과:',
-        professionalPortfolio: '프로페셔널 포트폴리오',
-        responsibilities: '담당 업무:',
-        companyScale: '회사 규모:',
-        teamScale: '팀 규모:',
-        reasonForLeaving: '퇴사 사유:',
-        pmCapabilities: 'PM 역량',
-        leadershipStyle: '리더십 스타일',
-        businessImpact: '비즈니스 임팩트',
-        softSkills: '소프트 스킬',
-        teamSize: '팀 규모:',
-        duration: '기간:',
-        outcomes: '성과:'
-      },
-      en: {
-        expertise: 'EXPERTISE',
-        projects: 'PROJECTS',
-        career: 'CAREER',
-        education: 'EDUCATION',
-        testimonials: 'TESTIMONIALS',
-        manager: 'LEADERSHIP & MANAGEMENT',
-        compensation: 'COMPENSATION EXPECTATIONS (PRIVATE)',
-        featuredProjects: 'Featured Projects',
-        medicalImaging: 'Medical Imaging',
-        orthodontic: 'Orthodontic Systems',
-        equipmentControl: 'Equipment Control',
-        enterprise: 'Enterprise Solutions',
-        openSource: 'Open Source',
-        coreCapabilities: 'Core Capabilities',
-        certifications: 'Certifications',
-        keyResponsibilities: 'Key Responsibilities:',
-        achievements: 'Achievements:',
-        professionalPortfolio: 'Professional Portfolio',
-        responsibilities: 'Responsibilities:',
-        companyScale: 'Company Size:',
-        teamScale: 'Team Size:',
-        reasonForLeaving: 'Reason for Leaving:',
-        pmCapabilities: 'PM Capabilities',
-        leadershipStyle: 'Leadership Style',
-        businessImpact: 'Business Impact',
-        softSkills: 'Soft Skills',
-        teamSize: 'Team Size:',
-        duration: 'Duration:',
-        outcomes: 'Outcomes:'
-      }
-    };
-    return labels[this.currentLang] || labels.en;
+    return window.ExportContent.getLabels(this.currentLang);
   }
 
   /**
@@ -699,20 +637,10 @@ class DOCXExporter {
     const lang = this.currentLang;
     const selectedFieldIds = Array.isArray(opts.personalInfoFields) ? opts.personalInfoFields : [];
     const showPersonalInfo = selectedFieldIds.length > 0;
-    const subtitle = lang === 'ko'
-      ? 'CTO · 연구소장 · 플랫폼 아키텍트'
-      : 'CTO · Research Director · Platform Architect';
-    const summaryLines = lang === 'ko'
-      ? [
-          '안전 중요·ISO 인증 도메인에서 R&D 조직과 플랫폼을 20년 넘게 이끌어 왔습니다.',
-          '2회 IPO 기여, 4개국 글로벌 인증 통과, 3–11명 다언어 R&D 팀 리딩 경험.',
-          '규제·표준이 요구되는 도메인이라면 산업에 종속되지 않는 SDLC 운영 패턴으로 적응합니다.'
-        ]
-      : [
-          '20+ years leading R&D organizations and platforms in safety-critical, ISO-certified domains.',
-          '2 IPOs delivered, 4 international approvals, 3–11 person multi-language R&D team leadership.',
-          'A regulated-SDLC operating pattern that adapts across industries — not bound to a single domain.'
-        ];
+    // Subtitle and summary come from the shared ExportContent module
+    // (profile data first, shared constants as fallback).
+    const subtitle = window.ExportContent.getCoverSubtitle(lang, data.profile);
+    const summaryLines = window.ExportContent.getCoverSummaryLines(lang, data.profile);
 
     // Top accent rule — short bold mark above the name (executive editorial style).
     // Implemented as a 1-cell left-anchored table so the rule does not span full width.
@@ -1335,6 +1263,84 @@ class DOCXExporter {
         });
       }
 
+      // Challenges / solutions mirror the public site's expanded project
+      // card (components.js) so exported documents carry the same content.
+      const challenges = this.getArray(project.expanded.challenges);
+      if (challenges.length > 0) {
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: '[ ' + labels.challenges + ' ]',
+              bold: true,
+              size: this.toHalfPt(14),  // Slightly larger
+              color: 'f59e0b',  // Warning amber matching web
+              shading: {
+                type: docx.ShadingType.CLEAR,
+                fill: 'fef3c7'  // Light amber background
+              }
+            })
+          ],
+          spacing: { before: 60, after: 40 },
+          keepLines: true,
+          keepNext: true
+        }));
+
+        challenges.forEach((challenge, index) => {
+          const isLast = index === challenges.length - 1;
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${this.stripHtml(this.getText(challenge))}`,
+                size: this.toHalfPt(11),
+                color: this.getColor('text.secondary')
+              })
+            ],
+            spacing: { after: 50 },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLast
+          }));
+        });
+      }
+
+      const solutions = this.getArray(project.expanded.solutions);
+      if (solutions.length > 0) {
+        children.push(new docx.Paragraph({
+          children: [
+            new docx.TextRun({
+              text: '[ ' + labels.solutions + ' ]',
+              bold: true,
+              size: this.toHalfPt(14),  // Slightly larger
+              color: '3b82f6',  // Primary blue matching web
+              shading: {
+                type: docx.ShadingType.CLEAR,
+                fill: 'dbeafe'  // Light blue background
+              }
+            })
+          ],
+          spacing: { before: 60, after: 40 },
+          keepLines: true,
+          keepNext: true
+        }));
+
+        solutions.forEach((solution, index) => {
+          const isLast = index === solutions.length - 1;
+          children.push(new docx.Paragraph({
+            children: [
+              new docx.TextRun({
+                text: `${this.stripHtml(this.getText(solution))}`,
+                size: this.toHalfPt(11),
+                color: this.getColor('text.secondary')
+              })
+            ],
+            spacing: { after: 50 },
+            indent: { left: this.getSpacing('list.indent') },
+            keepLines: true,
+            keepNext: !isLast
+          }));
+        });
+      }
+
       const achievements = this.getArray(project.expanded.achievements);
       if (achievements.length > 0) {
         children.push(new docx.Paragraph({
@@ -1562,7 +1568,7 @@ class DOCXExporter {
           children.push(new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: '[ ' + (this.currentLang === 'ko' ? '주요 성과' : 'Key Achievements') + ' ]',
+                text: '[ ' + labels.keyAchievements + ' ]',
                 bold: true,
                 size: this.toHalfPt(14),  // Slightly larger
                 color: '10b981',  // Success green matching web

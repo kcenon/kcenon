@@ -59,6 +59,38 @@
       }
     },
     {
+      "id": "ai-engineering",
+      "icon": "ai",
+      "title": {
+        "ko": "AI-Native Engineering & 자동화",
+        "en": "AI-Native Engineering & Automation"
+      },
+      "items": {
+        "ko": [
+          "의료기기 인증·규제 문서 생성에 AI 워크플로 적용 — 추적성 매트릭스·SOUP 분석·증거 문서의 보조 생성",
+          "AI 산출물 검증 규율 — 교차 검증을 위한 휴먼 승인 게이트와 추적성 자동 감사 장치 운영",
+          "멀티에이전트 병렬 분석·교차 검증 워크플로 — 대규모 분석·감사를 에이전트 팀으로 병렬화",
+          "자동화가 발견한 결함의 AI 기반 파악·분류·리포트 생성",
+          "GitHub 이슈·PR 기록 기반 개발 보고서 자동 생성 체계 구축·운영",
+          "LLM 에이전트 워크플로 기반 요구사항 확장 보조",
+          "머지 전 3중 품질 게이트 — CI/CD 회귀 테스트, SonarQube 정적분석·보안, AI 코드 리뷰",
+          "재사용 AI 워크플로 자산화 — 버전 관리되는 스킬·에이전트 정의를 조직 자산으로 운영",
+          "최소 인력 조직의 레버리지 극대화 — 자동화 우선(automation-first) 운영 설계"
+        ],
+        "en": [
+          "AI workflows applied to medical device certification and regulatory documentation — assisted generation of traceability matrices, SOUP analyses, and evidence documents",
+          "AI output verification discipline — human approval gates for cross-verification plus automated traceability audits",
+          "Multi-agent parallel analysis and cross-verification workflows — large-scale analysis and audits parallelized across agent teams",
+          "AI-driven triage, classification, and reporting of findings",
+          "Automated development reporting generated from GitHub issue/PR records",
+          "LLM agent workflows assisting requirement expansion",
+          "Triple pre-merge quality gate — CI/CD regression tests, SonarQube static/security analysis, and AI code review",
+          "Reusable AI workflow assets — versioned skill and agent definitions operated as organizational assets",
+          "Automation-first operating design maximizing leverage for lean teams"
+        ]
+      }
+    },
+    {
       "id": "distributed",
       "icon": "git-branch",
       "title": {
@@ -189,6 +221,30 @@
       }
     },
     {
+      "id": "hardware-integration",
+      "icon": "hardware",
+      "title": {
+        "ko": "하드웨어-소프트웨어 통합",
+        "en": "Hardware-Software Integration"
+      },
+      "items": {
+        "ko": [
+          "의료영상 획득 장비(X-ray, CBCT, CT/MR) 제어 소프트웨어 설계",
+          "구강 센서 SDK 설계·배포 — 서드파티/OEM 통합 지원",
+          "장비 캘리브레이션·정렬 자동화 시스템",
+          "3D 프린터 제어 및 출력 파이프라인",
+          "획득→처리→저장·전송(PACS)으로 이어지는 영상 파이프라인 수직 통합"
+        ],
+        "en": [
+          "Control software design for medical imaging acquisition devices (X-ray, CBCT, CT/MR)",
+          "Intraoral sensor SDK design and distribution — third-party/OEM integration",
+          "Equipment calibration and alignment automation systems",
+          "3D printer control and output pipeline",
+          "Vertical integration of the imaging pipeline: acquisition → processing → archiving/transfer (PACS)"
+        ]
+      }
+    },
+    {
       "id": "technologies",
       "icon": "tool",
       "title": {
@@ -267,8 +323,8 @@
         "en": "R&D Leadership"
       },
       "description": {
-        "ko": "3-11명 규모 다언어 R&D 팀 리딩 및 멘토링",
-        "en": "Leading and mentoring 3-11 person multi-language R&D teams"
+        "ko": "2~11명 규모 다언어 R&D 팀 리딩 및 멘토링",
+        "en": "Leading and mentoring 2-11 person multi-language R&D teams"
       }
     },
     {

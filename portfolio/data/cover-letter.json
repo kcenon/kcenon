@@ -175,8 +175,8 @@
         "en": "Dear Hiring Manager,"
       },
       "opening": {
-        "ko": "20년간 3~11명 규모 팀을 리딩하며 기술 아키텍처 설계와 팀 성장을 동시에 이끌어온 경험을 바탕으로, 높은 품질의 제품 딜리버리와 지속 가능한 팀 문화를 만들고자 지원합니다.",
-        "en": "With 20 years of leading teams of 3-11 members while driving both technical architecture design and team growth, I am applying to deliver high-quality products and build sustainable team culture."
+        "ko": "20년 경력 중 14년 이상 2~11명 규모 팀을 리딩하며 기술 아키텍처 설계와 팀 성장을 동시에 이끌어온 경험을 바탕으로, 높은 품질의 제품 딜리버리와 지속 가능한 팀 문화를 만들고자 지원합니다.",
+        "en": "With 14+ years of leading teams of 2-11 members over a 20-year career, driving both technical architecture design and team growth, I am applying to deliver high-quality products and build sustainable team culture."
       },
       "keyPoints": [
         {
@@ -229,8 +229,8 @@
           "en": "**1,200+ Pages of Audit-Ready Traceability**: Authored SRS/SDS, risk analyses, V&V protocols, and traceability matrices, and **directly handled auditor Q&A** across 4 international jurisdictions. The same documentation system and audit-response practice carry over regardless of the industry."
         },
         {
-          "ko": "**다언어 R&D 조직 운영**: C++/Rust/Go/Python 환경에서 **3-11명 팀을 두 곳의 IPO 기업**(바텍, 레이)에서 이끌었습니다. 코드 리뷰 문화, SQA와의 협업, Daily Release 사이클, OpenTelemetry 기반 관측성을 도입하면서 **처리량 2배·레이턴시 50% 감소**라는 수치를 실제로 만들어 냈습니다. 표준 준수와 빠른 출시는 둘 중 하나를 골라야 하는 문제가 아니라는 점을, 운영 현장에서 직접 보여 드릴 수 있습니다.",
-          "en": "**Multi-Language R&D Organization**: Led 3–11 person teams at **two IPO companies** (VATECH, Ray) in C++/Rust/Go/Python polyglot environments. Through code-review culture, SQA collaboration, daily-release cadence, and OpenTelemetry observability, achieved **2x throughput and 50% latency reduction** as measurable outcomes — demonstrating that standards compliance and fast delivery are not opposites in practice."
+          "ko": "**다언어 R&D 조직 운영**: C++/Rust/Go/Python 환경에서 **2~11명 규모 팀을 리딩**해 왔고, **두 곳의 IPO 기업**(바텍, 레이)에 재직했습니다 — 팀 리딩은 레이에서였습니다. 코드 리뷰 문화, SQA와의 협업, Daily Release 사이클, OpenTelemetry 기반 관측성을 도입하면서 **처리량 2배·레이턴시 50% 감소**라는 수치를 실제로 만들어 냈습니다. 표준 준수와 빠른 출시는 둘 중 하나를 골라야 하는 문제가 아니라는 점을, 운영 현장에서 직접 보여 드릴 수 있습니다.",
+          "en": "**Multi-Language R&D Organization**: Led teams of 2-11 members in C++/Rust/Go/Python polyglot environments, with tenure at **two IPO companies** (VATECH, Ray) — team leadership at Ray. Through code-review culture, SQA collaboration, daily-release cadence, and OpenTelemetry observability, achieved **2x throughput and 50% latency reduction** as measurable outcomes — demonstrating that standards compliance and fast delivery are not opposites in practice."
         },
         {
           "ko": "**0→1 시스템화와 인증 출시**: 다양한 도메인의 **4개 이상 프로덕션 시스템**을 백지에서 시판 단계까지 만들어 봤습니다. 핵심 자산은 도메인 지식이 아닙니다. 요구사항 동결, 위험 분석, 아키텍처, V&V, 시판 후 감시(PMS)로 이어지는 **반복 가능한 0→1 절차**가 자산입니다. 이 절차는 어떤 표준 환경에 들어가도 첫날부터 작동합니다.",
@@ -240,6 +240,47 @@
       "closing": {
         "ko": "도메인은 도구이지 정체성이 아닙니다. 표준이라는 제약 위에서 엄정한 엔지니어링 조직을 세우는 일이라면, 산업 분야와 무관하게 첫날부터 기여할 준비가 되어 있습니다. 귀사의 R&D 거버넌스와 기술 전략을 깊이 있게 논의할 기회를 기대하겠습니다.",
         "en": "Domain is a tool, not an identity. Wherever the work is to build a rigorous engineering organization under standard-driven constraints, I am positioned to contribute from day one — independent of industry vertical. I would welcome a substantive conversation about your R&D governance and technical strategy."
+      },
+      "signature": {
+        "ko": "신동철 드림",
+        "en": "Sincerely,\nDongcheol Shin"
+      }
+    },
+    {
+      "id": "systems-platform-vp",
+      "targetRole": {
+        "ko": "VP of Technology / 시스템 아키텍처 총괄 (플랫폼 전환 기업)",
+        "en": "VP of Technology / Head of Systems Architecture (Platform-Transition Companies)"
+      },
+      "greeting": {
+        "ko": "채용 담당자님께,",
+        "en": "Dear Hiring Manager,"
+      },
+      "opening": {
+        "ko": "장비 제어부터 분산 클라우드까지 하드웨어-소프트웨어 멀티레이어 시스템을 20년간 설계해 왔고, 현재는 시드 단계 의료기기 스타트업 CTO로서 AI-네이티브 자동화 운영 체계를 직접 구축·운영하고 있습니다. 제품 중심 기업이 플랫폼 기업으로 전환하는 길목에서 아키텍처 규율을 제도화하는 역할에 지원합니다.",
+        "en": "For 20 years I have designed multi-layer hardware-software systems — from instrument control to distributed cloud — and today, as CTO of a Seed-stage medical device startup, I build and operate an AI-native automation system firsthand. I am applying to institutionalize architecture discipline at the point where a product-led company becomes a platform company."
+      },
+      "keyPoints": [
+        {
+          "ko": "**멀티레이어 시스템 오너십**: X-ray/CBCT/CT-MR **영상 획득 장비 제어** → **DICOM 인터페이스 계약**(C-STORE/C-FIND/C-MOVE conformance) → 영상 처리 파이프라인 → **10+ 마이크로서비스 분산 클라우드**까지 수직 통합 설계. 하드웨어 의존 시스템과 SaaS 양쪽의 운영 현실을 모두 경험했습니다.",
+          "en": "**Multi-Layer System Ownership**: Vertically integrated design from **imaging instrument control** (X-ray/CBCT/CT-MR) → **DICOM interface contracts** (C-STORE/C-FIND/C-MOVE conformance) → image processing pipelines → **10+ microservice distributed cloud**. I have lived the operating realities of both hardware-dependent systems and SaaS."
+        },
+        {
+          "ko": "**아키텍처 규율의 제도화**: IEC 62304 설계 통제로 **아키텍처 리뷰 아티팩트 없이는 출시가 불가능한 체계**를 전사에 수립했고, ISO 14971 위험분석/FMEA로 구현 전 failure-mode anticipation을 표준 관행으로 만들었습니다. **1,200+ 페이지 추적성 문서**와 4개국 심사관 Q&A 직접 대응 — 감사 통과를 걸고 집행해 온 규율입니다.",
+          "en": "**Institutionalized Architecture Discipline**: Established a company-wide system where **nothing ships without an architecture review artifact** (IEC 62304 design control), and made pre-implementation failure-mode anticipation standard practice via ISO 14971 risk analysis/FMEA. **1,200+ pages of traceability documentation** and direct auditor Q&A across 4 jurisdictions — discipline enforced with certification on the line."
+        },
+        {
+          "ko": "**AI-네이티브 운영 (현직)**: GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 게이트, AI 코드 리뷰, 발견된 문제의 **AI 기반 파악·리포트 자동화**로 최소 인력이 최대 산출을 내는 운영 구조를 설계·적용 중입니다. 의료기기 인증·규제 문서 생성까지 AI 워크플로로 수행하되 **휴먼 승인 게이트와 추적성 자동 감사**로 검증합니다 — AI를 실행 보조가 아니라 요구사항 확장과 검증의 도구로 사용합니다.",
+          "en": "**AI-Native Operations (Current)**: Designing and running a lean-team leverage system — automated reporting from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, AI code review, and **AI-driven triage and reporting** of findings. AI workflows extend to medical device certification and regulatory documentation, verified through **human approval gates and automated traceability audits** — I use AI as a requirement-expansion and verification tool, not just an execution aid."
+        },
+        {
+          "ko": "**플랫폼·OEM 아키텍처**: DICOM 표준 구현으로 멀티벤더 상호운용을 확보하고, **센서 SDK**로 서드파티 통합을 지원했으며, 공통 컴포넌트(메시징·스레딩·네트워크·로깅) 거버넌스와 **삼성 CT/MR 플랫폼 0→1** 구축을 이끌었습니다. 제품의 집합이 아니라 일관된 플랫폼으로 확장하는 설계를 지향합니다.",
+          "en": "**Platform & OEM Architecture**: Secured multi-vendor interoperability through DICOM standard implementation, enabled third-party integration via a **sensor SDK**, governed reusable components (messaging, threading, network, logging), and led the **0→1 Samsung CT/MR platform** build. I design for coherent platforms, not collections of products."
+        }
+      ],
+      "closing": {
+        "ko": "글로벌 분산 팀 및 4개국 규제기관과 영어로 직접 협업해 왔습니다. 시스템 경계와 인터페이스 계약을 먼저 정의하고 문서를 기본값으로 만드는 조직 — 제품의 성공을 플랫폼의 일관성으로 확장하는 일에 기여하고 싶습니다. 구체적인 아키텍처 논의를 환영합니다.",
+        "en": "I have collaborated directly in English with globally distributed teams and regulators across 4 jurisdictions. I want to help extend product success into platform coherence — an organization that defines system boundaries and interface contracts first, and makes documentation the default. I would welcome a substantive architecture discussion."
       },
       "signature": {
         "ko": "신동철 드림",

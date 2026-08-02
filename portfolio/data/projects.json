@@ -100,7 +100,7 @@
       "id": "smartdent-v3",
       "icon": "hospital",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "SMARTDent v3",
@@ -199,7 +199,7 @@
       "id": "samsung-ct",
       "icon": "microscope",
       "company": {
-        "ko": "주식회사 레이 → Samsung",
+        "ko": "(주)레이 → Samsung",
         "en": "Ray Co., Ltd. → Samsung"
       },
       "title": "Medical CT Project for Samsung",
@@ -285,7 +285,7 @@
     {
       "id": "high-speed-download",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "High Speed File Download System",
@@ -336,7 +336,7 @@
     {
       "id": "3d-visualization",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "3D Visualization Software",
@@ -381,7 +381,7 @@
     {
       "id": "alpha-project",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Alpha Project",
@@ -428,7 +428,7 @@
     {
       "id": "dicom-visualization",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Visualization Software for DICOM",
@@ -523,7 +523,7 @@
     {
       "id": "orthovision",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "OrthoVision Project",
@@ -567,7 +567,7 @@
     {
       "id": "ezceph",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "EzCeph Project",
@@ -613,7 +613,7 @@
     {
       "id": "3d-printer",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "3D Printer Software",
@@ -657,7 +657,7 @@
     {
       "id": "automation-alignment",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Automation Alignment Software",
@@ -701,7 +701,7 @@
     {
       "id": "intraoral-sensor-sdk",
       "company": {
-        "ko": "주식회사 레이",
+        "ko": "(주)레이",
         "en": "Ray Co., Ltd."
       },
       "title": "Intraoral Sensor SDK",
@@ -745,7 +745,7 @@
     {
       "id": "implagraphy",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "Implagraphy Project",
@@ -789,7 +789,7 @@
     {
       "id": "easydent",
       "company": {
-        "ko": "바텍 VATECH",
+        "ko": "(주)바텍",
         "en": "VATECH"
       },
       "title": "EasyDent Project",
@@ -882,7 +882,7 @@
     {
       "id": "eda-ai-server",
       "company": {
-        "ko": "Purplechips",
+        "ko": "퍼플칩스 (POSTECH)",
         "en": "Purplechips"
       },
       "title": "EDA AI Server",
@@ -930,10 +930,71 @@
   ],
   "openSource": [
     {
+      "id": "claude-config",
+      "title": "claude-config",
+      "github": "https://github.com/kcenon/claude-config",
+      "description": {
+        "ko": "AI-네이티브 SDLC 자산 저장소. LLM 에이전트용 <strong>스킬·훅·에이전트 정의를 버전 관리</strong>하고, CI 검증·회귀 테스트·릴리스 파이프라인으로 배포하는 워크플로 인프라.",
+        "en": "AI-native SDLC asset repository. <strong>Version-controlled skills, hooks, and agent definitions</strong> for LLM agents, shipped through CI validation, regression tests, and a release pipeline."
+      },
+      "tags": [
+        "AI Workflow",
+        "LLM Agents",
+        "CI/CD",
+        "Shell/PowerShell"
+      ],
+      "expanded": {
+        "features": {
+          "ko": [
+            "이슈→PR→릴리스 수명주기 자동화 스킬 (issue-work, pr-work, release)",
+            "규제 SDLC 지원 워크플로 — 추적성·증거 패키지·위험 통제·SOUP 인벤토리",
+            "커밋 메시지·언어 정책·브랜치 보호를 강제하는 훅 가드",
+            "멀티 시스템 배포와 CI 기반 스킬/문서 검증, 크로스 플랫폼 회귀 테스트"
+          ],
+          "en": [
+            "Issue-to-release lifecycle automation skills (issue-work, pr-work, release)",
+            "Regulated-SDLC workflows — traceability, evidence packs, risk control, SOUP inventory",
+            "Hook guards enforcing commit-message, language-policy, and branch-protection rules",
+            "Multi-system deployment with CI-based skill/doc validation and cross-platform regression tests"
+          ]
+        }
+      }
+    },
+    {
+      "id": "claude-docker",
+      "title": "claude-docker",
+      "github": "https://github.com/kcenon/claude-docker",
+      "description": {
+        "ko": "단일 호스트에서 <strong>다중 Claude Code 인스턴스를 계정 격리로 병렬 실행</strong>하는 컨테이너 인프라. 소스는 공유하되 자격 증명·세션은 격리.",
+        "en": "Container infrastructure for running <strong>multiple isolated Claude Code instances</strong> on a single host — shared source, isolated accounts and sessions."
+      },
+      "tags": [
+        "Docker",
+        "AI Infrastructure",
+        "Isolation",
+        "Supply Chain"
+      ],
+      "expanded": {
+        "features": {
+          "ko": [
+            "계정별 격리 컨테이너로 멀티 에이전트 병렬 운용",
+            "설치 스크립트 SHA256 핀 고정 — 공급망 무결성 검증",
+            "CI 기반 빌드·동작 검증 파이프라인",
+            "공유 소스 마운트로 에이전트 간 일관된 작업 환경"
+          ],
+          "en": [
+            "Per-account isolated containers for parallel multi-agent operation",
+            "SHA256-pinned installer — supply-chain integrity verification",
+            "CI-based build and behavior verification pipeline",
+            "Shared source mounts for a consistent environment across agents"
+          ]
+        }
+      }
+    },
+    {
       "id": "messaging-system",
       "title": "messaging_system",
       "github": "https://github.com/kcenon/messaging_system",
-      "stars": 30,
       "description": {
         "ko": "Modern C++20 메시징 인프라. <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, 메시지 파이프라인 패턴 지원.",
         "en": "Modern C++20 messaging infrastructure. Supports <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, and message pipeline patterns."
@@ -965,7 +1026,6 @@
       "id": "thread-system",
       "title": "thread_system",
       "github": "https://github.com/kcenon/thread_system",
-      "stars": 7,
       "description": {
         "ko": "Modern C++20 멀티스레딩 프레임워크. <strong>1.16M jobs/sec</strong> 처리량, Lock-free 큐, Hazard Pointers, Adaptive Optimization.",
         "en": "Modern C++20 multithreading framework. <strong>1.16M jobs/sec</strong> throughput, Lock-free queue, Hazard Pointers, Adaptive Optimization."

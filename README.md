@@ -8,15 +8,16 @@
 
 ## 🎯 Professional Summary
 
-**20+ years** leading R&D and platform architecture in **safety-critical, ISO-certified domains**. Track record spans **medical devices, industrial systems, and SaaS platforms** — built and certified from zero.
+**20+ years** leading R&D and platform architecture in **safety-critical, ISO-certified domains**. Track record spans **medical devices, semiconductor EDA, and SaaS platforms** — built and certified from zero.
 
 **Core Impact**:
 - Designed SDLC and quality systems compliant with **IEC 62304, ISO 13485, ISO 14971** — patterns transfer to ISO 26262, DO-178C, IEC 61508, and ISO 27001
 - Led **4 international regulatory approvals** (FDA 510(k), CE, KFDA, CCC) with **1,200+ pages** of auditor-ready traceability documentation
-- Orchestrated **10+ microservices** in C++, Rust, Go, Python (RabbitMQ/Redis) — **2x throughput**, **50% latency reduction**
+- Orchestrated **10+ microservices** in C++, Rust, Go, Python (RabbitMQ/Redis) at Pozalabs (audio SaaS)
+- Achieved **2x throughput** and **50% latency reduction** on medical imaging systems at Ray
 - Built **4+ production systems** from blank repo to certified release across **2 IPO companies**
 
-Open to **CTO / Head of R&D / 연구소장** roles in any standard-driven, regulated industry.
+Since March 2026, **CTO at [Flonics](https://flonics.co.kr)** — a Seed-stage medical device startup preparing for its Pre-A round — owning development, operations, and management across all projects with a lean team.
 
 **[📊 View detailed achievements & projects →](https://kcenon.github.io/kcenon/portfolio/)**
 
@@ -27,11 +28,11 @@ Open to **CTO / Head of R&D / 연구소장** roles in any standard-driven, regul
 | **Leadership Experience** | 20+ years in R&D and platform architecture |
 | **Regulatory Certifications** | 4 international approvals (FDA, CE, KFDA, CCC) |
 | **Quality Systems** | IEC 62304 (Class B/C), ISO 13485, ISO 14971 SDLC design |
-| **Distributed Systems** | 10+ microservices (C++, Rust, Go, Python) — 2x throughput, 50% latency cut |
+| **Distributed Systems** | 10+ microservices at Pozalabs (C++, Rust, Go, Python); 2x throughput, 50% latency cut at Ray |
 | **Documentation Rigor** | 1,200+ pages of traceable, auditor-ready SRS/SDS |
-| **Team Leadership** | Led teams of 3–11 engineers across 2 IPO companies |
+| **Team Leadership** | Led teams of 2-11 engineers; career spans 2 IPO companies (VATECH, Ray — team lead at Ray) |
 | **Zero-to-One** | 4+ production systems built from blank repo to certified release |
-| **Domain Range** | Medical imaging, audio SaaS, industrial automation |
+| **Domain Range** | Medical imaging, audio SaaS, semiconductor EDA, system virtualization |
 
 ## 🛠️ Core Skills
 
@@ -69,9 +70,9 @@ configuration management, post-market surveillance — is the same.
 
 ## 🔭 Currently
 
-**CTO at Flonics** (since 2026.03) — leading R&D for medical imaging-based blood flow diagnostics, applying ISO 13485 / IEC 62304 processes from day one.
+**CTO at [Flonics](https://flonics.co.kr)** (since 2026.03) — a Seed-stage medical device startup preparing for its Pre-A round, running lean. Owning development, operations, and management across all projects while leading R&D for medical imaging-based blood flow diagnostics, with ISO 13485 / IEC 62304 processes applied from day one. Maximizing lean-team leverage through an automation-first operation: reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, AI code review, and AI-driven triage and reporting of findings — extending to regulated documentation for device certification, verified through human approval gates and automated traceability audits.
 
-**Long-term interest**: **CTO / Head of R&D / 연구소장** roles in any ISO-certified domain — automotive functional safety, industrial IoT, defense/aerospace, or regulated SaaS. The common thread is **building rigorous engineering organizations under standard-driven constraints**, not the specific industry vertical.
+**Long-term interest**: **CTO / Head of R&D / Research Director** roles in any ISO-certified domain — automotive functional safety, industrial IoT, defense/aerospace, or regulated SaaS. The common thread is **building rigorous engineering organizations under standard-driven constraints**, not the specific industry vertical.
 
 ## 📫 Let's Connect
 
