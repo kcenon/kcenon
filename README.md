@@ -16,7 +16,7 @@
 - Orchestrated **10+ microservices** in C++, Rust, Go, Python (RabbitMQ/Redis) — **2x throughput**, **50% latency reduction**
 - Built **4+ production systems** from blank repo to certified release across **2 IPO companies**
 
-Since March 2026, **CTO at [Flonics](https://flonics.co.kr)** — a medical device startup grown from Seed to Pre-A — owning development, operations, and management across all projects with a lean team.
+Since March 2026, **CTO at [Flonics](https://flonics.co.kr)** — a Seed-stage medical device startup preparing for its Pre-A round — owning development, operations, and management across all projects with a lean team.
 
 **[📊 View detailed achievements & projects →](https://kcenon.github.io/kcenon/portfolio/)**
 
@@ -69,7 +69,7 @@ configuration management, post-market surveillance — is the same.
 
 ## 🔭 Currently
 
-**CTO at [Flonics](https://flonics.co.kr)** (since 2026.03) — a medical device startup grown from Seed to Pre-A, running lean. Owning development, operations, and management across all projects while leading R&D for medical imaging-based blood flow diagnostics, with ISO 13485 / IEC 62304 processes applied from day one. Maximizing lean-team leverage through an automation-first operation: reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, AI code review, and AI-driven triage and reporting of findings — extending to regulated documentation for device certification, verified through human approval gates and automated traceability audits.
+**CTO at [Flonics](https://flonics.co.kr)** (since 2026.03) — a Seed-stage medical device startup preparing for its Pre-A round, running lean. Owning development, operations, and management across all projects while leading R&D for medical imaging-based blood flow diagnostics, with ISO 13485 / IEC 62304 processes applied from day one. Maximizing lean-team leverage through an automation-first operation: reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, AI code review, and AI-driven triage and reporting of findings — extending to regulated documentation for device certification, verified through human approval gates and automated traceability audits.
 
 **Long-term interest**: **CTO / Head of R&D / 연구소장** roles in any ISO-certified domain — automotive functional safety, industrial IoT, defense/aerospace, or regulated SaaS. The common thread is **building rigorous engineering organizations under standard-driven constraints**, not the specific industry vertical.
 

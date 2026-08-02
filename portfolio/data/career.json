@@ -16,8 +16,8 @@
       },
       "badge": "MedTech",
       "companyDescription": {
-        "ko": "의료영상 기반 혈류 진단 솔루션을 개발하는 의료기기 스타트업 — 시드에서 Pre-A 단계로 성장 (flonics.co.kr)",
-        "en": "Medical device startup developing medical imaging-based blood flow diagnostic solutions — grown from Seed to Pre-A stage (flonics.co.kr)"
+        "ko": "의료영상 기반 혈류 진단 솔루션을 개발하는 시드 단계 의료기기 스타트업 — Pre-A 라운드 준비 중 (flonics.co.kr)",
+        "en": "Seed-stage medical device startup developing medical imaging-based blood flow diagnostic solutions — preparing for its Pre-A round (flonics.co.kr)"
       },
       "responsibilities": {
         "ko": "프로젝트 전반의 개발·운영·관리 총괄, 기술 전략 수립 및 R&D 리딩, 의료영상 기반 혈류 진단 시스템 아키텍처 설계, 의료기기 인허가(IEC 62304/ISO 13485) 프로세스 정립, 자동화 우선 개발·운영 체계(CI/CD·SonarQube·AI 보고) 구축",
@@ -25,13 +25,13 @@
       },
       "scale": {
         "company": {
-          "ko": "초기 스타트업 (Pre-A, 최소 인력 운용)",
-          "en": "Early-stage startup (Pre-A, lean team)"
+          "ko": "초기 스타트업 (시드 단계, 최소 인력 운용)",
+          "en": "Early-stage startup (Seed, lean team)"
         }
       },
       "note": {
-        "ko": "<strong>도메인 회귀·확장</strong>: 분산 시스템 SaaS에서 축적한 플랫폼 역량을 의료영상 도메인으로 다시 가져와, 혈류 진단이라는 신규 임상 영역에 적용. 시드에서 Pre-A로 성장한 스타트업을 최소 인력으로 운영하며, 규제 환경(IEC 62304/ISO 13485) 경험과 클라우드 네이티브 운영 역량을 결합해 개발–운영–관리 전 영역을 커버하는 CTO 역할. GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 분석, AI 코드 리뷰, 발견된 문제의 AI 기반 파악·리포트 자동화로 최소 인력의 산출을 극대화하는 운영 체계를 적용 중. 의료기기 인증·규제 문서 생성에도 같은 AI 워크플로를 적용하며, 휴먼 승인 게이트와 추적성 자동 감사 장치로 산출물을 검증한다.",
-        "en": "<strong>Domain Return & Expansion</strong>: Bringing platform expertise accumulated in distributed SaaS back to the medical imaging domain, applied to the novel clinical area of blood flow diagnostics. Running a startup grown from Seed to Pre-A with a lean team — a CTO role covering development, operations, and management end to end, combining regulated-environment discipline (IEC 62304/ISO 13485) with cloud-native operational experience. Operating an automation-first system — reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security analysis, AI code review, and AI-driven triage and reporting of findings — to maximize output with minimal headcount. The same AI workflows extend to medical device certification and regulatory documentation, verified through human approval gates and automated traceability audits."
+        "ko": "<strong>도메인 회귀·확장</strong>: 분산 시스템 SaaS에서 축적한 플랫폼 역량을 의료영상 도메인으로 다시 가져와, 혈류 진단이라는 신규 임상 영역에 적용. 시드 단계 스타트업을 최소 인력으로 운영하며 Pre-A 라운드를 준비하는 한편, 규제 환경(IEC 62304/ISO 13485) 경험과 클라우드 네이티브 운영 역량을 결합해 개발–운영–관리 전 영역을 커버하는 CTO 역할. GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 분석, AI 코드 리뷰, 발견된 문제의 AI 기반 파악·리포트 자동화로 최소 인력의 산출을 극대화하는 운영 체계를 적용 중. 의료기기 인증·규제 문서 생성에도 같은 AI 워크플로를 적용하며, 휴먼 승인 게이트와 추적성 자동 감사 장치로 산출물을 검증한다.",
+        "en": "<strong>Domain Return & Expansion</strong>: Bringing platform expertise accumulated in distributed SaaS back to the medical imaging domain, applied to the novel clinical area of blood flow diagnostics. Running a Seed-stage startup with a lean team while preparing for its Pre-A round — a CTO role covering development, operations, and management end to end, combining regulated-environment discipline (IEC 62304/ISO 13485) with cloud-native operational experience. Operating an automation-first system — reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security analysis, AI code review, and AI-driven triage and reporting of findings — to maximize output with minimal headcount. The same AI workflows extend to medical device certification and regulatory documentation, verified through human approval gates and automated traceability audits."
       },
       "tags": [
         "Medical Imaging",
@@ -56,8 +56,8 @@
       },
       "badge": "SaaS",
       "companyDescription": {
-        "ko": "AI를 통한 음악 작곡 자동화 시스템 개발 스타트업",
-        "en": "Startup developing AI-powered music composition automation systems"
+        "ko": "AI를 통한 음악 작곡 자동화 시스템을 개발하는 시리즈 A 스타트업",
+        "en": "Series A startup developing AI-powered music composition automation systems"
       },
       "responsibilities": {
         "ko": "오디오 렌더링 SaaS 분산 시스템 아키텍처 설계, 10+ 마이크로서비스 오케스트레이션, 메시징/캐시/관측성, CI/CD(무중단) 구축",
@@ -110,8 +110,8 @@
         "en": "Lead Programmer"
       },
       "companyDescription": {
-        "ko": "POSTECH과 POSCO의 합작 벤처로 기획된 AI 기반 EDA 스타트업",
-        "en": "AI-based EDA startup planned as a joint venture between POSTECH and POSCO"
+        "ko": "POSTECH과 POSCO의 합작 벤처로 기획된 시드 단계 AI 기반 EDA 스타트업",
+        "en": "Seed-stage AI-based EDA startup planned as a joint venture between POSTECH and POSCO"
       },
       "responsibilities": {
         "ko": "AI 작업에 대한 서빙 시스템 Architecture 설계/구현",
