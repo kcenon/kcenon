@@ -6,7 +6,7 @@
 (async function() {
   const DATA_BASE_PATH = 'data';
   // Bump on every content change to invalidate browser/CDN caches.
-  const DATA_VERSION = '1.16.0';
+  const DATA_VERSION = '3.0.0';
   const PRIVATE_ACCESS_KEY = 'kcenon.private.access';
   const PRIVATE_ACCESS_TOKEN = 'enabled';
 
@@ -131,5 +131,12 @@
       profile: null,
       compensation: null
     };
+
+    // Dispatch the ready event on this path too. Consumers gate their
+    // startup on this event; staying silent here leaves them waiting
+    // forever and rendering a blank page with no error shown.
+    window.dispatchEvent(new CustomEvent('portfolioDataReady', {
+      detail: window.PortfolioData
+    }));
   }
 })();

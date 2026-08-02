@@ -26,26 +26,34 @@ class SectionOrderManager {
   }
 
   /**
-   * Load saved section order from localStorage or use defaults
+   * Load saved section order from localStorage, merged against the current
+   * defaults so schema changes migrate automatically:
+   * - saved order and inclusion state are kept for sections that still exist
+   * - sections that only exist in the defaults are appended at the end
+   * - saved entries no longer present in the defaults are dropped
    */
   loadSavedOrder() {
-    const saved = localStorage.getItem('export-section-order');
-    if (saved) {
-      try {
-        this.sections = JSON.parse(saved);
-        // Validate saved data
-        const requiredIds = ['expertise', 'projects', 'manager', 'career', 'testimonials'];
-        const savedIds = this.sections.map(s => s.id);
-        const hasAllIds = requiredIds.every(id => savedIds.includes(id));
-        if (!hasAllIds) {
-          this.sections = this.getDefaultSections();
-        }
-      } catch (e) {
-        this.sections = this.getDefaultSections();
-      }
-    } else {
-      this.sections = this.getDefaultSections();
+    const defaults = this.getDefaultSections();
+    let saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem('export-section-order'));
+    } catch (e) {
+      saved = null;
     }
+    if (!Array.isArray(saved)) {
+      this.sections = defaults;
+      return;
+    }
+
+    const defaultById = new Map(defaults.map(s => [s.id, s]));
+    const merged = saved
+      .filter(s => s && defaultById.has(s.id))
+      .map(s => ({ ...defaultById.get(s.id), included: s.included !== false }));
+    const mergedIds = new Set(merged.map(s => s.id));
+    defaults.forEach(s => {
+      if (!mergedIds.has(s.id)) merged.push(s);
+    });
+    this.sections = merged;
   }
 
   /**
@@ -372,7 +380,6 @@ class SectionOrderManager {
       section.included = checkbox.checked;
       this.saveOrder();
       this.render();
-      this.bindEvents();
 
       if (this.onChange) {
         this.onChange(this.getOrderedSections());
@@ -454,7 +461,6 @@ class SectionOrderManager {
 
     this.saveOrder();
     this.render();
-    this.bindEvents();
 
     if (this.onChange) {
       this.onChange(this.getOrderedSections());
@@ -487,7 +493,6 @@ class SectionOrderManager {
     this.sections = this.getDefaultSections();
     this.saveOrder();
     this.render();
-    this.bindEvents();
 
     if (this.onChange) {
       this.onChange(this.getOrderedSections());
@@ -501,7 +506,6 @@ class SectionOrderManager {
   setSections(sections) {
     this.sections = sections;
     this.render();
-    this.bindEvents();
   }
 
   /**

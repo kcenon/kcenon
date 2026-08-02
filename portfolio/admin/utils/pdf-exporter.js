@@ -2,7 +2,8 @@
  * PDF Exporter - Generate PDF from portfolio data using pdfmake
  * Supports theme-based styling via StyleManager
  *
- * Dependencies: utils/i18n.js (getLang, getText, getArray, calculateDuration, formatPeriodWithDuration)
+ * Dependencies: utils/i18n.js (getLang), utils/export-content.js
+ * (shared labels, cover-page content, duration calculation)
  */
 
 class PDFExporter {
@@ -48,50 +49,13 @@ class PDFExporter {
   }
 
   /**
-   * Calculate duration from period string (delegates to shared utility)
+   * Calculate duration from period string (delegates to shared ExportContent,
+   * which takes the language as an explicit argument — no global state swap)
    * @param {string|Object} period - Period string or multilingual object
    * @returns {string|null} Formatted duration string
    */
   calculateDuration(period) {
-    // Temporarily set global language context for shared utility
-    const originalLang = window.currentLanguage;
-    window.currentLanguage = this.currentLang;
-    const result = window.i18nUtils?.calculateDuration?.(period) ?? this._calculateDurationFallback(period);
-    window.currentLanguage = originalLang;
-    return result;
-  }
-
-  /**
-   * Fallback duration calculation if shared utility not available
-   * @private
-   */
-  _calculateDurationFallback(period) {
-    const periodStr = this.getText(period);
-    if (!periodStr) return null;
-    const parts = periodStr.split(' - ');
-    if (parts.length !== 2) return null;
-
-    const parseDate = (str) => {
-      str = str.trim().replace(/\s*\([^)]*\)\s*$/, '');
-      if (str.toLowerCase() === 'present' || str === '현재') return new Date();
-      const [year, month] = str.split('.');
-      return new Date(parseInt(year), month ? parseInt(month) - 1 : 0);
-    };
-
-    try {
-      const startDate = parseDate(parts[0]);
-      const endDate = parseDate(parts[1]);
-      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth()) + 1;
-      if (months <= 0) return null;
-      const lang = this.currentLang;
-      if (months >= 12) {
-        const years = Math.floor(months / 12);
-        const rem = months % 12;
-        if (rem === 0) return lang === 'ko' ? `${years}년` : `${years} yr${years > 1 ? 's' : ''}`;
-        return lang === 'ko' ? `${years}년 ${rem}개월` : `${years} yr${years > 1 ? 's' : ''} ${rem} mo`;
-      }
-      return lang === 'ko' ? `${months}개월` : `${months} mo`;
-    } catch (e) { return null; }
+    return window.ExportContent.calculateDuration(period, this.currentLang);
   }
 
   /**
@@ -107,69 +71,11 @@ class PDFExporter {
   }
 
   /**
-   * Get localized labels based on current language
+   * Get localized labels (delegates to the shared ExportContent dictionary)
    * @returns {Object} Localized label strings
    */
   getLabels() {
-    const labels = {
-      ko: {
-        expertise: '전문성',
-        projects: '프로젝트',
-        career: '경력',
-        education: '학력',
-        testimonials: '추천서',
-        manager: '리더십 & 관리',
-        compensation: '희망 보상 (비공개)',
-        featuredProjects: '주요 프로젝트',
-        medicalImaging: '의료 영상',
-        orthodontic: '교정 시스템',
-        equipmentControl: '장비 제어',
-        enterprise: '엔터프라이즈 솔루션',
-        openSource: '오픈 소스',
-        coreCapabilities: '핵심 역량',
-        certifications: '인증',
-        keyResponsibilities: '주요 역할:',
-        achievements: '성과:',
-        challenges: '기술적 도전:',
-        solutions: '해결 방법:',
-        pmCapabilities: 'PM 역량',
-        leadershipStyle: '리더십 스타일',
-        businessImpact: '비즈니스 임팩트',
-        softSkills: '소프트 스킬',
-        teamSize: '팀 규모:',
-        duration: '기간:',
-        outcomes: '성과:'
-      },
-      en: {
-        expertise: 'EXPERTISE',
-        projects: 'PROJECTS',
-        career: 'CAREER',
-        education: 'EDUCATION',
-        testimonials: 'TESTIMONIALS',
-        manager: 'LEADERSHIP & MANAGEMENT',
-        compensation: 'COMPENSATION EXPECTATIONS (PRIVATE)',
-        featuredProjects: 'Featured Projects',
-        medicalImaging: 'Medical Imaging',
-        orthodontic: 'Orthodontic Systems',
-        equipmentControl: 'Equipment Control',
-        enterprise: 'Enterprise Solutions',
-        openSource: 'Open Source',
-        coreCapabilities: 'Core Capabilities',
-        certifications: 'Certifications',
-        keyResponsibilities: 'Key Responsibilities:',
-        achievements: 'Achievements:',
-        challenges: 'Challenges:',
-        solutions: 'Solutions:',
-        pmCapabilities: 'PM Capabilities',
-        leadershipStyle: 'Leadership Style',
-        businessImpact: 'Business Impact',
-        softSkills: 'Soft Skills',
-        teamSize: 'Team Size:',
-        duration: 'Duration:',
-        outcomes: 'Outcomes:'
-      }
-    };
-    return labels[this.currentLang] || labels.en;
+    return window.ExportContent.getLabels(this.currentLang);
   }
 
   /**
@@ -619,8 +525,16 @@ class PDFExporter {
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
 
-      // Load Korean font first
-      await this.loadKoreanFont();
+      // Load Korean font first. Without it a Korean export would silently
+      // produce broken Hangul glyphs (Roboto has none), so abort in that
+      // case; English exports proceed with a warning attached to the result.
+      const fontOk = await this.loadKoreanFont();
+      if (!fontOk && this.currentLang === 'ko') {
+        throw new Error('Korean font (Noto Sans KR) could not be loaded - aborting PDF export to avoid broken Hangul text. Check the network connection and retry.');
+      }
+      const fontWarning = fontOk
+        ? null
+        : 'Korean font unavailable - PDF generated with the Latin-only Roboto font.';
 
       // Load cover letter if requested
       let coverLetterTemplate = null;
@@ -633,10 +547,25 @@ class PDFExporter {
         includeCoverPage, pageBreakBetweenSections, personalInfoFields
       });
 
+      // Resolve only after the PDF is actually built and handed to the
+      // browser for download; build/save errors reject instead of being
+      // silently reported as success.
       return new Promise((resolve, reject) => {
-        const pdfDoc = pdfMake.createPdf(docDefinition);
-        pdfDoc.download(filename);
-        resolve({ success: true, filename });
+        try {
+          const pdfDoc = pdfMake.createPdf(docDefinition);
+          pdfDoc.getBlob((blob) => {
+            try {
+              window.saveAs(blob, filename);
+              const result = { success: true, filename };
+              if (fontWarning) result.fontWarning = fontWarning;
+              resolve(result);
+            } catch (saveError) {
+              reject(saveError);
+            }
+          });
+        } catch (buildError) {
+          reject(buildError);
+        }
       });
     } catch (error) {
       console.error('PDF generation failed:', error);
@@ -880,20 +809,10 @@ class PDFExporter {
       year: 'numeric', month: 'long', day: 'numeric'
     });
 
-    const subtitle = lang === 'ko'
-      ? 'CTO · 연구소장 · 플랫폼 아키텍트'
-      : 'CTO · Research Director · Platform Architect';
-    const summaryLines = lang === 'ko'
-      ? [
-          '안전 중요·ISO 인증 도메인에서 R&D 조직과 플랫폼을 20년 넘게 이끌어 왔습니다.',
-          '2회 IPO 기여, 4개국 글로벌 인증 통과, 3–11명 다언어 R&D 팀 리딩 경험.',
-          '규제·표준이 요구되는 도메인이라면 산업에 종속되지 않는 SDLC 운영 패턴으로 적응합니다.'
-        ]
-      : [
-          '20+ years leading R&D organizations and platforms in safety-critical, ISO-certified domains.',
-          '2 IPOs delivered, 4 international approvals, 3–11 person multi-language R&D team leadership.',
-          'A regulated-SDLC operating pattern that adapts across industries — not bound to a single domain.'
-        ];
+    // Subtitle and summary come from the shared ExportContent module
+    // (profile data first, shared constants as fallback).
+    const subtitle = window.ExportContent.getCoverSubtitle(lang, data.profile);
+    const summaryLines = window.ExportContent.getCoverSummaryLines(lang, data.profile);
 
     content.push({
       canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 3, color: this.getColor('primary') }],
@@ -1493,6 +1412,38 @@ class PDFExporter {
         ));
       }
 
+      // Challenges / solutions mirror the public site's expanded project
+      // card (components.js) so exported documents carry the same content.
+      const challenges = this.getArray(project.expanded.challenges);
+      if (challenges.length > 0) {
+        items.push({
+          text: '[ ' + labels.challenges + ' ]',
+          bold: true,
+          fontSize: this.getTypography('fontSize.h4'),
+          color: '#F59E0B',  // Warning color
+          margin: [0, 6, 0, 4]
+        });
+        items.push(this.buildBulletList(
+          challenges.map(c => this.stripHtml(this.getText(c))),
+          { markerColor: this.getColor('warning'), bottomMargin: 6 }
+        ));
+      }
+
+      const solutions = this.getArray(project.expanded.solutions);
+      if (solutions.length > 0) {
+        items.push({
+          text: '[ ' + labels.solutions + ' ]',
+          bold: true,
+          fontSize: this.getTypography('fontSize.h4'),
+          color: '#3B82F6',  // Primary color
+          margin: [0, 6, 0, 4]
+        });
+        items.push(this.buildBulletList(
+          solutions.map(s => this.stripHtml(this.getText(s))),
+          { markerColor: this.getColor('accent'), bottomMargin: 6 }
+        ));
+      }
+
       const achievements = this.getArray(project.expanded.achievements);
       if (achievements.length > 0) {
         items.push({
@@ -1592,7 +1543,7 @@ class PDFExporter {
         if (item.responsibilities) {
           entry.push({
             text: [
-              { text: this.currentLang === 'ko' ? '담당 업무: ' : 'Responsibilities: ', bold: true },
+              { text: labels.responsibilities + ' ', bold: true },
               { text: this.stripHtml(this.getText(item.responsibilities)) }
             ],
             color: this.getColor('text.secondary'),
@@ -1605,10 +1556,10 @@ class PDFExporter {
         if (item.scale && (item.scale.company || item.scale.team)) {
           const scaleText = [];
           if (item.scale.company) {
-            scaleText.push(this.currentLang === 'ko' ? `회사 규모: ${this.getText(item.scale.company)}` : `Company: ${this.getText(item.scale.company)}`);
+            scaleText.push(`${labels.companyScale} ${this.getText(item.scale.company)}`);
           }
           if (item.scale.team) {
-            scaleText.push(this.currentLang === 'ko' ? `팀 규모: ${this.getText(item.scale.team)}` : `Team: ${this.getText(item.scale.team)}`);
+            scaleText.push(`${labels.teamScale} ${this.getText(item.scale.team)}`);
           }
           entry.push({
             text: scaleText.join('  |  '),
@@ -1630,7 +1581,7 @@ class PDFExporter {
         if (achievements.length > 0) {
           // Add achievements label with success color
           entry.push({
-            text: '[ ' + (this.currentLang === 'ko' ? '주요 성과' : 'Key Achievements') + ' ]',
+            text: '[ ' + labels.keyAchievements + ' ]',
             bold: true,
             fontSize: this.getTypography('fontSize.h4'),
             color: '#10B981',  // Success color
@@ -1656,7 +1607,7 @@ class PDFExporter {
         if (item.leaveReason) {
           entry.push({
             text: [
-              { text: this.currentLang === 'ko' ? '퇴사 사유: ' : 'Reason for Leaving: ', bold: true },
+              { text: labels.reasonForLeaving + ' ', bold: true },
               { text: this.stripHtml(this.getText(item.leaveReason)) }
             ],
             color: this.getColor('text.muted'),

@@ -145,7 +145,12 @@ const professionalTheme = {
       marginTop: 20,
       marginBottom: 15,
       paddingTop: 0,
-      paddingBottom: 0
+      paddingBottom: 0,
+      gap: 10
+    },
+    subsection: {
+      marginTop: 18,
+      marginBottom: 12
     },
     paragraph: {
       marginTop: 5,
@@ -153,7 +158,17 @@ const professionalTheme = {
     },
     list: {
       indent: 15,
-      itemSpacing: 3
+      itemSpacing: 3,
+      itemGap: 10,
+      marginBottom: 12
+    },
+    header: {
+      marginBottom: 12,
+      paddingBottom: 8
+    },
+    gap: {
+      medium: 8,
+      xlarge: 24
     }
   },
   layout: {
@@ -226,7 +241,12 @@ const modernDarkTheme = {
       marginTop: 20,
       marginBottom: 15,
       paddingTop: 0,
-      paddingBottom: 0
+      paddingBottom: 0,
+      gap: 10
+    },
+    subsection: {
+      marginTop: 18,
+      marginBottom: 12
     },
     paragraph: {
       marginTop: 5,
@@ -234,7 +254,17 @@ const modernDarkTheme = {
     },
     list: {
       indent: 15,
-      itemSpacing: 3
+      itemSpacing: 3,
+      itemGap: 10,
+      marginBottom: 12
+    },
+    header: {
+      marginBottom: 12,
+      paddingBottom: 8
+    },
+    gap: {
+      medium: 8,
+      xlarge: 24
     }
   },
   layout: {
