@@ -10,6 +10,17 @@ const _getLang = () => window.getLang?.() || window.i18nUtils?.getLang?.() || 'k
 const _getText = (obj) => window.getText?.(obj) ?? window.i18nUtils?.getText?.(obj) ?? (typeof obj === 'string' ? obj : obj?.ko || obj?.en || '');
 const _getArray = (obj) => window.getArray?.(obj) ?? window.i18nUtils?.getArray?.(obj) ?? (Array.isArray(obj) ? obj : obj?.ko || obj?.en || []);
 const _t = (key) => window.i18nUtils?.t?.(key) ?? window.translations?.[_getLang()]?.[key] ?? key;
+// HTML-escape data-derived values before template interpolation (shared impl in utils/i18n.js).
+// Intentional-markup exceptions rendered without _esc (fields authored with <strong> in JSON):
+// projects[].description, testimonials featured.quote / testimonials[].text,
+// career timeline[].note, expertise categories[].items.
+const _esc = (v) => (window.escapeHtml ?? window.i18nUtils?.escapeHtml)?.(v)
+    ?? String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+// Guard for URLs interpolated into href/src: allow only http(s), neutralize anything else.
+const _safeUrl = (url) => {
+    const s = String(url ?? '').trim();
+    return /^https?:\/\//i.test(s) ? _esc(s) : '#';
+};
 
 // Icon SVG definitions - Consolidated for all sections
 const Icons = {
@@ -66,8 +77,9 @@ const ProjectIconMap = {
 const _calculateDuration = (period) => window.calculateDuration?.(period) ?? window.i18nUtils?.calculateDuration?.(period) ?? null;
 
 // Render period with duration
+// periodStr is data-derived (escaped); duration is built internally from parsed numbers (safe)
 function renderPeriodWithDuration(period) {
-    const periodStr = _getText(period);
+    const periodStr = _esc(_getText(period));
     const duration = _calculateDuration(period);
     if (duration) {
         return `<span class="project-period">${periodStr} <span class="project-duration">(${duration})</span></span>`;
@@ -84,13 +96,13 @@ function renderRoleBadges(roles) {
         'qa-doc': 'QA Doc'
     };
     return roles.map(role =>
-        `<span class="role-badge ${role}">${roleLabels[role] || role}</span>`
+        `<span class="role-badge ${_esc(role)}">${_esc(roleLabels[role] || role)}</span>`
     ).join('');
 }
 
 // Render tags
 function renderTags(tags) {
-    return tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+    return tags.map(tag => `<span class="tag">${_esc(tag)}</span>`).join('');
 }
 
 // Render metrics
@@ -100,9 +112,9 @@ function renderMetrics(metrics) {
         <div class="project-metrics">
             ${metrics.map(m => `
                 <div class="metric">
-                    <span class="metric-value">${_getText(m.value)}</span>
-                    <span class="metric-label">${_getText(m.label)}</span>
-                    ${m.change ? `<span class="metric-change ${m.positive ? 'positive' : ''}">${_getText(m.change)}</span>` : ''}
+                    <span class="metric-value">${_esc(_getText(m.value))}</span>
+                    <span class="metric-label">${_esc(_getText(m.label))}</span>
+                    ${m.change ? `<span class="metric-change ${m.positive ? 'positive' : ''}">${_esc(_getText(m.change))}</span>` : ''}
                 </div>
             `).join('')}
         </div>
@@ -118,20 +130,21 @@ function renderCertifications(certs) {
         <div class="expanded-section">
             <h4>${label}</h4>
             <div class="cert-badges">
-                ${certs.map(cert => `<span class="cert-badge">${cert}</span>`).join('')}
+                ${certs.map(cert => `<span class="cert-badge">${_esc(cert)}</span>`).join('')}
             </div>
         </div>
     `;
 }
 
 // Render expanded section list
+// title is an internal label constant (not escaped); items are data-derived (escaped)
 function renderExpandedList(title, items) {
     if (!items || items.length === 0) return '';
     return `
         <div class="expanded-section">
             <h4>${title}</h4>
             <ul>
-                ${items.map(item => `<li>${item}</li>`).join('')}
+                ${items.map(item => `<li>${_esc(item)}</li>`).join('')}
             </ul>
         </div>
     `;
@@ -146,15 +159,15 @@ function renderFeaturedProject(project) {
         : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions', achievements: 'Achievements' };
 
     return `
-        <article class="project-card featured expandable" id="project-${project.id}">
+        <article class="project-card featured expandable" id="project-${_esc(project.id)}">
             <div class="project-header">
                 <div class="project-icon">${iconSvg}</div>
                 <div class="project-meta">
                     <span class="project-badge">Featured</span>
-                    <span class="project-company">${_getText(project.company)}</span>
+                    <span class="project-company">${_esc(_getText(project.company))}</span>
                 </div>
             </div>
-            <h3 class="project-title">${_getText(project.title)}</h3>
+            <h3 class="project-title">${_esc(_getText(project.title))}</h3>
             ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
             <p class="project-description">${_getText(project.description)}</p>
@@ -183,11 +196,11 @@ function renderProjectCard(project) {
         : { roles: 'Roles', challenges: 'Challenges', solutions: 'Solutions' };
 
     return `
-        <article class="project-card expandable" id="project-${project.id}">
+        <article class="project-card expandable" id="project-${_esc(project.id)}">
             <div class="project-header">
-                <span class="project-company-small">${_getText(project.company)}</span>
+                <span class="project-company-small">${_esc(_getText(project.company))}</span>
             </div>
-            <h3 class="project-title">${_getText(project.title)}</h3>
+            <h3 class="project-title">${_esc(_getText(project.title))}</h3>
             ${renderPeriodWithDuration(project.period)}
             <div class="role-badges">${renderRoleBadges(project.roles)}</div>
             <p class="project-description">${_getText(project.description)}</p>
@@ -217,16 +230,16 @@ function renderOpenSourceCard(project) {
         : { features: 'Key Features', performance: 'Performance', viewOnGithub: 'View on GitHub' };
 
     return `
-        <article class="project-card opensource expandable" id="project-${project.id}">
+        <article class="project-card opensource expandable" id="project-${_esc(project.id)}">
             <div class="project-header">
                 <span class="project-company-small">Open Source</span>
-                <a href="${project.github}" target="_blank" rel="noopener noreferrer" class="github-link" title="${labels.viewOnGithub}">
+                <a href="${_safeUrl(project.github)}" target="_blank" rel="noopener noreferrer" class="github-link" title="${labels.viewOnGithub}">
                     ${Icons.github}
                 </a>
             </div>
-            <h3 class="project-title">${_getText(project.title)}</h3>
-            ${project.period ? `<span class="project-period">${_getText(project.period)}</span>` : ''}
-            ${project.stars ? `<div class="project-stats"><span class="star-count">${project.stars} stars</span></div>` : ''}
+            <h3 class="project-title">${_esc(_getText(project.title))}</h3>
+            ${project.period ? `<span class="project-period">${_esc(_getText(project.period))}</span>` : ''}
+            ${project.stars ? `<div class="project-stats"><span class="star-count">${_esc(project.stars)} stars</span></div>` : ''}
             <p class="project-description">${_getText(project.description)}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
@@ -360,7 +373,7 @@ function renderTestimonials(data, container) {
         if (!labels) return '';
         const arr = _getArray(labels);
         return arr.map(l =>
-            `<span class="testimonial-label ${l.type}">${_getText(l.text)}</span>`
+            `<span class="testimonial-label ${_esc(l.type)}">${_esc(_getText(l.text))}</span>`
         ).join('');
     };
 
@@ -374,9 +387,9 @@ function renderTestimonials(data, container) {
                 <p class="testimonial-quote">"${_getText(data.featured.quote)}"</p>
                 <div class="testimonial-labels">${renderLabels(data.featured.labels)}</div>
                 <footer class="testimonial-author">
-                    <span class="author-name">${_getText(data.featured.author)}</span>
-                    <span class="author-role">${_getText(data.featured.role)}</span>
-                    <span class="author-relation">${_getText(data.featured.relation)}</span>
+                    <span class="author-name">${_esc(_getText(data.featured.author))}</span>
+                    <span class="author-role">${_esc(_getText(data.featured.role))}</span>
+                    <span class="author-relation">${_esc(_getText(data.featured.relation))}</span>
                 </footer>
             </blockquote>
         </div>
@@ -385,15 +398,15 @@ function renderTestimonials(data, container) {
             ${data.testimonials.map(item => `
                 <div class="testimonial-card">
                     <div class="testimonial-meta">
-                        <span class="testimonial-date">${item.date}</span>
-                        <span class="testimonial-context">${_getText(item.context)}</span>
+                        <span class="testimonial-date">${_esc(item.date)}</span>
+                        <span class="testimonial-context">${_esc(_getText(item.context))}</span>
                     </div>
                     <p class="testimonial-text">"${_getText(item.text)}"</p>
                     <div class="testimonial-labels">${renderLabels(item.labels)}</div>
                     <footer class="testimonial-author">
-                        <span class="author-name">${_getText(item.author)}</span>
-                        <span class="author-role">${_getText(item.role)}</span>
-                        <span class="author-relation">${_getText(item.relation)}</span>
+                        <span class="author-name">${_esc(_getText(item.author))}</span>
+                        <span class="author-role">${_esc(_getText(item.role))}</span>
+                        <span class="author-relation">${_esc(_getText(item.relation))}</span>
                     </footer>
                 </div>
             `).join('')}
@@ -439,7 +452,7 @@ function renderCareer(data, container) {
             <div class="timeline-related-projects">
                 <strong>${labels.relatedProjects}:</strong>
                 <div class="project-links">
-                    ${projectIds.map(id => `<a href="#project-${id}" class="project-link" data-project-id="${id}">${getProjectTitle(id)}</a>`).join('')}
+                    ${projectIds.map(id => `<a href="#project-${_esc(id)}" class="project-link" data-project-id="${_esc(id)}">${_esc(getProjectTitle(id))}</a>`).join('')}
                 </div>
             </div>
         `;
@@ -449,6 +462,8 @@ function renderCareer(data, container) {
         let periodStr = _getText(period);
         // Remove any existing duration from the period string
         periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
+        // periodStr is data-derived (escaped); duration is built internally from parsed numbers (safe)
+        periodStr = _esc(periodStr);
         const duration = _calculateDuration(period);
         if (duration) {
             return `${periodStr} <span class="timeline-duration">(${duration})</span>`;
@@ -462,7 +477,7 @@ function renderCareer(data, container) {
         if (arr.length === 0) return '';
         return `
             <ul class="timeline-achievements">
-                ${arr.map(a => `<li>${_getText(a)}</li>`).join('')}
+                ${arr.map(a => `<li>${_esc(_getText(a))}</li>`).join('')}
             </ul>
         `;
     };
@@ -471,8 +486,8 @@ function renderCareer(data, container) {
         if (!scale) return '';
         return `
             <div class="timeline-scale">
-                ${scale.company ? `<span class="scale-item"><strong>${labels.companyScale}:</strong> ${_getText(scale.company)}</span>` : ''}
-                ${scale.team ? `<span class="scale-item"><strong>${labels.teamScale}:</strong> ${_getText(scale.team)}</span>` : ''}
+                ${scale.company ? `<span class="scale-item"><strong>${labels.companyScale}:</strong> ${_esc(_getText(scale.company))}</span>` : ''}
+                ${scale.team ? `<span class="scale-item"><strong>${labels.teamScale}:</strong> ${_esc(_getText(scale.team))}</span>` : ''}
             </div>
         `;
     };
@@ -485,18 +500,18 @@ function renderCareer(data, container) {
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3 class="timeline-title">${_getText(item.company)}</h3>
+                            <h3 class="timeline-title">${_esc(_getText(item.company))}</h3>
                             <span class="timeline-period">${renderTimelinePeriod(item.period)}</span>
-                            ${item.badge ? `<span class="timeline-badge">${_getText(item.badge)}</span>` : ''}
+                            ${item.badge ? `<span class="timeline-badge">${_esc(_getText(item.badge))}</span>` : ''}
                         </div>
-                        <p class="timeline-role">${_getText(item.role)}</p>
-                        ${item.companyDescription ? `<p class="timeline-company-desc">${_getText(item.companyDescription)}</p>` : ''}
-                        ${item.description ? `<p class="timeline-description">${_getText(item.description)}</p>` : ''}
-                        ${item.responsibilities ? `<p class="timeline-responsibilities"><strong>${labels.responsibilities}:</strong> ${_getText(item.responsibilities)}</p>` : ''}
+                        <p class="timeline-role">${_esc(_getText(item.role))}</p>
+                        ${item.companyDescription ? `<p class="timeline-company-desc">${_esc(_getText(item.companyDescription))}</p>` : ''}
+                        ${item.description ? `<p class="timeline-description">${_esc(_getText(item.description))}</p>` : ''}
+                        ${item.responsibilities ? `<p class="timeline-responsibilities"><strong>${labels.responsibilities}:</strong> ${_esc(_getText(item.responsibilities))}</p>` : ''}
                         ${renderScale(item.scale)}
                         ${renderAchievements(item.achievements)}
                         ${item.note ? `<div class="timeline-note"><p>${_getText(item.note)}</p></div>` : ''}
-                        ${item.leaveReason ? `<p class="timeline-leave-reason"><strong>${labels.leaveReason}:</strong> ${_getText(item.leaveReason)}</p>` : ''}
+                        ${item.leaveReason ? `<p class="timeline-leave-reason"><strong>${labels.leaveReason}:</strong> ${_esc(_getText(item.leaveReason))}</p>` : ''}
                         ${renderRelatedProjects(item.relatedProjects)}
                         ${item.tags ? `<div class="timeline-tags">${renderTags(item.tags)}</div>` : ''}
                     </div>
@@ -546,10 +561,10 @@ function renderExpertise(data, container) {
                         <div class="expertise-category">
                             <h3 class="expertise-title">
                                 <span class="expertise-icon">${iconMap[cat.icon] || '📌'}</span>
-                                ${_getText(cat.title)}
+                                ${_esc(_getText(cat.title))}
                             </h3>
                             <div class="tech-tags">
-                                ${cat.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                ${cat.tags.map(tag => `<span class="tag">${_esc(tag)}</span>`).join('')}
                             </div>
                         </div>
                     `;
@@ -559,7 +574,7 @@ function renderExpertise(data, container) {
                     <div class="expertise-category">
                         <h3 class="expertise-title">
                             <span class="expertise-icon">${iconMap[cat.icon] || '📌'}</span>
-                            ${_getText(cat.title)}
+                            ${_esc(_getText(cat.title))}
                         </h3>
                         <ul class="expertise-list">
                             ${items.map(item => `<li>${_getText(item)}</li>`).join('')}
@@ -586,8 +601,8 @@ function renderLifecycleDetails(data, container) {
     container.innerHTML = data.lifecycleDetails.map(item => `
         <div class="lifecycle-card">
             <div class="lifecycle-icon">${iconMap[item.icon] || '📌'}</div>
-            <h4>${_getText(item.title)}</h4>
-            <p>${_getText(item.description)}</p>
+            <h4>${_esc(_getText(item.title))}</h4>
+            <p>${_esc(_getText(item.description))}</p>
         </div>
     `).join('');
 }
@@ -610,9 +625,9 @@ function renderManager(data, container) {
                 ${highlights.map(h => `
                     <div class="manager-highlight-card">
                         <div class="highlight-icon">${getIcon(h.icon)}</div>
-                        <div class="manager-highlight-value">${_getText(h.value)}</div>
-                        <div class="manager-highlight-label">${_getText(h.label)}</div>
-                        <div class="manager-highlight-description">${_getText(h.description)}</div>
+                        <div class="manager-highlight-value">${_esc(_getText(h.value))}</div>
+                        <div class="manager-highlight-label">${_esc(_getText(h.label))}</div>
+                        <div class="manager-highlight-description">${_esc(_getText(h.description))}</div>
                     </div>
                 `).join('')}
             </div>
@@ -622,7 +637,7 @@ function renderManager(data, container) {
     // Render PM Capabilities
     const renderCapabilities = (capabilities) => {
         const renderBadges = (items) =>
-            (items || []).filter(Boolean).map(text => `<span class="metric-badge">${text}</span>`).join('');
+            (items || []).filter(Boolean).map(text => `<span class="metric-badge">${_esc(text)}</span>`).join('');
 
         return capabilities.map(cap => {
             const badges = [];
@@ -660,11 +675,11 @@ function renderManager(data, container) {
             return `
                 <div class="manager-capability-card">
                     <div class="capability-icon">${getIcon(cap.icon)}</div>
-                    <h3 class="capability-title">${_getText(cap.title)}</h3>
-                    <p class="capability-description">${_getText(cap.description)}</p>
+                    <h3 class="capability-title">${_esc(_getText(cap.title))}</h3>
+                    <p class="capability-description">${_esc(_getText(cap.description))}</p>
                     ${highlights && highlights.length > 0 ? `
                         <ul class="capability-highlights">
-                            ${highlights.map(h => `<li>${h}</li>`).join('')}
+                            ${highlights.map(h => `<li>${_esc(h)}</li>`).join('')}
                         </ul>
                     ` : ''}
                     ${badges.length > 0 ? `<div class="capability-metrics">${renderBadges(badges)}</div>` : ''}
@@ -679,12 +694,12 @@ function renderManager(data, container) {
         const principles = _getArray(style.principles);
         return `
             <div class="leadership-style-section">
-                <h3 class="subsection-title">${_getText(style.title)}</h3>
+                <h3 class="subsection-title">${_esc(_getText(style.title))}</h3>
                 <div class="leadership-principles">
                     ${principles.map(p => `
                         <div class="principle-item">
                             <span class="principle-icon">✓</span>
-                            <span>${p}</span>
+                            <span>${_esc(p)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -702,24 +717,24 @@ function renderManager(data, container) {
                 <h3 class="subsection-title">${lang === 'ko' ? '비즈니스 임팩트' : 'Business Impact'}</h3>
                 <div class="impact-numbers">
                     <div class="impact-number">
-                        <span class="number">${numbers.certifications}</span>
+                        <span class="number">${_esc(numbers.certifications)}</span>
                         <span class="label">${lang === 'ko' ? '글로벌 인증' : 'Global Certs'}</span>
                     </div>
                     <div class="impact-number">
-                        <span class="number">${numbers.ipos}</span>
+                        <span class="number">${_esc(numbers.ipos)}</span>
                         <span class="label">${lang === 'ko' ? 'IPO 기여' : 'IPO Contrib'}</span>
                     </div>
                     <div class="impact-number">
-                        <span class="number">${numbers.performanceImprovement}</span>
+                        <span class="number">${_esc(numbers.performanceImprovement)}</span>
                         <span class="label">${lang === 'ko' ? '성능 향상' : 'Performance'}</span>
                     </div>
                     <div class="impact-number">
-                        <span class="number">${numbers.projectsDelivered}</span>
+                        <span class="number">${_esc(numbers.projectsDelivered)}</span>
                         <span class="label">${lang === 'ko' ? '프로젝트 납품' : 'Projects'}</span>
                     </div>
                 </div>
                 <ul class="impact-highlights">
-                    ${highlights.map(h => `<li>${h}</li>`).join('')}
+                    ${highlights.map(h => `<li>${_esc(h)}</li>`).join('')}
                 </ul>
             </div>
         `;
@@ -735,7 +750,7 @@ function renderManager(data, container) {
                     ${skills.map(skill => `
                         <div class="soft-skill-item">
                             <div class="skill-icon">${getIcon(skill.icon)}</div>
-                            <span class="skill-name">${_getText(skill.title)}</span>
+                            <span class="skill-name">${_esc(_getText(skill.title))}</span>
                             <div class="skill-level">
                                 ${Array(5).fill(0).map((_, i) => `<span class="level-dot ${i < skill.level ? 'filled' : ''}"></span>`).join('')}
                             </div>
@@ -781,11 +796,11 @@ function renderEducation(data, container) {
     const items = data.items.map(item => `
         <article class="education-item">
             <header class="education-header">
-                <h3 class="education-institution">${_getText(item.institution)}</h3>
-                <span class="education-period">${item.period || ''}</span>
+                <h3 class="education-institution">${_esc(_getText(item.institution))}</h3>
+                <span class="education-period">${_esc(item.period || '')}</span>
             </header>
-            ${item.degree ? `<p class="education-degree">${_getText(item.degree)}</p>` : ''}
-            ${item.location ? `<p class="education-location">${_getText(item.location)}</p>` : ''}
+            ${item.degree ? `<p class="education-degree">${_esc(_getText(item.degree))}</p>` : ''}
+            ${item.location ? `<p class="education-location">${_esc(_getText(item.location))}</p>` : ''}
         </article>
     `).join('');
     container.innerHTML = items;
@@ -821,31 +836,31 @@ function renderCompensation(data, container) {
 
     const currentBlock = data.currentPackage ? `
         <div class="compensation-block">
-            <h4 class="compensation-block-title">${_getText(data.currentPackage.label)}</h4>
+            <h4 class="compensation-block-title">${_esc(_getText(data.currentPackage.label))}</h4>
             <ul class="compensation-component-list">
                 ${(data.currentPackage.components || []).map(c => `
                     <li>
-                        <span class="compensation-component-label">${_getText(c.label)}</span>
-                        <span class="compensation-component-value">${c.value || ''}</span>
+                        <span class="compensation-component-label">${_esc(_getText(c.label))}</span>
+                        <span class="compensation-component-value">${_esc(c.value || '')}</span>
                     </li>
                 `).join('')}
             </ul>
             ${data.currentPackage.estimatedAnnualEv ? `
-                <p class="compensation-ev"><strong>${sectionLabels.evTerm}:</strong> ${_getText(data.currentPackage.estimatedAnnualEv)}</p>
+                <p class="compensation-ev"><strong>${sectionLabels.evTerm}:</strong> ${_esc(_getText(data.currentPackage.estimatedAnnualEv))}</p>
             ` : ''}
         </div>
     ` : '';
 
     const marketBlock = data.marketBaseline ? `
         <div class="compensation-block">
-            <h4 class="compensation-block-title">${_getText(data.marketBaseline.label)}</h4>
+            <h4 class="compensation-block-title">${_esc(_getText(data.marketBaseline.label))}</h4>
             ${data.marketBaseline.anchor ? `
-                <p class="compensation-anchor"><strong>${sectionLabels.anchorTerm}:</strong> ${_getText(data.marketBaseline.anchor)}</p>
+                <p class="compensation-anchor"><strong>${sectionLabels.anchorTerm}:</strong> ${_esc(_getText(data.marketBaseline.anchor))}</p>
             ` : ''}
             ${Array.isArray(data.marketBaseline.evidence) && data.marketBaseline.evidence.length ? `
                 <p class="compensation-evidence-label">${sectionLabels.evidenceTerm}</p>
                 <ul class="compensation-evidence-list">
-                    ${data.marketBaseline.evidence.map(e => `<li>${_getText(e)}</li>`).join('')}
+                    ${data.marketBaseline.evidence.map(e => `<li>${_esc(_getText(e))}</li>`).join('')}
                 </ul>
             ` : ''}
         </div>
@@ -856,19 +871,19 @@ function renderCompensation(data, container) {
             <h4 class="compensation-block-title">${sectionLabels.tiers}</h4>
             <div class="compensation-tier-grid">
                 ${data.tiers.map(tier => `
-                    <article class="compensation-tier compensation-tier--${tier.tone || tier.id || 'default'}">
+                    <article class="compensation-tier compensation-tier--${_esc(tier.tone || tier.id || 'default')}">
                         <header class="compensation-tier-header">
-                            <h5 class="compensation-tier-label">${_getText(tier.label)}</h5>
+                            <h5 class="compensation-tier-label">${_esc(_getText(tier.label))}</h5>
                         </header>
                         <dl class="compensation-tier-details">
-                            <dt>${sectionLabels.baseTerm}</dt><dd>${_getText(tier.base)}</dd>
-                            <dt>${sectionLabels.signingTerm}</dt><dd>${_getText(tier.signing)}</dd>
-                            <dt>${sectionLabels.incentiveTerm}</dt><dd>${_getText(tier.incentive)}</dd>
-                            <dt>${sectionLabels.optionsTerm}</dt><dd>${_getText(tier.options)}</dd>
-                            <dt>${sectionLabels.totalTerm}</dt><dd class="compensation-tier-total">${_getText(tier.totalFirstYear)}</dd>
+                            <dt>${sectionLabels.baseTerm}</dt><dd>${_esc(_getText(tier.base))}</dd>
+                            <dt>${sectionLabels.signingTerm}</dt><dd>${_esc(_getText(tier.signing))}</dd>
+                            <dt>${sectionLabels.incentiveTerm}</dt><dd>${_esc(_getText(tier.incentive))}</dd>
+                            <dt>${sectionLabels.optionsTerm}</dt><dd>${_esc(_getText(tier.options))}</dd>
+                            <dt>${sectionLabels.totalTerm}</dt><dd class="compensation-tier-total">${_esc(_getText(tier.totalFirstYear))}</dd>
                         </dl>
                         ${tier.rationale ? `
-                            <p class="compensation-tier-rationale"><strong>${sectionLabels.rationaleTerm}:</strong> ${_getText(tier.rationale)}</p>
+                            <p class="compensation-tier-rationale"><strong>${sectionLabels.rationaleTerm}:</strong> ${_esc(_getText(tier.rationale))}</p>
                         ` : ''}
                     </article>
                 `).join('')}
@@ -880,7 +895,7 @@ function renderCompensation(data, container) {
         <div class="compensation-block">
             <h4 class="compensation-block-title">${sectionLabels.nonNegotiables}</h4>
             <ul class="compensation-non-negotiables">
-                ${data.nonNegotiables.map(n => `<li>${_getText(n)}</li>`).join('')}
+                ${data.nonNegotiables.map(n => `<li>${_esc(_getText(n))}</li>`).join('')}
             </ul>
         </div>
     ` : '';
@@ -888,22 +903,22 @@ function renderCompensation(data, container) {
     const stanceBlock = data.negotiationStance ? `
         <div class="compensation-block compensation-block--stance">
             <h4 class="compensation-block-title">${sectionLabels.stance}</h4>
-            <p>${_getText(data.negotiationStance)}</p>
+            <p>${_esc(_getText(data.negotiationStance))}</p>
         </div>
     ` : '';
 
     const visibilityNote = data.visibility ? `
-        <p class="compensation-visibility-note">${_getText(data.visibility)}</p>
+        <p class="compensation-visibility-note">${_esc(_getText(data.visibility))}</p>
     ` : '';
 
     const lastUpdated = data.lastUpdated ? `
-        <p class="compensation-meta">${sectionLabels.updatedTerm}: ${data.lastUpdated}</p>
+        <p class="compensation-meta">${sectionLabels.updatedTerm}: ${_esc(data.lastUpdated)}</p>
     ` : '';
 
     container.innerHTML = `
-        <h2 class="section-title">${_getText(data.title)}</h2>
-        ${data.subtitle ? `<p class="section-subtitle">${_getText(data.subtitle)}</p>` : ''}
-        ${data.intro ? `<p class="compensation-intro">${_getText(data.intro)}</p>` : ''}
+        <h2 class="section-title">${_esc(_getText(data.title))}</h2>
+        ${data.subtitle ? `<p class="section-subtitle">${_esc(_getText(data.subtitle))}</p>` : ''}
+        ${data.intro ? `<p class="compensation-intro">${_esc(_getText(data.intro))}</p>` : ''}
         ${visibilityNote}
         <details class="compensation-details">
             <summary class="compensation-summary">

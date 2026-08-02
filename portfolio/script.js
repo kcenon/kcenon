@@ -292,6 +292,12 @@ const translations = {
     }
 };
 
+// Translation keys whose values intentionally contain HTML and must be rendered
+// via innerHTML: hero.summary uses <strong> emphasis, footer.copyright uses the
+// &copy; entity. Every other key is plain text and is rendered via textContent
+// so stray '<' or '&' in translations can never break markup or inject HTML.
+const HTML_I18N_KEYS = new Set(['hero.summary', 'footer.copyright']);
+
 let currentLang = localStorage.getItem('lang') || 'ko';
 
 function setMetaContent(selector, content) {
@@ -347,11 +353,18 @@ function setLanguage(lang) {
         langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
     }
 
-    // Update all elements with data-i18n attribute
+    // Update all elements with data-i18n attribute.
+    // innerHTML is limited to the HTML_I18N_KEYS allowlist; all other keys are
+    // plain text and use textContent (see HTML_I18N_KEYS comment above).
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
-            el.innerHTML = interpolateTemplate(translations[lang][key]);
+            const value = interpolateTemplate(translations[lang][key]);
+            if (HTML_I18N_KEYS.has(key)) {
+                el.innerHTML = value;
+            } else {
+                el.textContent = value;
+            }
         }
     });
 
