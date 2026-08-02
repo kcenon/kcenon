@@ -535,7 +535,9 @@ function renderExpertise(data, container) {
         'file-text': '📄',
         'git-branch': '🔀',
         'cloud': '☁️',
-        'shield': '🛡️'
+        'shield': '🛡️',
+        'ai': '🤖',
+        'hardware': '⚙️'
     };
 
     let html = `

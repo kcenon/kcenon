@@ -6,7 +6,7 @@
 (async function() {
   const DATA_BASE_PATH = 'data';
   // Bump on every content change to invalidate browser/CDN caches.
-  const DATA_VERSION = '1.12.0';
+  const DATA_VERSION = '1.13.0';
   const PRIVATE_ACCESS_KEY = 'kcenon.private.access';
   const PRIVATE_ACCESS_TOKEN = 'enabled';
 

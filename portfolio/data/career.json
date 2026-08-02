@@ -20,8 +20,8 @@
         "en": "Medical device startup developing medical imaging-based blood flow diagnostic solutions — grown from Seed to Pre-A stage (flonics.co.kr)"
       },
       "responsibilities": {
-        "ko": "프로젝트 전반의 개발·운영·관리 총괄, 기술 전략 수립 및 R&D 리딩, 의료영상 기반 혈류 진단 시스템 아키텍처 설계, 의료기기 인허가(IEC 62304/ISO 13485) 프로세스 정립",
-        "en": "Own development, operations, and management across all projects; lead technology strategy and R&D; architect medical imaging-based blood flow diagnostic systems; establish medical device regulatory processes (IEC 62304/ISO 13485)"
+        "ko": "프로젝트 전반의 개발·운영·관리 총괄, 기술 전략 수립 및 R&D 리딩, 의료영상 기반 혈류 진단 시스템 아키텍처 설계, 의료기기 인허가(IEC 62304/ISO 13485) 프로세스 정립, 자동화 우선 개발·운영 체계(CI/CD·SonarQube·AI 보고) 구축",
+        "en": "Own development, operations, and management across all projects; lead technology strategy and R&D; architect medical imaging-based blood flow diagnostic systems; establish medical device regulatory processes (IEC 62304/ISO 13485); build an automation-first development and operations system (CI/CD, SonarQube, AI reporting)"
       },
       "scale": {
         "company": {
@@ -30,8 +30,8 @@
         }
       },
       "note": {
-        "ko": "<strong>도메인 회귀·확장</strong>: 분산 시스템 SaaS에서 축적한 플랫폼 역량을 의료영상 도메인으로 다시 가져와, 혈류 진단이라는 신규 임상 영역에 적용. 시드에서 Pre-A로 성장한 스타트업을 최소 인력으로 운영하며, 규제 환경(IEC 62304/ISO 13485) 경험과 클라우드 네이티브 운영 역량을 결합해 개발–운영–관리 전 영역을 커버하는 CTO 역할.",
-        "en": "<strong>Domain Return & Expansion</strong>: Bringing platform expertise accumulated in distributed SaaS back to the medical imaging domain, applied to the novel clinical area of blood flow diagnostics. Running a startup grown from Seed to Pre-A with a lean team — a CTO role covering development, operations, and management end to end, combining regulated-environment discipline (IEC 62304/ISO 13485) with cloud-native operational experience."
+        "ko": "<strong>도메인 회귀·확장</strong>: 분산 시스템 SaaS에서 축적한 플랫폼 역량을 의료영상 도메인으로 다시 가져와, 혈류 진단이라는 신규 임상 영역에 적용. 시드에서 Pre-A로 성장한 스타트업을 최소 인력으로 운영하며, 규제 환경(IEC 62304/ISO 13485) 경험과 클라우드 네이티브 운영 역량을 결합해 개발–운영–관리 전 영역을 커버하는 CTO 역할. GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 분석, 발견된 문제의 AI 기반 파악·리포트 자동화로 최소 인력의 산출을 극대화하는 운영 체계를 적용 중.",
+        "en": "<strong>Domain Return & Expansion</strong>: Bringing platform expertise accumulated in distributed SaaS back to the medical imaging domain, applied to the novel clinical area of blood flow diagnostics. Running a startup grown from Seed to Pre-A with a lean team — a CTO role covering development, operations, and management end to end, combining regulated-environment discipline (IEC 62304/ISO 13485) with cloud-native operational experience. Operating an automation-first system — reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security analysis, and AI-driven triage and reporting of findings — to maximize output with minimal headcount."
       },
       "tags": [
         "Medical Imaging",
