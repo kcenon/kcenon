@@ -102,6 +102,23 @@ function formatPeriodWithDuration(period) {
 }
 
 /**
+ * Escape HTML special characters for safe interpolation into innerHTML templates
+ * Replaces &, <, >, ", ' with their HTML entities. Applied exactly once at the
+ * interpolation site — input data must contain raw (unescaped) text.
+ * @param {*} str - Raw value (non-strings are coerced; null/undefined yield '')
+ * @returns {string} HTML-escaped string
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/**
  * Get translated text from translations object
  * @param {string} key - Translation key (e.g., 'nav.about')
  * @returns {string} Translated text or key if not found
@@ -118,6 +135,7 @@ window.i18nUtils = {
     getArray,
     calculateDuration,
     formatPeriodWithDuration,
+    escapeHtml,
     t
 };
 
@@ -127,3 +145,4 @@ window.getText = getText;
 window.getArray = getArray;
 window.calculateDuration = calculateDuration;
 window.formatPeriodWithDuration = formatPeriodWithDuration;
+window.escapeHtml = escapeHtml;

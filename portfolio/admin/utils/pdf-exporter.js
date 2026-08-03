@@ -2,13 +2,20 @@
  * PDF Exporter - Generate PDF from portfolio data using pdfmake
  * Supports theme-based styling via StyleManager
  *
- * Dependencies: utils/i18n.js (getLang), utils/export-content.js
- * (shared labels, cover-page content, duration calculation)
+ * Content (sections, field order, labels, localized strings) comes from the
+ * format-neutral tree built by utils/export-ir.js (window.ExportIR); this
+ * file only maps IR nodes to pdfmake constructs and owns every styling
+ * decision (colors, typography, spacing, unbreakable blocks) plus the
+ * Korean font loading.
+ *
+ * Dependencies: utils/i18n.js (getLang), utils/export-content.js (labels),
+ * utils/export-ir.js (IR)
  */
 
 class PDFExporter {
   constructor() {
     this.fontLoaded = false;
+    this.boldFontLoaded = false;
     this.fontLoading = null;
     this.currentTheme = null;
     this.themeStyles = null;
@@ -21,61 +28,6 @@ class PDFExporter {
    */
   getLang() {
     return window.i18nUtils?.getLang?.() || window.currentLanguage || window.getLanguage?.() || 'ko';
-  }
-
-  /**
-   * Get text from multilingual object (delegates to shared utility)
-   * @param {*} obj - Multilingual object or string
-   * @returns {string} Text in current language
-   */
-  getText(obj) {
-    // Use shared utility with currentLang context
-    if (!obj) return '';
-    if (typeof obj === 'string') return obj;
-    const lang = this.currentLang;
-    return obj[lang] || obj.ko || obj.en || '';
-  }
-
-  /**
-   * Get array from multilingual object (delegates to shared utility)
-   * @param {*} obj - Multilingual array object or array
-   * @returns {Array} Array in current language
-   */
-  getArray(obj) {
-    if (!obj) return [];
-    if (Array.isArray(obj)) return obj;
-    const lang = this.currentLang;
-    return obj[lang] || obj.ko || obj.en || [];
-  }
-
-  /**
-   * Calculate duration from period string (delegates to shared ExportContent,
-   * which takes the language as an explicit argument — no global state swap)
-   * @param {string|Object} period - Period string or multilingual object
-   * @returns {string|null} Formatted duration string
-   */
-  calculateDuration(period) {
-    return window.ExportContent.calculateDuration(period, this.currentLang);
-  }
-
-  /**
-   * Format period with duration
-   * @param {string|Object} period - Period string or multilingual object
-   * @returns {string} Period with duration appended
-   */
-  formatPeriodWithDuration(period) {
-    let periodStr = this.getText(period);
-    periodStr = periodStr.replace(/\s*\([^)]*(?:개월|년|months?|yrs?|mo)[^)]*\)/gi, '').trim();
-    const duration = this.calculateDuration(period);
-    return duration ? `${periodStr} (${duration})` : periodStr;
-  }
-
-  /**
-   * Get localized labels (delegates to the shared ExportContent dictionary)
-   * @returns {Object} Localized label strings
-   */
-  getLabels() {
-    return window.ExportContent.getLabels(this.currentLang);
   }
 
   /**
@@ -420,29 +372,59 @@ class PDFExporter {
   }
 
   /**
-   * Load Korean font (Noto Sans KR) for PDF generation
+   * Load Korean fonts (Noto Sans KR Regular + Bold) for PDF generation.
+   *
+   * Regular is required: without it Korean exports would render broken
+   * Hangul glyphs, so callers treat its failure as fatal for 'ko'.
+   * Bold is optional: when it fails, every weight falls back to Regular
+   * and the export proceeds (bold hierarchy is lost, not the text).
+   *
+   * The result is memoized via this.fontLoading so repeated exports do
+   * not refetch either font.
+   *
+   * @returns {Promise<{regular: boolean, bold: boolean}>} Load status per weight
    */
   async loadKoreanFont() {
-    if (this.fontLoaded) return true;
+    if (this.fontLoaded) return { regular: true, bold: this.boldFontLoaded };
     if (this.fontLoading) return this.fontLoading;
 
     this.fontLoading = (async () => {
       try {
-        // Noto Sans KR Regular from Google Fonts
-        const fontUrl = 'https://fonts.gstatic.com/s/notosanskr/v36/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzzuoyeLTq8H4hfeE.ttf';
+        // Noto Sans KR from Google Fonts
+        const regularUrl = 'https://fonts.gstatic.com/s/notosanskr/v36/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzzuoyeLTq8H4hfeE.ttf';
+        const boldUrl = 'https://fonts.gstatic.com/s/notosanskr/v39/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzzg01eLQ.ttf';
 
-        const response = await fetch(fontUrl);
-        if (!response.ok) {
-          console.warn('Korean font load failed, using default font');
-          return false;
+        const fetchFont = async (url) => {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return this.arrayBufferToBase64(await response.arrayBuffer());
+        };
+
+        const [regularResult, boldResult] = await Promise.allSettled([
+          fetchFont(regularUrl),
+          fetchFont(boldUrl)
+        ]);
+
+        if (regularResult.status !== 'fulfilled') {
+          console.warn('Korean font load failed, using default font:', regularResult.reason);
+          return { regular: false, bold: false };
         }
 
-        const fontBuffer = await response.arrayBuffer();
-        const base64 = this.arrayBufferToBase64(fontBuffer);
+        const boldOk = boldResult.status === 'fulfilled';
+        if (!boldOk) {
+          console.warn('Korean bold font load failed, using Regular for bold text:', boldResult.reason);
+        }
 
-        // Register font with pdfMake
+        // Register fonts with pdfMake. When Bold is unavailable, map the
+        // bold weights back to Regular so the export still succeeds.
         pdfMake.vfs = pdfMake.vfs || {};
-        pdfMake.vfs['NotoSansKR-Regular.ttf'] = base64;
+        pdfMake.vfs['NotoSansKR-Regular.ttf'] = regularResult.value;
+        if (boldOk) {
+          pdfMake.vfs['NotoSansKR-Bold.ttf'] = boldResult.value;
+        }
+        const boldFile = boldOk ? 'NotoSansKR-Bold.ttf' : 'NotoSansKR-Regular.ttf';
 
         pdfMake.fonts = {
           Roboto: {
@@ -453,18 +435,21 @@ class PDFExporter {
           },
           NotoSansKR: {
             normal: 'NotoSansKR-Regular.ttf',
-            bold: 'NotoSansKR-Regular.ttf',
+            bold: boldFile,
             italics: 'NotoSansKR-Regular.ttf',
-            bolditalics: 'NotoSansKR-Regular.ttf'
+            bolditalics: boldFile
           }
         };
 
         this.fontLoaded = true;
-        console.log('Korean font loaded successfully');
-        return true;
+        this.boldFontLoaded = boldOk;
+        console.log(boldOk
+          ? 'Korean fonts loaded successfully (Regular + Bold)'
+          : 'Korean font loaded (Regular only, Bold unavailable)');
+        return { regular: true, bold: boldOk };
       } catch (error) {
         console.warn('Korean font load error:', error);
-        return false;
+        return { regular: false, bold: false };
       }
     })();
 
@@ -525,16 +510,21 @@ class PDFExporter {
       // Initialize theme
       this.initializeTheme(theme, themeOverrides);
 
-      // Load Korean font first. Without it a Korean export would silently
-      // produce broken Hangul glyphs (Roboto has none), so abort in that
-      // case; English exports proceed with a warning attached to the result.
-      const fontOk = await this.loadKoreanFont();
-      if (!fontOk && this.currentLang === 'ko') {
+      // Load Korean fonts first. Without Regular a Korean export would
+      // silently produce broken Hangul glyphs (Roboto has none), so abort
+      // in that case; English exports proceed with a warning attached to
+      // the result. A missing Bold weight is never fatal: the export
+      // proceeds with Regular substituted and a warning attached.
+      const fontStatus = await this.loadKoreanFont();
+      if (!fontStatus.regular && this.currentLang === 'ko') {
         throw new Error('Korean font (Noto Sans KR) could not be loaded - aborting PDF export to avoid broken Hangul text. Check the network connection and retry.');
       }
-      const fontWarning = fontOk
-        ? null
-        : 'Korean font unavailable - PDF generated with the Latin-only Roboto font.';
+      let fontWarning = null;
+      if (!fontStatus.regular) {
+        fontWarning = 'Korean font unavailable - PDF generated with the Latin-only Roboto font.';
+      } else if (!fontStatus.bold) {
+        fontWarning = 'Korean bold font unavailable - bold text is rendered in the regular weight.';
+      }
 
       // Load cover letter if requested
       let coverLetterTemplate = null;
@@ -613,84 +603,22 @@ class PDFExporter {
   }
 
   /**
-   * Build pdfmake document definition
+   * Build pdfmake document definition from the format-neutral IR tree
    */
   buildDocument(data, sections, info) {
+    const ir = window.ExportIR.build(data, {
+      sections,
+      title: info.title,
+      author: info.author,
+      includeCoverPage: info.includeCoverPage,
+      includeCoverLetter: info.includeCoverLetter,
+      coverLetterTemplate: info.coverLetterTemplate,
+      pageBreakBetweenSections: info.pageBreakBetweenSections,
+      personalInfoFields: info.personalInfoFields
+    }, this.currentLang);
+
     const content = [];
-    const {
-      includeCoverLetter = false,
-      coverLetterTemplate = null,
-      includeCoverPage = true,
-      pageBreakBetweenSections = true,
-      personalInfoFields = []
-    } = info;
-
-    // Cover Page (hero + stats infographic)
-    if (includeCoverPage) {
-      content.push(...this.buildCoverPage(info, data, { personalInfoFields }));
-    }
-
-    // Cover Letter (if included). When the cover page precedes it, force
-    // the letter onto a new page by setting pageBreak:'before' on its first
-    // node — no trailing break (the next section header handles that one).
-    if (includeCoverLetter && coverLetterTemplate) {
-      const letter = this.buildCoverLetterPage(coverLetterTemplate);
-      if (includeCoverPage && letter.length > 0) {
-        letter[0].pageBreak = 'before';
-      }
-      content.push(...letter);
-    }
-
-    // Inline header (only when no cover page is used)
-    if (!includeCoverPage) {
-      content.push(this.buildHeader(info));
-    }
-
-    // Build each section. With a cover page, every section starts on a new page;
-    // otherwise, only break between sections (skip first).
-    sections.forEach((section, index) => {
-      const addPageBreak = includeCoverPage
-        ? true
-        : (pageBreakBetweenSections && index > 0);
-
-      switch (section) {
-        case 'expertise':
-          if (data.expertise) {
-            content.push(...this.buildExpertiseSection(data.expertise, addPageBreak));
-          }
-          break;
-        case 'projects':
-          if (data.projects) {
-            content.push(...this.buildProjectsSection(data.projects, addPageBreak));
-          }
-          break;
-        case 'career':
-          if (data.career) {
-            content.push(...this.buildCareerSection(data.career, addPageBreak));
-          }
-          break;
-        case 'testimonials':
-          if (data.testimonials) {
-            content.push(...this.buildTestimonialsSection(data.testimonials, addPageBreak));
-          }
-          break;
-        case 'manager':
-          if (data.manager) {
-            content.push(...this.buildManagerSection(data.manager, addPageBreak));
-          }
-          break;
-        case 'education':
-          if (data.education) {
-            content.push(...this.buildEducationSection(data.education, addPageBreak));
-          }
-          break;
-        case 'compensation':
-          if (data.compensation) {
-            content.push(...this.buildCompensationSection(data.compensation, addPageBreak));
-          }
-          break;
-      }
-    });
+    ir.children.forEach(section => content.push(...this.renderSection(section)));
 
     // Use theme-based page margins
     const pageMargins = this.themeStyles?.pageMargins || [
@@ -702,14 +630,14 @@ class PDFExporter {
 
     return {
       info: {
-        title: info.title,
-        author: info.author,
+        title: ir.title,
+        author: ir.author,
         subject: 'Professional Portfolio',
         creator: 'Portfolio Admin'
       },
       pageSize: 'A4',
       pageMargins,
-      footer: this.getDocFooter(info),
+      footer: this.getDocFooter(ir),
       defaultStyle: {
         font: this.fontLoaded ? 'NotoSansKR' : 'Roboto',
         fontSize: this.getTypography('fontSize.body'),
@@ -721,211 +649,890 @@ class PDFExporter {
     };
   }
 
+  // ── IR walkers ──────────────────────────────────────────────────────────
+
   /**
-   * Build cover letter page
-   * @param {Object} template - Cover letter template object
-   * @returns {Array} pdfmake content array for cover letter
+   * Render one IR section to an array of pdfmake content nodes
+   * @param {Object} section - IR section node
+   * @returns {Array} pdfmake content nodes
    */
-  buildCoverLetterPage(template) {
-    const lang = this.currentLang;
-    const content = [];
-
-    // Greeting
-    content.push({
-      text: this.getText(template.greeting),
-      fontSize: this.getTypography('fontSize.body'),
-      margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
-    });
-
-    // Opening paragraph (with variable substitution)
-    const position = this.getText(template.targetRole);
-    const opening = this.getText(template.opening).replace('{position}', position);
-    content.push({
-      text: opening,
-      fontSize: this.getTypography('fontSize.body'),
-      lineHeight: this.getTypography('lineHeight') * 1.1,
-      alignment: 'justify',
-      margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
-    });
-
-    // Key points
-    const keyPointsContent = [];
-    const keyPoints = this.getArray(template.keyPoints);
-    keyPoints.forEach(point => {
-      const text = this.getText(point);
-      // Convert **text** to bold
-      const parts = text.split(/\*\*(.+?)\*\*/g);
-      const formattedText = parts.map((part, index) => {
-        if (index % 2 === 1) {
-          // Odd indices are inside **...**
-          return { text: part, bold: true, color: this.getColor('primary') };
-        }
-        return part;
-      });
-
-      keyPointsContent.push({
-        text: formattedText,
-        margin: [0, 0, 0, this.getSpacing('list.itemGap') * 1.2]
-      });
-    });
-
-    content.push({
-      ul: keyPointsContent,
-      margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
-    });
-
-    // Closing paragraph
-    content.push({
-      text: this.getText(template.closing),
-      fontSize: this.getTypography('fontSize.body'),
-      lineHeight: this.getTypography('lineHeight') * 1.1,
-      alignment: 'justify',
-      margin: [0, 0, 0, this.getSpacing('section.gap') * 2]
-    });
-
-    // Signature
-    content.push({
-      text: this.getText(template.signature),
-      fontSize: this.getTypography('fontSize.body'),
-      margin: [0, 0, 0, 0]
-    });
-
-    return content;
+  renderSection(section) {
+    const out = this.renderNodes(section.children, {});
+    // The cover letter starts on a new page by setting pageBreak:'before' on
+    // its first node — no trailing break (the next section header handles
+    // that one). Content-section headings carry their own pageBreakBefore.
+    if (section.id === 'coverLetter' && section.pageBreakBefore && out.length > 0) {
+      out[0].pageBreak = 'before';
+    }
+    return out;
   }
 
   /**
-   * Build cover page with hero block and stats infographic
-   * @param {Object} info - Document info ({title, author})
-   * @param {Object} data - Full portfolio data
-   * @returns {Array} pdfmake content array (ends with page break)
+   * Render a list of IR nodes
+   * @param {Array} nodes - IR nodes
+   * @param {Object} ctx - Render context (e.g. featured testimonial flag)
+   * @returns {Array} pdfmake content nodes
    */
-  buildCoverPage(info, data, opts = {}) {
-    const content = [];
-    const lang = this.currentLang;
-    const selectedFieldIds = Array.isArray(opts.personalInfoFields) ? opts.personalInfoFields : [];
-    const showPersonalInfo = selectedFieldIds.length > 0;
-    const locale = lang === 'ko' ? 'ko-KR' : 'en-US';
-    const dateStr = new Date().toLocaleDateString(locale, {
-      year: 'numeric', month: 'long', day: 'numeric'
-    });
+  renderNodes(nodes, ctx) {
+    const out = [];
+    (nodes || []).forEach(node => out.push(...this.renderNode(node, ctx)));
+    return out;
+  }
 
-    // Subtitle and summary come from the shared ExportContent module
-    // (profile data first, shared constants as fallback).
-    const subtitle = window.ExportContent.getCoverSubtitle(lang, data.profile);
-    const summaryLines = window.ExportContent.getCoverSummaryLines(lang, data.profile);
+  /**
+   * Render a single IR node
+   * @param {Object} node - IR node
+   * @param {Object} ctx - Render context
+   * @returns {Array} pdfmake content nodes
+   */
+  renderNode(node, ctx) {
+    switch (node.type) {
+      case 'group': return this.renderGroup(node, ctx);
+      case 'heading': return this.renderHeading(node);
+      case 'paragraph': return this.renderParagraph(node, ctx);
+      case 'bulletList': return this.renderBulletListNode(node);
+      case 'keyValueList': return this.renderKeyValueList(node);
+      case 'badgeRow': return this.renderBadgeRow(node);
+      case 'table': return this.renderTable(node);
+      case 'statsRow': return this.renderStatsRow(node);
+      case 'spacer': return this.renderSpacer(node);
+      default: return [];
+    }
+  }
 
-    content.push({
-      canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 3, color: this.getColor('primary') }],
-      margin: [0, 40, 0, 48]
-    });
+  /**
+   * Render an IR group as an unbreakable stack (role decides the margin)
+   */
+  renderGroup(node, ctx) {
+    switch (node.role) {
+      case 'expertiseCategory':
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, ctx),
+          margin: [0, 0, 0, this.getSpacing('gap.medium')]
+        }];
+      case 'heroCapabilities':
+      case 'certifications':
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, ctx),
+          margin: [0, 0, 0, 5]
+        }];
+      case 'project':
+        // Card-like block. Bottom margin sized to keep projects distinct
+        // without leaving large gaps on the page.
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, ctx),
+          margin: [0, 0, 0, 22]
+        }];
+      case 'careerEntry':
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, ctx),
+          margin: [0, 0, 0, this.getSpacing('gap.xlarge')]
+        }];
+      case 'educationEntry':
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, ctx),
+          margin: [0, 0, 0, this.getSpacing('gap.medium')]
+        }];
+      case 'testimonial':
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, { ...ctx, featured: !!node.featured }),
+          margin: [0, 14, 0, 22]
+        }];
+      case 'pmCapability':
+        return [{
+          unbreakable: true,
+          stack: this.renderNodes(node.children, ctx),
+          margin: [0, 0, 0, 4]
+        }];
+      default:
+        return this.renderNodes(node.children, ctx);
+    }
+  }
 
-    // Name — 32pt per Microsoft Word resume guide (28–35pt range)
-    content.push({
-      text: info.author || info.title,
-      fontSize: 32,
-      bold: true,
-      color: this.getColor('text.primary'),
-      lineHeight: 1.15,
-      margin: [0, 0, 0, 10]
-    });
+  /**
+   * Render an IR heading node
+   */
+  renderHeading(node) {
+    switch (node.role) {
+      case 'section':
+        return this.buildSectionHeader(node.text, !!node.pageBreakBefore);
+      case 'subsection':
+        return this.buildSubsectionHeader(node.text, !!node.pageBreakBefore);
+      case 'expertiseCategory':
+        // Category title with enhanced primary color
+        return [{
+          text: '[ ' + node.text + ' ]',
+          fontSize: this.getTypography('fontSize.h3'),
+          color: '#3B82F6',  // Primary blue matching web design
+          bold: true,
+          margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
+        }];
+      case 'coreCapabilities':
+        return [{
+          text: node.text,
+          style: 'sectionTitle'
+        }];
+      case 'certifications':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.h3'),
+          color: '#3B82F6',  // Primary blue
+          bold: true,
+          margin: [0, 18, 0, 8]
+        }];
+      default:
+        return [];
+    }
+  }
 
-    // Subtitle / role line
-    content.push({
-      text: subtitle,
-      fontSize: 12,
-      color: this.getColor('primary'),
-      bold: true,
-      characterSpacing: 1.5,
-      margin: [0, 0, 0, showPersonalInfo ? 12 : 26]
-    });
+  /**
+   * Render an IR paragraph node (role decides the exact typography)
+   */
+  renderParagraph(node, ctx) {
+    switch (node.role) {
+      // ── Cover page ────────────────────────────────────────────────
+      case 'coverName':
+        // Name — 32pt per Microsoft Word resume guide (28–35pt range)
+        return [{
+          text: node.text,
+          fontSize: 32,
+          bold: true,
+          color: this.getColor('text.primary'),
+          lineHeight: 1.15,
+          margin: [0, 0, 0, 10]
+        }];
 
-    // Optional personal info row — only the field IDs the user selected.
-    if (showPersonalInfo && data.profile && Array.isArray(data.profile.fields)) {
-      const byId = new Map(data.profile.fields.map(f => [f.id, f]));
-      const parts = selectedFieldIds
-        .map(id => byId.get(id))
-        .filter(Boolean)
-        .map(f => this.getText(f.value))
-        .filter(v => v && v.length > 0);
-      if (parts.length) {
-        content.push({
-          text: parts.join('   ·   '),
+      case 'coverSubtitle':
+        return [{
+          text: node.text,
+          fontSize: 12,
+          color: this.getColor('primary'),
+          bold: true,
+          characterSpacing: 1.5,
+          margin: [0, 0, 0, node.tight ? 12 : 26]
+        }];
+
+      case 'coverPersonalInfo':
+        return [{
+          text: node.text,
           fontSize: 9.5,
           color: this.getColor('text.secondary'),
           margin: [0, 0, 0, 22]
-        });
+        }];
+
+      case 'coverSummary':
+        // Executive summary — single block, lines joined with newlines
+        return [{
+          text: node.lines.join('\n'),
+          fontSize: 10.5,
+          color: this.getColor('text.secondary'),
+          lineHeight: 1.6,
+          margin: [0, 0, 0, 30]
+        }];
+
+      case 'coverCertsLabel':
+        return [{
+          text: node.text,
+          fontSize: 9,
+          color: this.getColor('text.muted'),
+          bold: true,
+          margin: [0, 28, 0, 6]
+        }];
+
+      case 'coverCertsText':
+        return [{
+          text: node.text,
+          fontSize: 11,
+          color: this.getColor('success'),
+          bold: true,
+          margin: [0, 0, 0, 0]
+        }];
+
+      case 'coverDate':
+        return [{
+          text: node.text,
+          fontSize: 9,
+          color: this.getColor('text.muted'),
+          alignment: 'right',
+          margin: [0, 60, 0, 0]
+        }];
+
+      // ── Cover letter ──────────────────────────────────────────────
+      case 'clGreeting':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.body'),
+          margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
+        }];
+
+      case 'clOpening':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.body'),
+          lineHeight: this.getTypography('lineHeight') * 1.1,
+          alignment: 'justify',
+          margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
+        }];
+
+      case 'clClosing':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.body'),
+          lineHeight: this.getTypography('lineHeight') * 1.1,
+          alignment: 'justify',
+          margin: [0, 0, 0, this.getSpacing('section.gap') * 2]
+        }];
+
+      case 'clSignature':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.body'),
+          margin: [0, 0, 0, 0]
+        }];
+
+      // ── Inline header (no cover page) ─────────────────────────────
+      case 'inlineHeader': {
+        const titleRun = node.runs.find(r => r.role === 'title');
+        const dateRun = node.runs.find(r => r.role === 'date');
+        return [{
+          columns: [
+            {
+              text: titleRun ? titleRun.text : '',
+              fontSize: this.getTypography('fontSize.h1'),
+              bold: true,
+              color: this.getColor('primary')  // Use primary color directly instead of style
+            },
+            {
+              text: dateRun ? dateRun.text : '',
+              alignment: 'right',
+              fontSize: this.getTypography('fontSize.small'),
+              color: this.getColor('text.muted'),
+              margin: [0, 8, 0, 0],
+              width: 'auto'
+            }
+          ],
+          margin: [0, 0, 0, this.getSpacing('header.marginBottom')]
+        }];
       }
+
+      // ── Projects ──────────────────────────────────────────────────
+      case 'projectTitle':
+        return [{
+          text: node.text,
+          bold: true,
+          fontSize: this.getTypography('fontSize.h3'),
+          color: this.getColor('primary'),  // Primary for emphasis
+          margin: [0, 0, 0, 4],
+          lineHeight: this.getTypography('lineHeight.tight')
+        }];
+
+      case 'projectMeta': {
+        const company = node.runs.find(r => r.role === 'company');
+        const period = node.runs.find(r => r.role === 'period');
+        const metaText = [];
+        if (company) {
+          metaText.push({
+            text: company.text,
+            color: this.getColor('text.secondary'),
+            bold: true
+          });
+        }
+        if (period) {
+          if (company) {
+            metaText.push({ text: ' | ', color: this.getColor('text.muted') });
+          }
+          metaText.push({
+            text: period.text,
+            color: this.getColor('accent')  // Accent color for dates
+          });
+        }
+        return [{
+          text: metaText,
+          fontSize: this.getTypography('fontSize.small'),
+          italics: true,
+          margin: [0, 0, 0, 6]
+        }];
+      }
+
+      case 'projectDescription':
+        return [{
+          text: node.text,
+          color: this.getColor('text.secondary'),
+          fontSize: this.getTypography('fontSize.body'),
+          lineHeight: this.getTypography('lineHeight.relaxed'),
+          margin: [0, 0, 0, 8]
+        }];
+
+      case 'blockLabel': {
+        // Color-coded '[ Label ]' block headers (web palette)
+        const styles = {
+          roles: { color: '#3B82F6', margin: [0, 0, 0, 4] },
+          challenges: { color: '#F59E0B', margin: [0, 6, 0, 4] },
+          solutions: { color: '#3B82F6', margin: [0, 6, 0, 4] },
+          achievements: { color: '#10B981', margin: [0, 6, 0, 4] },
+          keyAchievements: { color: '#10B981', margin: [0, 6, 0, 3] }
+        };
+        const s = styles[node.variant] || styles.roles;
+        return [{
+          text: node.text,
+          bold: true,
+          fontSize: this.getTypography('fontSize.h4'),
+          color: s.color,
+          margin: s.margin
+        }];
+      }
+
+      // ── Career ────────────────────────────────────────────────────
+      case 'careerHeader': {
+        const title = node.runs.find(r => r.role === 'title');
+        const badge = node.runs.find(r => r.role === 'badge');
+        const period = node.runs.find(r => r.role === 'period');
+        const companyText = [];
+        companyText.push({
+          text: title ? title.text : '',
+          bold: true,
+          color: '#3B82F6'  // Primary color
+        });
+        if (badge) {
+          companyText.push({
+            text: ' [' + badge.text + ']',
+            color: '#F59E0B',  // Warning color
+            bold: true
+          });
+        }
+        return [{
+          columns: [
+            {
+              text: companyText,
+              fontSize: this.getTypography('fontSize.h3'),
+              width: '*'
+            },
+            {
+              text: period ? period.text : '',
+              alignment: 'right',
+              color: '#3B82F6',  // Primary color for dates
+              fontSize: this.getTypography('fontSize.small'),
+              bold: true,
+              width: 'auto'
+            }
+          ],
+          margin: [0, 8, 0, 4]
+        }];
+      }
+
+      case 'careerRole':
+        return [{
+          text: '> ' + node.text,
+          color: '#0F172A',  // Text primary
+          fontSize: this.getTypography('fontSize.body'),
+          bold: true,
+          margin: [0, 0, 0, 4]
+        }];
+
+      case 'careerCompanyDescription':
+        return [{
+          text: node.text,
+          italics: true,
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 3]
+        }];
+
+      case 'careerResponsibilities': {
+        const label = node.runs.find(r => r.role === 'label');
+        const value = node.runs.find(r => r.role === 'value');
+        return [{
+          text: [
+            { text: (label ? label.text : '') + ' ', bold: true },
+            { text: value ? value.text : '' }
+          ],
+          color: this.getColor('text.secondary'),
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 3]
+        }];
+      }
+
+      case 'careerDescription':
+        return [{
+          text: node.text,
+          color: this.getColor('text.secondary'),
+          margin: [0, 0, 0, 3]
+        }];
+
+      case 'careerNote':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.small'),
+          italics: true,
+          color: this.getColor('text.muted'),
+          margin: [0, 3, 0, 5]
+        }];
+
+      case 'careerLeaveReason': {
+        const label = node.runs.find(r => r.role === 'label');
+        const value = node.runs.find(r => r.role === 'value');
+        return [{
+          text: [
+            { text: (label ? label.text : '') + ' ', bold: true },
+            { text: value ? value.text : '' }
+          ],
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.tiny'),
+          margin: [0, 0, 0, 3]
+        }];
+      }
+
+      // ── Education ─────────────────────────────────────────────────
+      case 'eduHeader': {
+        const title = node.runs.find(r => r.role === 'title');
+        const meta = node.runs.find(r => r.role === 'meta');
+        return [{
+          columns: [
+            {
+              text: title ? title.text : '',
+              fontSize: this.getTypography('fontSize.h3'),
+              bold: true,
+              color: this.getColor('primary'),
+              width: '*'
+            },
+            {
+              text: meta ? meta.text : '',
+              alignment: 'right',
+              color: this.getColor('primary'),
+              fontSize: this.getTypography('fontSize.small'),
+              bold: true,
+              width: 'auto'
+            }
+          ],
+          margin: [0, 8, 0, 4]
+        }];
+      }
+
+      case 'eduDegree':
+        return [{
+          text: node.text,
+          color: this.getColor('text.primary'),
+          fontSize: this.getTypography('fontSize.body'),
+          margin: [0, 0, 0, 3]
+        }];
+
+      case 'eduLocation':
+        return [{
+          text: node.text,
+          color: this.getColor('text.muted'),
+          italics: true,
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 3]
+        }];
+
+      // ── Compensation (private) ────────────────────────────────────
+      case 'compSubtitle':
+        return [{
+          text: node.text,
+          italics: true,
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.body'),
+          margin: [0, 0, 0, 6]
+        }];
+
+      case 'compIntro':
+        return [{
+          text: node.text,
+          color: this.getColor('text.primary'),
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 10]
+        }];
+
+      case 'compWarning':
+        // Confidentiality watermark line
+        return [{
+          text: node.text,
+          color: '#b91c1c',
+          bold: true,
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 10]
+        }];
+
+      case 'compBlockTitle':
+        return [{
+          text: node.text,
+          bold: true,
+          color: this.getColor('primary'),
+          fontSize: this.getTypography('fontSize.h3'),
+          margin: [0, node.variant === 'package' ? 0 : 12, 0, 4]
+        }];
+
+      case 'compEstimate':
+        return [{
+          text: node.text,
+          italics: true,
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 4, 0, 12]
+        }];
+
+      case 'compStance':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.primary'),
+          margin: [0, 0, 0, 8]
+        }];
+
+      case 'compLastUpdated':
+        return [{
+          text: node.text,
+          italics: true,
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.small'),
+          alignment: 'right',
+          margin: [0, 8, 0, 0]
+        }];
+
+      // ── Testimonials ──────────────────────────────────────────────
+      case 'testimonialFeaturedTag':
+        return [{
+          text: node.text,
+          fontSize: this.getTypography('fontSize.tiny'),
+          color: '#3B82F6',  // Primary
+          bold: true,
+          margin: [0, 0, 0, 4]
+        }];
+
+      case 'testimonialQuote':
+        return [{
+          text: `"${node.text}"`,
+          italics: true,
+          fontSize: (ctx && ctx.featured)
+            ? this.getTypography('fontSize.body') + 1
+            : this.getTypography('fontSize.body'),
+          margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
+          color: '#0F172A',  // Text primary
+          lineHeight: this.getTypography('lineHeight.relaxed')
+        }];
+
+      case 'testimonialAuthor': {
+        const author = node.runs.find(r => r.role === 'author');
+        const authorRole = node.runs.find(r => r.role === 'authorRole');
+        const relation = node.runs.find(r => r.role === 'relation');
+        const authorText = [];
+        authorText.push({
+          text: author ? author.text : '',
+          bold: true,
+          color: '#3B82F6'  // Primary
+        });
+        if (authorRole) {
+          authorText.push({
+            text: ', ' + authorRole.text,
+            color: '#475569',  // Text secondary
+            bold: false
+          });
+        }
+        if (relation) {
+          authorText.push({
+            text: ` (${relation.text})`,
+            color: '#3B82F6',  // Primary
+            italics: true
+          });
+        }
+        return [{
+          text: authorText,
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [this.getSpacing('list.indent'), 0, 0, 0]
+        }];
+      }
+
+      // ── Manager / leadership ──────────────────────────────────────
+      case 'pmCapTitle':
+        return [{
+          text: [
+            { text: '◆ ', color: this.getColor('accent'), fontSize: 12, bold: true },
+            { text: node.text, color: this.getColor('primary'), bold: true, fontSize: 12 }
+          ],
+          margin: [0, node.first ? 0 : 10, 0, 4]
+        }];
+
+      case 'pmCapDescription':
+        return [{
+          text: node.text,
+          color: this.getColor('text.secondary'),
+          italics: true,
+          fontSize: 10.5,
+          lineHeight: 1.5,
+          margin: [16, 0, 0, 6]
+        }];
+
+      default:
+        return [];
     }
-
-    // Executive summary — 3-line P&L / team-size / impact synthesis (HBS pattern)
-    content.push({
-      text: summaryLines.join('\n'),
-      fontSize: 10.5,
-      color: this.getColor('text.secondary'),
-      lineHeight: 1.6,
-      margin: [0, 0, 0, 30]
-    });
-
-    content.push({
-      canvas: [{ type: 'line', x1: 0, y1: 0, x2: 451, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
-      margin: [0, 0, 0, 26]
-    });
-
-    const stats = this.buildStatsInfographic(data);
-    if (stats) content.push(stats);
-
-    if (data.expertise?.certifications?.length > 0) {
-      const certText = data.expertise.certifications.map(c => this.getText(c.name)).join('  ·  ');
-      content.push({
-        text: lang === 'ko' ? '인증 / Certifications' : 'Certifications',
-        fontSize: 9,
-        color: this.getColor('text.muted'),
-        bold: true,
-        margin: [0, 28, 0, 6]
-      });
-      content.push({
-        text: certText,
-        fontSize: 11,
-        color: this.getColor('success'),
-        bold: true,
-        margin: [0, 0, 0, 0]
-      });
-    }
-
-    content.push({
-      text: dateStr,
-      fontSize: 9,
-      color: this.getColor('text.muted'),
-      alignment: 'right',
-      margin: [0, 60, 0, 0]
-    });
-
-    // No trailing pageBreak: 'after' here — the next section header
-    // already carries pageBreak: 'before', so adding both produces a blank page.
-    return content;
   }
 
   /**
-   * Build a 4-column stats infographic for the cover page
-   * @param {Object} data - Portfolio data
-   * @returns {Object|null} pdfmake table node or null when no data
+   * Render an IR bullet list node (role decides marker color and margins)
    */
-  buildStatsInfographic(data) {
-    const lang = this.currentLang;
-    const kn = data?.manager?.businessImpact?.keyNumbers || {};
-    const certCount = data?.expertise?.certifications?.length || kn.certifications;
-    const stats = [];
+  renderBulletListNode(node) {
+    const texts = (node.items || []).map(item => item.text);
 
-    stats.push({ value: '20+', label: lang === 'ko' ? '경력 (년)' : 'Years' });
-    if (certCount) stats.push({ value: String(certCount), label: lang === 'ko' ? '글로벌 인증' : 'Certifications' });
-    if (kn.ipos) stats.push({ value: String(kn.ipos), label: 'IPO' });
-    if (kn.performanceImprovement) stats.push({ value: String(kn.performanceImprovement), label: lang === 'ko' ? '성능 향상' : 'Performance' });
-    if (kn.projectsDelivered && stats.length < 4) {
-      stats.push({ value: String(kn.projectsDelivered), label: lang === 'ko' ? '프로젝트' : 'Projects' });
+    switch (node.role) {
+      case 'expertiseItems':
+        return [this.buildBulletList(texts)];
+
+      case 'projectDetail': {
+        const markerByVariant = {
+          roles: this.getColor('accent'),
+          challenges: this.getColor('warning'),
+          solutions: this.getColor('accent'),
+          achievements: this.getColor('success')
+        };
+        return [this.buildBulletList(texts, {
+          markerColor: markerByVariant[node.variant] || this.getColor('accent'),
+          bottomMargin: 6
+        })];
+      }
+
+      case 'careerAchievements':
+        return [this.buildBulletList(texts, { markerColor: this.getColor('success'), bottomMargin: 6 })];
+
+      case 'pmCapHighlights':
+        return [this.buildBulletList(texts, { markerColor: this.getColor('accent'), bottomMargin: 6 })];
+
+      case 'managerPrinciples':
+        return [this.buildBulletList(texts, { markerColor: this.getColor('accent') })];
+
+      case 'managerImpact':
+        return [this.buildBulletList(texts, { markerColor: this.getColor('success') })];
+
+      case 'clKeyPoints': {
+        const keyPointsContent = (node.items || []).map(item => ({
+          text: (item.runs || []).map(r => r.role === 'strong'
+            ? { text: r.text, bold: true, color: this.getColor('primary') }
+            : r.text),
+          margin: [0, 0, 0, this.getSpacing('list.itemGap') * 1.2]
+        }));
+        return [{
+          ul: keyPointsContent,
+          margin: [0, 0, 0, this.getSpacing('section.gap') * 1.5]
+        }];
+      }
+
+      case 'compNonNegotiables':
+        return texts.map(text => ({
+          text: `• ${text}`,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.primary'),
+          margin: [0, 0, 0, 2]
+        }));
+
+      default:
+        return [];
     }
+  }
 
-    const finalStats = stats.slice(0, 4);
-    if (finalStats.length === 0) return null;
+  /**
+   * Render an IR key/value list
+   */
+  renderKeyValueList(node) {
+    const entries = node.entries || [];
+
+    switch (node.role) {
+      case 'heroCapabilities':
+        return entries.map(entry => ({
+          text: [
+            { text: entry.label + ': ', bold: true },
+            { text: entry.value }
+          ],
+          margin: [this.getSpacing('list.indent'), 0, 0, 5]
+        }));
+
+      case 'careerScale':
+        return [{
+          text: entries.map(entry => `${entry.label} ${entry.value}`).join('  |  '),
+          color: this.getColor('text.muted'),
+          fontSize: this.getTypography('fontSize.tiny'),
+          margin: [0, 0, 0, 3]
+        }];
+
+      case 'compComponents':
+        return entries.map(entry => ({
+          text: `• ${entry.label}: ${entry.value}`,
+          fontSize: this.getTypography('fontSize.small'),
+          color: this.getColor('text.primary'),
+          margin: [0, 0, 0, 2]
+        }));
+
+      case 'compRationales':
+        // Per-tier rationale lines
+        return entries.map(entry => ({
+          text: [
+            { text: `${entry.label}: `, bold: true, color: this.getColor('primary') },
+            { text: entry.value, color: this.getColor('text.muted') }
+          ],
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 3]
+        }));
+
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * Render an IR badge row. The joiner and bracket decoration are PDF
+   * styling decisions (the DOCX walker uses its own).
+   */
+  renderBadgeRow(node) {
+    const items = node.items || [];
+
+    switch (node.role) {
+      case 'expertiseTags':
+        return [{
+          text: '[ ' + items.join(' | ') + ' ]',
+          fontSize: this.getTypography('fontSize.small') + 1,  // Slightly larger
+          color: '#3B82F6',  // Primary blue matching web
+          bold: true,
+          margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
+        }];
+
+      case 'certificationBadges':
+        return [{
+          text: items.join(' | '),
+          color: this.getColor('success'),  // Success green matching web
+          bold: true,
+          fontSize: this.getTypography('fontSize.body') + 1,
+          margin: [this.getSpacing('list.indent'), 0, 0, 10]
+        }];
+
+      case 'projectTags':
+        return [{
+          text: '[ ' + items.join(' | ') + ' ]',
+          fontSize: this.getTypography('fontSize.tiny') + 1,  // Slightly larger for readability
+          color: '#3B82F6',  // Primary blue matching web accent
+          bold: true,
+          margin: [0, 0, 0, 8]
+        }];
+
+      case 'careerTags':
+        return [{
+          text: items.join(' | '),
+          color: this.getColor('primary'),
+          fontSize: this.getTypography('fontSize.tiny'),
+          margin: [0, 0, 0, 5]
+        }];
+
+      case 'testimonialLabels':
+        return [{
+          text: '[ ' + items.join(' | ') + ' ]',
+          fontSize: this.getTypography('fontSize.tiny'),
+          color: '#10B981',  // Success
+          bold: true,
+          margin: [this.getSpacing('list.indent'), 5, 0, 0]
+        }];
+
+      case 'pmCapMetrics':
+        return [{
+          text: items.join('   ·   '),
+          color: this.getColor('accent'),
+          bold: true,
+          fontSize: 9,
+          margin: [16, 4, 0, 0]
+        }];
+
+      case 'pmCapTags':
+        return [{
+          text: items.join(' · '),
+          color: this.getColor('text.muted'),
+          fontSize: 9,
+          margin: [16, 4, 0, 0]
+        }];
+
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * Render an IR table node
+   */
+  renderTable(node) {
+    switch (node.role) {
+      case 'compTiers': {
+        // Negotiation tiers as a compact table
+        const headerRow = (node.header || []).map(h => ({ text: h, bold: true }));
+        const body = [headerRow];
+        (node.rows || []).forEach(rowData => {
+          body.push(rowData.map((val, idx) => idx === 0
+            ? { text: val, bold: true }
+            : { text: val }));
+        });
+        return [{
+          table: {
+            headerRows: 1,
+            widths: ['auto', '*', '*', '*', '*', '*'],
+            body
+          },
+          layout: 'lightHorizontalLines',
+          fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 10]
+        }];
+      }
+
+      case 'softSkillsGrid': {
+        // 2-column descriptive grid
+        const buildSkillCell = (skill) => ({
+          stack: [
+            {
+              text: [
+                { text: '◆  ', color: this.getColor('accent'), fontSize: 11, bold: true },
+                { text: skill.title, color: this.getColor('primary'), bold: true, fontSize: 11.5 }
+              ],
+              margin: [0, 0, 0, 5]
+            },
+            ...(skill.description ? [{
+              text: skill.description,
+              color: this.getColor('text.secondary'),
+              fontSize: 9.5,
+              lineHeight: 1.55,
+              margin: [16, 0, 0, 0]
+            }] : [])
+          ]
+        });
+
+        const cells = (node.cells || []).map(buildSkillCell);
+        while (cells.length % 2 !== 0) cells.push({ text: '' });
+        const rows = [];
+        for (let i = 0; i < cells.length; i += 2) rows.push(cells.slice(i, i + 2));
+
+        return [{
+          table: { widths: ['*', '*'], body: rows },
+          layout: {
+            hLineWidth: () => 0,
+            vLineWidth: () => 0,
+            paddingLeft: () => 10,
+            paddingRight: () => 10,
+            paddingTop: () => 10,
+            paddingBottom: () => 12
+          },
+          margin: [0, 0, 0, 6]
+        }];
+      }
+
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * Render the cover-page stats row as a 2-row infographic table
+   */
+  renderStatsRow(node) {
+    const finalStats = node.items || [];
+    if (finalStats.length === 0) return [];
 
     const widths = Array(finalStats.length).fill('*');
     const valueRow = finalStats.map(s => ({
@@ -946,7 +1553,7 @@ class PDFExporter {
       margin: [0, 8, 0, 12]
     }));
 
-    return {
+    return [{
       table: { widths, heights: [56, 28], body: [valueRow, labelRow] },
       layout: {
         hLineWidth: () => 0,
@@ -958,7 +1565,85 @@ class PDFExporter {
         paddingBottom: () => 0
       },
       margin: [0, 0, 0, 0]
-    };
+    }];
+  }
+
+  /**
+   * Render decorative spacers/rules (role decides the exact visual)
+   */
+  renderSpacer(node) {
+    switch (node.role) {
+      case 'coverTopRule':
+        return [{
+          canvas: [{ type: 'rect', x: 0, y: 0, w: 60, h: 3, color: this.getColor('primary') }],
+          margin: [0, 40, 0, 48]
+        }];
+
+      case 'coverDivider':
+        return [{
+          canvas: [{ type: 'line', x1: 0, y1: 0, x2: 451, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+          margin: [0, 0, 0, 26]
+        }];
+
+      case 'inlineHeaderRule': {
+        // Header underline depends on the theme's headerStyle layout key
+        const headerStyle = this.getLayout('headerStyle');
+        if (headerStyle === 'underlined' || headerStyle === 'bordered') {
+          return [{
+            canvas: [{
+              type: 'line',
+              x1: 0, y1: 0,
+              x2: 451, y2: 0,
+              lineWidth: 3,
+              lineColor: this.getColor('primary')
+            }],
+            margin: [0, this.getSpacing('header.paddingBottom'), 0, this.getSpacing('section.marginTop')]
+          }];
+        } else if (headerStyle === 'boxed') {
+          return [{
+            canvas: [{
+              type: 'rect',
+              x: 0, y: -50,
+              w: 451, h: 80,
+              lineWidth: 1,
+              lineColor: '#E2E8F0'
+            }],
+            margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
+          }];
+        }
+        // Default: simple spacing
+        return [{
+          text: '',
+          margin: [0, 0, 0, this.getSpacing('section.marginTop')]
+        }];
+      }
+
+      case 'projectDetailRule':
+        // Separator between project summary and expanded details
+        return [{
+          canvas: [{
+            type: 'line',
+            x1: 0, y1: 0,
+            x2: 150, y2: 0,
+            lineWidth: 1,
+            lineColor: '#E2E8F0'
+          }],
+          margin: [0, 8, 0, 8]
+        }];
+
+      case 'testimonialDivider':
+        // Thin centered rule between adjacent testimonials
+        return [{
+          canvas: [{ type: 'line', x1: 200, y1: 0, x2: 315, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
+          margin: [0, 4, 0, 6]
+        }];
+
+      case 'pmCapabilitiesEnd':
+        return [{ text: '', margin: [0, 0, 0, 10] }];
+
+      default:
+        return [];
+    }
   }
 
   /**
@@ -996,86 +1681,6 @@ class PDFExporter {
     };
   }
 
-  /**
-   * Build document header with enhanced styling
-   */
-  buildHeader(info) {
-    const headerStyle = this.getLayout('headerStyle');
-    const locale = this.currentLang === 'ko' ? 'ko-KR' : 'en-US';
-
-    // Enhanced header with better typography
-    const headerContent = {
-      columns: [
-        {
-          text: info.author || info.title,
-          fontSize: this.getTypography('fontSize.h1'),
-          bold: true,
-          color: this.getColor('primary')  // Use primary color directly instead of style
-        },
-        {
-          text: new Date().toLocaleDateString(locale, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }),
-          alignment: 'right',
-          fontSize: this.getTypography('fontSize.small'),
-          color: this.getColor('text.muted'),
-          margin: [0, 8, 0, 0],
-          width: 'auto'
-        }
-      ],
-      margin: [0, 0, 0, this.getSpacing('header.marginBottom')]
-    };
-
-    // Apply header style with gradient-like effect
-    if (headerStyle === 'underlined' || headerStyle === 'bordered') {
-      return [
-        headerContent,
-        {
-          canvas: [{
-            type: 'line',
-            x1: 0, y1: 0,
-            x2: 451, y2: 0,
-            lineWidth: 3,
-            lineColor: this.getColor('primary')
-          }],
-          margin: [0, this.getSpacing('header.paddingBottom'), 0, this.getSpacing('section.marginTop')]
-        }
-      ];
-    } else if (headerStyle === 'boxed') {
-      return [
-        headerContent,
-        {
-          canvas: [{
-            type: 'rect',
-            x: 0, y: -50,
-            w: 451, h: 80,
-            lineWidth: 1,
-            lineColor: '#E2E8F0'
-          }],
-          margin: [0, 0, 0, this.getSpacing('section.marginBottom')]
-        }
-      ];
-    }
-
-    // Default: simple header with spacing
-    return [
-      headerContent,
-      {
-        text: '',
-        margin: [0, 0, 0, this.getSpacing('section.marginTop')]
-      }
-    ];
-  }
-
-  /**
-   * Build a card-style section header with optional page break.
-   * Returns nodes ready to push into pdfmake content (header + spacer).
-   * @param {string} text - Section title (uppercase recommended)
-   * @param {boolean} addPageBreak - Force page break before this section
-   * @returns {Array} pdfmake content nodes
-   */
   /**
    * Render a bullet list as a stack of paragraphs that mirrors the DOCX
    * '·  ' style — colored leading marker + indented body text. This keeps
@@ -1141,6 +1746,13 @@ class PDFExporter {
     ];
   }
 
+  /**
+   * Build a card-style section header with optional page break.
+   * Returns nodes ready to push into pdfmake content (header + rule).
+   * @param {string} text - Section title (uppercase applied)
+   * @param {boolean} addPageBreak - Force page break before this section
+   * @returns {Array} pdfmake content nodes
+   */
   buildSectionHeader(text, addPageBreak = false) {
     // Single full-width primary-color rule under the heading,
     // matching the DOCX H2 paragraph bottom border (1.5pt primary).
@@ -1161,995 +1773,6 @@ class PDFExporter {
         margin: [0, 0, 0, 18]
       }
     ];
-  }
-
-  /**
-   * Build expertise section
-   * @param {Object} expertise - Expertise data
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildExpertiseSection(expertise, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-
-    content.push(...this.buildSectionHeader(labels.expertise, addPageBreak));
-
-    // Categories with color-coded sections
-    if (expertise.categories && expertise.categories.length > 0) {
-      expertise.categories.forEach((category, index) => {
-        const categoryContent = [];
-
-        // Category title with enhanced primary color (style removed to allow color override)
-        categoryContent.push({
-          text: '[ ' + this.getText(category.title) + ' ]',
-          fontSize: this.getTypography('fontSize.h3'),
-          color: '#3B82F6',  // Primary blue matching web design
-          bold: true,
-          margin: [0, this.getSpacing('subsection.marginTop'), 0, this.getSpacing('subsection.marginBottom')]
-        });
-
-        const items = this.getArray(category.items);
-        if (items.length > 0) {
-          categoryContent.push(this.buildBulletList(
-            items.map(item => this.stripHtml(this.getText(item)))
-          ));
-        }
-
-        // Handle tags for Technologies category with web-like styling
-        const tags = this.getArray(category.tags);
-        if (tags.length > 0) {
-          categoryContent.push({
-            text: '[ ' + tags.map(tag => this.getText(tag)).join(' | ') + ' ]',
-            fontSize: this.getTypography('fontSize.small') + 1,  // Slightly larger
-            color: '#3B82F6',  // Primary blue matching web
-            bold: true,
-            margin: [this.getSpacing('list.indent'), 0, 0, this.getSpacing('list.marginBottom')]
-          });
-        }
-
-        content.push({
-          unbreakable: true,
-          stack: categoryContent,
-          margin: [0, 0, 0, this.getSpacing('gap.medium')]
-        });
-      });
-    }
-
-    // Hero Capabilities
-    if (expertise.heroCapabilities && expertise.heroCapabilities.length > 0) {
-      const capabilitiesContent = [];
-
-      capabilitiesContent.push({
-        text: labels.coreCapabilities,
-        style: 'sectionTitle'
-      });
-
-      expertise.heroCapabilities.forEach(cap => {
-        capabilitiesContent.push({
-          text: [
-            { text: this.getText(cap.title) + ': ', bold: true },
-            { text: this.getText(cap.description) }
-          ],
-          margin: [this.getSpacing('list.indent'), 0, 0, 5]
-        });
-      });
-
-      content.push({
-        unbreakable: true,
-        stack: capabilitiesContent,
-        margin: [0, 0, 0, 5]
-      });
-    }
-
-    // Certifications with enhanced web-like styling
-    if (expertise.certifications && expertise.certifications.length > 0) {
-      content.push({
-        unbreakable: true,
-        stack: [
-          {
-            text: labels.certifications,
-            fontSize: this.getTypography('fontSize.h3'),
-            color: '#3B82F6',  // Primary blue
-            bold: true,
-            margin: [0, 18, 0, 8]
-          },
-          {
-            text: expertise.certifications.map(cert => this.getText(cert.name)).join(' | '),
-            color: this.getColor('success'),  // Success green matching web
-            bold: true,
-            fontSize: this.getTypography('fontSize.body') + 1,
-            margin: [this.getSpacing('list.indent'), 0, 0, 10]
-          }
-        ],
-        margin: [0, 0, 0, 5]
-      });
-    }
-
-    return content;
-  }
-
-  /**
-   * Strip HTML tags from text
-   */
-  stripHtml(html) {
-    if (!html) return '';
-    return html.replace(/<[^>]*>/g, '');
-  }
-
-  /**
-   * Build projects section
-   * @param {Object} projects - Projects data
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildProjectsSection(projects, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-
-    content.push(...this.buildSectionHeader(labels.projects, addPageBreak));
-
-    // Each category that has projects starts on a new page for readability.
-    // The very first category sits on the same page as the PROJECTS header.
-    let firstCategory = true;
-
-    if (projects.featured && projects.featured.length > 0) {
-      content.push(...this.buildSubsectionHeader(labels.featuredProjects, !firstCategory));
-      firstCategory = false;
-      projects.featured.forEach(project => {
-        content.push(this.formatProject(project));
-      });
-    }
-
-    const categories = ['medicalImaging', 'orthodontic', 'equipmentControl', 'enterprise', 'openSource'];
-    categories.forEach(category => {
-      if (projects[category] && projects[category].length > 0) {
-        const categoryName = this.formatCategoryName(category);
-        content.push(...this.buildSubsectionHeader(categoryName, !firstCategory));
-        firstCategory = false;
-        projects[category].forEach(project => {
-          content.push(this.formatProject(project));
-        });
-      }
-    });
-
-    return content;
-  }
-
-  /**
-   * Format a single project with enhanced color coding
-   */
-  formatProject(project) {
-    const items = [];
-    const labels = this.getLabels();
-
-    // Project title with primary color for emphasis
-    items.push({
-      text: this.getText(project.title) || this.getText(project.name) || 'Untitled Project',
-      bold: true,
-      fontSize: this.getTypography('fontSize.h3'),
-      color: this.getColor('primary'),  // Changed to primary for emphasis
-      margin: [0, 0, 0, 4],
-      lineHeight: this.getTypography('lineHeight.tight')
-    });
-
-    // Company and period with distinct colors
-    if (project.company || project.period) {
-      const metaText = [];
-      if (project.company) {
-        metaText.push({
-          text: this.getText(project.company),
-          color: this.getColor('text.secondary'),
-          bold: true
-        });
-      }
-      if (project.period) {
-        const period = this.formatPeriodWithDuration(project.period);
-        if (project.company) {
-          metaText.push({ text: ' | ', color: this.getColor('text.muted') });
-        }
-        metaText.push({
-          text: period,
-          color: this.getColor('accent')  // Accent color for dates
-        });
-      }
-
-      items.push({
-        text: metaText,
-        fontSize: this.getTypography('fontSize.small'),
-        italics: true,
-        margin: [0, 0, 0, 6]
-      });
-    }
-
-    // Description with better spacing
-    if (project.description) {
-      items.push({
-        text: this.stripHtml(this.getText(project.description)),
-        color: this.getColor('text.secondary'),
-        fontSize: this.getTypography('fontSize.body'),
-        lineHeight: this.getTypography('lineHeight.relaxed'),
-        margin: [0, 0, 0, 8]
-      });
-    }
-
-    // Tags with enhanced web-like styling
-    const tags = this.getArray(project.tags);
-    if (tags.length > 0) {
-      items.push({
-        text: '[ ' + tags.map(tag => this.getText(tag)).join(' | ') + ' ]',
-        fontSize: this.getTypography('fontSize.tiny') + 1,  // Slightly larger for readability
-        color: '#3B82F6',  // Primary blue matching web accent
-        bold: true,
-        margin: [0, 0, 0, 8]
-      });
-    }
-
-    // Expanded details with color-coded sections
-    if (project.expanded) {
-      const roles = this.getArray(project.expanded.roles);
-      if (roles.length > 0) {
-        // Add a separator line
-        items.push({
-          canvas: [{
-            type: 'line',
-            x1: 0, y1: 0,
-            x2: 150, y2: 0,
-            lineWidth: 1,
-            lineColor: '#E2E8F0'
-          }],
-          margin: [0, 8, 0, 8]
-        });
-
-        items.push({
-          text: '[ ' + labels.keyResponsibilities + ' ]',
-          bold: true,
-          fontSize: this.getTypography('fontSize.h4'),
-          color: '#3B82F6',  // Primary color
-          margin: [0, 0, 0, 4]
-        });
-        items.push(this.buildBulletList(
-          roles.map(r => this.stripHtml(this.getText(r))),
-          { markerColor: this.getColor('accent'), bottomMargin: 6 }
-        ));
-      }
-
-      // Challenges / solutions mirror the public site's expanded project
-      // card (components.js) so exported documents carry the same content.
-      const challenges = this.getArray(project.expanded.challenges);
-      if (challenges.length > 0) {
-        items.push({
-          text: '[ ' + labels.challenges + ' ]',
-          bold: true,
-          fontSize: this.getTypography('fontSize.h4'),
-          color: '#F59E0B',  // Warning color
-          margin: [0, 6, 0, 4]
-        });
-        items.push(this.buildBulletList(
-          challenges.map(c => this.stripHtml(this.getText(c))),
-          { markerColor: this.getColor('warning'), bottomMargin: 6 }
-        ));
-      }
-
-      const solutions = this.getArray(project.expanded.solutions);
-      if (solutions.length > 0) {
-        items.push({
-          text: '[ ' + labels.solutions + ' ]',
-          bold: true,
-          fontSize: this.getTypography('fontSize.h4'),
-          color: '#3B82F6',  // Primary color
-          margin: [0, 6, 0, 4]
-        });
-        items.push(this.buildBulletList(
-          solutions.map(s => this.stripHtml(this.getText(s))),
-          { markerColor: this.getColor('accent'), bottomMargin: 6 }
-        ));
-      }
-
-      const achievements = this.getArray(project.expanded.achievements);
-      if (achievements.length > 0) {
-        items.push({
-          text: '[ ' + labels.achievements + ' ]',
-          bold: true,
-          fontSize: this.getTypography('fontSize.h4'),
-          color: '#10B981',  // Success color
-          margin: [0, 6, 0, 4]
-        });
-        items.push(this.buildBulletList(
-          achievements.map(a => this.stripHtml(this.getText(a))),
-          { markerColor: this.getColor('success'), bottomMargin: 6 }
-        ));
-      }
-    }
-
-    // Return with card-like styling. Bottom margin sized to keep projects
-    // distinct without leaving large gaps on the page.
-    return {
-      unbreakable: true,
-      stack: items,
-      margin: [0, 0, 0, 22]
-    };
-  }
-
-  /**
-   * Build career section
-   * @param {Object} career - Career data
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildCareerSection(career, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-
-    content.push(...this.buildSectionHeader(labels.career, addPageBreak));
-
-    if (career.timeline && career.timeline.length > 0) {
-      career.timeline.forEach(item => {
-        const entry = [];
-
-        // Company with optional badge
-        const companyText = [];
-        companyText.push({
-          text: this.getText(item.company) || this.getText(item.title) || '',
-          bold: true,
-          color: '#3B82F6'  // Primary color
-        });
-        if (item.badge) {
-          companyText.push({
-            text: ' [' + this.getText(item.badge) + ']',
-            color: '#F59E0B',  // Warning color
-            bold: true
-          });
-        }
-
-        entry.push({
-          columns: [
-            {
-              text: companyText,
-              fontSize: this.getTypography('fontSize.h3'),
-              width: '*'
-            },
-            {
-              text: this.formatPeriodWithDuration(item.period) || '',
-              alignment: 'right',
-              color: '#3B82F6',  // Primary color for dates
-              fontSize: this.getTypography('fontSize.small'),
-              bold: true,
-              width: 'auto'
-            }
-          ],
-          margin: [0, 8, 0, 4]
-        });
-
-        if (item.role || item.position) {
-          entry.push({
-            text: '> ' + (this.getText(item.role) || this.getText(item.position)),
-            color: '#0F172A',  // Text primary
-            fontSize: this.getTypography('fontSize.body'),
-            bold: true,
-            margin: [0, 0, 0, 4]
-          });
-        }
-
-        // Company description
-        if (item.companyDescription) {
-          entry.push({
-            text: this.stripHtml(this.getText(item.companyDescription)),
-            italics: true,
-            color: this.getColor('text.muted'),
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        // Responsibilities
-        if (item.responsibilities) {
-          entry.push({
-            text: [
-              { text: labels.responsibilities + ' ', bold: true },
-              { text: this.stripHtml(this.getText(item.responsibilities)) }
-            ],
-            color: this.getColor('text.secondary'),
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        // Scale (company/team size)
-        if (item.scale && (item.scale.company || item.scale.team)) {
-          const scaleText = [];
-          if (item.scale.company) {
-            scaleText.push(`${labels.companyScale} ${this.getText(item.scale.company)}`);
-          }
-          if (item.scale.team) {
-            scaleText.push(`${labels.teamScale} ${this.getText(item.scale.team)}`);
-          }
-          entry.push({
-            text: scaleText.join('  |  '),
-            color: this.getColor('text.muted'),
-            fontSize: this.getTypography('fontSize.tiny'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        if (item.description) {
-          entry.push({
-            text: this.stripHtml(this.getText(item.description)),
-            color: this.getColor('text.secondary'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        const achievements = this.getArray(item.achievements);
-        if (achievements.length > 0) {
-          // Add achievements label with success color
-          entry.push({
-            text: '[ ' + labels.keyAchievements + ' ]',
-            bold: true,
-            fontSize: this.getTypography('fontSize.h4'),
-            color: '#10B981',  // Success color
-            margin: [0, 6, 0, 3]
-          });
-          entry.push(this.buildBulletList(
-            achievements.map(a => this.stripHtml(this.getText(a))),
-            { markerColor: this.getColor('success'), bottomMargin: 6 }
-          ));
-        }
-
-        if (item.note) {
-          entry.push({
-            text: this.stripHtml(this.getText(item.note)),
-            fontSize: this.getTypography('fontSize.small'),
-            italics: true,
-            color: this.getColor('text.muted'),
-            margin: [0, 3, 0, 5]
-          });
-        }
-
-        // Leave reason
-        if (item.leaveReason) {
-          entry.push({
-            text: [
-              { text: labels.reasonForLeaving + ' ', bold: true },
-              { text: this.stripHtml(this.getText(item.leaveReason)) }
-            ],
-            color: this.getColor('text.muted'),
-            fontSize: this.getTypography('fontSize.tiny'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-
-        const tags = this.getArray(item.tags);
-        if (tags.length > 0) {
-          entry.push({
-            text: tags.map(tag => this.getText(tag)).join(' | '),
-            color: this.getColor('primary'),
-            fontSize: this.getTypography('fontSize.tiny'),
-            margin: [0, 0, 0, 5]
-          });
-        }
-
-        content.push({
-          unbreakable: true,
-          stack: entry,
-          margin: [0, 0, 0, this.getSpacing('gap.xlarge')]
-        });
-      });
-    }
-
-    return content;
-  }
-
-  /**
-   * Build education section
-   * @param {Object} education - Education data ({ items: [] })
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildEducationSection(education, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-    content.push(...this.buildSectionHeader(labels.education, addPageBreak));
-
-    const items = education?.items || [];
-    items.forEach(item => {
-      const entry = [];
-
-      entry.push({
-        columns: [
-          {
-            text: this.getText(item.institution) || '',
-            fontSize: this.getTypography('fontSize.h3'),
-            bold: true,
-            color: this.getColor('primary'),
-            width: '*'
-          },
-          {
-            text: item.period || '',
-            alignment: 'right',
-            color: this.getColor('primary'),
-            fontSize: this.getTypography('fontSize.small'),
-            bold: true,
-            width: 'auto'
-          }
-        ],
-        margin: [0, 8, 0, 4]
-      });
-
-      if (item.degree) {
-        entry.push({
-          text: this.getText(item.degree),
-          color: this.getColor('text.primary'),
-          fontSize: this.getTypography('fontSize.body'),
-          margin: [0, 0, 0, 3]
-        });
-      }
-
-      if (item.location) {
-        entry.push({
-          text: this.getText(item.location),
-          color: this.getColor('text.muted'),
-          italics: true,
-          fontSize: this.getTypography('fontSize.small'),
-          margin: [0, 0, 0, 3]
-        });
-      }
-
-      content.push({
-        unbreakable: true,
-        stack: entry,
-        margin: [0, 0, 0, this.getSpacing('gap.medium')]
-      });
-    });
-
-    return content;
-  }
-
-  /**
-   * Build compensation section (PRIVATE).
-   * Renders the expected compensation tiers as a compact table. Only included
-   * in exports when the user explicitly enables the option in the export modal.
-   * @param {Object} compensation - Compensation data
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildCompensationSection(compensation, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-
-    content.push(...this.buildSectionHeader(labels.compensation, addPageBreak));
-
-    if (compensation.subtitle) {
-      content.push({
-        text: this.getText(compensation.subtitle),
-        italics: true,
-        color: this.getColor('text.muted'),
-        fontSize: this.getTypography('fontSize.body'),
-        margin: [0, 0, 0, 6]
-      });
-    }
-    if (compensation.intro) {
-      content.push({
-        text: this.getText(compensation.intro),
-        color: this.getColor('text.primary'),
-        fontSize: this.getTypography('fontSize.small'),
-        margin: [0, 0, 0, 10]
-      });
-    }
-
-    // Confidentiality watermark line
-    content.push({
-      text: this.getText({
-        ko: '※ 본 섹션은 비공개 협상용 자료입니다. 외부 유출 금지.',
-        en: '※ This section is private negotiation material. Do not distribute externally.'
-      }),
-      color: '#b91c1c',
-      bold: true,
-      fontSize: this.getTypography('fontSize.small'),
-      margin: [0, 0, 0, 10]
-    });
-
-    // Current package summary
-    if (compensation.currentPackage) {
-      content.push({
-        text: this.getText(compensation.currentPackage.label) || '',
-        bold: true,
-        color: this.getColor('primary'),
-        fontSize: this.getTypography('fontSize.h3'),
-        margin: [0, 0, 0, 4]
-      });
-      const components = compensation.currentPackage.components || [];
-      components.forEach(c => {
-        content.push({
-          text: `• ${this.getText(c.label)}: ${c.value || ''}`,
-          fontSize: this.getTypography('fontSize.small'),
-          color: this.getColor('text.primary'),
-          margin: [0, 0, 0, 2]
-        });
-      });
-      if (compensation.currentPackage.estimatedAnnualEv) {
-        content.push({
-          text: this.getText(compensation.currentPackage.estimatedAnnualEv),
-          italics: true,
-          color: this.getColor('text.muted'),
-          fontSize: this.getTypography('fontSize.small'),
-          margin: [0, 4, 0, 12]
-        });
-      }
-    }
-
-    // Negotiation tiers as a 5-column table
-    const tiers = compensation.tiers || [];
-    if (tiers.length > 0) {
-      const headerRow = [
-        { text: this.getText({ ko: '시나리오', en: 'Tier' }), bold: true },
-        { text: this.getText({ ko: '기본급', en: 'Base' }), bold: true },
-        { text: this.getText({ ko: '사이닝', en: 'Signing' }), bold: true },
-        { text: this.getText({ ko: '인센티브', en: 'Incentive' }), bold: true },
-        { text: this.getText({ ko: '옵션/RSU', en: 'Options/RSU' }), bold: true },
-        { text: this.getText({ ko: '1년차 총보상', en: '1Y Total' }), bold: true }
-      ];
-      const body = [headerRow];
-      tiers.forEach(tier => {
-        body.push([
-          { text: this.getText(tier.label), bold: true },
-          { text: this.getText(tier.base) || '' },
-          { text: this.getText(tier.signing) || '' },
-          { text: this.getText(tier.incentive) || '' },
-          { text: this.getText(tier.options) || '' },
-          { text: this.getText(tier.totalFirstYear) || '' }
-        ]);
-      });
-
-      content.push({
-        table: {
-          headerRows: 1,
-          widths: ['auto', '*', '*', '*', '*', '*'],
-          body
-        },
-        layout: 'lightHorizontalLines',
-        fontSize: this.getTypography('fontSize.small'),
-        margin: [0, 0, 0, 10]
-      });
-
-      // Per-tier rationale lines
-      tiers.forEach(tier => {
-        if (tier.rationale) {
-          content.push({
-            text: [
-              { text: `${this.getText(tier.label)}: `, bold: true, color: this.getColor('primary') },
-              { text: this.getText(tier.rationale), color: this.getColor('text.muted') }
-            ],
-            fontSize: this.getTypography('fontSize.small'),
-            margin: [0, 0, 0, 3]
-          });
-        }
-      });
-    }
-
-    // Non-negotiables
-    if (Array.isArray(compensation.nonNegotiables) && compensation.nonNegotiables.length) {
-      content.push({
-        text: this.getText({ ko: '비협상 조건', en: 'Non-negotiable Terms' }),
-        bold: true,
-        color: this.getColor('primary'),
-        fontSize: this.getTypography('fontSize.h3'),
-        margin: [0, 12, 0, 4]
-      });
-      compensation.nonNegotiables.forEach(item => {
-        content.push({
-          text: `• ${this.getText(item)}`,
-          fontSize: this.getTypography('fontSize.small'),
-          color: this.getColor('text.primary'),
-          margin: [0, 0, 0, 2]
-        });
-      });
-    }
-
-    // Negotiation stance
-    if (compensation.negotiationStance) {
-      content.push({
-        text: this.getText({ ko: '협상 입장', en: 'Negotiation Stance' }),
-        bold: true,
-        color: this.getColor('primary'),
-        fontSize: this.getTypography('fontSize.h3'),
-        margin: [0, 12, 0, 4]
-      });
-      content.push({
-        text: this.getText(compensation.negotiationStance),
-        fontSize: this.getTypography('fontSize.small'),
-        color: this.getColor('text.primary'),
-        margin: [0, 0, 0, 8]
-      });
-    }
-
-    if (compensation.lastUpdated) {
-      content.push({
-        text: this.getText({ ko: `최종 갱신: ${compensation.lastUpdated}`, en: `Last updated: ${compensation.lastUpdated}` }),
-        italics: true,
-        color: this.getColor('text.muted'),
-        fontSize: this.getTypography('fontSize.small'),
-        alignment: 'right',
-        margin: [0, 8, 0, 0]
-      });
-    }
-
-    return content;
-  }
-
-  /**
-   * Build testimonials section
-   * @param {Object} testimonials - Testimonials data
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildTestimonialsSection(testimonials, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-
-    content.push(...this.buildSectionHeader(labels.testimonials, addPageBreak));
-
-    // Build a flat list, inserting a thin centered separator rule between
-    // adjacent testimonials so each block visually closes before the next.
-    const ordered = [];
-    if (testimonials.featured) ordered.push({ t: testimonials.featured, featured: true });
-    if (testimonials.testimonials && testimonials.testimonials.length > 0) {
-      testimonials.testimonials.forEach(t => ordered.push({ t, featured: false }));
-    }
-
-    ordered.forEach(({ t, featured }, idx) => {
-      if (idx > 0) {
-        content.push({
-          canvas: [{ type: 'line', x1: 200, y1: 0, x2: 315, y2: 0, lineWidth: 0.5, lineColor: this.getColor('border') }],
-          margin: [0, 4, 0, 6]
-        });
-      }
-      content.push(this.formatTestimonial(t, featured));
-    });
-
-    return content;
-  }
-
-  /**
-   * Format a single testimonial with enhanced visual hierarchy
-   */
-  formatTestimonial(testimonial, isFeatured) {
-    const items = [];
-
-    // Add colored background box for featured testimonials
-    if (isFeatured) {
-      items.push({
-        text: isFeatured ? '[ Featured Testimonial ]' : '',
-        fontSize: this.getTypography('fontSize.tiny'),
-        color: '#3B82F6',  // Primary
-        bold: true,
-        margin: [0, 0, 0, 4]
-      });
-    }
-
-    if (testimonial.quote || testimonial.text) {
-      const quoteText = this.getText(testimonial.quote) || this.getText(testimonial.text);
-      items.push({
-        text: `"${this.stripHtml(quoteText)}"`,
-        italics: true,
-        fontSize: isFeatured ? this.getTypography('fontSize.body') + 1 : this.getTypography('fontSize.body'),
-        margin: [this.getSpacing('list.indent'), 0, this.getSpacing('list.indent'), 8],
-        color: '#0F172A',  // Text primary
-        lineHeight: this.getTypography('lineHeight.relaxed')
-      });
-    }
-
-    // Author info with color coding
-    const authorText = [];
-    authorText.push({
-      text: this.getText(testimonial.author) || this.getText(testimonial.name) || '',
-      bold: true,
-      color: '#3B82F6'  // Primary
-    });
-    if (testimonial.role) {
-      authorText.push({
-        text: ', ' + this.getText(testimonial.role),
-        color: '#475569',  // Text secondary
-        bold: false
-      });
-    }
-    if (testimonial.relation) {
-      authorText.push({
-        text: ` (${this.getText(testimonial.relation)})`,
-        color: '#3B82F6',  // Primary
-        italics: true
-      });
-    }
-
-    items.push({
-      text: authorText,
-      fontSize: this.getTypography('fontSize.small'),
-      margin: [this.getSpacing('list.indent'), 0, 0, 0]
-    });
-
-    // Labels
-    if (testimonial.labels && testimonial.labels.length > 0) {
-      items.push({
-        text: '[ ' + testimonial.labels.map(l => this.getText(l.text)).join(' | ') + ' ]',
-        fontSize: this.getTypography('fontSize.tiny'),
-        color: '#10B981',  // Success
-        bold: true,
-        margin: [this.getSpacing('list.indent'), 5, 0, 0]
-      });
-    }
-
-    return {
-      unbreakable: true,
-      stack: items,
-      margin: [0, 14, 0, 22]
-    };
-  }
-
-  /**
-   * Build manager/leadership section
-   * @param {Object} manager - Manager data
-   * @param {boolean} addPageBreak - Whether to add page break before section
-   */
-  buildManagerSection(manager, addPageBreak = false) {
-    const content = [];
-    const labels = this.getLabels();
-
-    content.push(...this.buildSectionHeader(labels.manager, addPageBreak));
-
-    const lang = this.currentLang;
-
-    // ── PM Capabilities ────────────────────────────────────
-    // Each capability is a richer card: title + description +
-    // bullet highlights + optional metrics chip line + tag chips.
-    if (manager.pmCapabilities && manager.pmCapabilities.length > 0) {
-      content.push(...this.buildSubsectionHeader(labels.pmCapabilities, false));
-
-      manager.pmCapabilities.forEach((cap, idx) => {
-        const items = [];
-
-        items.push({
-          text: [
-            { text: '◆ ', color: this.getColor('accent'), fontSize: 12, bold: true },
-            { text: this.getText(cap.title), color: this.getColor('primary'), bold: true, fontSize: 12 }
-          ],
-          margin: [0, idx === 0 ? 0 : 10, 0, 4]
-        });
-
-        if (cap.description) {
-          items.push({
-            text: this.getText(cap.description),
-            color: this.getColor('text.secondary'),
-            italics: true,
-            fontSize: 10.5,
-            lineHeight: 1.5,
-            margin: [16, 0, 0, 6]
-          });
-        }
-
-        const highlights = this.getArray(cap.highlights);
-        if (highlights.length > 0) {
-          items.push(this.buildBulletList(
-            highlights.map(h => this.stripHtml(this.getText(h))),
-            { markerColor: this.getColor('accent'), bottomMargin: 6 }
-          ));
-        }
-
-        const m = cap.metrics || {};
-        const chips = [];
-        if (Array.isArray(m.teamSizes) && m.teamSizes.length > 0) {
-          const min = Math.min(...m.teamSizes), max = Math.max(...m.teamSizes);
-          chips.push(`${lang === 'ko' ? '팀 규모' : 'Team Size'} ${min}–${max}`);
-        }
-        if (m.yearsLeading) chips.push(`${lang === 'ko' ? '리딩 연차' : 'Leading'} ${m.yearsLeading}+ ${lang === 'ko' ? '년' : 'yrs'}`);
-        if (m.projectsLed) chips.push(`${lang === 'ko' ? '리딩 프로젝트' : 'Projects Led'} ${m.projectsLed}+`);
-        if (m.onTimeDelivery) chips.push(`${lang === 'ko' ? '정시 납품' : 'On-Time'} ${m.onTimeDelivery}`);
-        if (m.certificationSuccess) chips.push(`${lang === 'ko' ? '인증 성공률' : 'Cert Success'} ${m.certificationSuccess}`);
-        if (m.majorProjects) chips.push(`${lang === 'ko' ? '주요 프로젝트' : 'Major Projects'} ${m.majorProjects}+`);
-
-        if (chips.length > 0) {
-          items.push({
-            text: chips.join('   ·   '),
-            color: this.getColor('accent'),
-            bold: true,
-            fontSize: 9,
-            margin: [16, 4, 0, 0]
-          });
-        }
-
-        const tags = this.getArray(cap.stakeholderTypes).concat(cap.frameworks || []);
-        if (tags.length > 0) {
-          items.push({
-            text: tags.map(t => this.getText(t)).join(' · '),
-            color: this.getColor('text.muted'),
-            fontSize: 9,
-            margin: [16, 4, 0, 0]
-          });
-        }
-
-        content.push({ unbreakable: true, stack: items, margin: [0, 0, 0, 4] });
-      });
-
-      content.push({ text: '', margin: [0, 0, 0, 10] });
-    }
-
-    // ── Leadership Style ───────────────────────────────────
-    if (manager.leadershipStyle) {
-      const principles = this.getArray(manager.leadershipStyle.principles);
-      if (principles.length > 0) {
-        content.push(...this.buildSubsectionHeader(labels.leadershipStyle, false));
-        content.push(this.buildBulletList(
-          principles.map(p => this.stripHtml(this.getText(p))),
-          { markerColor: this.getColor('accent') }
-        ));
-      }
-    }
-
-    // ── Business Impact ────────────────────────────────────
-    // keyNumbers intentionally omitted — already shown in cover-page stat
-    // infographic. Highlights remain as the qualitative narrative.
-    if (manager.businessImpact) {
-      const highlights = this.getArray(manager.businessImpact.highlights);
-      if (highlights.length > 0) {
-        content.push(...this.buildSubsectionHeader(labels.businessImpact, false));
-        content.push(this.buildBulletList(
-          highlights.map(h => this.stripHtml(this.getText(h))),
-          { markerColor: this.getColor('success') }
-        ));
-      }
-    }
-
-    // ── Soft Skills — 2-column descriptive grid ────────────
-    if (manager.softSkills && manager.softSkills.length > 0) {
-      content.push(...this.buildSubsectionHeader(labels.softSkills, false));
-
-      const buildSkillCell = (skill) => ({
-        stack: [
-          {
-            text: [
-              { text: '◆  ', color: this.getColor('accent'), fontSize: 11, bold: true },
-              { text: this.getText(skill.title), color: this.getColor('primary'), bold: true, fontSize: 11.5 }
-            ],
-            margin: [0, 0, 0, 5]
-          },
-          ...(skill.description ? [{
-            text: this.getText(skill.description),
-            color: this.getColor('text.secondary'),
-            fontSize: 9.5,
-            lineHeight: 1.55,
-            margin: [16, 0, 0, 0]
-          }] : [])
-        ]
-      });
-
-      const cells = manager.softSkills.map(buildSkillCell);
-      while (cells.length % 2 !== 0) cells.push({ text: '' });
-      const rows = [];
-      for (let i = 0; i < cells.length; i += 2) rows.push(cells.slice(i, i + 2));
-
-      content.push({
-        table: { widths: ['*', '*'], body: rows },
-        layout: {
-          hLineWidth: () => 0,
-          vLineWidth: () => 0,
-          paddingLeft: () => 10,
-          paddingRight: () => 10,
-          paddingTop: () => 10,
-          paddingBottom: () => 12
-        },
-        margin: [0, 0, 0, 6]
-      });
-    }
-
-    return content;
-  }
-
-  /**
-   * Format category name for display
-   */
-  formatCategoryName(category) {
-    const labels = this.getLabels();
-    const names = {
-      medicalImaging: labels.medicalImaging,
-      orthodontic: labels.orthodontic,
-      equipmentControl: labels.equipmentControl,
-      enterprise: labels.enterprise,
-      openSource: labels.openSource
-    };
-    return names[category] || category;
   }
 
   /**
