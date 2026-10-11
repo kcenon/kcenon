@@ -31,6 +31,7 @@ jobs:
       - name: Verify export and preview content
         run: node tools/check-exports.mjs
       - name: Build both languages and document formats
+        timeout-minutes: 2
         run: node tools/export-snapshot.mjs baseline --dir "$RUNNER_TEMP/profile-export"
       - name: Verify public repository state and source links
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'

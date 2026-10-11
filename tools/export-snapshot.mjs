@@ -418,7 +418,7 @@ function main() {
       console.log(`baseline ${name}.json  ${Buffer.byteLength(json, 'utf8')} bytes  ${status}`);
     }
     console.log(`Baseline written to: ${dir}`);
-    process.exit(failed ? 1 : 0);
+    return failed ? 1 : 0;
   }
 
   // compare mode
@@ -446,10 +446,11 @@ function main() {
   }
   if (missing > 0 || totalDiffs > 0) {
     console.log(`Compare result: ${totalDiffs} difference(s), ${missing} missing baseline file(s).`);
-    process.exit(1);
+    return 1;
   }
   console.log('Compare result: all snapshots identical.');
-  process.exit(0);
+  return 0;
 }
 
-main();
+// Let Node drain output and finish runtime cleanup before exiting.
+process.exitCode = main();
