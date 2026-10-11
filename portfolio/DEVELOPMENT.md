@@ -46,10 +46,11 @@ the file in `vendor/` and bump the unified version as above.
 
 ## Profile and project content
 
-Keep `README.md` and `README.ko.md` aligned: the same selected projects, sources,
-current role, and scope of standards experience. Keep career achievements in
-the career history with their company context. Do not turn standards experience
-into a count of personal certificates.
+Keep `README.md` and `README.ko.md` aligned: the same current role, company-specific
+experience, links, and scope of standards experience. Summarize experience with
+its company context and link to the complete career history. Project discovery
+uses the profile's pinned repositories and the portfolio catalog. Do not turn
+standards experience into a count of personal certificates.
 
 The public project catalog stays in `data/projects.json` under `openSource`.
 Each entry has a bilingual `group`, `description`, and `status`, a repository
