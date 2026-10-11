@@ -54,7 +54,9 @@ into a count of personal certificates.
 The public project catalog stays in `data/projects.json` under `openSource`.
 Each entry has a bilingual `group`, `description`, and `status`, a repository
 `github` URL, a `reviewedAt` date, and `sources` with bilingual labels and file
-URLs. List published-release and development-branch capabilities separately when
+URLs. Every entry also has bilingual `expanded.features` bullets summarizing the
+project before its documentation links; links alone are not a detail summary.
+List published-release and development-branch capabilities separately when
 necessary. Avoid fixed repository/star totals and unconditional benchmark figures.
 A project may be absent from this selected catalog without being archived.
 

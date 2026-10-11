@@ -27,6 +27,14 @@ for (const lang of ['ko', 'en']) {
     assert(elements.some(node => node.type === 'projectTitle' && node.text === title), `Preview missing ${title}`);
   }
   for (const project of data.projects.openSource) {
+    const group = nodes.find(node => node.role === 'project' && node.children.some(child =>
+      child.role === 'projectTitle' && child.text === project.title));
+    const details = group.children.find(node => node.role === 'projectDetail' && node.variant === 'features');
+    assert.deepEqual(Array.from(details?.items || [], item => item.text), project.expanded.features[lang],
+      `IR missing detail summary: ${project.id}`);
+    for (const feature of project.expanded.features[lang]) {
+      assert(elements.some(node => node.text === `• ${feature}`), `Preview missing detail: ${project.id}`);
+    }
     assert(nodes.some(node => node.text === project.status[lang]), `IR missing status: ${project.id}`);
     assert(elements.some(node => node.text === project.status[lang]), `Preview missing status: ${project.id}`);
     for (const source of project.sources) {
@@ -42,5 +50,5 @@ for (const lang of ['ko', 'en']) {
     { label: { ko: 'unsafe', en: 'unsafe' }, url: 'javascript:alert(1)' }
   ] }, lang);
   assert.equal(unsafe.length, 0, 'Unsafe document links must be excluded');
-  console.log(`PASS: ${lang} project content, support notes, evidence links, complete preview, and career stats`);
+  console.log(`PASS: ${lang} project content, detail summaries, support notes, evidence links, complete preview, and career stats`);
 }

@@ -76,6 +76,12 @@ def main():
         require(re.fullmatch(r'https://github.com/kcenon/[\w-]+', project['github']), f'{project["id"]}: invalid repository URL')
         for key in ('group', 'status', 'description'):
             require(isinstance(project.get(key), dict) and set(project[key]) == {'ko', 'en'}, f'{project["id"]}: missing bilingual {key}')
+        features = project.get('expanded', {}).get('features', {})
+        for lang in ('ko', 'en'):
+            items = features.get(lang)
+            require(isinstance(items, list) and items and all(isinstance(item, str) and item.strip() for item in items),
+                    f'{project["id"]}: missing {lang} detail summary')
+        require(len(features['ko']) == len(features['en']), f'{project["id"]}: detail translation count mismatch')
         require(project.get('sources'), f'{project["id"]}: missing source links')
         require(re.fullmatch(r'\d{4}-\d{2}-\d{2}', project.get('reviewedAt', '')), f'{project["id"]}: missing review date')
         for source in project['sources']:

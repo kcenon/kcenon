@@ -226,8 +226,8 @@ function renderProjectCard(project) {
 function renderOpenSourceCard(project) {
     const lang = _getLang();
     const labels = lang === 'ko'
-        ? { features: '주요 기능', performance: '성능 특징', viewOnGithub: 'GitHub에서 보기' }
-        : { features: 'Key Features', performance: 'Performance', viewOnGithub: 'View on GitHub' };
+        ? { features: '주요 기능', performance: '성능 특징', documentation: '관련 문서', viewOnGithub: 'GitHub에서 보기' }
+        : { features: 'Key Features', performance: 'Performance', documentation: 'Documentation', viewOnGithub: 'View on GitHub' };
 
     return `
         <article class="project-card opensource expandable" id="project-${_esc(project.id)}">
@@ -251,9 +251,12 @@ function renderOpenSourceCard(project) {
             <div class="project-expanded">
                 ${renderExpandedList(labels.features, _getArray(project.expanded?.features))}
                 ${renderExpandedList(labels.performance, _getArray(project.expanded?.performance))}
-                <ul class="project-sources" aria-label="${lang === 'ko' ? '프로젝트 문서' : 'Project documentation'}">
-                    ${(project.sources || []).map(source => `<li><a href="${_safeUrl(source.url)}" target="_blank" rel="noopener noreferrer">${_esc(_getText(source.label))}</a></li>`).join('')}
-                </ul>
+                ${project.sources?.length ? `<div class="expanded-section">
+                    <h4>${labels.documentation}</h4>
+                    <ul class="project-sources" aria-label="${labels.documentation}">
+                        ${project.sources.map(source => `<li><a href="${_safeUrl(source.url)}" target="_blank" rel="noopener noreferrer">${_esc(_getText(source.label))}</a></li>`).join('')}
+                    </ul>
+                </div>` : ''}
             </div>
         </article>
     `;
