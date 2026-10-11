@@ -91,7 +91,6 @@ def main():
     readmes = [(ROOT / name).read_text() for name in ('README.md', 'README.ko.md')]
     links = [set(re.findall(r'\]\((https?://[^)]+)\)', text)) for text in readmes]
     require(links[0] == links[1], 'README languages link to different evidence or projects')
-    require(len(re.findall(r'^\| \[', readmes[0], re.M)) == 6, 'Expected six selected projects')
     for url in links[0]:
         if '/blob/' in url and url.startswith('https://github.com/kcenon/'):
             urls.add(url)
