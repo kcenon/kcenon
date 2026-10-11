@@ -1,85 +1,43 @@
-# 안녕하세요, 신동철입니다 👋
+# 신동철
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-raphaelshin-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/raphaelshin/)
-[![Email](https://img.shields.io/badge/Email-kcenon@gmail.com-red?style=flat&logo=gmail)](mailto:kcenon@gmail.com)
-[![Portfolio](https://img.shields.io/badge/Portfolio-인터랙티브_보기-green?style=flat&logo=github)](https://kcenon.github.io/kcenon/portfolio/)
+**의료영상, Modern C++ 시스템, AI를 활용한 소프트웨어 개발**에 집중하는 소프트웨어 아키텍트이자 기술 리더입니다.
 
-**[English README](README.md)** | **[📊 인터랙티브 포트폴리오 →](https://kcenon.github.io/kcenon/portfolio/)**
+[English](README.md) · [포트폴리오](https://kcenon.github.io/kcenon/portfolio/) · [LinkedIn](https://www.linkedin.com/in/raphaelshin/) · [이메일](mailto:kcenon@gmail.com)
 
-## 🎯 프로필 요약
+## 현재 집중하는 분야
 
-**안전 중요(safety-critical)·ISO 인증 도메인**에서 R&D와 플랫폼 아키텍처를 **20년 넘게** 이끌어 왔습니다. **의료기기, 반도체 EDA, SaaS 플랫폼**을 백지에서 인증·출시까지 직접 만들어 온 이력이 있습니다.
+2026년 3월부터 [Flonics](https://flonics.co.kr) CTO로 재직하며 의료영상 기반 혈류 진단 솔루션의 개발·운영·기술 관리를 총괄하고 있습니다.
 
-**핵심 임팩트**:
-- **IEC 62304, ISO 13485, ISO 14971** 기반 SDLC 및 품질 시스템 설계 — 동일 패턴이 ISO 26262, DO-178C, IEC 61508, ISO 27001에도 이전 가능
-- **4개 국제 규제 인증**(FDA 510(k), CE, KFDA, CCC) 주도, **1,200+ 페이지**의 감사(audit) 대응 추적성 문서 작성
-- 포자랩스(오디오 SaaS)에서 C++, Rust, Go, Python 기반 **10개 이상 마이크로서비스** 오케스트레이션 (RabbitMQ/Redis)
-- 레이의 의료영상 시스템에서 **처리량 2배**, **레이턴시 50% 감소** 달성
-- **2개 IPO 기업**에서 **4개 이상의 프로덕션 시스템**을 백지 상태에서 인증 출시까지 구축
+- **의료영상:** DICOM/PACS, 병원 정보 시스템 연동, 테스트 환경.
+- **시스템 엔지니어링:** 동시성, 네트워크, 메시징, 데이터 접근, 관측성을 위한 재사용 가능한 C++ 라이브러리.
+- **AI 개발 자동화:** 요구사항부터 PR까지의 워크플로, 버전 관리되는 에이전트 설정, 격리된 개발 환경, 생성 결과에 대한 사람의 검토.
 
-2026년 3월부터 **[Flonics](https://flonics.co.kr) CTO**로 재직하며, Pre-A 라운드를 준비 중인 시드 단계 의료기기 스타트업에서 최소 인력으로 프로젝트 전반의 개발·운영·관리를 총괄하고 있습니다.
+## 대표 프로젝트
 
-**[📊 상세 성과 및 프로젝트 보기 →](https://kcenon.github.io/kcenon/portfolio/)**
+| 프로젝트 | 역할 | 문서 |
+| --- | --- | --- |
+| [claude_code_agent](https://github.com/kcenon/claude_code_agent) | Claude Agent SDK 기반 요구사항·문서·구현·PR 에이전트 워크플로. | [개발 개요](https://github.com/kcenon/claude_code_agent/blob/develop/README.md) |
+| [pacs_system](https://github.com/kcenon/pacs_system) | DICOM을 자체 구현한 C++20 PACS. 기반 기술과 코덱에는 외부 라이브러리를 사용합니다. | [의존성 명세](https://github.com/kcenon/pacs_system/blob/main/vcpkg.json) |
+| [messaging_system](https://github.com/kcenon/messaging_system) | C++20 Pub/Sub, Request/Reply, 이벤트 스트리밍, 메시지 파이프라인. | [개요](https://github.com/kcenon/messaging_system/blob/main/README.md) |
+| [thread_system](https://github.com/kcenon/thread_system) | C++20 스레드 풀, 적응형 큐, 취소, 스케줄링. | [기능](https://github.com/kcenon/thread_system/blob/main/docs/FEATURES.md) |
+| [network_system](https://github.com/kcenon/network_system) | C++20 비동기 네트워크. 현재 개발 API와 공개 릴리스의 지원 범위는 구분됩니다. | [프로토콜 지원 범위와 제한](https://github.com/kcenon/network_system/blob/main/docs/PROTOCOL_SUPPORT.md) |
+| [claude-docker](https://github.com/kcenon/claude-docker) | Claude Code·Codex CLI·Gemini CLI 계정 격리, 공유 소스 또는 작업 트리 환경, Go TUI. | [런타임 지원](https://github.com/kcenon/claude-docker/blob/main/docs/RUNTIMES.md) |
 
-## 📊 수치로 보는 임팩트
+버전 관리되는 AI 워크플로는 [claude-config](https://github.com/kcenon/claude-config), 병원 정보 연동은 [pacs_bridge](https://github.com/kcenon/pacs_bridge), DICOM 통합 테스트는 [dcmtk-docker](https://github.com/kcenon/dcmtk-docker)에서 다룹니다. [vcpkg 레지스트리](https://github.com/kcenon/vcpkg-registry)는 패키지로 배포되는 C++ 라이브러리를 연결합니다.
 
-| 지표 | 달성 내역 |
-|------|-----------|
-| **리더십 경력** | 20년 이상 R&D 및 플랫폼 아키텍처 |
-| **규제 인증** | 4개 국제 인증 (FDA, CE, KFDA, CCC) |
-| **품질 시스템** | IEC 62304 (Class B/C), ISO 13485, ISO 14971 SDLC 설계 |
-| **분산 시스템** | 포자랩스에서 10개 이상 마이크로서비스 (C++, Rust, Go, Python) · 레이에서 처리량 2배, 레이턴시 50% 감소 |
-| **문서화 역량** | 1,200+ 페이지 추적성 보장 SRS/SDS — 감사 대응 가능 수준 |
-| **팀 리더십** | 2~11명 엔지니어 팀 리딩 · 2개 IPO 기업(바텍, 레이) 재직 — 팀 리딩은 레이에서 |
-| **Zero-to-One** | 4개 이상 프로덕션 시스템을 백지에서 인증 출시까지 구축 |
-| **도메인 범위** | 의료 영상, 오디오 SaaS, 반도체 EDA, 시스템 가상화 |
+프로젝트별 상태와 근거 링크는 [포트폴리오 프로젝트 목록](https://kcenon.github.io/kcenon/portfolio/#projects)에서, 전체 목록은 [공개 저장소](https://github.com/kcenon?tab=repositories)에서 확인할 수 있습니다.
 
-## 🛠️ 핵심 기술
+## 기술 및 표준 적용 경험
 
-**언어**: C++ (14/17), C#, Rust, Go, Python
-**분산 시스템**: 마이크로서비스, RabbitMQ, Redis Sentinel, OpenTelemetry, Docker
-**백엔드**: .NET Core, ASP.NET Web API, PostgreSQL, MySQL, TCP/IP
-**의료 영상**: PACS, DICOM (C-STORE/C-FIND/C-MOVE), ISO 13485, IEC 62304, HIPAA
-**클라우드 & DevOps**: AWS, GitHub Actions, zero-downtime 배포
-**UI**: WPF (MVVM), Qt/QML
+- **언어:** C++ (14/17/20), C#, Rust, Go, Python, TypeScript.
+- **시스템:** ASIO, RabbitMQ, Redis, PostgreSQL, OpenTelemetry, Docker, AWS, GitHub Actions.
+- **영상 및 UI:** DICOM/PACS, Qt, WPF/MVVM.
+- **의료기기 엔지니어링:** IEC 62304, ISO 13485, ISO 14971을 요구사항, 위험 분석, 검증, 추적성, 인허가 문서화에 적용한 경험입니다. 개인 자격증이 아닌 엔지니어링 및 제품 인허가 업무 경험을 설명합니다.
 
-**[🛠️ 전체 기술 스택, 인증 및 전문 분야 보기 →](https://kcenon.github.io/kcenon/portfolio/)**
+의료기기, 오디오 SaaS, 반도체 EDA, 가상화 분야에서 일했습니다. 회사별 업무와 담당 역할은 [경력 상세](https://kcenon.github.io/kcenon/portfolio/#career)에 정리되어 있습니다.
 
-## 🏆 인증 및 표준
+## 연락하기
 
-**의료기기**: IEC 62304 (Class B/C), ISO 13485, ISO 14971, FDA 510(k), CE, KFDA, CCC
-**헬스케어 규제 준수**: HIPAA 기술적 보호조치, DICOM PS3.15 익명화
+의료영상, 시스템 엔지니어링, AI 개발 자동화 분야의 기술 리더십과 협업에 관한 대화를 환영합니다.
 
-## 🛡️ 도메인 간 규제 전문성 (Cross-Domain Regulatory Expertise)
-
-**ISO/IEC 표준 기반 SDLC** 경험은 규제 산업 전반에 그대로 이전됩니다.
-표준 명칭은 다르지만, 요구사항 추적성, 위험 분석, V&V 증거, 형상 관리, 시판 후 감시(PMS)라는
-**핵심 규율은 동일**합니다.
-
-| 역량 | 직접 적용 표준 | 이전 가능 영역 |
-|------|---------------|-----------------|
-| **소프트웨어 라이프사이클** | IEC 62304, ISO 13485 | ISO 26262 (자동차), DO-178C (항공), IEC 61508 (산업 기능안전) |
-| **위험 관리** | ISO 14971, FDA QSR | ARP4761, ISO 27005, IATF 16949 |
-| **인허가 문서화** | 510(k), CE 기술문서 | Type Approval, AS9100, SOC 2, ISO 27001 |
-| **감사 및 추적성** | DICOM PS3.15, HIPAA | GDPR, PCI-DSS, ISMS-P |
-
-## 📈 GitHub 통계
-
-![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
-![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
-
-## 🔭 현재
-
-**[Flonics](https://flonics.co.kr) CTO** (2026.03 ~ 현재) — Pre-A 라운드를 준비 중인 시드 단계 의료기기 스타트업에서 최소 인력으로 프로젝트 전반의 개발·운영·관리를 총괄. 의료영상 기반 혈류 진단 솔루션의 R&D를 이끌며 ISO 13485 / IEC 62304 프로세스를 초기 단계부터 정립 중. GitHub 이슈·PR 기록 기반 자동 보고, CI/CD 테스트 자동화, SonarQube 보안 게이트, AI 코드 리뷰, 발견된 문제의 AI 기반 파악·리포트 자동화로 최소 인력의 레버리지를 극대화하는 운영 체계를 적용 중. 의료기기 인증·규제 문서 생성에도 AI 워크플로를 적용하며 휴먼 승인 게이트와 추적성 자동 감사 장치로 검증 중.
-
-**장기 관심사**: 규제·표준 기반 산업 전반의 **CTO / R&D 총괄 / 연구소장** 포지션 — 자동차 기능안전, 산업 IoT, 방위·항공, 규제 SaaS 등이 모두 해당합니다. 산업 분야 자체보다, **표준이라는 제약 위에서 엄정한 엔지니어링 조직을 만들어 가는** 공통 과제에 관심이 있습니다.
-
-## 📫 연락하기
-
-📧 [kcenon@gmail.com](mailto:kcenon@gmail.com)
-💼 [LinkedIn](https://www.linkedin.com/in/raphaelshin/)
-🌐 [인터랙티브 포트폴리오](https://kcenon.github.io/kcenon/portfolio/)
-
----
-
-*분산 시스템 아키텍처와 규제 준수 전문성을 통해 측정 가능한 임팩트를 제공합니다.*
+[이메일](mailto:kcenon@gmail.com) · [LinkedIn](https://www.linkedin.com/in/raphaelshin/) · [포트폴리오](https://kcenon.github.io/kcenon/portfolio/)

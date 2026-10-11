@@ -1,85 +1,43 @@
-# Hi there, I'm Dongcheol Shin 👋
+# Dongcheol Shin
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-raphaelshin-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/raphaelshin/)
-[![Email](https://img.shields.io/badge/Email-kcenon@gmail.com-red?style=flat&logo=gmail)](mailto:kcenon@gmail.com)
-[![Portfolio](https://img.shields.io/badge/Portfolio-View_Interactive-green?style=flat&logo=github)](https://kcenon.github.io/kcenon/portfolio/)
+Software architect and technical leader working on **medical imaging, Modern C++ systems, and AI-assisted software delivery**.
 
-**[한국어 README](README.ko.md)** | **[📊 Interactive Portfolio →](https://kcenon.github.io/kcenon/portfolio/)**
+[한국어](README.ko.md) · [Portfolio](https://kcenon.github.io/kcenon/portfolio/) · [LinkedIn](https://www.linkedin.com/in/raphaelshin/) · [Email](mailto:kcenon@gmail.com)
 
-## 🎯 Professional Summary
+## Current focus
 
-**20+ years** leading R&D and platform architecture in **safety-critical, ISO-certified domains**. Track record spans **medical devices, semiconductor EDA, and SaaS platforms** — built and certified from zero.
+CTO at [Flonics](https://flonics.co.kr) since March 2026, responsible for development, operations, and technical management of medical imaging-based blood flow diagnostics.
 
-**Core Impact**:
-- Designed SDLC and quality systems compliant with **IEC 62304, ISO 13485, ISO 14971** — patterns transfer to ISO 26262, DO-178C, IEC 61508, and ISO 27001
-- Led **4 international regulatory approvals** (FDA 510(k), CE, KFDA, CCC) with **1,200+ pages** of auditor-ready traceability documentation
-- Orchestrated **10+ microservices** in C++, Rust, Go, Python (RabbitMQ/Redis) at Pozalabs (audio SaaS)
-- Achieved **2x throughput** and **50% latency reduction** on medical imaging systems at Ray
-- Built **4+ production systems** from blank repo to certified release across **2 IPO companies**
+- **Medical imaging:** DICOM/PACS, hospital-system integration, and test environments.
+- **Systems engineering:** reusable C++ libraries for concurrency, networking, messaging, data access, and observability.
+- **AI-assisted delivery:** requirements-to-PR workflows, versioned agent configuration, isolated development environments, and human review of generated work.
 
-Since March 2026, **CTO at [Flonics](https://flonics.co.kr)** — a Seed-stage medical device startup preparing for its Pre-A round — owning development, operations, and management across all projects with a lean team.
+## Selected projects
 
-**[📊 View detailed achievements & projects →](https://kcenon.github.io/kcenon/portfolio/)**
+| Project | Purpose | Documentation |
+| --- | --- | --- |
+| [claude_code_agent](https://github.com/kcenon/claude_code_agent) | Agent-driven requirements, documentation, implementation, and PR workflows built on the Claude Agent SDK. | [Development overview](https://github.com/kcenon/claude_code_agent/blob/develop/README.md) |
+| [pacs_system](https://github.com/kcenon/pacs_system) | C++20 PACS with its own DICOM implementation; uses third-party infrastructure and codec libraries. | [Dependencies](https://github.com/kcenon/pacs_system/blob/main/vcpkg.json) |
+| [messaging_system](https://github.com/kcenon/messaging_system) | C++20 pub/sub, request/reply, event streaming, and message pipelines. | [Overview](https://github.com/kcenon/messaging_system/blob/main/README.md) |
+| [thread_system](https://github.com/kcenon/thread_system) | C++20 thread pools, adaptive queues, cancellation, and scheduling. | [Features](https://github.com/kcenon/thread_system/blob/main/docs/FEATURES.md) |
+| [network_system](https://github.com/kcenon/network_system) | C++20 asynchronous networking. Current development APIs and published releases have different support scopes. | [Protocol support and limitations](https://github.com/kcenon/network_system/blob/main/docs/PROTOCOL_SUPPORT.md) |
+| [claude-docker](https://github.com/kcenon/claude-docker) | Isolated Claude Code, Codex CLI, and Gemini CLI accounts, shared-source or worktree environments, and a Go TUI. | [Runtime support](https://github.com/kcenon/claude-docker/blob/main/docs/RUNTIMES.md) |
 
-## 📊 Impact by Numbers
+Supporting projects include [claude-config](https://github.com/kcenon/claude-config) for versioned AI workflows, [pacs_bridge](https://github.com/kcenon/pacs_bridge) for hospital integration, and [dcmtk-docker](https://github.com/kcenon/dcmtk-docker) for DICOM integration testing. The [vcpkg registry](https://github.com/kcenon/vcpkg-registry) connects the packaged C++ libraries.
 
-| Metric | Achievement |
-|--------|-------------|
-| **Leadership Experience** | 20+ years in R&D and platform architecture |
-| **Regulatory Certifications** | 4 international approvals (FDA, CE, KFDA, CCC) |
-| **Quality Systems** | IEC 62304 (Class B/C), ISO 13485, ISO 14971 SDLC design |
-| **Distributed Systems** | 10+ microservices at Pozalabs (C++, Rust, Go, Python); 2x throughput, 50% latency cut at Ray |
-| **Documentation Rigor** | 1,200+ pages of traceable, auditor-ready SRS/SDS |
-| **Team Leadership** | Led teams of 2-11 engineers; career spans 2 IPO companies (VATECH, Ray — team lead at Ray) |
-| **Zero-to-One** | 4+ production systems built from blank repo to certified release |
-| **Domain Range** | Medical imaging, audio SaaS, semiconductor EDA, system virtualization |
+See the [portfolio project catalog](https://kcenon.github.io/kcenon/portfolio/#projects) for project status and source links, or [all public repositories](https://github.com/kcenon?tab=repositories).
 
-## 🛠️ Core Skills
+## Technologies and standards experience
 
-**Languages**: C++ (14/17), C#, Rust, Go, Python
-**Distributed Systems**: Microservices, RabbitMQ, Redis Sentinel, OpenTelemetry, Docker
-**Backend**: .NET Core, ASP.NET Web API, PostgreSQL, MySQL, TCP/IP
-**Medical Imaging**: PACS, DICOM (C-STORE/C-FIND/C-MOVE), ISO 13485, IEC 62304, HIPAA
-**Cloud & DevOps**: AWS, GitHub Actions, zero-downtime deployment
-**UI**: WPF (MVVM), Qt/QML
+- **Languages:** C++ (14/17/20), C#, Rust, Go, Python, TypeScript.
+- **Systems:** ASIO, RabbitMQ, Redis, PostgreSQL, OpenTelemetry, Docker, AWS, GitHub Actions.
+- **Imaging and UI:** DICOM/PACS, Qt, WPF/MVVM.
+- **Medical-device engineering:** experience applying IEC 62304, ISO 13485, and ISO 14971 to requirements, risk analysis, verification, traceability, and regulatory documentation. These describe engineering and product-approval experience, not personal certifications.
 
-**[🛠️ Complete tech stack, certifications & specializations →](https://kcenon.github.io/kcenon/portfolio/)**
+My career spans medical devices, audio SaaS, semiconductor EDA, and virtualization. Company-specific work and responsibilities are described in the [career history](https://kcenon.github.io/kcenon/portfolio/#career).
 
-## 🏆 Certifications & Standards
+## Connect
 
-**Medical Device**: IEC 62304 (Class B/C), ISO 13485, ISO 14971, FDA 510(k), CE, KFDA, CCC
-**Healthcare Compliance**: HIPAA Technical Safeguards, DICOM PS3.15 De-identification
+Open to conversations about technical leadership and collaboration in medical imaging, systems engineering, and AI-assisted development.
 
-## 🛡️ Cross-Domain Regulatory Expertise
-
-Deep experience in **ISO/IEC standard-driven SDLC** transfers directly across regulated industries.
-The standards differ; the discipline — requirements traceability, hazard analysis, V&V evidence,
-configuration management, post-market surveillance — is the same.
-
-| Capability | Hands-on Standards | Transferable To |
-|------------|-------------------|-----------------|
-| **Software Lifecycle** | IEC 62304, ISO 13485 | ISO 26262 (Automotive), DO-178C (Aerospace), IEC 61508 (Industrial Functional Safety) |
-| **Risk Management** | ISO 14971, FDA QSR | ARP4761, ISO 27005, IATF 16949 |
-| **Compliance Documentation** | 510(k), CE Technical Files | Type Approval, AS9100, SOC 2, ISO 27001 |
-| **Audit & Traceability** | DICOM PS3.15, HIPAA | GDPR, PCI-DSS, ISMS-P |
-
-## 📈 GitHub Stats
-
-![GitHub Stats](https://github-readme-stats-sigma-five.vercel.app/api?username=kcenon&show_icons=true&theme=radical)
-![Top Languages](https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=kcenon&layout=compact&theme=radical)
-
-## 🔭 Currently
-
-**CTO at [Flonics](https://flonics.co.kr)** (since 2026.03) — a Seed-stage medical device startup preparing for its Pre-A round, running lean. Owning development, operations, and management across all projects while leading R&D for medical imaging-based blood flow diagnostics, with ISO 13485 / IEC 62304 processes applied from day one. Maximizing lean-team leverage through an automation-first operation: reporting generated from GitHub issue/PR records, CI/CD test automation, SonarQube security gates, AI code review, and AI-driven triage and reporting of findings — extending to regulated documentation for device certification, verified through human approval gates and automated traceability audits.
-
-**Long-term interest**: **CTO / Head of R&D / Research Director** roles in any ISO-certified domain — automotive functional safety, industrial IoT, defense/aerospace, or regulated SaaS. The common thread is **building rigorous engineering organizations under standard-driven constraints**, not the specific industry vertical.
-
-## 📫 Let's Connect
-
-📧 [kcenon@gmail.com](mailto:kcenon@gmail.com)
-💼 [LinkedIn](https://www.linkedin.com/in/raphaelshin/)
-🌐 [Interactive Portfolio](https://kcenon.github.io/kcenon/portfolio/)
-
----
-
-*Delivering measurable impact through distributed systems architecture and regulatory compliance expertise.*
+[Email](mailto:kcenon@gmail.com) · [LinkedIn](https://www.linkedin.com/in/raphaelshin/) · [Portfolio](https://kcenon.github.io/kcenon/portfolio/)
