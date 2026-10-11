@@ -19,6 +19,12 @@ function initializePortfolio() {
         return;
     }
 
+    // Career metrics share their values with the export covers.
+    document.querySelectorAll('[data-career-metric]').forEach(element => {
+        const metric = data.profile?.careerMetrics?.[Number(element.dataset.careerMetric)];
+        if (metric) element.textContent = metric.value;
+    });
+
     // Render sections from the loaded data
     if (data.projects) {
         const projectsContainer = document.getElementById('projects-container');
@@ -140,8 +146,8 @@ function interpolateTemplate(str) {
 const translations = {
     ko: {
         // Meta
-        'meta.title': '신동철 | Software Architect · Distributed Systems',
-        'meta.description': '분산 시스템·플랫폼 엔지니어링 소프트웨어 아키텍트 신동철의 포트폴리오. 마이크로서비스, 메시징, CI/CD, 관측성, 고성능 C++/C#/.NET 및 규제(IEC 62304/ISO 13485) 딜리버리 경험.',
+        'meta.title': "신동철 | CTO · 의료영상 · C++ · AI 개발 자동화",
+        'meta.description': "Flonics CTO 신동철의 포트폴리오. 의료영상과 DICOM/PACS, Modern C++ 시스템 라이브러리, AI 개발 자동화 및 규제·표준 적용 경험.",
         'meta.locale': 'ko_KR',
         // Navigation
         'nav.about': '소개',
@@ -160,22 +166,22 @@ const translations = {
         // Hero
         'hero.status': 'CTO @ Flonics',
         'hero.name': '신동철',
-        'hero.title': 'Software Architect · 분산 시스템/플랫폼 엔지니어링',
-        'hero.summary': '2026년 3월부터 <strong>Flonics CTO</strong>로 재직하며, 시드 단계 스타트업(Pre-A 준비 중)에서 프로젝트 전반의 개발·운영·관리를 총괄하고 있습니다. 프로덕션 환경에서 운영 가능한 <strong>분산 시스템/플랫폼</strong>을 설계·구현해 왔습니다. 마이크로서비스, 메시징(RabbitMQ), 캐시(Redis), <strong>CI/CD(무중단 배포)</strong>, <strong>관측성(OpenTelemetry)</strong>을 통해 확장성과 안정성을 만들고, 필요 시 <strong>IEC 62304/ISO 13485</strong> 같은 규제 환경에서도 요구사항→설계→테스트→문서화까지 end-to-end 딜리버리를 수행합니다.',
-        'hero.metric1': '년 경력',
-        'hero.metric2': '마이크로서비스',
+        'hero.title': "CTO · 의료영상 · C++ 시스템 · AI 개발 자동화",
+        'hero.summary': "2026년 3월부터 <strong>Flonics CTO</strong>로 의료영상 솔루션의 개발·운영·기술 관리를 총괄하고 있습니다. <strong>Modern C++ 시스템 라이브러리</strong>와 <strong>AI 개발 자동화</strong>를 공개 프로젝트로 개발하며, 요구사항·설계·테스트·문서화를 연결하는 엔지니어링에 집중합니다.",
+        'hero.metric1': "년 개발 경력",
+        'hero.metric2': "년 팀 리딩",
         'hero.metric3': 'Daily Release',
         'hero.badge1': 'Microservices',
         'hero.badge2': '무중단 배포',
         'hero.badge3': '관측성 (OpenTelemetry)',
         'hero.badge4': 'IEC 62304 / ISO 13485',
-        'hero.badge5': 'CE · FDA · KFDA · CCC',
+        'hero.badge5': "제품 인허가 경험: CE · FDA · KFDA · CCC",
         'hero.capability1.title': '분산 시스템',
         'hero.capability1.desc': '마이크로서비스·메시징·캐시·확장성 패턴',
         'hero.capability2.title': '신뢰성 & 관측성',
         'hero.capability2.desc': 'Tracing/metrics/logging, 장애 대응, SLO 기반 운영',
-        'hero.capability3.title': '플랫폼 엔지니어링',
-        'hero.capability3.desc': 'CI/CD, 무중단 배포, 배포 표준화/자동화',
+        'hero.capability3.title': "AI 개발 자동화",
+        'hero.capability3.desc': "에이전트 워크플로, 계정·작업 격리, CI/CD와 사람의 검토",
         'hero.capability4.title': '규제 환경 딜리버리',
         'hero.capability4.desc': 'IEC 62304/ISO 13485, 추적성, V&V/심사 대응',
         // V-Model
@@ -207,7 +213,7 @@ const translations = {
         'section.methodology.desc': '요구사항↔설계↔테스트 추적성과 V&V를 갖춘 규제 환경(IEC 62304) 기반 딜리버리 프로세스',
         'expertise.desc': '분산 시스템·클라우드·고성능 엔지니어링을 기반으로, 규제 환경에서 단련된 품질/문서화 역량까지 함께 제공합니다.',
         'projects.title': 'Projects',
-        'projects.desc': '프로덕션 시스템과 플랫폼 컴포넌트 중심의 주요 프로젝트',
+        'projects.desc': "의료영상, C++ 시스템, AI 개발 자동화의 공개 프로젝트와 회사별 업무 사례",
         'testimonials.title': 'Testimonials',
         'testimonials.desc': '함께 일한 동료들의 추천서',
         'expand': '상세 보기',
@@ -216,8 +222,8 @@ const translations = {
     },
     en: {
         // Meta
-        'meta.title': 'Dongcheol Shin | Software Architect · Distributed Systems',
-        'meta.description': 'Portfolio of Dongcheol Shin, a software architect focused on distributed systems and platform engineering: microservices, messaging, CI/CD, observability, and high-performance C++/C#/.NET. Also experienced in regulated delivery (IEC 62304/ISO 13485).',
+        'meta.title': "Dongcheol Shin | CTO · Medical Imaging · C++ · AI-assisted Development",
+        'meta.description': "Portfolio of Dongcheol Shin, CTO at Flonics: medical imaging and DICOM/PACS, Modern C++ systems libraries, AI-assisted development, and standards experience.",
         'meta.locale': 'en_US',
         // Navigation
         'nav.about': 'About',
@@ -236,22 +242,22 @@ const translations = {
         // Hero
         'hero.status': 'CTO @ Flonics',
         'hero.name': 'Dongcheol Shin',
-        'hero.title': 'Software Architect · Distributed Systems / Platform Engineering',
-        'hero.summary': 'Since March 2026, I have served as <strong>CTO at Flonics</strong>, a Seed-stage startup preparing for its Pre-A round, owning development, operations, and management across all projects. I design and build production-grade <strong>distributed systems/platforms</strong>: microservices, messaging (RabbitMQ), caching (Redis), <strong>CI/CD (zero-downtime releases)</strong>, and <strong>observability (OpenTelemetry)</strong>. I can also deliver end-to-end in regulated contexts such as <strong>IEC 62304 / ISO 13485</strong>—from requirements to design, testing, and documentation.',
-        'hero.metric1': 'Years Experience',
-        'hero.metric2': 'Microservices',
+        'hero.title': "CTO · Medical Imaging · C++ Systems · AI-assisted Development",
+        'hero.summary': "Since March 2026, I have served as <strong>CTO at Flonics</strong>, responsible for development, operations, and technical management of medical imaging solutions. My public work connects <strong>Modern C++ systems libraries</strong> and <strong>AI-assisted development</strong>, with an emphasis on requirements, design, testing, and documentation.",
+        'hero.metric1': "Years in Software",
+        'hero.metric2': "Years Leading",
         'hero.metric3': 'Daily Release',
         'hero.badge1': 'Microservices',
         'hero.badge2': 'Zero-downtime Deploy',
         'hero.badge3': 'Observability (OpenTelemetry)',
         'hero.badge4': 'IEC 62304 / ISO 13485',
-        'hero.badge5': 'CE · FDA · KFDA · CCC',
+        'hero.badge5': "Product approval experience: CE · FDA · KFDA · CCC",
         'hero.capability1.title': 'Distributed Systems',
         'hero.capability1.desc': 'Microservices, messaging, caching, scalability patterns',
         'hero.capability2.title': 'Reliability & Observability',
         'hero.capability2.desc': 'Tracing/metrics/logging, incident response, SLO mindset',
-        'hero.capability3.title': 'Platform Engineering',
-        'hero.capability3.desc': 'CI/CD, zero-downtime releases, automation & tooling',
+        'hero.capability3.title': "AI-assisted Development",
+        'hero.capability3.desc': "Agent workflows, account/worktree isolation, CI/CD, and human review",
         'hero.capability4.title': 'Regulated Delivery',
         'hero.capability4.desc': 'IEC 62304/ISO 13485, traceability, V&V & audits',
         // V-Model
@@ -283,7 +289,7 @@ const translations = {
         'section.methodology.desc': 'Regulated delivery process based on IEC 62304 with end-to-end traceability and V&V',
         'expertise.desc': 'Distributed/cloud/high-performance engineering, plus quality and documentation discipline from regulated environments.',
         'projects.title': 'Projects',
-        'projects.desc': 'Selected production systems and platform components across domains',
+        'projects.desc': "Public medical imaging, C++ systems, and AI development projects alongside company work",
         'testimonials.title': 'Testimonials',
         'testimonials.desc': 'Recommendations from colleagues',
         'expand': 'View Details',

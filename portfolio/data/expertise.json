@@ -10,18 +10,18 @@
       "items": {
         "ko": [
           "ISO 13485 — 산업별 동등 QMS 운영 패턴으로 적응 가능",
-          "IEC 62304 — 안전 중요 SW 생명주기 표준 일반에 동형 적용",
+          "IEC 62304 기반 소프트웨어 생명주기, 추적성 및 검증 활동",
           "ISO 14971 — 산업별 위험관리 표준 운영 경험으로 변환 가능",
-          "글로벌 4개국 인증 심사 통과 및 심사관 Q&A 리딩 경험",
-          "<strong>HIPAA Controls</strong> 수준의 보안·감사 통제 — 산업별 데이터 보호 체계로 이전 가능",
+          "제품 인허가 심사 대응 및 심사관 Q&A 리딩 경험",
+          "<strong>HIPAA 기술적 보호조치</strong> 적용 경험",
           "설계 통제(Design Control) 및 형상 관리 프로세스 정립"
         ],
         "en": [
           "ISO 13485 — adapts to equivalent QMS operating patterns across industries",
-          "IEC 62304 — isomorphic application across safety-critical SW lifecycle standards",
+          "IEC 62304 software lifecycle, traceability, and verification activities",
           "ISO 14971 — transferable to industry-specific risk-management frameworks",
-          "Passed 4 international audits and led auditor Q&A across jurisdictions",
-          "<strong>HIPAA-grade</strong> security and audit controls — transferable to other data-protection regimes",
+          "Product-approval audit preparation and auditor Q&A leadership",
+          "<strong>HIPAA technical safeguards</strong> implementation experience",
           "Design Control & Configuration Management process establishment"
         ]
       }
@@ -406,5 +406,9 @@
         "en": "Enhanced automated verification with unit tests to prevent regression and improve quality"
       }
     }
-  ]
+  ],
+  "standardsNote": {
+    "ko": "제품 인허가와 표준 적용 업무 경험입니다. 개인 자격증 목록이 아닙니다.",
+    "en": "Experience in product approvals and applying standards; these are not personal certifications."
+  }
 }

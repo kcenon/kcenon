@@ -232,14 +232,14 @@ function renderOpenSourceCard(project) {
     return `
         <article class="project-card opensource expandable" id="project-${_esc(project.id)}">
             <div class="project-header">
-                <span class="project-company-small">Open Source</span>
+                <span class="project-company-small">${_esc(_getText(project.group) || 'Open Source')}</span>
                 <a href="${_safeUrl(project.github)}" target="_blank" rel="noopener noreferrer" class="github-link" title="${labels.viewOnGithub}">
                     ${Icons.github}
                 </a>
             </div>
             <h3 class="project-title">${_esc(_getText(project.title))}</h3>
             ${project.period ? `<span class="project-period">${_esc(_getText(project.period))}</span>` : ''}
-            ${project.stars ? `<div class="project-stats"><span class="star-count">${_esc(project.stars)} stars</span></div>` : ''}
+            ${project.status ? `<p class="project-status">${_esc(_getText(project.status))}</p>` : ''}
             <p class="project-description">${_getText(project.description)}</p>
             <div class="project-tags">${renderTags(project.tags)}</div>
             <button class="expand-btn" aria-expanded="false">
@@ -251,9 +251,27 @@ function renderOpenSourceCard(project) {
             <div class="project-expanded">
                 ${renderExpandedList(labels.features, _getArray(project.expanded?.features))}
                 ${renderExpandedList(labels.performance, _getArray(project.expanded?.performance))}
+                <ul class="project-sources" aria-label="${lang === 'ko' ? '프로젝트 문서' : 'Project documentation'}">
+                    ${(project.sources || []).map(source => `<li><a href="${_safeUrl(source.url)}" target="_blank" rel="noopener noreferrer">${_esc(_getText(source.label))}</a></li>`).join('')}
+                </ul>
             </div>
         </article>
     `;
+}
+
+// Group the catalog by its localized domain labels; data order determines display order.
+function renderOpenSourceGroups(projects) {
+    const groups = new Map();
+    projects.forEach(project => {
+        const title = _getText(project.group) || 'Open Source';
+        if (!groups.has(title)) groups.set(title, []);
+        groups.get(title).push(project);
+    });
+    return Array.from(groups, ([title, entries]) => `
+        <div class="opensource-group">
+            <h4 class="projects-subtitle">${_esc(title)}</h4>
+            <div class="projects-grid">${entries.map(renderOpenSourceCard).join('')}</div>
+        </div>`).join('');
 }
 
 // Render all projects with filter tabs
@@ -291,19 +309,17 @@ function renderProjects(data, container) {
 
         <!-- Open Source Projects -->
         <div class="project-category" data-category="opensource">
-            <h3 class="projects-subtitle">Platform Components (Open Source)</h3>
+            <h3 class="projects-subtitle">${lang === 'ko' ? '공개 프로젝트' : 'Public Projects'}</h3>
             <p class="opensource-description">
                 ${lang === 'ko'
-                    ? '네트워크/스레딩/메시징/로깅 등 프로덕션 시스템에 필요한 인프라 컴포넌트를 Modern C++20으로 설계·구현한 오픈소스들.'
-                    : 'Open-source infrastructure components for production systems (networking, threading, messaging, logging), designed and built in Modern C++20.'}
+                    ? 'AI 개발 자동화, 의료영상과 연동, C++ 시스템 라이브러리. 공통 인터페이스를 기반으로 실행·통신·데이터·관측성을 구성하고 vcpkg 레지스트리로 연결합니다. 프로젝트별 지원 범위는 문서를 확인하세요.'
+                    : 'AI-assisted development, medical imaging and integration, and C++ systems libraries. Shared interfaces connect execution, communication, data, and observability through a vcpkg registry. Consult each project’s documentation for its support scope.'}
             </p>
-            <div class="projects-grid">
-                ${data.openSource.map(renderOpenSourceCard).join('')}
-            </div>
+            ${renderOpenSourceGroups(data.openSource)}
             <div class="opensource-cta">
-                <a href="https://github.com/kcenon" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                <a href="https://github.com/kcenon?tab=repositories" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
                     ${Icons.github}
-                    ${lang === 'ko' ? '전체 37개 프로젝트 보기' : 'View all 37 projects'}
+                    ${lang === 'ko' ? '전체 공개 저장소 보기' : 'View all public repositories'}
                 </a>
             </div>
         </div>
@@ -554,6 +570,7 @@ function renderExpertise(data, container) {
     let html = `
         <h2 class="section-title">${_t('nav.expertise')}</h2>
         <p class="section-description">${_t('expertise.desc')}</p>
+        ${data.standardsNote ? `<p class="section-description">${_esc(_getText(data.standardsNote))}</p>` : ''}
         <div class="expertise-grid">
             ${data.categories.map(cat => {
                 if (cat.tags) {
@@ -718,7 +735,7 @@ function renderManager(data, container) {
                 <div class="impact-numbers">
                     <div class="impact-number">
                         <span class="number">${_esc(numbers.certifications)}</span>
-                        <span class="label">${lang === 'ko' ? '글로벌 인증' : 'Global Certs'}</span>
+                        <span class="label">${lang === 'ko' ? '제품 인허가 체계' : 'Product Approval Frameworks'}</span>
                     </div>
                     <div class="impact-number">
                         <span class="number">${_esc(numbers.ipos)}</span>

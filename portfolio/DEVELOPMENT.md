@@ -43,3 +43,48 @@ locally from `portfolio/admin/vendor/` instead of CDN `<script>` tags. This
 removes the third-party runtime dependency (no CDN outage/compromise surface,
 no SRI hash maintenance) and works offline. When upgrading a library, replace
 the file in `vendor/` and bump the unified version as above.
+
+## Profile and project content
+
+Keep `README.md` and `README.ko.md` aligned: the same selected projects, sources,
+current role, and scope of standards experience. Keep career achievements in
+the career history with their company context. Do not turn standards experience
+into a count of personal certificates.
+
+The public project catalog stays in `data/projects.json` under `openSource`.
+Each entry has a bilingual `group`, `description`, and `status`, a repository
+`github` URL, a `reviewedAt` date, and `sources` with bilingual labels and file
+URLs. List published-release and development-branch capabilities separately when
+necessary. Avoid fixed repository/star totals and unconditional benchmark figures.
+A project may be absent from this selected catalog without being archived.
+
+The website groups entries by `group`; `ExportContent.getProjectContext` supplies
+the support notes and links to the PDF/DOCX IR and the document preview. Project
+preview content also comes from the IR, so catalog entries are not truncated.
+Career metrics for export covers live in `data/profile.json`; the same values
+must appear in the website hero and the leadership data.
+
+Run these checks before publishing:
+
+```sh
+python3 tools/check-profile.py
+sh tools/check-cache-versions.sh
+node tools/check-exports.mjs
+```
+
+`python3 tools/check-profile.py --remote` additionally checks repository visibility,
+archive flags, source branches, and file responses, including error text returned
+inside SVG images. It checks catalog and README source/image links; it does not
+verify every external career claim or social link. An optional `GITHUB_TOKEN`
+raises the GitHub API rate limit. The token is sent only to `api.github.com`.
+
+The Profile validation workflow runs local checks and builds both export formats
+in both languages on PRs and main pushes. Weekly and manual runs also check the
+remote sources; they report drift without rewriting biographical content.
+
+For content changes, generate snapshots before and after with
+`tools/export-snapshot.mjs`, using directories outside the checkout. Inspect the
+expected content differences and open actual PDF/DOCX outputs; snapshot checks
+do not verify fonts or pagination. Check Korean/English, mobile/desktop, and dark
+mode in a browser. Export snapshot artifacts must not be committed to the public
+Pages tree. The original scripts in `tools/` are covered by `tools/LICENSE` only.

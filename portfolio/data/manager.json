@@ -28,8 +28,8 @@
       "icon": "check-square",
       "value": "4",
       "label": {
-        "ko": "글로벌 인증",
-        "en": "Global Certs"
+        "ko": "제품 인허가 체계",
+        "en": "Product Approval Frameworks"
       },
       "description": {
         "ko": "CE/FDA/KFDA/CCC",

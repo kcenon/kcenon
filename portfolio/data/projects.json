@@ -930,6 +930,45 @@
   ],
   "openSource": [
     {
+      "id": "claude-code-agent",
+      "title": "claude_code_agent",
+      "github": "https://github.com/kcenon/claude_code_agent",
+      "group": {
+        "ko": "AI 개발 자동화",
+        "en": "AI-assisted development"
+      },
+      "description": {
+        "ko": "Claude Agent SDK 기반 <strong>요구사항→문서→구현→PR</strong> 워크플로. 신규 개발, 기존 프로젝트 개선, GitHub 이슈 가져오기를 지원합니다.",
+        "en": "Claude Agent SDK workflows from <strong>requirements to documents, implementation, and PRs</strong>, with greenfield, enhancement, and GitHub issue import modes."
+      },
+      "tags": [
+        "TypeScript",
+        "Claude Agent SDK",
+        "SDLC"
+      ],
+      "status": {
+        "ko": "개발 브랜치 기준 · 설치 패키지의 지원 범위는 별도 확인",
+        "en": "Development branch; check the installed package for supported behavior"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개발 개요",
+            "en": "Development overview"
+          },
+          "url": "https://github.com/kcenon/claude_code_agent/blob/develop/README.md"
+        },
+        {
+          "label": {
+            "ko": "런타임 구성",
+            "en": "Runtime inventory"
+          },
+          "url": "https://github.com/kcenon/claude_code_agent/blob/develop/docs/architecture/runtime-inventory.md"
+        }
+      ]
+    },
+    {
       "id": "claude-config",
       "title": "claude-config",
       "github": "https://github.com/kcenon/claude-config",
@@ -958,190 +997,511 @@
             "Multi-system deployment with CI-based skill/doc validation and cross-platform regression tests"
           ]
         }
-      }
+      },
+      "group": {
+        "ko": "AI 개발 자동화",
+        "en": "AI-assisted development"
+      },
+      "reviewedAt": "2026-10-11",
+      "status": {
+        "ko": "버전 관리되는 스킬·훅·에이전트 설정",
+        "en": "Versioned skills, hooks, and agent configuration"
+      },
+      "sources": [
+        {
+          "label": {
+            "ko": "설치와 지원 범위",
+            "en": "Installation and support"
+          },
+          "url": "https://github.com/kcenon/claude-config/blob/main/README.md"
+        }
+      ]
     },
     {
       "id": "claude-docker",
       "title": "claude-docker",
       "github": "https://github.com/kcenon/claude-docker",
+      "group": {
+        "ko": "AI 개발 자동화",
+        "en": "AI-assisted development"
+      },
       "description": {
-        "ko": "단일 호스트에서 <strong>다중 Claude Code 인스턴스를 계정 격리로 병렬 실행</strong>하는 컨테이너 인프라. 소스는 공유하되 자격 증명·세션은 격리.",
-        "en": "Container infrastructure for running <strong>multiple isolated Claude Code instances</strong> on a single host — shared source, isolated accounts and sessions."
+        "ko": "<strong>Claude Code, Codex CLI, Gemini CLI</strong>를 계정별 컨테이너에서 실행합니다. 공유 소스 또는 Git 작업 트리 격리와 Go TUI를 제공합니다.",
+        "en": "Runs <strong>Claude Code, Codex CLI, and Gemini CLI</strong> in per-account containers, with shared-source or isolated Git worktrees and a Go TUI."
       },
       "tags": [
         "Docker",
+        "Go",
         "AI Infrastructure",
-        "Isolation",
-        "Supply Chain"
+        "Git Worktree"
       ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "계정별 격리 컨테이너로 멀티 에이전트 병렬 운용",
-            "설치 스크립트 SHA256 핀 고정 — 공급망 무결성 검증",
-            "CI 기반 빌드·동작 검증 파이프라인",
-            "공유 소스 마운트로 에이전트 간 일관된 작업 환경"
-          ],
-          "en": [
-            "Per-account isolated containers for parallel multi-agent operation",
-            "SHA256-pinned installer — supply-chain integrity verification",
-            "CI-based build and behavior verification pipeline",
-            "Shared source mounts for a consistent environment across agents"
-          ]
-        }
-      }
-    },
-    {
-      "id": "messaging-system",
-      "title": "messaging_system",
-      "github": "https://github.com/kcenon/messaging_system",
-      "description": {
-        "ko": "Modern C++20 메시징 인프라. <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, 메시지 파이프라인 패턴 지원.",
-        "en": "Modern C++20 messaging infrastructure. Supports <strong>Pub/Sub, Request/Reply, Event Streaming</strong>, and message pipeline patterns."
+      "status": {
+        "ko": "Claude Code 기본 · Codex/Gemini 선택 · 일부 기능은 런타임별 차이",
+        "en": "Claude Code by default; opt-in Codex/Gemini with runtime-specific capabilities"
       },
-      "tags": [
-        "C++20",
-        "Pub/Sub",
-        "Event Streaming",
-        "Lock-free"
-      ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "Publisher/Subscriber 패턴 구현",
-            "Request/Reply 동기 통신",
-            "Event Streaming 비동기 처리",
-            "Message Pipeline 체이닝"
-          ],
-          "en": [
-            "Publisher/Subscriber pattern implementation",
-            "Request/Reply synchronous communication",
-            "Event Streaming asynchronous processing",
-            "Message Pipeline chaining"
-          ]
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "런타임 지원 범위",
+            "en": "Runtime support"
+          },
+          "url": "https://github.com/kcenon/claude-docker/blob/main/docs/RUNTIMES.md"
+        },
+        {
+          "label": {
+            "ko": "격리 방식",
+            "en": "Isolation model"
+          },
+          "url": "https://github.com/kcenon/claude-docker/blob/main/docs/ISOLATION.md"
         }
-      }
-    },
-    {
-      "id": "thread-system",
-      "title": "thread_system",
-      "github": "https://github.com/kcenon/thread_system",
-      "description": {
-        "ko": "Modern C++20 멀티스레딩 프레임워크. <strong>1.16M jobs/sec</strong> 처리량, Lock-free 큐, Hazard Pointers, Adaptive Optimization.",
-        "en": "Modern C++20 multithreading framework. <strong>1.16M jobs/sec</strong> throughput, Lock-free queue, Hazard Pointers, Adaptive Optimization."
-      },
-      "tags": [
-        "C++20",
-        "Lock-free",
-        "Thread Pool",
-        "Hazard Pointers"
-      ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "초당 116만 작업 처리",
-            "Lock-free 알고리즘 기반 큐",
-            "Hazard Pointer 메모리 관리",
-            "워크로드 기반 적응형 최적화"
-          ],
-          "en": [
-            "1.16 million jobs per second processing",
-            "Lock-free algorithm based queue",
-            "Hazard Pointer memory management",
-            "Workload-based adaptive optimization"
-          ]
-        }
-      }
-    },
-    {
-      "id": "network-system",
-      "title": "network_system",
-      "github": "https://github.com/kcenon/network_system",
-      "description": {
-        "ko": "Modern C++20 비동기 네트워크 라이브러리. <strong>TCP/UDP, HTTP/1.1, WebSocket, TLS 1.3</strong> 지원. ASIO 기반 Non-blocking I/O.",
-        "en": "Modern C++20 asynchronous network library. Supports <strong>TCP/UDP, HTTP/1.1, WebSocket, TLS 1.3</strong>. ASIO-based Non-blocking I/O."
-      },
-      "tags": [
-        "C++20",
-        "ASIO",
-        "WebSocket",
-        "TLS 1.3"
-      ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "TCP/UDP 소켓 통신",
-            "HTTP/1.1 클라이언트/서버",
-            "WebSocket 양방향 통신",
-            "TLS 1.3 보안 연결"
-          ],
-          "en": [
-            "TCP/UDP socket communication",
-            "HTTP/1.1 client/server",
-            "WebSocket bidirectional communication",
-            "TLS 1.3 secure connection"
-          ]
-        }
-      }
+      ]
     },
     {
       "id": "pacs-system",
       "title": "pacs_system",
       "github": "https://github.com/kcenon/pacs_system",
+      "group": {
+        "ko": "의료영상과 연동",
+        "en": "Medical imaging and integration"
+      },
       "description": {
-        "ko": "Modern C++20 PACS. <strong>외부 DICOM 라이브러리 없이</strong> kcenon 생태계만으로 구축. 고성능 비동기 I/O, SIMD 가속.",
-        "en": "Modern C++20 PACS. Built <strong>without external DICOM libraries</strong> using only kcenon ecosystem. High-performance async I/O, SIMD acceleration."
+        "ko": "<strong>외부 DICOM 라이브러리에 의존하지 않는</strong> C++20 PACS 구현. 네트워크, 저장, 코덱 등에는 기반 라이브러리를 사용합니다.",
+        "en": "C++20 PACS with <strong>its own DICOM implementation</strong>. Networking, storage, and codecs use supporting libraries."
       },
       "tags": [
         "C++20",
         "DICOM",
-        "PACS",
-        "SIMD"
+        "PACS"
       ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "순수 C++20 DICOM 구현",
-            "외부 라이브러리 의존성 제거",
-            "SIMD 가속 영상 처리",
-            "비동기 네트워크 I/O"
-          ],
-          "en": [
-            "Pure C++20 DICOM implementation",
-            "No external library dependencies",
-            "SIMD accelerated image processing",
-            "Asynchronous network I/O"
-          ]
+      "status": {
+        "ko": "공개 릴리스와 개발 API의 지원 범위를 구분",
+        "en": "Published releases and development APIs have different support scopes"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "기능과 적합성 문서 안내",
+            "en": "Features and conformance documentation"
+          },
+          "url": "https://github.com/kcenon/pacs_system/blob/main/README.md"
+        },
+        {
+          "label": {
+            "ko": "의존성 명세",
+            "en": "Dependency manifest"
+          },
+          "url": "https://github.com/kcenon/pacs_system/blob/main/vcpkg.json"
         }
-      }
+      ]
+    },
+    {
+      "id": "pacs-bridge",
+      "title": "pacs_bridge",
+      "github": "https://github.com/kcenon/pacs_bridge",
+      "group": {
+        "ko": "의료영상과 연동",
+        "en": "Medical imaging and integration"
+      },
+      "description": {
+        "ko": "PACS와 HIS/RIS를 연결하는 <strong>HL7 v2.x·FHIR R4 연동</strong> 프로젝트. 워크리스트 및 검사 상태 전달을 다룹니다.",
+        "en": "<strong>HL7 v2.x and FHIR R4 integration</strong> between PACS and HIS/RIS, including worklists and examination status exchange."
+      },
+      "tags": [
+        "DICOM",
+        "HL7",
+        "FHIR"
+      ],
+      "status": {
+        "ko": "기능별 구현 및 테스트 범위는 개발 상태 문서 참조",
+        "en": "Consult development status for implementation and test coverage"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/pacs_bridge/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "dcmtk-docker",
+      "title": "dcmtk-docker",
+      "github": "https://github.com/kcenon/dcmtk-docker",
+      "group": {
+        "ko": "의료영상과 연동",
+        "en": "Medical imaging and integration"
+      },
+      "description": {
+        "ko": "Docker에서 실행하는 <strong>DCMTK 기반 DICOM 통합 테스트 환경</strong>. C-ECHO, C-STORE, C-FIND, C-MOVE를 확인합니다.",
+        "en": "A Docker-based <strong>DCMTK DICOM integration test environment</strong> for C-ECHO, C-STORE, C-FIND, and C-MOVE."
+      },
+      "tags": [
+        "Docker",
+        "DCMTK",
+        "Integration Testing"
+      ],
+      "status": {
+        "ko": "로컬 Docker 기반 DICOM 네트워크 통합 테스트",
+        "en": "Local Docker-based DICOM network integration testing"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/dcmtk-docker/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "messaging-system",
+      "title": "messaging_system",
+      "github": "https://github.com/kcenon/messaging_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "C++20 <strong>Pub/Sub, Request/Reply, 이벤트 스트리밍</strong> 및 메시지 파이프라인. 공통 시스템 라이브러리와 연결됩니다.",
+        "en": "C++20 <strong>pub/sub, request/reply, event streaming</strong>, and message pipelines integrated with the shared system libraries."
+      },
+      "tags": [
+        "C++20",
+        "Pub/Sub",
+        "Event Streaming"
+      ],
+      "status": {
+        "ko": "기능 및 선택 의존성의 지원 범위는 문서 참조",
+        "en": "See documentation for features and optional dependency support"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/messaging_system/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "thread-system",
+      "title": "thread_system",
+      "github": "https://github.com/kcenon/thread_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "C++20 스레드 풀, 적응형 큐, 우선순위 스케줄링, 취소 및 안전한 메모리 회수.",
+        "en": "C++20 thread pools, adaptive queues, priority scheduling, cancellation, and safe memory reclamation."
+      },
+      "tags": [
+        "C++20",
+        "Thread Pool",
+        "Adaptive Queue"
+      ],
+      "status": {
+        "ko": "성능 문서는 과거 구성의 측정값이며 최신 버전의 보장값이 아님",
+        "en": "Benchmark documents describe historical configurations, not current-version guarantees"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "기능",
+            "en": "Features"
+          },
+          "url": "https://github.com/kcenon/thread_system/blob/main/docs/FEATURES.md"
+        },
+        {
+          "label": {
+            "ko": "벤치마크 조건과 결과",
+            "en": "Benchmark conditions and results"
+          },
+          "url": "https://github.com/kcenon/thread_system/blob/main/docs/BENCHMARKS.md"
+        }
+      ]
+    },
+    {
+      "id": "network-system",
+      "title": "network_system",
+      "github": "https://github.com/kcenon/network_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "ASIO 기반 C++20 비동기 네트워크. TCP/UDP, TLS, WebSocket, HTTP/2, gRPC, QUIC 관련 API를 제공합니다.",
+        "en": "ASIO-based C++20 asynchronous networking with TCP/UDP, TLS, WebSocket, HTTP/2, gRPC, and QUIC APIs."
+      },
+      "tags": [
+        "C++20",
+        "ASIO",
+        "TLS",
+        "Networking"
+      ],
+      "status": {
+        "ko": "개발 API와 배포 버전 구분 · QUIC 일부 및 DTLS는 실험적",
+        "en": "Development APIs differ from releases; parts of QUIC and DTLS are experimental"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "프로토콜 지원 범위와 제한",
+            "en": "Protocol support and limitations"
+          },
+          "url": "https://github.com/kcenon/network_system/blob/main/docs/PROTOCOL_SUPPORT.md"
+        },
+        {
+          "label": {
+            "ko": "설치와 릴리스 안내",
+            "en": "Installation and releases"
+          },
+          "url": "https://github.com/kcenon/network_system/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "common-system",
+      "title": "common_system",
+      "github": "https://github.com/kcenon/common_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "라이브러리 사이의 공통 인터페이스, <strong>Result 패턴</strong>, 오류 처리와 설계 패턴을 제공하는 C++20 기반 계층.",
+        "en": "C++20 foundation for shared interfaces, <strong>Result pattern</strong>, error handling, and design patterns across libraries."
+      },
+      "tags": [
+        "C++20",
+        "Interfaces",
+        "Result<T>"
+      ],
+      "status": {
+        "ko": "헤더 방식 기본 · 이름 있는 모듈은 실험적",
+        "en": "Headers by default; named modules are experimental"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/common_system/blob/main/README.md"
+        }
+      ]
     },
     {
       "id": "logger-system",
       "title": "logger_system",
       "github": "https://github.com/kcenon/logger_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
       "description": {
-        "ko": "비동기 로깅 프레임워크. <strong>4.34M msg/sec</strong> 처리량. 구조화된 로깅, 다중 출력, 로그 레벨 지원.",
-        "en": "Asynchronous logging framework. <strong>4.34M msg/sec</strong> throughput. Structured logging, multiple outputs, log level support."
+        "ko": "구조화된 로그, 비동기 처리, 다중 출력 및 선택적 관측성 연동을 제공하는 C++20 로깅 라이브러리.",
+        "en": "C++20 logging with structured messages, asynchronous processing, multiple outputs, and optional observability integration."
       },
       "tags": [
         "C++20",
-        "Async",
-        "High-throughput"
+        "Async Logging",
+        "Observability"
       ],
-      "expanded": {
-        "features": {
-          "ko": [
-            "초당 434만 메시지 처리",
-            "비동기 I/O 기반",
-            "Zero-copy 최적화"
-          ],
-          "en": [
-            "4.34 million messages per second",
-            "Based on asynchronous I/O",
-            "Zero-copy optimization"
-          ]
+      "status": {
+        "ko": "성능 문서는 과거 구성의 측정값이며 최신 버전의 보장값이 아님",
+        "en": "Benchmark documents describe historical configurations, not current-version guarantees"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "설치와 선택 기능",
+            "en": "Installation and optional features"
+          },
+          "url": "https://github.com/kcenon/logger_system/blob/main/README.md"
+        },
+        {
+          "label": {
+            "ko": "벤치마크 조건과 결과",
+            "en": "Benchmark conditions and results"
+          },
+          "url": "https://github.com/kcenon/logger_system/blob/main/docs/BENCHMARKS.md"
         }
-      }
+      ]
+    },
+    {
+      "id": "container-system",
+      "title": "container_system",
+      "github": "https://github.com/kcenon/container_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "타입이 있는 값과 직렬화를 제공하는 C++20 데이터 컨테이너. 공통 인터페이스를 통해 다른 라이브러리와 연결됩니다.",
+        "en": "C++20 data containers with typed values and serialization, integrated with other libraries through common interfaces."
+      },
+      "tags": [
+        "C++20",
+        "Serialization",
+        "Typed Values"
+      ],
+      "status": {
+        "ko": "동시 접근 시 타입·연산별 스레드 안전성 조건 확인",
+        "en": "Check thread-safety conditions for each type and operation"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/container_system/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "database-system",
+      "title": "database_system",
+      "github": "https://github.com/kcenon/database_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "PostgreSQL, MySQL, SQLite 등을 위한 C++20 데이터 접근 계층과 비동기 작업.",
+        "en": "C++20 data access and asynchronous operations for PostgreSQL, MySQL, SQLite, and other backends."
+      },
+      "tags": [
+        "C++20",
+        "SQL",
+        "Data Access"
+      ],
+      "status": {
+        "ko": "MongoDB와 Redis 백엔드는 실험적이며 기본 비활성화",
+        "en": "MongoDB and Redis backends are experimental and disabled by default"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/database_system/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "monitoring-system",
+      "title": "monitoring_system",
+      "github": "https://github.com/kcenon/monitoring_system",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "C++20 메트릭 수집, 분산 추적, 상태 모니터링 및 선택적 수집기·내보내기 연동.",
+        "en": "C++20 metrics, distributed tracing, health monitoring, and optional collectors and exporters."
+      },
+      "tags": [
+        "C++20",
+        "Metrics",
+        "Tracing"
+      ],
+      "status": {
+        "ko": "수집기·플러그인·내보내기별 지원 단계가 다름",
+        "en": "Support levels vary by collector, plugin, and exporter"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "구성 요소 지원 상태",
+            "en": "Component support status"
+          },
+          "url": "https://github.com/kcenon/monitoring_system/blob/main/docs/SUPPORT_STATUS.md"
+        }
+      ]
+    },
+    {
+      "id": "vcpkg-registry",
+      "title": "vcpkg-registry",
+      "github": "https://github.com/kcenon/vcpkg-registry",
+      "group": {
+        "ko": "C++ 시스템 라이브러리",
+        "en": "C++ systems libraries"
+      },
+      "description": {
+        "ko": "C++ 시스템 라이브러리를 소비자 프로젝트에 연결하는 <strong>사용자 정의 vcpkg 레지스트리</strong>. 버전과 의존성을 고정해 배포합니다.",
+        "en": "A <strong>custom vcpkg registry</strong> connecting the C++ libraries to consumer projects with versioned packages and dependencies."
+      },
+      "tags": [
+        "vcpkg",
+        "CMake",
+        "Packaging"
+      ],
+      "status": {
+        "ko": "레지스트리 패키지 버전과 소스 저장소 최신 버전은 구분",
+        "en": "Registry package versions may differ from source repository releases"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/vcpkg-registry/blob/main/README.md"
+        }
+      ]
+    },
+    {
+      "id": "hanok-window",
+      "title": "hanok_window",
+      "github": "https://github.com/kcenon/hanok_window",
+      "group": {
+        "ko": "설계 자동화 사례",
+        "en": "Design automation"
+      },
+      "description": {
+        "ko": "치수와 창살 구성을 입력받아 <strong>한옥 창호 CAD 패키지</strong>를 생성하는 Python 도구. 로컬 웹 UI와 LLM 도구를 제공합니다.",
+        "en": "Python tools generating <strong>hanok lattice-window CAD packages</strong> from dimensions and lattice settings, with a local web UI and LLM tools."
+      },
+      "tags": [
+        "Python",
+        "CAD",
+        "DXF",
+        "LLM Tools"
+      ],
+      "status": {
+        "ko": "명목 CAD 기하 검증 · 공차·하드웨어·CAM·지그 제작 검증 대기",
+        "en": "Nominal CAD geometry checks; tolerances, hardware, CAM, and fixtures await fabrication validation"
+      },
+      "reviewedAt": "2026-10-11",
+      "sources": [
+        {
+          "label": {
+            "ko": "개요 및 사용법",
+            "en": "Overview and usage"
+          },
+          "url": "https://github.com/kcenon/hanok_window/blob/develop/README.md"
+        }
+      ]
     }
   ]
 }

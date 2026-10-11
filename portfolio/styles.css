@@ -3574,3 +3574,10 @@ body {
         justify-content: space-between;
     }
 }
+
+/* Catalog support notes and source links remain readable in narrow cards. */
+.opensource-group { margin-top: 2rem; }
+.project-status { font-size: 0.875rem; color: var(--text-secondary); margin: 0.75rem 0; }
+.project-sources { padding-left: 1.25rem; margin: 0.75rem 0; }
+.project-sources li { margin-bottom: 0.5rem; overflow-wrap: anywhere; }
+.project-sources a { color: var(--accent); text-decoration: underline; }

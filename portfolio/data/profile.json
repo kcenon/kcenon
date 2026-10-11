@@ -4,23 +4,32 @@
     "en": "Dongcheol Shin"
   },
   "title": {
-    "ko": "CTO · 연구소장 · 플랫폼 아키텍트",
-    "en": "CTO · Research Director · Platform Architect"
+    "ko": "CTO · 의료영상 · C++ 시스템 · AI 개발 자동화",
+    "en": "CTO · Medical Imaging · C++ Systems · AI-assisted Development"
   },
   "fields": [
     {
       "id": "email",
-      "label": { "ko": "이메일", "en": "Email" },
+      "label": {
+        "ko": "이메일",
+        "en": "Email"
+      },
       "value": "kcenon@gmail.com"
     },
     {
       "id": "phone",
-      "label": { "ko": "전화번호", "en": "Phone" },
+      "label": {
+        "ko": "전화번호",
+        "en": "Phone"
+      },
       "value": "010-2705-1068"
     },
     {
       "id": "address",
-      "label": { "ko": "주소", "en": "Address" },
+      "label": {
+        "ko": "주소",
+        "en": "Address"
+      },
       "value": {
         "ko": "경기도 용인시",
         "en": "Yongin, Gyeonggi-do, Republic of Korea"
@@ -28,15 +37,49 @@
     },
     {
       "id": "github",
-      "label": { "ko": "GitHub", "en": "GitHub" },
+      "label": {
+        "ko": "GitHub",
+        "en": "GitHub"
+      },
       "value": "github.com/kcenon",
       "url": "https://github.com/kcenon"
     },
     {
       "id": "linkedin",
-      "label": { "ko": "LinkedIn", "en": "LinkedIn" },
+      "label": {
+        "ko": "LinkedIn",
+        "en": "LinkedIn"
+      },
       "value": "linkedin.com/in/raphaelshin",
       "url": "https://www.linkedin.com/in/raphaelshin/"
+    }
+  ],
+  "coverSummary": {
+    "ko": [
+      "Flonics CTO로 의료영상 솔루션의 개발·운영·기술 관리를 총괄합니다.",
+      "의료영상, Modern C++ 시스템, AI 개발 자동화를 연결합니다.",
+      "요구사항·설계·테스트·추적성을 연결하는 규제 환경의 개발 경험을 갖추고 있습니다."
+    ],
+    "en": [
+      "CTO at Flonics, responsible for development, operations, and technical management of medical imaging solutions.",
+      "Connecting medical imaging, Modern C++ systems, and AI-assisted software delivery.",
+      "Experienced in regulated delivery connecting requirements, design, testing, and traceability."
+    ]
+  },
+  "careerMetrics": [
+    {
+      "value": "20+",
+      "label": {
+        "ko": "년 개발 경력",
+        "en": "Years in Software"
+      }
+    },
+    {
+      "value": "14+",
+      "label": {
+        "ko": "년 팀 리딩",
+        "en": "Years Leading"
+      }
     }
   ]
 }
