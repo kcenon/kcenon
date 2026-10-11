@@ -91,20 +91,7 @@
    * exporters (buildStatsTable / buildStatsInfographic).
    */
   function computeStats(data, lang) {
-    const kn = (data && data.manager && data.manager.businessImpact
-      && data.manager.businessImpact.keyNumbers) || {};
-    const certCount = (data && data.expertise && data.expertise.certifications
-      && data.expertise.certifications.length) || kn.certifications;
-    const stats = [];
-
-    stats.push({ value: '20+', label: lang === 'ko' ? '경력 (년)' : 'Years' });
-    if (certCount) stats.push({ value: String(certCount), label: lang === 'ko' ? '글로벌 인증' : 'Certifications' });
-    if (kn.ipos) stats.push({ value: String(kn.ipos), label: 'IPO' });
-    if (kn.performanceImprovement) stats.push({ value: String(kn.performanceImprovement), label: lang === 'ko' ? '성능 향상' : 'Performance' });
-    if (kn.projectsDelivered && stats.length < 4) {
-      stats.push({ value: String(kn.projectsDelivered), label: lang === 'ko' ? '프로젝트' : 'Projects' });
-    }
-    return stats.slice(0, 4);
+    return window.ExportContent.getCareerStats(data, lang);
   }
 
   function buildCoverSection(data, info, lang) {
@@ -141,7 +128,7 @@
       && data.expertise.certifications.length > 0) {
       children.push({
         type: 'paragraph', role: 'coverCertsLabel',
-        text: lang === 'ko' ? '인증 / Certifications' : 'Certifications'
+        text: window.ExportContent.getLabels(lang).certifications
       });
       children.push({
         type: 'paragraph', role: 'coverCertsText',
@@ -202,6 +189,8 @@
 
   function buildExpertiseSection(expertise, labels, lang) {
     const children = [{ type: 'heading', level: 2, role: 'section', text: labels.expertise }];
+
+    if (expertise.standardsNote) children.push({ type: 'paragraph', role: 'projectDescription', text: getTextIn(expertise.standardsNote, lang) });
 
     if (expertise.categories && expertise.categories.length > 0) {
       expertise.categories.forEach(category => {
@@ -300,6 +289,13 @@
       });
     }
 
+    window.ExportContent.getProjectContext(project, lang).forEach(entry => {
+      children.push({
+        type: 'paragraph', role: entry.url ? 'projectLink' : 'projectDescription',
+        text: entry.text, url: entry.url
+      });
+    });
+
     const tags = getArrayIn(project.tags, lang);
     if (tags.length > 0) {
       children.push({
@@ -310,6 +306,7 @@
     }
 
     if (project.expanded) {
+      const features = getArrayIn(project.expanded.features, lang);
       const roles = getArrayIn(project.expanded.roles, lang);
       const challenges = getArrayIn(project.expanded.challenges, lang);
       const solutions = getArrayIn(project.expanded.solutions, lang);
@@ -324,6 +321,7 @@
         });
       };
 
+      if (features.length > 0) pushBlock('features', lang === 'ko' ? '주요 기능' : 'Key Features', features, false);
       if (roles.length > 0) {
         children.push({ type: 'spacer', role: 'projectDetailRule' });
         pushBlock('roles', labels.keyResponsibilities, roles, achievements.length > 0);

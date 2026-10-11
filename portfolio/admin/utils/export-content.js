@@ -24,16 +24,8 @@
   };
 
   const COVER_SUMMARY_LINES = {
-    ko: [
-      '안전 중요·ISO 인증 도메인에서 R&D 조직과 플랫폼을 20년 넘게 이끌어 왔습니다.',
-      '2회 IPO 기여, 4개국 글로벌 인증 통과, 2~11명 다언어 R&D 팀 리딩 경험.',
-      '규제·표준이 요구되는 도메인이라면 산업에 종속되지 않는 SDLC 운영 패턴으로 적응합니다.'
-    ],
-    en: [
-      '20+ years leading R&D organizations and platforms in safety-critical, ISO-certified domains.',
-      '2 IPOs delivered, 4 international approvals, 2-11 person multi-language R&D team leadership.',
-      'A regulated-SDLC operating pattern that adapts across industries — not bound to a single domain.'
-    ]
+    ko: ['의료영상, Modern C++ 시스템, AI 개발 자동화를 연결하는 기술 리더입니다.'],
+    en: ['Technical leadership connecting medical imaging, Modern C++ systems, and AI-assisted development.']
   };
 
   const LABELS = {
@@ -52,7 +44,7 @@
       enterprise: '엔터프라이즈 솔루션',
       openSource: '오픈 소스',
       coreCapabilities: '핵심 역량',
-      certifications: '인증',
+      certifications: '제품 인허가 및 표준 적용 경험',
       keyResponsibilities: '주요 역할:',
       achievements: '성과:',
       challenges: '기술적 도전:',
@@ -86,7 +78,7 @@
       enterprise: 'Enterprise Solutions',
       openSource: 'Open Source',
       coreCapabilities: 'Core Capabilities',
-      certifications: 'Certifications',
+      certifications: 'Product Approval and Standards Experience',
       keyResponsibilities: 'Key Responsibilities:',
       achievements: 'Achievements:',
       challenges: 'Challenges:',
@@ -223,9 +215,30 @@
     }
   }
 
+  // Shared by the cover, exporters, and preview. Framework names are not certificate counts.
+  function getCareerStats(data, lang) {
+    return (data.profile?.careerMetrics || []).map(metric => ({
+      value: String(metric.value), label: getTextIn(metric.label, lang)
+    }));
+  }
+
+  // Keep project support notes and evidence identical in both document formats and preview.
+  function getProjectContext(project, lang) {
+    const entries = [];
+    if (project.group) entries.push({ text: getTextIn(project.group, lang) });
+    if (project.status) entries.push({ text: getTextIn(project.status, lang) });
+    if (project.github) entries.push({ text: 'GitHub', url: project.github });
+    (project.sources || []).forEach(source => entries.push({
+      text: getTextIn(source.label, lang), url: source.url
+    }));
+    return entries.filter(entry => !entry.url || /^https?:\/\//i.test(entry.url));
+  }
+
   // Export for browser global access
   window.ExportContent = {
     getLabels,
+    getCareerStats,
+    getProjectContext,
     getCoverSubtitle,
     getCoverSummaryLines,
     calculateDuration,

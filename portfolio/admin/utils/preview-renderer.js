@@ -322,6 +322,7 @@ class DocumentPreviewRenderer {
    */
   flowElements(elements, state, contentHeight) {
     elements.forEach(element => {
+      if (element.pageBreakBefore) this.breakPage(state);
       // Check if element fits on current page (groups use total group height)
       if (state.page.currentY + element.height > contentHeight && state.page.elements.length > 0) {
         state.pages.push(state.page);
@@ -458,7 +459,7 @@ class DocumentPreviewRenderer {
         .map(c => this.getText(c.name)).join('  ·  ');
       elements.push({
         type: 'date',
-        text: lang === 'ko' ? '인증 / Certifications' : 'Certifications',
+        text: this.getExportLabels().certifications,
         height: typography.fontSize.small + 8
       });
       elements.push({ type: 'subheading', text: certText, height: typography.fontSize.h3 + 10 });
@@ -474,20 +475,7 @@ class DocumentPreviewRenderer {
    * @returns {Array<{value: string, label: string}>} Stats entries
    */
   buildCoverStats(data) {
-    const lang = this.currentLang;
-    const kn = data?.manager?.businessImpact?.keyNumbers || {};
-    const certCount = data?.expertise?.certifications?.length || kn.certifications;
-    const stats = [];
-
-    stats.push({ value: '20+', label: lang === 'ko' ? '경력 (년)' : 'Years' });
-    if (certCount) stats.push({ value: String(certCount), label: lang === 'ko' ? '글로벌 인증' : 'Certifications' });
-    if (kn.ipos) stats.push({ value: String(kn.ipos), label: 'IPO' });
-    if (kn.performanceImprovement) stats.push({ value: String(kn.performanceImprovement), label: lang === 'ko' ? '성능 향상' : 'Performance' });
-    if (kn.projectsDelivered && stats.length < 4) {
-      stats.push({ value: String(kn.projectsDelivered), label: lang === 'ko' ? '프로젝트' : 'Projects' });
-    }
-
-    return stats.slice(0, 4);
+    return window.ExportContent.getCareerStats(data, this.currentLang);
   }
 
   /**
@@ -762,6 +750,10 @@ class DocumentPreviewRenderer {
    * Groups category title with its items to prevent splitting
    */
   buildExpertiseElements(elements, data, typography) {
+    if (data.standardsNote) {
+      const text = this.getText(data.standardsNote);
+      elements.push({ type: 'paragraph', text, height: this.estimateWrappedHeight(text, typography.fontSize.body) });
+    }
     if (data.categories) {
       data.categories.slice(0, 3).forEach(cat => {
         const groupItems = [];
@@ -795,34 +787,30 @@ class DocumentPreviewRenderer {
    * Groups project title with description to prevent splitting
    */
   buildProjectsElements(elements, data, typography) {
-    const allProjects = [
-      ...(data.featured || []),
-      ...(data.medicalImaging || []),
-      ...(data.orthodontic || []),
-      ...(data.equipmentControl || []),
-      ...(data.enterprise || []),
-      ...(data.openSource || [])
-    ].slice(0, 4);
-
-    allProjects.forEach(project => {
-      const groupItems = [];
-      groupItems.push({
-        type: 'projectTitle',
-        text: this.getText(project.title),
-        height: typography.fontSize.h3 + 8
-      });
-      groupItems.push({
-        type: 'paragraph',
-        text: this.truncate(this.getText(project.description), 100),
-        height: typography.fontSize.body * 2 + 10
-      });
-      // Push as a group to keep together
-      elements.push({
-        type: 'group',
-        items: groupItems,
-        height: groupItems.reduce((sum, item) => sum + item.height, 0) + 5
-      });
-    });
+    const ir = window.ExportIR.build({ projects: data }, {
+      sections: ['projects'], includeCoverPage: false
+    }, this.currentLang);
+    const section = ir.children.find(node => node.id === 'projects');
+    const pushText = (text, type = 'paragraph', pageBreakBefore = false) => {
+      elements.push({ type, text, pageBreakBefore,
+        height: this.estimateWrappedHeight(text, type === 'subheading' || type === 'projectTitle'
+          ? typography.fontSize.h3 : typography.fontSize.body) });
+    };
+    const walk = node => {
+      if (node.type === 'heading') {
+        if (node.level !== 2) pushText(node.text, 'subheading', node.pageBreakBefore);
+      } else if (node.type === 'paragraph') {
+        const text = node.text ?? (node.runs || []).map(run => run.text).join(' · ');
+        pushText(node.url ? `${text}: ${node.url}` : text,
+          node.role === 'projectTitle' ? 'projectTitle' : 'paragraph');
+      } else if (node.type === 'badgeRow') {
+        pushText(node.items.join(' · '));
+      } else if (node.type === 'bulletList') {
+        node.items.forEach(item => pushText(`• ${item.text}`));
+      }
+      (node.children || []).forEach(walk);
+    };
+    if (section) walk(section);
   }
 
   /**
@@ -1147,27 +1135,18 @@ class DocumentPreviewRenderer {
     }
     text = String(text);
 
-    const words = text.split(' ');
     let line = '';
     let lineY = y;
-    const lineHeight = parseInt(this.ctx.font) * 1.4;
-
-    words.forEach(word => {
-      const testLine = line + word + ' ';
-      const metrics = this.ctx.measureText(testLine);
-
-      if (metrics.width > maxWidth && line !== '') {
-        this.ctx.fillText(line.trim(), x, lineY);
-        line = word + ' ';
+    const lineHeight = parseFloat(this.ctx.font.match(/[\d.]+(?=px)/)?.[0] || '12') * 1.4;
+    for (const char of text) {
+      if (char === '\n' || (line && this.ctx.measureText(line + char).width > maxWidth)) {
+        this.ctx.fillText(line.trimEnd(), x, lineY);
+        line = '';
         lineY += lineHeight;
-      } else {
-        line = testLine;
       }
-    });
-
-    if (line.trim()) {
-      this.ctx.fillText(line.trim(), x, lineY);
+      if (char !== '\n') line += char;
     }
+    if (line) this.ctx.fillText(line.trimEnd(), x, lineY);
   }
 
   /**

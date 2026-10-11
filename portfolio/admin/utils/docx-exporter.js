@@ -673,6 +673,15 @@ class DOCXExporter {
         })];
       }
 
+      case 'projectLink':
+        return [new docx.Paragraph({
+          children: [new docx.ExternalHyperlink({
+            link: node.url,
+            children: [new docx.TextRun({ text: `${node.text}: ${node.url}`, style: 'Hyperlink', size: this.toHalfPt(9) })]
+          })],
+          spacing: { after: 120 }, keepLines: true
+        })];
+
       case 'projectDescription':
         return [new docx.Paragraph({
           children: [new docx.TextRun({

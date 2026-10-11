@@ -960,6 +960,13 @@ class PDFExporter {
         }];
       }
 
+      case 'projectLink':
+        return [{
+          text: `${node.text}: ${node.url}`, link: node.url,
+          color: this.getColor('accent'), fontSize: this.getTypography('fontSize.small'),
+          margin: [0, 0, 0, 6]
+        }];
+
       case 'projectDescription':
         return [{
           text: node.text,

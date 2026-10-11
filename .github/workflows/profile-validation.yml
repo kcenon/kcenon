@@ -1,0 +1,39 @@
+name: Profile validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Validate content and local links
+        run: python3 tools/check-profile.py
+      - name: Check cache versions
+        run: sh tools/check-cache-versions.sh
+      - name: Validate JavaScript syntax
+        run: find portfolio tools -name '*.js' -o -name '*.mjs' | grep -v '/vendor/' | xargs -n 1 node --check
+      - name: Verify export and preview content
+        run: node tools/check-exports.mjs
+      - name: Build both languages and document formats
+        run: node tools/export-snapshot.mjs baseline --dir "$RUNNER_TEMP/profile-export"
+      - name: Verify public repository state and source links
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/check-profile.py --remote
