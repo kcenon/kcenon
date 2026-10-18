@@ -9,22 +9,18 @@
       },
       "items": {
         "ko": [
-          "ISO 13485 — 산업별 동등 QMS 운영 패턴으로 적응 가능",
-          "IEC 62304 기반 소프트웨어 생명주기, 추적성 및 검증 활동",
-          "ISO 14971 — 산업별 위험관리 표준 운영 경험으로 변환 가능",
-          "제품 인허가 심사 대응 및 심사관 Q&A 리딩 경험",
-          "<strong>식약처 의료기기 GMP</strong>(ISO 13485 기반) 심사 준비·대응 — 심사 전 문서 점검, 문서·기록 관리, CCB 변경 통제",
-          "<strong>HIPAA 기술적 보호조치</strong> 적용 경험",
-          "설계 통제(Design Control) 및 형상 관리 프로세스 정립"
+          "<strong>IEC 62304</strong> — 소프트웨어 생명주기 운영, 요구사항↔설계↔테스트 추적성과 단계별 검증 활동",
+          "<strong>ISO 14971</strong> — FMEA를 포함한 소프트웨어 위험 분석과 완화 조치",
+          "<strong>ISO 13485</strong> — 품질경영 체계 안에서 설계 통제(Design Control)·형상 관리·CCB 변경 통제와 문서·기록 관리 프로세스 정립",
+          "<strong>인허가·GMP 심사</strong> — 제품 인허가(CE/FDA/KFDA/CCC)와 식약처 의료기기 GMP 심사 준비·대응: 심사 전 문서 점검, 근거 자료 준비, 심사관 Q&A 리딩",
+          "<strong>타 산업 적용</strong> — 같은 품질경영·위험관리 운영 방식을 산업별 동등 표준에 그대로 적용 가능"
         ],
         "en": [
-          "ISO 13485 — adapts to equivalent QMS operating patterns across industries",
-          "IEC 62304 software lifecycle, traceability, and verification activities",
-          "ISO 14971 — transferable to industry-specific risk-management frameworks",
-          "Product-approval audit preparation and auditor Q&A leadership",
-          "<strong>Korean MFDS medical device GMP</strong> (ISO 13485-based) audit preparation and response — pre-audit document reviews, document and record control, CCB change control",
-          "<strong>HIPAA technical safeguards</strong> implementation experience",
-          "Design Control & Configuration Management process establishment"
+          "<strong>IEC 62304</strong> — software lifecycle operation with requirements↔design↔test traceability and phase-by-phase verification",
+          "<strong>ISO 14971</strong> — software risk analysis, including FMEA, and mitigations",
+          "<strong>ISO 13485</strong> — design control, configuration management, CCB change control, and document and record control established within the QMS",
+          "<strong>Approval & GMP audits</strong> — preparation for and response to product-approval (CE/FDA/KFDA/CCC) and Korean MFDS medical device GMP audits: pre-audit document reviews, evidence preparation, and auditor Q&A leadership",
+          "<strong>Cross-industry transfer</strong> — the same quality and risk-management practices carry over to equivalent standards in other industries"
         ]
       }
     },
