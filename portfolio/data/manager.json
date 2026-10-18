@@ -200,12 +200,14 @@
         "ko": [
           "IEC 62304 Class B/C 프로세스 수립 및 전사 적용",
           "V&V 프로세스 정립 및 자동화 도구 개발",
-          "CI/CD 표준화로 배포 품질과 속도 동시 개선"
+          "CI/CD 표준화로 배포 품질과 속도 동시 개선",
+          "CCB 의장으로 설계 변경 심의·의결과 GMP 문서·기록 관리 체계 운영"
         ],
         "en": [
           "Established IEC 62304 Class B/C process and rolled it out company-wide",
           "Defined V&V processes and built automation tooling",
-          "Improved both speed and quality by standardizing CI/CD"
+          "Improved both speed and quality by standardizing CI/CD",
+          "Chair the CCB, running design change review and decisions alongside GMP document and record control"
         ]
       }
     }

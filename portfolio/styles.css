@@ -1499,14 +1499,58 @@ body {
     line-height: 1.5;
 }
 
+.gmp-readiness {
+    margin-top: 64px;
+}
+
+.gmp-readiness-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.gmp-readiness-desc {
+    max-width: 720px;
+    margin: 0 auto 32px;
+    text-align: center;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.gmp-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.gmp-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 12px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent-hover);
+    font-weight: 700;
+}
+
 @media (max-width: 1024px) {
-    .lifecycle-details {
+    .lifecycle-details,
+    .gmp-steps {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 600px) {
-    .lifecycle-details {
+    .lifecycle-details,
+    .gmp-steps {
         grid-template-columns: 1fr;
     }
 

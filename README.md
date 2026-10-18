@@ -11,6 +11,7 @@ CTO at [Flonics](https://flonics.co.kr) since March 2026, responsible for develo
 - **Medical imaging:** DICOM/PACS, hospital-system integration, and test environments.
 - **Systems engineering:** reusable C++ libraries for concurrency, networking, messaging, data access, and observability.
 - **AI-assisted delivery:** requirements-to-PR workflows, versioned agent configuration, isolated development environments, and human review of generated work.
+- **GMP audit readiness:** preparation for and response to Korean MFDS medical device GMP audits (based on ISO 13485) for a software medical device: pre-audit document reviews, document and record control, change control board (CCB) decisions, and evidence for auditor questions.
 
 ## Experience highlights
 
@@ -25,7 +26,7 @@ See the [career history](https://kcenon.github.io/kcenon/portfolio/#career) for 
 - **Languages:** C++ (14/17/20), C#, Rust, Go, Python, TypeScript.
 - **Systems:** ASIO, RabbitMQ, Redis, PostgreSQL, OpenTelemetry, Docker, AWS, GitHub Actions.
 - **Imaging and UI:** DICOM/PACS, Qt, WPF/MVVM.
-- **Medical-device engineering:** experience applying IEC 62304, ISO 13485, and ISO 14971 to requirements, risk analysis, verification, traceability, and regulatory documentation. These describe engineering and product-approval experience, not personal certifications.
+- **Medical-device engineering:** experience applying IEC 62304, ISO 13485 (including the Korean MFDS medical device GMP built on it), and ISO 14971 to requirements, risk analysis, verification, traceability, regulatory documentation, and audit preparation. These describe engineering, product-approval, and audit-preparation experience, not personal certifications.
 
 ## Connect
 

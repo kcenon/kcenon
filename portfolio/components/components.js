@@ -627,6 +627,26 @@ function renderLifecycleDetails(data, container) {
     `).join('');
 }
 
+// Render GMP audit readiness as numbered process steps
+function renderGmpReadiness(data, container) {
+    const gmp = data.gmpReadiness;
+    if (!gmp) return;
+
+    container.innerHTML = `
+        <h3 class="gmp-readiness-title">${_esc(_getText(gmp.title))}</h3>
+        <p class="gmp-readiness-desc">${_esc(_getText(gmp.description))}</p>
+        <ol class="gmp-steps">
+            ${gmp.steps.map((step, index) => `
+                <li class="lifecycle-card gmp-step">
+                    <span class="gmp-step-number" aria-hidden="true">${index + 1}</span>
+                    <h4>${_esc(_getText(step.title))}</h4>
+                    <p>${_esc(_getText(step.description))}</p>
+                </li>
+            `).join('')}
+        </ol>
+    `;
+}
+
 // Render manager/leadership section
 function renderManager(data, container) {
     const lang = _getLang();
@@ -964,6 +984,7 @@ window.PortfolioComponents = {
     renderCareer,
     renderExpertise,
     renderLifecycleDetails,
+    renderGmpReadiness,
     renderManager,
     renderEducation,
     renderCompensation,

@@ -13,6 +13,7 @@
           "IEC 62304 기반 소프트웨어 생명주기, 추적성 및 검증 활동",
           "ISO 14971 — 산업별 위험관리 표준 운영 경험으로 변환 가능",
           "제품 인허가 심사 대응 및 심사관 Q&A 리딩 경험",
+          "<strong>식약처 의료기기 GMP</strong>(ISO 13485 기반) 심사 준비·대응 — 심사 전 문서 점검, 문서·기록 관리, CCB 변경 통제",
           "<strong>HIPAA 기술적 보호조치</strong> 적용 경험",
           "설계 통제(Design Control) 및 형상 관리 프로세스 정립"
         ],
@@ -21,6 +22,7 @@
           "IEC 62304 software lifecycle, traceability, and verification activities",
           "ISO 14971 — transferable to industry-specific risk-management frameworks",
           "Product-approval audit preparation and auditor Q&A leadership",
+          "<strong>Korean MFDS medical device GMP</strong> (ISO 13485-based) audit preparation and response — pre-audit document reviews, document and record control, CCB change control",
           "<strong>HIPAA technical safeguards</strong> implementation experience",
           "Design Control & Configuration Management process establishment"
         ]
@@ -43,6 +45,8 @@
           "검증 & 유효성 확인(V&V) 프로토콜/리포트",
           "단위/통합 테스트 명세서",
           "SOUP 분석 (미확인 출처 소프트웨어)",
+          "설계 변경 요청(DCR) 및 CCB 회의록",
+          "문서 상태·승인·개정 이력 메타데이터와 자동 점검",
           "릴리즈 노트 & 변경 이력"
         ],
         "en": [
@@ -54,6 +58,8 @@
           "Verification & Validation (V&V) protocols/reports",
           "Unit/Integration Test Specifications",
           "SOUP (Software of Unknown Provenance) analysis",
+          "Design change requests (DCR) and CCB minutes",
+          "Document status, approval, and revision metadata with automated checks",
           "Release notes & change history"
         ]
       }
@@ -407,6 +413,78 @@
       }
     }
   ],
+  "gmpReadiness": {
+    "title": {
+      "ko": "GMP 심사 준비·대응",
+      "en": "GMP Audit Readiness & Response"
+    },
+    "description": {
+      "ko": "식약처 의료기기 GMP(ISO 13485 기반) 심사에 대비해 문서·기록·변경 통제를 평소에도 심사 가능한 상태로 유지하고, 심사 질의에는 근거 자료로 답합니다.",
+      "en": "For Korean MFDS medical device GMP audits (based on ISO 13485), documents, records, and change control are kept audit-ready day to day, and auditor questions are answered with evidence."
+    },
+    "steps": [
+      {
+        "title": {
+          "ko": "심사 전 문서 점검",
+          "en": "Pre-audit Document Review"
+        },
+        "description": {
+          "ko": "문서별 현행 개정본을 승인 기록과 대조하고, 발견사항을 심각도별로 분류해 시정 계획으로 연결",
+          "en": "Check each document's current revision against its approval record, rate findings by severity, and turn them into a corrective plan"
+        }
+      },
+      {
+        "title": {
+          "ko": "문서·기록 관리",
+          "en": "Document & Record Control"
+        },
+        "description": {
+          "ko": "문서 상태값·개정 원칙·승인 메타데이터를 정의하고, CI 점검으로 누락을 조기에 발견",
+          "en": "Define document status values, revision rules, and approval metadata, and catch gaps early with CI checks"
+        }
+      },
+      {
+        "title": {
+          "ko": "CCB 변경 통제",
+          "en": "CCB Change Control"
+        },
+        "description": {
+          "ko": "설계 변경 요청(DCR)을 CCB에서 심의·의결하고, 회의록을 감사 가능한 기록으로 보존",
+          "en": "Review and decide design change requests (DCR) at the CCB, and keep the minutes as auditable records"
+        }
+      },
+      {
+        "title": {
+          "ko": "추적성·근거 자료",
+          "en": "Traceability & Evidence"
+        },
+        "description": {
+          "ko": "요구사항–위험–설계–시험 추적성과 SOUP·SBOM 기록을 질의 즉시 제시할 수 있게 정리",
+          "en": "Organize requirement–risk–design–test traceability and SOUP/SBOM records so they can be shown as soon as they are requested"
+        }
+      },
+      {
+        "title": {
+          "ko": "심사 당일 대응",
+          "en": "Audit-day Response"
+        },
+        "description": {
+          "ko": "질의마다 담당자와 근거 문서를 연결해 답변하고, 질의·지적 사항을 기록",
+          "en": "Answer each auditor question with its owner and source documents, and log questions and findings"
+        }
+      },
+      {
+        "title": {
+          "ko": "후속 조치 (CAPA)",
+          "en": "Follow-up (CAPA)"
+        },
+        "description": {
+          "ko": "지적 사항을 시정·예방조치(CAPA)로 등록하고, CCB에서 완료와 효과성을 확인",
+          "en": "Register findings as corrective and preventive actions (CAPA), and confirm completion and effectiveness at the CCB"
+        }
+      }
+    ]
+  },
   "standardsNote": {
     "ko": "제품 인허가와 표준 적용 업무 경험입니다. 개인 자격증 목록이 아닙니다.",
     "en": "Experience in product approvals and applying standards; these are not personal certifications."
