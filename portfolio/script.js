@@ -9,7 +9,7 @@ function initializePortfolio() {
         console.warn('PortfolioComponents not found. Make sure components/components.js is loaded.');
         return;
     }
-    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderManager, renderEducation, renderCompensation } = components;
+    const { renderProjects, renderTestimonials, renderCareer, renderExpertise, renderLifecycleDetails, renderGmpReadiness, renderManager, renderEducation, renderCompensation } = components;
 
     // Get data loaded by data/data.js (fetches JSON files into window.PortfolioData)
     const data = window.PortfolioData;
@@ -47,6 +47,9 @@ function initializePortfolio() {
 
         const lifecycleDetails = document.getElementById('lifecycle-details');
         if (lifecycleDetails) renderLifecycleDetails(data.expertise, lifecycleDetails);
+
+        const gmpReadiness = document.getElementById('gmp-readiness');
+        if (gmpReadiness) renderGmpReadiness(data.expertise, gmpReadiness);
     }
 
     // Render manager/leadership section
@@ -183,7 +186,7 @@ const translations = {
         'hero.capability3.title': "AI 개발 자동화",
         'hero.capability3.desc': "에이전트 워크플로, 계정·작업 격리, CI/CD와 사람의 검토",
         'hero.capability4.title': '규제 환경 딜리버리',
-        'hero.capability4.desc': 'IEC 62304/ISO 13485, 추적성, V&V/심사 대응',
+        'hero.capability4.desc': 'IEC 62304/ISO 13485·GMP, 추적성, V&V/심사 대응',
         // V-Model
         'vmodel.definition': '정의 & 설계',
         'vmodel.verification': '검증 & 테스트',
@@ -210,7 +213,7 @@ const translations = {
         'contact.title': 'Contact',
         'contact.intro': '분산 시스템, 플랫폼 엔지니어링, 고성능 C++/.NET, 또는 오픈소스 협업에 관심이 있으시다면 언제든 연락주세요.',
         'section.methodology': '규제 환경 딜리버리 (IEC 62304)',
-        'section.methodology.desc': '요구사항↔설계↔테스트 추적성과 V&V를 갖춘 규제 환경(IEC 62304) 기반 딜리버리 프로세스',
+        'section.methodology.desc': '요구사항↔설계↔테스트 추적성, V&V, GMP 심사 준비를 갖춘 규제 환경(IEC 62304) 기반 딜리버리 프로세스',
         'expertise.desc': '분산 시스템·클라우드·고성능 엔지니어링을 기반으로, 규제 환경에서 단련된 품질/문서화 역량까지 함께 제공합니다.',
         'projects.title': 'Projects',
         'projects.desc': "의료영상, C++ 시스템, AI 개발 자동화의 공개 프로젝트와 회사별 업무 사례",
@@ -259,7 +262,7 @@ const translations = {
         'hero.capability3.title': "AI-assisted Development",
         'hero.capability3.desc': "Agent workflows, account/worktree isolation, CI/CD, and human review",
         'hero.capability4.title': 'Regulated Delivery',
-        'hero.capability4.desc': 'IEC 62304/ISO 13485, traceability, V&V & audits',
+        'hero.capability4.desc': 'IEC 62304/ISO 13485/GMP, traceability, V&V & audits',
         // V-Model
         'vmodel.definition': 'Definition & Design',
         'vmodel.verification': 'Verification & Test',
@@ -286,7 +289,7 @@ const translations = {
         'contact.title': 'Contact',
         'contact.intro': 'If you are interested in distributed systems, platform engineering, high-performance software, or open source collaboration, please feel free to contact me.',
         'section.methodology': 'Regulated Delivery (IEC 62304)',
-        'section.methodology.desc': 'Regulated delivery process based on IEC 62304 with end-to-end traceability and V&V',
+        'section.methodology.desc': 'Regulated delivery process based on IEC 62304 with end-to-end traceability, V&V, and GMP audit readiness',
         'expertise.desc': 'Distributed/cloud/high-performance engineering, plus quality and documentation discipline from regulated environments.',
         'projects.title': 'Projects',
         'projects.desc': "Public medical imaging, C++ systems, and AI development projects alongside company work",
